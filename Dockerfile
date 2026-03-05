@@ -2,8 +2,6 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-
 RUN pip install --no-cache-dir \
     fastapi \
     uvicorn \
@@ -16,9 +14,9 @@ RUN pip install --no-cache-dir \
     langchain-community \
     duckduckgo-search \
     python-dotenv \
-    sentence-transformers \
     numpy \
-    scikit-learn
+    scikit-learn \
+    scipy
 
 COPY . .
 
