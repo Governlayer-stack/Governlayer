@@ -1,7 +1,46 @@
+# Python
 venv/
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Environment
 .env
+
+# Database
 *.db
+
+# OS
 .DS_Store
-venv/
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+docker-compose.override.yml
+
+# Alembic
+alembic/versions/*.pyc
+
+# Models cache
+models/
+.cache/
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Profiling
+*.prof
+*.svg
+
+# Git rewrite artifacts
+.git-rewrite/

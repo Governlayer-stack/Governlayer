@@ -4,52 +4,76 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-GovernLayer is an AI governance platform that provides compliance auditing, behavioral drift detection, risk scoring, and an immutable audit ledger. It has two interfaces: a REST API (FastAPI) and an MCP server (FastMCP).
+GovernLayer is an autonomous AI governance platform providing compliance auditing, behavioral drift detection, risk scoring, agent orchestration, and an immutable hash-chained audit ledger. Two interfaces: REST API (FastAPI) and MCP server (FastMCP). Agents are orchestrated via LangGraph.
 
-## Running the Application
+## Commands
 
 ```bash
-# API server (default port 8000)
-uvicorn api:app --host 0.0.0.0 --port 8000
-
-# MCP server (stdio transport)
-python governlayer_mcp.py
-
-# Run drift detection tests
-python drift_detection.py
-
-# Initialize database tables
-python database.py
+make dev              # Run API server with hot reload (port 8000)
+make test             # Run all tests
+make test-drift       # Run drift detection tests only
+make test-one TEST=tests/test_drift.py::test_name  # Single test
+make lint             # Ruff linting
+make format           # Auto-format
+make mcp              # Run MCP server (stdio)
+make setup            # Full local setup (venv + deps + db)
+make docker-up        # Start full stack (API + Postgres + Redis)
+make docker-down      # Stop containers
+make docker-local-llm # Start stack with Ollama for local inference
+make db-init          # Initialize database tables
+make db-migrate       # Run Alembic migrations
+make db-revision MSG="description"  # Create new migration
+make ollama-pull      # Pull default local models
 ```
-
-## Environment Requirements
-
-- Python 3.11
-- PostgreSQL database at `postgresql://localhost/governlayer` (hardcoded in `database.py`)
-- `GROQ_API_KEY` env var for LLM calls (loaded via dotenv)
-- `sentence-transformers` model `all-MiniLM-L6-v2` (auto-downloaded on first run)
-- Deployed on Railway via Dockerfile (does NOT include sentence-transformers; drift detection unavailable in deployed build)
 
 ## Architecture
 
-**`api.py`** — FastAPI REST API. All endpoints require JWT auth (`/auth/register`, `/auth/login` to get tokens). Core endpoints:
-- `/govern` — The main decision controller: runs drift detection + risk scoring, then APPROVE/ESCALATE/BLOCK. Records to immutable audit ledger.
-- `/audit` — LLM-based compliance audit against governance frameworks.
-- `/drift` — Standalone drift detection endpoint.
-- `/risk-score` — 6-dimension risk scoring (Privacy, Autonomy, Infrastructure, Oversight, Transparency, Fairness).
-- `/ledger`, `/audit-history` — Query the hash-chained audit ledger.
-- `/threats`, `/incident-response`, `/jurisdiction`, `/deadlines` — LLM+search-powered analysis tools.
+```
+src/
+  config.py              # Centralized settings from env (pydantic-settings)
+  main.py                # FastAPI app factory, router registration
+  api/
+    auth.py              # JWT registration + login
+    governance.py        # /govern — drift + risk + decide + ledger (main pipeline)
+    audit.py             # /audit, /audit-history — LLM compliance audits
+    risk.py              # /risk-score — 6-dimension deterministic scoring
+    ledger.py            # /ledger — hash-chained audit trail
+    threats.py           # /threats, /incident-response, /jurisdiction, /deadlines
+    deps.py              # Shared: LLM client, search tool singletons
+  models/
+    database.py          # SQLAlchemy models (AuditRecord, RiskScoreRecord, User), hash chain
+    schemas.py           # Pydantic request/response models
+  drift/
+    detection.py         # Sentence-transformer embeddings vs safety manifolds, D_c calculation
+  agents/
+    orchestrator.py      # LangGraph StateGraph: drift -> risk -> decide -> [escalate] -> ledger
+    compliance_agent.py  # ReAct agent for framework scanning
+    threat_agent.py      # ReAct agent for MITRE ATLAS / OWASP analysis
+  mcp/
+    server.py            # FastMCP server with 10 tools (standalone, no auth/db)
+  security/
+    auth.py              # Password hashing, JWT create/verify
+```
 
-**`drift_detection.py`** — Behavioral drift detection engine. Uses sentence-transformers to embed reasoning traces and compare them against pre-built "safety manifolds" (reference embeddings per use case). Computes a drift coefficient D_c = 1 - cosine_similarity. Also scans for dangerous keyword patterns. Use cases: `loan_approval`, `hiring`, `medical_diagnosis`, `content_moderation`, `general`.
+Legacy files (`api.py`, `database.py`, `drift_detection.py`, `governlayer_mcp.py`) remain at root for backward compatibility during migration.
 
-**`database.py`** — SQLAlchemy models and database setup. Three tables: `audit_records` (hash-chained ledger), `risk_scores`, `users`. Uses `compute_hash()` to chain audit records via SHA-256 hashes (blockchain-style immutable ledger).
+## Environment
 
-**`governlayer_mcp.py`** — MCP server exposing 10 tools for Claude Desktop/MCP clients. Mirrors API functionality (audit, risk scoring, threat analysis, etc.) but without auth or database persistence. Uses LangChain + Groq (Llama 3.3 70B) and DuckDuckGo search.
+- Python 3.11 (`/opt/homebrew/bin/python3.11`)
+- PostgreSQL 15 (local via homebrew, Docker via compose)
+- Redis (cache + message broker)
+- Ollama (local model inference, optional via `--profile local-llm`)
+- `GROQ_API_KEY` in `.env` for cloud LLM
+- See `.env.example` for all config variables
 
 ## Key Technical Details
 
-- JWT auth uses a hardcoded `SECRET_KEY` in `api.py` — this should be moved to env vars for production.
-- The audit ledger is hash-chained: each record stores `previous_hash` and `current_hash`, starting from a genesis hash of `SHA256("GOVERNLAYER_GENESIS")`.
-- Risk scoring is deterministic (not LLM-based) — boolean inputs map to fixed scores per dimension.
-- Drift detection loads the transformer model and pre-computes manifolds at module import time.
-- The Dockerfile omits `sentence-transformers` and `torch` to keep the image small, so the deployed version stubs out drift detection.
+- **Config**: All settings centralized in `src/config.py` via pydantic-settings. No hardcoded secrets.
+- **Audit ledger**: Hash-chained via SHA-256. Genesis hash = `SHA256("GOVERNLAYER_GENESIS")`. Each record stores `previous_hash` + `current_hash`.
+- **Risk scoring**: Deterministic (not LLM). Boolean inputs -> fixed scores across 6 dimensions.
+- **Drift detection**: Gracefully degrades — full embedding mode when sentence-transformers available, keyword-only fallback otherwise.
+- **Agent orchestration**: LangGraph StateGraph with conditional edges for human-in-the-loop escalation.
+- **Dual LLM**: `USE_LOCAL_LLM=true` routes to Ollama for sovereign/offline operation.
+- **Docker**: Multi-stage build, non-root user, health checks. Compose includes Postgres, Redis, optional Ollama.
+- **Migrations**: Alembic configured, models auto-detected from `src.models.database.Base`.
+- **Testing**: pytest with FastAPI TestClient fixtures in `tests/conftest.py`.

@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  # --- Core API ---
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://governlayer:governlayer@postgres:5432/governlayer
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # --- PostgreSQL ---
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: governlayer
+      POSTGRES_USER: governlayer
+      POSTGRES_PASSWORD: governlayer
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # 5433 external to avoid conflict with local PG
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U governlayer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- Redis ---
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass governlayer --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "governlayer", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- Ollama (local model inference) ---
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollamadata:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          memory: 4G
+    profiles:
+      - local-llm  # Only starts with: docker compose --profile local-llm up
+
+volumes:
+  pgdata:
+  redisdata:
+  ollamadata:
