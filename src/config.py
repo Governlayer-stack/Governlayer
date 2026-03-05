@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     ollama_model: str = "llama3:8b"
     use_local_llm: bool = False
 
+    # OpenRouter (universal gateway — 500+ models)
+    openrouter_api_key: str = ""
+
+    # Achonye orchestration
+    achonye_prefer_local: bool = True      # Route simple tasks to Ollama
+    achonye_consensus_critical: bool = True # Multi-LLM validation on critical tasks
+    achonye_leader_model: str = "claude-opus"
+
     # Redis
     redis_url: str = "redis://localhost:6379/0"
 

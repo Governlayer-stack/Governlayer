@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import get_settings
 from src.models.database import create_tables
-from src.api import auth, governance, audit, risk, ledger, threats
+from src.api import auth, governance, audit, risk, ledger, threats, achonye
 
 FRAMEWORKS = [
     "NIST_AI_RMF", "EU_AI_ACT", "ISO_42001", "MITRE_ATLAS", "OWASP_AI",
@@ -40,6 +40,7 @@ def create_app() -> FastAPI:
     app.include_router(risk.router)
     app.include_router(ledger.router)
     app.include_router(threats.router)
+    app.include_router(achonye.router)
 
     @app.on_event("startup")
     def startup():
@@ -55,7 +56,9 @@ def create_app() -> FastAPI:
             "components": [
                 "policy_engine", "drift_detection", "risk_scoring",
                 "decision_controller", "audit_ledger", "agent_orchestrator",
+                "achonye_multi_llm",
             ],
+            "achonye": "Multi-LLM orchestration active",
         }
 
     @app.get("/frameworks")

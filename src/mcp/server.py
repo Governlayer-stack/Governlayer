@@ -214,9 +214,55 @@ def analyze_ai_threats(system_type: str, deployment_context: str) -> str:
     return response.content
 
 
+@mcp.tool()
+def achonye_route(task: str, prefer_local: bool = True) -> str:
+    """Route a task through Achonye's intelligent multi-LLM system.
+
+    Achonye analyzes the task complexity and routes to the optimal model:
+    - Trivial/simple -> local Ollama models (zero cost, full privacy)
+    - Moderate -> Groq or standard cloud models
+    - Complex -> Board consultation (multiple senior models)
+    - Critical -> Consensus validation (multi-LLM voting/debate)
+    """
+    from src.llm.router import route_task
+    decision = route_task(task, prefer_local=prefer_local)
+    return (
+        f"# Achonye Routing Decision\n\n"
+        f"- **Task Complexity**: {decision.task_complexity.value}\n"
+        f"- **Capability Needed**: {decision.capability_needed.value}\n"
+        f"- **Primary Model**: {decision.primary_model}\n"
+        f"- **Reason**: {decision.reason}\n"
+        f"- **Requires Consensus**: {decision.requires_consensus}\n"
+    )
+
+
+@mcp.tool()
+def achonye_ecosystem() -> str:
+    """View the full Achonye multi-LLM ecosystem — all models, hierarchy, status."""
+    from src.llm.providers import MODEL_REGISTRY, ModelTier
+    result = "# Achonye Ecosystem\n\n"
+    result += "## Hierarchy\n"
+    result += "- **Leader**: Claude Opus 4.6 (Achonye)\n"
+    result += "- **Board**: Claude Sonnet, Gemini Pro, GPT-4o\n"
+    result += "- **Validator**: Multi-LLM Consensus Engine\n"
+    result += "- **Operators**: See below\n\n"
+
+    for tier in ModelTier:
+        models = [p for p in MODEL_REGISTRY.values() if p.tier == tier]
+        if models:
+            result += f"## {tier.value.upper()} Models ({len(models)})\n"
+            for m in models:
+                caps = ", ".join(c.value for c in m.capabilities)
+                result += f"- **{m.name}** ({m.provider}): {caps}\n"
+            result += "\n"
+
+    result += f"\n**Total Models**: {len(MODEL_REGISTRY)}\n"
+    return result
+
+
 # ALL tools registered above — now run
 if __name__ == "__main__":
     print("GovernLayer MCP Server starting...")
     print(f"{len(FRAMEWORKS)} governance frameworks loaded")
-    print("10 tools registered")
+    print("12 tools registered (including Achonye)")
     mcp.run()

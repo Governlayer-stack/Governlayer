@@ -9,12 +9,12 @@ This is the brain of the autonomous agentic system. It manages:
 
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
-from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 from typing import TypedDict, Literal, Annotated
 from operator import add
 
 from src.config import get_settings
+from src.llm.providers import get_model, ModelCapability, get_best_for
 
 
 class GovernanceState(TypedDict):
@@ -36,11 +36,10 @@ settings = get_settings()
 memory = MemorySaver()
 
 
-def create_llm():
-    if settings.use_local_llm:
-        from langchain_community.llms import Ollama
-        return Ollama(model=settings.ollama_model, base_url=settings.ollama_base_url)
-    return ChatGroq(model=settings.llm_model)
+def create_llm(capability: ModelCapability = ModelCapability.GOVERNANCE):
+    """Create an LLM using Achonye's intelligent routing."""
+    model_name = get_best_for(capability, prefer_local=settings.use_local_llm)
+    return get_model(model_name)
 
 
 # --- Agent nodes ---

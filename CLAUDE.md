@@ -45,12 +45,17 @@ src/
     schemas.py           # Pydantic request/response models
   drift/
     detection.py         # Sentence-transformer embeddings vs safety manifolds, D_c calculation
+  llm/
+    providers.py         # 14-model registry: Ollama, Groq, OpenRouter (Gemini, GPT, Grok, etc.)
+    router.py            # Intelligent task router: complexity + capability -> optimal model
+    consensus.py         # Multi-LLM consensus: Voting, Chain-of-Verification, Adversarial Debate
   agents/
+    achonye.py           # THE LEADER: hierarchical multi-LLM orchestrator (Leader->Board->Validator->Operators)
     orchestrator.py      # LangGraph StateGraph: drift -> risk -> decide -> [escalate] -> ledger
     compliance_agent.py  # ReAct agent for framework scanning
     threat_agent.py      # ReAct agent for MITRE ATLAS / OWASP analysis
   mcp/
-    server.py            # FastMCP server with 10 tools (standalone, no auth/db)
+    server.py            # FastMCP server with 12 tools (standalone, no auth/db)
   security/
     auth.py              # Password hashing, JWT create/verify
 ```
@@ -73,7 +78,9 @@ Legacy files (`api.py`, `database.py`, `drift_detection.py`, `governlayer_mcp.py
 - **Risk scoring**: Deterministic (not LLM). Boolean inputs -> fixed scores across 6 dimensions.
 - **Drift detection**: Gracefully degrades — full embedding mode when sentence-transformers available, keyword-only fallback otherwise.
 - **Agent orchestration**: LangGraph StateGraph with conditional edges for human-in-the-loop escalation.
-- **Dual LLM**: `USE_LOCAL_LLM=true` routes to Ollama for sovereign/offline operation.
+- **Achonye Architecture**: Multi-LLM orchestration — Leader (Claude Opus) -> Board (Sonnet, Gemini, GPT-4o) -> Validator (consensus engine) -> Operators (14 models across local + cloud). Routes trivial tasks to local Ollama (zero cost), critical tasks through multi-LLM consensus.
+- **OpenRouter**: Universal gateway for cloud models (one API key, 500+ models). All non-Groq, non-Ollama models route through OpenRouter.
+- **Consensus Engine**: Three hallucination-resistance strategies — Voting (3+ models agree), Chain-of-Verification (generate->question->verify->synthesize), Adversarial Debate (claim->critique->judge).
 - **Docker**: Multi-stage build, non-root user, health checks. Compose includes Postgres, Redis, optional Ollama.
 - **Migrations**: Alembic configured, models auto-detected from `src.models.database.Base`.
 - **Testing**: pytest with FastAPI TestClient fixtures in `tests/conftest.py`.

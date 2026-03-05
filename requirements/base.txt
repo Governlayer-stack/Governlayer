@@ -14,9 +14,11 @@ python-jose>=3.5.0
 bcrypt>=4.0.1
 python-multipart>=0.0.22
 
-# LLM — Groq (cloud)
+# LLM — Multi-provider (Achonye ecosystem)
 langchain>=1.2.0
 langchain-groq>=1.1.0
+langchain-ollama>=0.3.0
+langchain-openai>=0.3.0
 langchain-community>=0.4.0
 langchain-core>=1.2.0
 python-dotenv>=1.2.0
