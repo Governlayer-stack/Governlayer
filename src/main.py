@@ -1,11 +1,25 @@
 """GovernLayer API — application factory."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 
 from src.config import get_settings
 from src.models.database import create_tables
-from src.api import auth, governance, audit, risk, ledger, threats, achonye
+from src.models.schemas import DriftRequest
+from src.security.auth import verify_token
+from src.api import auth, governance, audit, risk, ledger, threats, achonye, automation
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        return response
 
 FRAMEWORKS = [
     "NIST_AI_RMF", "EU_AI_ACT", "ISO_42001", "MITRE_ATLAS", "OWASP_AI",
@@ -25,13 +39,15 @@ def create_app() -> FastAPI:
         version=settings.policy_version,
     )
 
+    allowed_origins = settings.cors_origins.split(",") if settings.cors_origins else ["*"]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Tighten for production
+        allow_origins=allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(SecurityHeadersMiddleware)
 
     # Register routers
     app.include_router(auth.router)
@@ -41,6 +57,7 @@ def create_app() -> FastAPI:
     app.include_router(ledger.router)
     app.include_router(threats.router)
     app.include_router(achonye.router)
+    app.include_router(automation.router)
 
     @app.on_event("startup")
     def startup():
@@ -66,12 +83,12 @@ def create_app() -> FastAPI:
         return {"total": len(FRAMEWORKS), "frameworks": FRAMEWORKS}
 
     @app.post("/drift")
-    def detect_drift(request: dict):
+    def detect_drift(request: DriftRequest, email: str = Depends(verify_token)):
         from src.drift.detection import analyze_reasoning
         return analyze_reasoning(
-            reasoning_trace=request.get("reasoning_trace", ""),
-            use_case=request.get("use_case", "general"),
-            threshold=request.get("threshold", 0.3),
+            reasoning_trace=request.reasoning_trace,
+            use_case=request.use_case,
+            threshold=request.threshold,
         )
 
     return app

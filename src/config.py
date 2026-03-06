@@ -1,7 +1,10 @@
 """Centralized configuration — all secrets and settings from environment."""
 
+import warnings
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+_DEFAULT_SECRET = "CHANGE-ME-IN-PRODUCTION"
 
 
 class Settings(BaseSettings):
@@ -9,7 +12,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://localhost/governlayer"
 
     # Auth
-    secret_key: str = "CHANGE-ME-IN-PRODUCTION"
+    secret_key: str = _DEFAULT_SECRET
     jwt_algorithm: str = "HS256"
     jwt_expiry_hours: int = 24
 
@@ -41,6 +44,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = False
+    cors_origins: str = "*"
 
     # Policy
     policy_version: str = "1.0.0"
@@ -50,4 +54,10 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    if s.secret_key == _DEFAULT_SECRET:
+        warnings.warn(
+            "SECRET_KEY is using the insecure default. Set SECRET_KEY in your .env file.",
+            stacklevel=2,
+        )
+    return s

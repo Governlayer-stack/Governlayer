@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import datetime
 import uuid
@@ -51,10 +51,20 @@ def audit_system(request: AuditRequest, email: str = Depends(verify_token), db: 
 
 
 @router.get("/audit-history")
-def audit_history(email: str = Depends(verify_token), db: Session = Depends(get_db)):
-    records = db.query(AuditRecord).filter(AuditRecord.audited_by == email).order_by(AuditRecord.created_at.desc()).all()
+def audit_history(
+    email: str = Depends(verify_token),
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(50, ge=1, le=200),
+):
+    query = db.query(AuditRecord).filter(AuditRecord.audited_by == email)
+    total = query.count()
+    records = query.order_by(AuditRecord.created_at.desc()).offset((page - 1) * per_page).limit(per_page).all()
     return {
-        "total": len(records),
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "pages": (total + per_page - 1) // per_page if total else 0,
         "audits": [{
             "decision_id": r.decision_id, "system_name": r.system_name,
             "governance_action": r.governance_action, "risk_score": r.risk_score,

@@ -29,8 +29,8 @@ docker-compose.override.yml
 # Alembic
 alembic/versions/*.pyc
 
-# Models cache
-models/
+# Models cache (ML model weights, not src/models/)
+/models/
 .cache/
 
 # Test

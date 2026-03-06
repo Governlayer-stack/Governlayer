@@ -11,8 +11,8 @@ services:
       - "8000:8000"
     env_file: .env
     environment:
-      - DATABASE_URL=postgresql://governlayer:governlayer@postgres:5432/governlayer
-      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-governlayer}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-governlayer}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
     depends_on:
       postgres:
         condition: service_healthy
@@ -29,15 +29,15 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: governlayer
-      POSTGRES_USER: governlayer
-      POSTGRES_PASSWORD: governlayer
+      POSTGRES_DB: ${POSTGRES_DB:-governlayer}
+      POSTGRES_USER: ${POSTGRES_USER:-governlayer}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5433:5432"  # 5433 external to avoid conflict with local PG
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U governlayer"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-governlayer}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -45,13 +45,13 @@ services:
   # --- Redis ---
   redis:
     image: redis:7-alpine
-    command: redis-server --requirepass governlayer --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: redis-server --requirepass ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env} --maxmemory 256mb --maxmemory-policy allkeys-lru
     ports:
       - "6379:6379"
     volumes:
       - redisdata:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "governlayer", "ping"]
+      test: ["CMD-SHELL", "redis-cli -a $REDIS_PASSWORD ping"]
       interval: 5s
       timeout: 5s
       retries: 5

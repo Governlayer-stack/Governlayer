@@ -24,6 +24,15 @@ make db-init          # Initialize database tables
 make db-migrate       # Run Alembic migrations
 make db-revision MSG="description"  # Create new migration
 make ollama-pull      # Pull default local models
+make n8n-start        # Start n8n workflow automation service
+make n8n-stop         # Stop n8n service
+make n8n-status       # Check n8n health
+make n8n-logs         # Tail n8n logs
+make n8n-ui           # Open n8n UI in browser
+make daemon-run       # Run governance pipeline once (immediate)
+make daemon-start     # Start autonomous daemon (hourly)
+make daemon-stop      # Stop autonomous daemon
+make daemon-health    # Check all service health
 ```
 
 ## Architecture
@@ -58,6 +67,10 @@ src/
     server.py            # FastMCP server with 12 tools (standalone, no auth/db)
   security/
     auth.py              # Password hashing, JWT create/verify
+scripts/
+  governlayer_daemon.py  # Autonomous scheduler — runs full pipeline on cron
+n8n-workflows/
+  governlayer_full_pipeline.json  # Importable n8n workflow (hourly governance)
 ```
 
 Legacy files (`api.py`, `database.py`, `drift_detection.py`, `governlayer_mcp.py`) remain at root for backward compatibility during migration.
@@ -84,3 +97,7 @@ Legacy files (`api.py`, `database.py`, `drift_detection.py`, `governlayer_mcp.py
 - **Docker**: Multi-stage build, non-root user, health checks. Compose includes Postgres, Redis, optional Ollama.
 - **Migrations**: Alembic configured, models auto-detected from `src.models.database.Base`.
 - **Testing**: pytest with FastAPI TestClient fixtures in `tests/conftest.py`.
+- **n8n Integration**: Workflow automation on port 5678, runs as launchd service. SSH to localhost enables n8n->Claude Code execution. Helper script at `~/.npm-global/bin/n8n-claude`.
+- **Automation API**: `/automate/full-pipeline` runs drift+risk+audit+ledger in one call. `/automate/scan` for instant deterministic checks. `/automate/health` for full service health. `/automate/register-bot` creates service accounts.
+- **Autonomous Daemon**: `scripts/governlayer_daemon.py` — standalone scheduler that runs the full pipeline on all monitored systems. Can run once or loop. launchd plist at `com.governlayer.daemon`.
+- **n8n Workflows**: Importable JSON at `n8n-workflows/governlayer_full_pipeline.json` — hourly scheduled pipeline with alerting.

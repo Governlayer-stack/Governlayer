@@ -8,7 +8,7 @@ Exposes the Achonye hierarchy through REST:
   POST /achonye/consensus   — Run a specific consensus strategy directly
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -20,6 +20,7 @@ from src.llm.providers import (
     MODEL_REGISTRY,
 )
 from src.llm.consensus import ConsensusStrategy
+from src.security.auth import verify_token
 
 router = APIRouter(prefix="/achonye", tags=["achonye"])
 
@@ -63,7 +64,7 @@ class ConsensusResponse(BaseModel):
 # --- Endpoints ---
 
 @router.post("/process", response_model=ProcessResponse)
-async def process_task(req: ProcessRequest):
+async def process_task(req: ProcessRequest, email: str = Depends(verify_token)):
     """Process any task through the Achonye hierarchy.
 
     Achonye will automatically:
@@ -94,7 +95,7 @@ async def process_task(req: ProcessRequest):
 
 
 @router.post("/consensus", response_model=ConsensusResponse)
-async def run_consensus_endpoint(req: ConsensusRequest):
+async def run_consensus_endpoint(req: ConsensusRequest, email: str = Depends(verify_token)):
     """Run a specific multi-LLM consensus strategy directly.
 
     Strategies:
@@ -129,14 +130,14 @@ async def run_consensus_endpoint(req: ConsensusRequest):
 
 
 @router.get("/ecosystem")
-async def get_ecosystem():
+async def get_ecosystem(email: str = Depends(verify_token)):
     """View the current Achonye ecosystem — all models, hierarchy, status."""
     achonye = get_achonye()
     return achonye.get_ecosystem_status()
 
 
 @router.get("/savings")
-async def get_savings():
+async def get_savings(email: str = Depends(verify_token)):
     """View token savings report from intelligent routing."""
     achonye = get_achonye()
     return achonye.get_token_savings_report()
@@ -146,6 +147,7 @@ async def get_savings():
 async def list_all_models(
     tier: Optional[str] = None,
     capability: Optional[str] = None,
+    email: str = Depends(verify_token),
 ):
     """List all available models in the ecosystem, with optional filters."""
     tier_filter = None

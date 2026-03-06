@@ -16,14 +16,14 @@ def auth_token(client):
     email = f"test-{uuid.uuid4().hex[:8]}@governlayer.test"
     response = client.post("/auth/register", json={
         "email": email,
-        "password": "testpassword123",
+        "password": "TestPassword123",
         "company": "TestCorp",
     })
     if response.status_code == 400:
         # Already exists, login instead
         response = client.post("/auth/login", json={
             "email": email,
-            "password": "testpassword123",
+            "password": "TestPassword123",
         })
     return response.json()["token"]
 

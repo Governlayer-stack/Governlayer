@@ -1,4 +1,4 @@
-.PHONY: help dev test lint docker-up docker-down db-init db-migrate mcp setup install ollama-pull
+.PHONY: help dev test lint docker-up docker-down db-init db-migrate mcp setup install ollama-pull n8n-start n8n-stop n8n-status n8n-logs n8n-ui daemon-start daemon-stop daemon-run daemon-health
 
 PYTHON := /opt/homebrew/bin/python3.11
 VENV := venv
@@ -77,3 +77,41 @@ ollama-pull: ## Pull default models for local inference
 	ollama pull llama3:8b
 	ollama pull codellama:7b
 	ollama pull nomic-embed-text
+
+# === n8n Workflow Automation ===
+
+n8n-start: ## Start n8n service
+	launchctl start com.n8n.server
+	@sleep 3 && curl -s http://localhost:5678/healthz && echo " - n8n running on http://localhost:5678"
+
+n8n-stop: ## Stop n8n service
+	launchctl stop com.n8n.server
+	@echo "n8n stopped"
+
+n8n-status: ## Check n8n service status
+	@launchctl list | grep n8n || echo "n8n service not loaded"
+	@curl -s http://localhost:5678/healthz 2>/dev/null && echo " - n8n healthy" || echo " - n8n not responding"
+
+n8n-logs: ## Tail n8n logs
+	tail -50 ~/.n8n/n8n.log
+
+n8n-ui: ## Open n8n UI in browser
+	open http://localhost:5678
+
+# === Autonomous Daemon ===
+
+daemon-run: ## Run governance pipeline once (immediate)
+	$(PY) scripts/governlayer_daemon.py
+
+daemon-start: ## Start autonomous daemon (hourly pipeline)
+	@mkdir -p ~/.governlayer
+	launchctl load ~/Library/LaunchAgents/com.governlayer.daemon.plist
+	launchctl start com.governlayer.daemon
+	@echo "Daemon started — runs pipeline every hour. Logs: ~/.governlayer/"
+
+daemon-stop: ## Stop autonomous daemon
+	launchctl stop com.governlayer.daemon 2>/dev/null; launchctl unload ~/Library/LaunchAgents/com.governlayer.daemon.plist 2>/dev/null
+	@echo "Daemon stopped"
+
+daemon-health: ## Check all service health via automation API
+	@curl -s http://localhost:8000/automate/health 2>/dev/null | python3 -m json.tool || echo "API not running"
