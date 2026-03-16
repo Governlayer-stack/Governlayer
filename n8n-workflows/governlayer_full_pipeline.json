@@ -1,0 +1,192 @@
+{
+  "name": "GovernLayer Full Autonomous Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/automate/register-bot",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "bot_name", "value": "n8n-pipeline" },
+            { "name": "password", "value": "governlayer-n8n-2026" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "register-bot",
+      "name": "Get Bot Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:8000/automate/health",
+        "options": {}
+      },
+      "id": "health-check",
+      "name": "Health Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, -150]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/automate/full-pipeline",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Get Bot Token').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"system_name\": \"GovernLayer API\",\n  \"reasoning_trace\": \"Processing governance request. Analyzing compliance against NIST AI RMF, EU AI Act, and ISO 42001. Evaluating drift and risk dimensions. Timestamp: {{ $now.toISO() }}\",\n  \"use_case\": \"governance\",\n  \"industry\": \"technology\",\n  \"handles_personal_data\": true,\n  \"makes_autonomous_decisions\": true,\n  \"used_in_critical_infrastructure\": false,\n  \"has_human_oversight\": true,\n  \"is_explainable\": true,\n  \"has_bias_testing\": false,\n  \"system_description\": \"AI governance control plane\",\n  \"frameworks\": \"NIST_AI_RMF,EU_AI_ACT,ISO_42001\",\n  \"run_audit\": true,\n  \"run_threats\": false\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "run-pipeline-1",
+      "name": "Pipeline: GovernLayer API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/automate/scan",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Get Bot Token').item.json.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"system_name\": \"Achonye Orchestrator\",\n  \"reasoning_trace\": \"Routing task through Achonye hierarchy. Leader analyzes complexity, selects optimal model. Applying token economics. Timestamp: {{ $now.toISO() }}\",\n  \"use_case\": \"orchestration\",\n  \"handles_personal_data\": false,\n  \"makes_autonomous_decisions\": true,\n  \"has_human_oversight\": true,\n  \"is_explainable\": true\n}",
+        "options": {}
+      },
+      "id": "run-scan-2",
+      "name": "Quick Scan: Achonye",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 150]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "block-check",
+              "leftValue": "={{ $json.governance_action }}",
+              "rightValue": "APPROVE",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-action",
+      "name": "Needs Attention?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format alert for any BLOCK or ESCALATE actions\nconst pipeline = $('Pipeline: GovernLayer API').item.json;\nconst scan = $('Quick Scan: Achonye').item.json;\nconst health = $('Health Check').item.json;\n\nconst alerts = [];\n\nif (pipeline.governance_action !== 'APPROVE') {\n  alerts.push({\n    system: pipeline.system,\n    action: pipeline.governance_action,\n    reason: pipeline.reason,\n    risk_score: pipeline.risk_score,\n    drift: pipeline.drift_coefficient\n  });\n}\n\nif (scan.action !== 'APPROVE') {\n  alerts.push({\n    system: scan.system,\n    action: scan.action,\n    risk_score: scan.risk_score,\n    drift: scan.drift_coefficient\n  });\n}\n\nconst degradedServices = Object.entries(health.services || {})\n  .filter(([_, v]) => v.status !== 'up')\n  .map(([k, _]) => k);\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    alerts_count: alerts.length,\n    alerts,\n    degraded_services: degradedServices,\n    overall_health: health.overall,\n    summary: alerts.length > 0\n      ? `ACTION REQUIRED: ${alerts.map(a => `${a.system} -> ${a.action}`).join(', ')}`\n      : 'All systems nominal'\n  }\n}];"
+      },
+      "id": "format-alert",
+      "name": "Format Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log successful run\nconst pipeline = $('Pipeline: GovernLayer API').item.json;\nconst scan = $('Quick Scan: Achonye').item.json;\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    status: 'all_clear',\n    systems_checked: 2,\n    results: [\n      { system: pipeline.system, action: pipeline.governance_action, risk: pipeline.risk_score },\n      { system: scan.system, action: scan.action, risk: scan.risk_score }\n    ]\n  }\n}];"
+      },
+      "id": "log-success",
+      "name": "Log Success",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 100]
+    }
+  ],
+  "connections": {
+    "Every Hour": {
+      "main": [
+        [{ "node": "Get Bot Token", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Bot Token": {
+      "main": [
+        [
+          { "node": "Health Check", "type": "main", "index": 0 },
+          { "node": "Pipeline: GovernLayer API", "type": "main", "index": 0 },
+          { "node": "Quick Scan: Achonye", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Pipeline: GovernLayer API": {
+      "main": [
+        [{ "node": "Needs Attention?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Needs Attention?": {
+      "main": [
+        [{ "node": "Format Alert", "type": "main", "index": 0 }],
+        [{ "node": "Log Success", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 300
+  },
+  "tags": [
+    { "name": "governlayer" },
+    { "name": "automation" },
+    { "name": "governance" }
+  ]
+}

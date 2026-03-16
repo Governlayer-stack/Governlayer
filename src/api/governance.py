@@ -1,13 +1,14 @@
+import uuid
+from datetime import datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from datetime import datetime
-import uuid
 
-from src.models.database import get_db, AuditRecord, compute_hash, get_last_hash
+from src.config import get_settings
+from src.drift.detection import analyze_reasoning
+from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
 from src.models.schemas import GovernRequest
 from src.security.auth import verify_token
-from src.drift.detection import analyze_reasoning
-from src.config import get_settings
 
 router = APIRouter(tags=["governance"])
 settings = get_settings()
@@ -33,7 +34,8 @@ def govern_decision(request: GovernRequest, email: str = Depends(verify_token), 
 
     if drift_result["vetoed"]:
         governance_action = "BLOCK"
-        reason = f"BLOCKED: Behavioral drift detected. D_c={drift_result['drift_coefficient']} exceeds threshold. {drift_result['explanation']}"
+        dc = drift_result['drift_coefficient']
+        reason = f"BLOCKED: Behavioral drift detected. D_c={dc} exceeds threshold. {drift_result['explanation']}"
     elif risk_level == "HIGH":
         governance_action = "ESCALATE_HUMAN"
         reason = f"ESCALATED: High risk score {round(overall_risk)}/100. Requires human review."
@@ -42,7 +44,8 @@ def govern_decision(request: GovernRequest, email: str = Depends(verify_token), 
         reason = f"ESCALATED: Medium risk with {drift_result['semantic_risk_flags']} semantic risk flags."
     else:
         governance_action = "APPROVE"
-        reason = f"APPROVED: Risk score {round(overall_risk)}/100. Drift coefficient {drift_result['drift_coefficient']} within safe boundaries."
+        dc = drift_result['drift_coefficient']
+        reason = f"APPROVED: Risk score {round(overall_risk)}/100. Drift coefficient {dc} within safe boundaries."
 
     decision_id = str(uuid.uuid4())
     previous_hash = get_last_hash(db)

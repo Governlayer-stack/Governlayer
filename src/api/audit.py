@@ -1,13 +1,14 @@
+import uuid
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from datetime import datetime
-import uuid
 
-from src.models.database import get_db, AuditRecord, compute_hash, get_last_hash
-from src.models.schemas import AuditRequest
-from src.security.auth import verify_token
 from src.api.deps import get_llm
 from src.config import get_settings
+from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
+from src.models.schemas import AuditRequest
+from src.security.auth import verify_token
 
 router = APIRouter(tags=["audit"])
 settings = get_settings()

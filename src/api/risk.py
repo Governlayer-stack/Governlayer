@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 from datetime import datetime
 
-from src.models.database import get_db, RiskScoreRecord
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from src.models.database import RiskScoreRecord, get_db
 from src.models.schemas import RiskScoreRequest
 from src.security.auth import verify_token
 

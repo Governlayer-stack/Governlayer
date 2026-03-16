@@ -7,17 +7,17 @@ Endpoints:
   POST /automate/register-bot    — Register a service account for automation
 """
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field
 import uuid
+from datetime import datetime
 
-from src.models.database import get_db, AuditRecord, compute_hash, get_last_hash
-from src.security.auth import verify_token, hash_password, create_token
-from src.drift.detection import analyze_reasoning
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
 from src.config import get_settings
+from src.drift.detection import analyze_reasoning
+from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
+from src.security.auth import create_token, hash_password, verify_token
 
 router = APIRouter(prefix="/automate", tags=["automation"])
 settings = get_settings()

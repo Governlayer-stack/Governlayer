@@ -44,3 +44,8 @@ htmlcov/
 
 # Git rewrite artifacts
 .git-rewrite/
+
+# Claude Code local tooling
+.claude/
+.claude-flow/
+.mcp.json

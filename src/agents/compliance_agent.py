@@ -6,10 +6,10 @@ Uses LangGraph ReAct pattern with tools for:
 - Generating compliance reports
 """
 
-from langgraph.prebuilt import create_react_agent
-from langchain_groq import ChatGroq
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import tool
+from langchain_groq import ChatGroq
+from langgraph.prebuilt import create_react_agent
 
 from src.config import get_settings
 

@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional
 import re
+
+from pydantic import BaseModel, Field, field_validator
 
 # Note: password validation enforced on registration only, not login
 
@@ -45,7 +45,7 @@ class GovernRequest(BaseModel):
     system_name: str = Field(..., min_length=1, max_length=255)
     reasoning_trace: str = Field(..., min_length=1, max_length=10000)
     use_case: str = Field(default="general", max_length=255)
-    ai_decision: Optional[str] = Field(default="", max_length=5000)
+    ai_decision: str | None = Field(default="", max_length=5000)
     handles_personal_data: bool = False
     makes_autonomous_decisions: bool = False
     used_in_critical_infrastructure: bool = False

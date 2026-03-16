@@ -1,8 +1,9 @@
-from sqlalchemy import create_engine, Column, String, Float, DateTime, Text, Boolean, Integer, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker
-from datetime import datetime
 import hashlib
 import json
+from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 from src.config import get_settings
 

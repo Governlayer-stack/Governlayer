@@ -73,7 +73,7 @@ n8n-workflows/
   governlayer_full_pipeline.json  # Importable n8n workflow (hourly governance)
 ```
 
-Legacy files (`api.py`, `database.py`, `drift_detection.py`, `governlayer_mcp.py`) remain at root for backward compatibility during migration.
+Legacy root files (`api.py`, `database.py`, `drift_detection.py`, `governlayer_mcp.py`) have been removed. All code lives under `src/`.
 
 ## Environment
 

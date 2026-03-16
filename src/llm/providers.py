@@ -10,8 +10,6 @@ from __future__ import annotations
 import enum
 import logging
 from dataclasses import dataclass, field
-from functools import lru_cache
-from typing import Optional
 
 from langchain_core.language_models import BaseChatModel
 
@@ -20,7 +18,7 @@ from src.config import get_settings
 logger = logging.getLogger(__name__)
 
 
-class ModelTier(str, enum.Enum):
+class ModelTier(enum.StrEnum):
     """Cost/capability tiers for routing decisions."""
     LOCAL = "local"          # Ollama — zero cost, full privacy
     FAST_CLOUD = "fast"      # Small cloud models — cheap, fast
@@ -28,7 +26,7 @@ class ModelTier(str, enum.Enum):
     PREMIUM_CLOUD = "premium"    # Frontier models — max capability
 
 
-class ModelCapability(str, enum.Enum):
+class ModelCapability(enum.StrEnum):
     """What a model excels at — used for task routing."""
     REASONING = "reasoning"
     CODE_GENERATION = "code_generation"
@@ -315,8 +313,8 @@ def get_profile(name: str) -> ModelProfile:
 
 
 def list_models(
-    tier: Optional[ModelTier] = None,
-    capability: Optional[ModelCapability] = None,
+    tier: ModelTier | None = None,
+    capability: ModelCapability | None = None,
 ) -> list[ModelProfile]:
     """List available models, optionally filtered by tier or capability."""
     results = []

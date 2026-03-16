@@ -1,6 +1,6 @@
 """Tests for behavioral drift detection engine."""
 
-from src.drift.detection import analyze_reasoning, calculate_drift, _HAS_EMBEDDINGS
+from src.drift.detection import _HAS_EMBEDDINGS, analyze_reasoning, calculate_drift
 
 
 def test_compliant_loan_evaluation():

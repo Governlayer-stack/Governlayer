@@ -3,10 +3,10 @@
 Fixed: original had tools defined after mcp.run() making them unreachable.
 """
 
-from fastmcp import FastMCP
-from langchain_groq import ChatGroq
-from langchain_community.tools import DuckDuckGoSearchRun
 from dotenv import load_dotenv
+from fastmcp import FastMCP
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_groq import ChatGroq
 
 load_dotenv()
 

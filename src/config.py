@@ -1,8 +1,9 @@
 """Centralized configuration — all secrets and settings from environment."""
 
 import warnings
-from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+from pydantic_settings import BaseSettings
 
 _DEFAULT_SECRET = "CHANGE-ME-IN-PRODUCTION"
 
@@ -44,15 +45,15 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = False
-    cors_origins: str = "*"
+    cors_origins: str = "https://governlayer.ai"
 
     # Policy
     policy_version: str = "1.0.0"
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "case_sensitive": False}
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "case_sensitive": False, "extra": "ignore"}
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
     s = Settings()
     if s.secret_key == _DEFAULT_SECRET:

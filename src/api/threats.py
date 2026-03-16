@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
 from datetime import datetime
 
-from src.models.schemas import ThreatRequest, IncidentRequest, JurisdictionRequest
-from src.security.auth import verify_token
+from fastapi import APIRouter, Depends
+
 from src.api.deps import get_llm, get_search
+from src.models.schemas import IncidentRequest, JurisdictionRequest, ThreatRequest
+from src.security.auth import verify_token
 
 router = APIRouter(tags=["threats"])
 
@@ -17,7 +18,11 @@ def analyze_threats(request: ThreatRequest, email: str = Depends(verify_token)):
         f"Analyze AI threats for {request.system_type} in {request.deployment_context}. "
         f"Search results: {results}. List top threats and security controls."
     )
-    return {"system_type": request.system_type, "threats": response.content, "analyzed_at": datetime.utcnow().isoformat()}
+    return {
+        "system_type": request.system_type,
+        "threats": response.content,
+        "analyzed_at": datetime.utcnow().isoformat(),
+    }
 
 
 @router.post("/incident-response")

@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
@@ -22,7 +22,7 @@ from src.llm.providers import get_model
 logger = logging.getLogger(__name__)
 
 
-class ConsensusStrategy(str, Enum):
+class ConsensusStrategy(StrEnum):
     VOTING = "voting"
     CHAIN_OF_VERIFICATION = "cove"
     ADVERSARIAL_DEBATE = "debate"

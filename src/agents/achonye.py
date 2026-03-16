@@ -34,29 +34,27 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Optional
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
+from src.llm.consensus import (
+    ConsensusResult,
+    ConsensusStrategy,
+    run_consensus,
+)
 from src.llm.providers import (
-    ModelCapability,
+    MODEL_REGISTRY,
     ModelTier,
     get_model,
     get_profile,
     list_models,
-    MODEL_REGISTRY,
 )
 from src.llm.router import (
-    TaskComplexity,
     RoutingDecision,
+    TaskComplexity,
     route_task,
-)
-from src.llm.consensus import (
-    ConsensusStrategy,
-    ConsensusResult,
-    run_consensus,
 )
 
 logger = logging.getLogger(__name__)
@@ -90,7 +88,7 @@ You lead with wisdom. You delegate with precision. You verify with rigor.
 """
 
 
-class AchonyeAction(str, Enum):
+class AchonyeAction(StrEnum):
     """Actions Achonye can take."""
     DIRECT_ANSWER = "direct"           # Answer immediately (trivial)
     DELEGATE_LOCAL = "delegate_local"  # Send to local operator
@@ -109,10 +107,10 @@ class AchonyeDecision:
     routing: RoutingDecision
     models_used: list[str] = field(default_factory=list)
     result: str = ""
-    consensus: Optional[ConsensusResult] = None
+    consensus: ConsensusResult | None = None
     subtask_results: list[dict] = field(default_factory=list)
     tokens_saved_estimate: int = 0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     audit_trail: list[str] = field(default_factory=list)
 
 
@@ -140,9 +138,9 @@ class Achonye:
     async def process(
         self,
         task: str,
-        force_model: Optional[str] = None,
-        force_strategy: Optional[ConsensusStrategy] = None,
-        context: Optional[dict] = None,
+        force_model: str | None = None,
+        force_strategy: ConsensusStrategy | None = None,
+        context: dict | None = None,
     ) -> AchonyeDecision:
         """Process a task through the Achonye hierarchy.
 
@@ -301,9 +299,9 @@ class Achonye:
             f"on this task:\n\n"
             f"TASK: {decision.task}\n\n"
             f"BOARD INPUT:\n" + "\n\n".join(board_input) + "\n\n"
-            f"Synthesize the Board's input into a single, authoritative response. "
-            f"Resolve any disagreements. Cite which Board member's perspective you're "
-            f"drawing from when relevant."
+            "Synthesize the Board's input into a single, authoritative response. "
+            "Resolve any disagreements. Cite which Board member's perspective you're "
+            "drawing from when relevant."
         )
         response = await leader.ainvoke([
             SystemMessage(content=ACHONYE_SYSTEM),
@@ -355,7 +353,7 @@ class Achonye:
     async def _handle_decompose(
         self,
         decision: AchonyeDecision,
-        context: Optional[dict],
+        context: dict | None,
     ) -> AchonyeDecision:
         """Decompose a complex task into subtasks and delegate each."""
         leader = get_model(self.leader_model)
@@ -437,7 +435,7 @@ class Achonye:
 
 
 # --- Singleton ---
-_achonye: Optional[Achonye] = None
+_achonye: Achonye | None = None
 
 
 def get_achonye(**kwargs) -> Achonye:

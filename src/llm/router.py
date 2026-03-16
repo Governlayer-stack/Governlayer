@@ -14,24 +14,23 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from langchain_core.language_models import BaseChatModel
 
 from src.llm.providers import (
+    MODEL_REGISTRY,
     ModelCapability,
     ModelTier,
     get_best_for,
     get_model,
     get_profile,
-    MODEL_REGISTRY,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class TaskComplexity(str, Enum):
+class TaskComplexity(StrEnum):
     TRIVIAL = "trivial"      # Classification, formatting, extraction
     SIMPLE = "simple"        # Summarization, simple Q&A
     MODERATE = "moderate"    # Analysis, code review, multi-step
@@ -154,8 +153,8 @@ _COMPLEXITY_TO_TIER: dict[TaskComplexity, list[ModelTier]] = {
 
 def route_task(
     task: str,
-    force_capability: Optional[ModelCapability] = None,
-    force_model: Optional[str] = None,
+    force_capability: ModelCapability | None = None,
+    force_model: str | None = None,
     prefer_local: bool = False,
 ) -> RoutingDecision:
     """Route a task to the optimal model based on analysis.
@@ -185,7 +184,8 @@ def route_task(
     if capability == ModelCapability.PRIVACY_SENSITIVE:
         prefer_local = True
 
-    primary = get_best_for(capability, prefer_local=prefer_local or complexity in (TaskComplexity.TRIVIAL, TaskComplexity.SIMPLE))
+    use_local = prefer_local or complexity in (TaskComplexity.TRIVIAL, TaskComplexity.SIMPLE)
+    primary = get_best_for(capability, prefer_local=use_local)
 
     # Critical tasks require consensus
     requires_consensus = complexity == TaskComplexity.CRITICAL

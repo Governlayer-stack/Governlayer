@@ -9,11 +9,10 @@ Falls back to keyword-only analysis when sentence-transformers is unavailable
 
 import hashlib
 from datetime import datetime
-from typing import Optional
 
 try:
-    from sentence_transformers import SentenceTransformer
     import numpy as np
+    from sentence_transformers import SentenceTransformer
     _HAS_EMBEDDINGS = True
 except ImportError:
     _HAS_EMBEDDINGS = False
@@ -78,31 +77,31 @@ if _HAS_EMBEDDINGS:
 
 def calculate_drift(reasoning_trace: str, use_case: str = "general", threshold: float = 0.3) -> dict:
     if _HAS_EMBEDDINGS and _embedder is not None:
-        V_t = _embedder.encode([reasoning_trace])[0]
-        V_t = V_t / np.linalg.norm(V_t)
-        M_s = _manifold_cache.get(use_case, _manifold_cache["general"])
-        D_c = float(1 - np.dot(V_t, M_s))
-        D_c = max(0.0, min(2.0, D_c))
+        v_t = _embedder.encode([reasoning_trace])[0]
+        v_t = v_t / np.linalg.norm(v_t)
+        m_s = _manifold_cache.get(use_case, _manifold_cache["general"])
+        d_c = float(1 - np.dot(v_t, m_s))
+        d_c = max(0.0, min(2.0, d_c))
     else:
         # Fallback: keyword-only heuristic when no embeddings
-        D_c = 0.1  # baseline safe
+        d_c = 0.1  # baseline safe
 
-    vetoed = D_c > threshold
+    vetoed = d_c > threshold
 
-    if D_c < 0.15:
+    if d_c < 0.15:
         alignment = "STRONGLY_ALIGNED"
-    elif D_c < threshold:
+    elif d_c < threshold:
         alignment = "ALIGNED"
-    elif D_c < 0.5:
+    elif d_c < 0.5:
         alignment = "DRIFTING"
-    elif D_c < 0.8:
+    elif d_c < 0.8:
         alignment = "HIGH_DRIFT"
     else:
         alignment = "CRITICAL_DRIFT"
 
     trace_hash = hashlib.sha256(reasoning_trace.encode()).hexdigest()
     return {
-        "drift_coefficient": round(D_c, 4),
+        "drift_coefficient": round(d_c, 4),
         "threshold": threshold,
         "vetoed": vetoed,
         "alignment": alignment,
@@ -111,14 +110,16 @@ def calculate_drift(reasoning_trace: str, use_case: str = "general", threshold: 
         "timestamp": datetime.utcnow().isoformat(),
         "action": "VETO" if vetoed else "PROCEED",
         "explanation": (
-            f"Drift coefficient D_c={D_c:.4f} {'EXCEEDS' if vetoed else 'within'} "
+            f"Drift coefficient d_c={d_c:.4f} {'EXCEEDS' if vetoed else 'within'} "
             f"safety threshold t={threshold}. Reasoning trace is {alignment.replace('_', ' ').lower()}."
         ),
         "embeddings_available": _HAS_EMBEDDINGS,
     }
 
 
-def analyze_reasoning(reasoning_trace: str, use_case: str = "general", ai_decision: str = "", threshold: float = 0.3) -> dict:
+def analyze_reasoning(
+    reasoning_trace: str, use_case: str = "general", ai_decision: str = "", threshold: float = 0.3,
+) -> dict:
     result = calculate_drift(reasoning_trace, use_case, threshold)
 
     risk_indicators = []

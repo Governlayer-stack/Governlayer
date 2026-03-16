@@ -4,10 +4,10 @@ Uses MITRE ATLAS and OWASP AI Security to identify and assess
 threats to AI systems. Can search for current threat intelligence.
 """
 
-from langgraph.prebuilt import create_react_agent
-from langchain_groq import ChatGroq
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import tool
+from langchain_groq import ChatGroq
+from langgraph.prebuilt import create_react_agent
 
 from src.config import get_settings
 

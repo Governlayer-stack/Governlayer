@@ -8,18 +8,17 @@ Exposes the Achonye hierarchy through REST:
   POST /achonye/consensus   — Run a specific consensus strategy directly
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel, Field
-from typing import Optional
 
-from src.agents.achonye import get_achonye, AchonyeAction
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
+
+from src.agents.achonye import get_achonye
+from src.llm.consensus import ConsensusStrategy
 from src.llm.providers import (
     ModelCapability,
     ModelTier,
     list_models,
-    MODEL_REGISTRY,
 )
-from src.llm.consensus import ConsensusStrategy
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/achonye", tags=["achonye"])
@@ -29,9 +28,9 @@ router = APIRouter(prefix="/achonye", tags=["achonye"])
 
 class ProcessRequest(BaseModel):
     task: str = Field(..., description="The task to process through Achonye")
-    force_model: Optional[str] = Field(None, description="Force a specific model (bypass routing)")
-    prefer_local: Optional[bool] = Field(None, description="Override local preference")
-    context: Optional[dict] = Field(None, description="Additional context for the task")
+    force_model: str | None = Field(None, description="Force a specific model (bypass routing)")
+    prefer_local: bool | None = Field(None, description="Override local preference")
+    context: dict | None = Field(None, description="Additional context for the task")
 
 
 class ProcessResponse(BaseModel):
@@ -41,7 +40,7 @@ class ProcessResponse(BaseModel):
     routing_reason: str
     task_complexity: str
     capability_needed: str
-    consensus_confidence: Optional[float] = None
+    consensus_confidence: float | None = None
     tokens_saved: int
     audit_trail: list[str]
 
@@ -49,7 +48,7 @@ class ProcessResponse(BaseModel):
 class ConsensusRequest(BaseModel):
     prompt: str
     strategy: str = Field("voting", description="voting | cove | debate")
-    models: Optional[list[str]] = Field(None, description="Models for voting strategy")
+    models: list[str] | None = Field(None, description="Models for voting strategy")
 
 
 class ConsensusResponse(BaseModel):
@@ -145,8 +144,8 @@ async def get_savings(email: str = Depends(verify_token)):
 
 @router.get("/models")
 async def list_all_models(
-    tier: Optional[str] = None,
-    capability: Optional[str] = None,
+    tier: str | None = None,
+    capability: str | None = None,
     email: str = Depends(verify_token),
 ):
     """List all available models in the ecosystem, with optional filters."""

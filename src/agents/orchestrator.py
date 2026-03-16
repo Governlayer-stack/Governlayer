@@ -7,14 +7,14 @@ This is the brain of the autonomous agentic system. It manages:
 - Agent memory across sessions
 """
 
-from langgraph.graph import StateGraph, END
-from langgraph.checkpoint.memory import MemorySaver
-from langchain_core.messages import HumanMessage, SystemMessage
-from typing import TypedDict, Literal, Annotated
 from operator import add
+from typing import Annotated, Literal, TypedDict
+
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph import END, StateGraph
 
 from src.config import get_settings
-from src.llm.providers import get_model, ModelCapability, get_best_for
+from src.llm.providers import ModelCapability, get_best_for, get_model
 
 
 class GovernanceState(TypedDict):
@@ -113,8 +113,9 @@ def human_review_node(state: GovernanceState) -> dict:
 
 def audit_ledger_node(state: GovernanceState) -> dict:
     """Record the decision to the immutable audit ledger."""
-    from src.models.database import compute_hash
     from datetime import datetime
+
+    from src.models.database import compute_hash
 
     record_data = {
         "system_name": state["system_name"],

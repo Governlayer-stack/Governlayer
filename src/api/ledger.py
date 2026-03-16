@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from src.models.database import get_db, AuditRecord, compute_hash
+from src.models.database import AuditRecord, get_db
 from src.security.auth import verify_token
 
 router = APIRouter(tags=["ledger"])

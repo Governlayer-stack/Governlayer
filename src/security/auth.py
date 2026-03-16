@@ -1,8 +1,9 @@
-from fastapi import Depends, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import JWTError, jwt
 from datetime import datetime, timedelta
+
 import bcrypt
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
 
 from src.config import get_settings
 
@@ -23,12 +24,17 @@ def create_token(email: str) -> str:
     return jwt.encode({"sub": email, "exp": expire}, settings.secret_key, algorithm=settings.jwt_algorithm)
 
 
-def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+def verify_token_raw(token: str) -> str:
+    """Verify a JWT token string directly (used by API key auth fallback)."""
     try:
-        payload = jwt.decode(credentials.credentials, settings.secret_key, algorithms=[settings.jwt_algorithm])
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
         email = payload.get("sub")
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid token")
         return email
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    return verify_token_raw(credentials.credentials)
