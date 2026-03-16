@@ -34,6 +34,13 @@ class Settings(BaseSettings):
     achonye_consensus_critical: bool = True # Multi-LLM validation on critical tasks
     achonye_leader_model: str = "claude-opus"
 
+    # Stripe billing
+    stripe_api_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_starter: str = ""
+    stripe_price_pro: str = ""
+    stripe_price_enterprise: str = ""
+
     # Redis
     redis_url: str = "redis://localhost:6379/0"
 

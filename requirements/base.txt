@@ -38,6 +38,9 @@ mcp>=1.26.0
 # Cache / message broker
 redis>=7.2.0
 
+# Billing
+stripe>=12.0.0
+
 # ML — drift detection
 numpy>=2.4.0
 scikit-learn>=1.8.0

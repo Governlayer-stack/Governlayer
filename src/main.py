@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from src.api import achonye, audit, auth, automation, enterprise, governance, ledger, risk, threats, v1
+from src.api import achonye, audit, auth, automation, billing, enterprise, governance, ledger, risk, threats, v1
 from src.config import get_settings
 from src.models.database import create_tables
 from src.models.schemas import DriftRequest
@@ -77,6 +77,7 @@ def create_app() -> FastAPI:
     app.include_router(achonye.router)
     app.include_router(automation.router)
     app.include_router(enterprise.router)
+    app.include_router(billing.router)
     app.include_router(v1.router)
 
     @app.on_event("startup")
