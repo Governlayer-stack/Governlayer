@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer — AI Governance Control Plane</title>
+<meta name="description" content="Enterprise AI governance platform. Compliance auditing, behavioral drift detection, risk scoring, and immutable audit ledgers for AI systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0b;--bg2:#111113;--bg3:#1a1a1f;--border:#222228;--text:#e4e4e7;--text2:#a1a1aa;--accent:#00d4aa;--accent2:#7c3aed;--radius:12px}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+code,pre{font-family:'JetBrains Mono',monospace}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,11,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--text2);font-size:14px;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all 0.2s;border:none;cursor:pointer}
+.btn-primary{background:var(--accent);color:#0a0a0b}
+.btn-primary:hover{background:#00e8bb;transform:translateY(-1px);box-shadow:0 4px 24px rgba(0,212,170,0.3)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--text2);background:var(--bg2)}
+
+/* Hero */
+.hero{padding:160px 24px 120px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(0,212,170,0.08) 0%,rgba(124,58,237,0.04) 50%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(40px,6vw,72px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,#a1a1aa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:clamp(16px,2vw,20px);color:var(--text2);max-width:640px;margin:0 auto 40px;line-height:1.7}
+.hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.hero-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;color:var(--accent);border:1px solid rgba(0,212,170,0.2);background:rgba(0,212,170,0.05);margin-bottom:24px}
+
+/* Sections */
+section{padding:100px 24px}
+.container{max-width:1200px;margin:0 auto}
+.section-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:12px}
+.section-title{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-1px;margin-bottom:16px}
+.section-desc{color:var(--text2);max-width:560px;font-size:16px;margin-bottom:48px}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:all 0.3s}
+.feature-card:hover{border-color:rgba(0,212,170,0.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.feature-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px;font-weight:700;color:#0a0a0b}
+.feature-icon.green{background:var(--accent)}
+.feature-icon.purple{background:var(--accent2);color:#fff}
+.feature-card h3{font-size:17px;font-weight:600;margin-bottom:8px}
+.feature-card p{color:var(--text2);font-size:14px;line-height:1.7}
+
+/* How it works */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;counter-reset:step}
+.step{position:relative;padding:32px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius)}
+.step::before{counter-increment:step;content:counter(step);position:absolute;top:-16px;left:24px;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#0a0a0b;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.step h3{font-size:17px;font-weight:600;margin-bottom:8px;margin-top:8px}
+.step p{color:var(--text2);font-size:14px;line-height:1.7}
+.step code{background:var(--bg3);padding:2px 8px;border-radius:4px;font-size:13px;color:var(--accent)}
+
+/* Pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;display:flex;flex-direction:column}
+.price-card.featured{border-color:var(--accent);position:relative}
+.price-card.featured::after{content:'Most Popular';position:absolute;top:-12px;right:24px;background:var(--accent);color:#0a0a0b;font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;text-transform:uppercase;letter-spacing:0.5px}
+.price-name{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:8px}
+.price-amount{font-size:36px;font-weight:800;margin-bottom:4px}
+.price-amount span{font-size:15px;font-weight:500;color:var(--text2)}
+.price-desc{font-size:13px;color:var(--text2);margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.price-features{list-style:none;margin-bottom:32px;flex:1}
+.price-features li{font-size:14px;color:var(--text2);padding:6px 0;padding-left:20px;position:relative}
+.price-features li::before{content:'';position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.price-card .btn{width:100%}
+
+/* Code */
+.code-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.code-header{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.code-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
+.code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
+.code-header span{color:var(--text2);font-size:13px;margin-left:auto}
+pre{padding:24px;overflow-x:auto;font-size:13px;line-height:1.8;color:var(--text2)}
+pre .comment{color:#555}
+pre .string{color:var(--accent)}
+pre .key{color:#c4b5fd}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:48px 24px;text-align:center}
+footer p{color:var(--text2);font-size:14px}
+footer .footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+footer .footer-links a{color:var(--text2);font-size:14px}
+footer .footer-links a:hover{color:var(--text)}
+
+/* Animations */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .features-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .steps{grid-template-columns:1fr}
+  section{padding:60px 16px}
+  .hero{padding:120px 16px 80px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">Govern<span>Layer</span></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://web-production-bdd26.up.railway.app/docs" class="btn btn-secondary" style="padding:8px 16px">API Docs</a>
+      <a href="https://web-production-bdd26.up.railway.app/docs" class="btn btn-primary" style="padding:8px 16px">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Now live -- 25 compliance frameworks supported</div>
+    <h1>AI Governance<br>Control Plane</h1>
+    <p class="subtitle">Enterprise compliance auditing, behavioral drift detection, deterministic risk scoring, and immutable audit ledgers for AI systems. One API to govern them all.</p>
+    <div class="hero-buttons">
+      <a href="https://web-production-bdd26.up.railway.app/docs" class="btn btn-primary" style="padding:14px 32px;font-size:16px">Get Started</a>
+      <a href="https://web-production-bdd26.up.railway.app/redoc" class="btn btn-secondary" style="padding:14px 32px;font-size:16px">View Docs</a>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">Everything you need to govern AI</h2>
+    <p class="section-desc">A complete governance platform purpose-built for enterprise AI compliance, safety, and auditability.</p>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon green">D</div>
+        <h3>Behavioral Drift Detection</h3>
+        <p>Sentence-transformer embeddings detect when AI reasoning drifts from safety manifolds. Real-time monitoring with configurable thresholds and automatic veto on dangerous outputs.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon purple">R</div>
+        <h3>Deterministic Risk Scoring</h3>
+        <p>Six-dimension scoring across privacy, autonomy, infrastructure, oversight, transparency, and fairness. No LLM required -- instant, reproducible results every time.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon green">L</div>
+        <h3>Immutable Audit Ledger</h3>
+        <p>SHA-256 hash-chained audit trail with integrity verification. Every governance decision is cryptographically linked. Tamper-evident by design.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon purple">C</div>
+        <h3>Multi-LLM Consensus</h3>
+        <p>Three anti-hallucination strategies: Voting (3+ models agree), Chain-of-Verification (generate, question, verify, synthesize), and Adversarial Debate (claim, critique, judge).</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon green">F</div>
+        <h3>25 Compliance Frameworks</h3>
+        <p>EU AI Act, NIST AI RMF, ISO 42001, HIPAA, GDPR, SOC2, MITRE ATLAS, OWASP AI, CCPA, IEEE Ethics, OECD AI, and 14 more -- all in one API.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon purple">E</div>
+        <h3>Enterprise Multi-Tenancy</h3>
+        <p>Organizations, scoped API keys, role-based access control, plan-based rate limiting, HMAC-signed webhooks, and per-request usage metering.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" style="background:var(--bg2)">
+  <div class="container">
+    <div class="section-label">Integration</div>
+    <h2 class="section-title">Three steps to govern your AI</h2>
+    <p class="section-desc">Go from zero to full governance in under five minutes. No infrastructure to manage.</p>
+    <div class="steps">
+      <div class="step fade-in">
+        <h3>Create an Organization</h3>
+        <p>Register your company as a tenant. Choose a plan that fits your scale. Each org gets isolated usage tracking and billing.</p>
+        <p style="margin-top:12px"><code>POST /v1/enterprise/orgs</code></p>
+      </div>
+      <div class="step fade-in">
+        <h3>Generate an API Key</h3>
+        <p>Create scoped API keys with configurable permissions. Control exactly which endpoints each key can access: govern, audit, risk, or scan.</p>
+        <p style="margin-top:12px"><code>POST /v1/enterprise/orgs/{slug}/api-keys</code></p>
+      </div>
+      <div class="step fade-in">
+        <h3>Govern Your AI</h3>
+        <p>Send your AI system's reasoning traces to GovernLayer. Get drift analysis, risk scores, compliance audits, and governance decisions in one call.</p>
+        <p style="margin-top:12px"><code>POST /v1/govern</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-desc">Start free. Scale as your AI governance needs grow.</p>
+    <div class="pricing-grid">
+      <div class="price-card fade-in">
+        <div class="price-name">Free</div>
+        <div class="price-amount">$0<span>/mo</span></div>
+        <div class="price-desc">For evaluation and development</div>
+        <ul class="price-features">
+          <li>20 requests / minute</li>
+          <li>All 25 frameworks</li>
+          <li>Drift detection</li>
+          <li>Risk scoring</li>
+          <li>Hash-chained ledger</li>
+          <li>Community support</li>
+        </ul>
+        <a href="https://web-production-bdd26.up.railway.app/docs" class="btn btn-secondary">Get Started</a>
+      </div>
+      <div class="price-card fade-in">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">$49<span>/mo</span></div>
+        <div class="price-desc">For teams shipping AI products</div>
+        <ul class="price-features">
+          <li>100 requests / minute</li>
+          <li>Everything in Free</li>
+          <li>LLM compliance audits</li>
+          <li>Threat analysis</li>
+          <li>Webhook notifications</li>
+          <li>Email support</li>
+        </ul>
+        <a href="https://web-production-bdd26.up.railway.app/docs" class="btn btn-secondary">Start Trial</a>
+      </div>
+      <div class="price-card featured fade-in">
+        <div class="price-name">Pro</div>
+        <div class="price-amount">$199<span>/mo</span></div>
+        <div class="price-desc">For scaling AI-first companies</div>
+        <ul class="price-features">
+          <li>500 requests / minute</li>
+          <li>Everything in Starter</li>
+          <li>Multi-LLM consensus</li>
+          <li>Full automation pipeline</li>
+          <li>Usage analytics</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="https://web-production-bdd26.up.railway.app/docs" class="btn btn-primary">Start Trial</a>
+      </div>
+      <div class="price-card fade-in">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-desc">For regulated industries at scale</div>
+        <ul class="price-features">
+          <li>2,000+ requests / minute</li>
+          <li>Everything in Pro</li>
+          <li>Dedicated infrastructure</li>
+          <li>Custom frameworks</li>
+          <li>On-premise deployment</li>
+          <li>SLA + dedicated support</li>
+        </ul>
+        <a href="mailto:founders@governlayer.ai" class="btn btn-secondary">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API Example -->
+<section style="background:var(--bg2)">
+  <div class="container">
+    <div class="section-label">Developer Experience</div>
+    <h2 class="section-title">One API call to govern your AI</h2>
+    <p class="section-desc">Clean REST API with comprehensive Swagger documentation. Ship governance in minutes, not months.</p>
+    <div class="code-section fade-in">
+      <div class="code-header">
+        <div class="code-dot red"></div>
+        <div class="code-dot yellow"></div>
+        <div class="code-dot green"></div>
+        <span>terminal</span>
+      </div>
+<pre><span class="comment"># Run a full governance check on your AI system</span>
+curl -X POST https://api.governlayer.ai/v1/govern \
+  -H <span class="string">"Authorization: Bearer gl_your_api_key"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="key">"system_name"</span>: <span class="string">"loan-approval-model"</span>,
+    <span class="key">"reasoning_trace"</span>: <span class="string">"Evaluating applicant based on credit score, income, and employment history..."</span>,
+    <span class="key">"use_case"</span>: <span class="string">"loan_approval"</span>,
+    <span class="key">"handles_personal_data"</span>: true,
+    <span class="key">"makes_autonomous_decisions"</span>: true,
+    <span class="key">"has_human_oversight"</span>: true,
+    <span class="key">"is_explainable"</span>: true,
+    <span class="key">"has_bias_testing"</span>: true
+  }'
+
+<span class="comment"># Response: drift analysis + risk scores + governance decision + ledger hash</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="https://web-production-bdd26.up.railway.app/docs">API Docs</a>
+      <a href="https://web-production-bdd26.up.railway.app/redoc">Reference</a>
+      <a href="https://web-production-bdd26.up.railway.app/frameworks">Frameworks</a>
+      <a href="https://github.com/Governlayer-stack/Governlayer">GitHub</a>
+      <a href="mailto:founders@governlayer.ai">Contact</a>
+    </div>
+    <p>GovernLayer -- AI Governance Control Plane. Built for enterprise.</p>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered fade-in animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
