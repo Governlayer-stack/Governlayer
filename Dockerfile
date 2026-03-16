@@ -27,7 +27,7 @@ RUN chown -R governlayer:governlayer /app
 USER governlayer
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:${PORT:-8000}/')" || exit 1
 
 EXPOSE 8000
 
