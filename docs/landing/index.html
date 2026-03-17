@@ -4,122 +4,233 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GovernLayer — AI Governance Control Plane</title>
-<meta name="description" content="Enterprise AI governance platform. Compliance auditing, behavioral drift detection, risk scoring, and immutable audit ledgers for AI systems.">
+<meta name="description" content="The governance layer for AI. Compliance auditing, behavioral drift detection, risk scoring, and immutable audit ledgers. 25 frameworks. One API.">
+<meta name="theme-color" content="#0f0f13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#ffffff;--bg2:#f8f9fb;--bg3:#f0f1f5;--border:#e2e4ea;--text:#1a1a2e;--text2:#5a5b6a;--accent:#00b894;--accent2:#6c5ce7;--radius:12px}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:var(--accent);text-decoration:none}
+:root{
+  --bg:#0a0a10;--bg2:#12121a;--bg3:#1a1a24;--bg4:#22222e;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --text:#f0f0f5;--text2:#8a8a9a;--text3:#55556a;
+  --accent:#6ee7b7;--accent2:#818cf8;--accent3:#f472b6;
+  --gradient:linear-gradient(135deg,#6ee7b7 0%,#818cf8 50%,#f472b6 100%);
+  --radius:16px;--radius-sm:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
 code,pre{font-family:'JetBrains Mono',monospace}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
 
-/* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px}
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{font-size:20px;font-weight:800;letter-spacing:-0.5px}
-.logo span{color:var(--accent)}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{color:var(--text2);font-size:14px;font-weight:500;transition:color 0.2s}
-.nav-links a:hover{color:var(--text)}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all 0.2s;border:none;cursor:pointer}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#00a884;transform:translateY(-1px);box-shadow:0 4px 24px rgba(0,184,148,0.3)}
-.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
-.btn-secondary:hover{border-color:var(--text2);background:var(--bg2)}
+/* ========== ANIMATED BACKGROUND ========== */
+.mesh-gradient{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
+.mesh-gradient .orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.15;animation:float 20s ease-in-out infinite}
+.mesh-gradient .orb:nth-child(1){width:600px;height:600px;background:#6ee7b7;top:-200px;left:-100px;animation-delay:0s}
+.mesh-gradient .orb:nth-child(2){width:500px;height:500px;background:#818cf8;top:30%;right:-150px;animation-delay:-7s}
+.mesh-gradient .orb:nth-child(3){width:400px;height:400px;background:#f472b6;bottom:-100px;left:30%;animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(40px,-30px) scale(1.05)}50%{transform:translate(-20px,40px) scale(0.95)}75%{transform:translate(30px,20px) scale(1.02)}}
 
-/* Hero */
-.hero{padding:160px 24px 120px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(0,184,148,0.1) 0%,rgba(108,92,231,0.06) 50%,transparent 70%);pointer-events:none}
-.hero h1{font-size:clamp(40px,6vw,72px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:24px;background:linear-gradient(135deg,#1a1a2e 0%,#5a5b6a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero .subtitle{font-size:clamp(16px,2vw,20px);color:var(--text2);max-width:640px;margin:0 auto 40px;line-height:1.7}
-.hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.hero-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;color:var(--accent);border:1px solid rgba(0,212,170,0.2);background:rgba(0,212,170,0.05);margin-bottom:24px}
+/* ========== NAV ========== */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 24px;transition:all 0.3s}
+nav.scrolled{background:rgba(10,10,16,0.8);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-size:21px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#0a0a10}
+.nav-links{display:flex;gap:8px;align-items:center}
+.nav-links a{color:var(--text2);font-size:14px;font-weight:500;padding:8px 16px;border-radius:8px;transition:all 0.2s}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;transition:all 0.25s;border:none;cursor:pointer;position:relative}
+.btn-primary{background:var(--text);color:var(--bg);font-weight:700}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(255,255,255,0.15)}
+.btn-ghost{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2)}
+.btn-gradient{background:var(--gradient);color:#0a0a10;font-weight:700}
+.btn-gradient:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(110,231,183,0.2)}
+.btn-lg{padding:14px 32px;font-size:16px;border-radius:var(--radius)}
+.btn svg{width:16px;height:16px}
 
-/* Sections */
-section{padding:100px 24px}
-.container{max-width:1200px;margin:0 auto}
-.section-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:12px}
-.section-title{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-1px;margin-bottom:16px}
-.section-desc{color:var(--text2);max-width:560px;font-size:16px;margin-bottom:48px}
+/* ========== HERO ========== */
+.hero{padding:180px 24px 140px;text-align:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 6px 6px 8px;border-radius:100px;font-size:13px;font-weight:500;color:var(--text2);border:1px solid var(--border2);background:rgba(255,255,255,0.03);margin-bottom:32px;backdrop-filter:blur(8px)}
+.hero-badge .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s ease-in-out infinite}
+.hero-badge .badge-tag{padding:3px 10px;border-radius:100px;background:rgba(110,231,183,0.1);color:var(--accent);font-size:12px;font-weight:600;margin-left:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero h1{font-size:clamp(44px,7vw,82px);font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:28px}
+.hero h1 .gradient-text{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:clamp(17px,2vw,20px);color:var(--text2);max-width:580px;margin:0 auto 44px;line-height:1.7;font-weight:400}
+.hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 
-/* Features */
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px}
-.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:all 0.3s}
-.feature-card:hover{border-color:rgba(0,184,148,0.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.06)}
-.feature-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px;font-weight:700;color:#fff}
-.feature-icon.green{background:var(--accent)}
-.feature-icon.purple{background:var(--accent2);color:#fff}
-.feature-card h3{font-size:17px;font-weight:600;margin-bottom:8px}
-.feature-card p{color:var(--text2);font-size:14px;line-height:1.7}
+/* ========== TRUST BAR ========== */
+.trust-bar{position:relative;z-index:1;padding:64px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.trust-inner{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;opacity:0.5}
+.trust-item{font-size:13px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 
-/* How it works */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;counter-reset:step}
-.step{position:relative;padding:32px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius)}
-.step::before{counter-increment:step;content:counter(step);position:absolute;top:-16px;left:24px;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
-.step h3{font-size:17px;font-weight:600;margin-bottom:8px;margin-top:8px}
-.step p{color:var(--text2);font-size:14px;line-height:1.7}
-.step code{background:#e8f5f0;padding:2px 8px;border-radius:4px;font-size:13px;color:#00805e}
+/* ========== STATS ========== */
+.stats-bar{position:relative;z-index:1;padding:80px 24px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.stat{background:var(--bg2);padding:40px;text-align:center}
+.stat-number{font-size:clamp(32px,4vw,48px);font-weight:900;letter-spacing:-2px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:14px;color:var(--text2);margin-top:4px;font-weight:500}
 
-/* Pricing */
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;display:flex;flex-direction:column}
-.price-card.featured{border-color:var(--accent);position:relative}
-.price-card.featured::after{content:'Most Popular';position:absolute;top:-12px;right:24px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;text-transform:uppercase;letter-spacing:0.5px}
-.price-name{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:8px}
-.price-amount{font-size:36px;font-weight:800;margin-bottom:4px}
-.price-amount span{font-size:15px;font-weight:500;color:var(--text2)}
-.price-desc{font-size:13px;color:var(--text2);margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+/* ========== BENTO GRID ========== */
+.bento-section{position:relative;z-index:1;padding:120px 24px}
+.bento-section .section-header{text-align:center;margin-bottom:64px}
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:16px;padding:6px 14px;border-radius:100px;border:1px solid rgba(110,231,183,0.15);background:rgba(110,231,183,0.05)}
+.section-title{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-2px;line-height:1.1}
+.section-desc{color:var(--text2);font-size:17px;max-width:520px;margin:20px auto 0;line-height:1.7}
+.bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto;gap:16px}
+.bento-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
+.bento-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,0.2)}
+.bento-card.span-2{grid-column:span 2}
+.bento-card.tall{grid-row:span 2}
+.bento-card .card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px;font-weight:800}
+.icon-emerald{background:rgba(110,231,183,0.12);color:var(--accent)}
+.icon-indigo{background:rgba(129,140,248,0.12);color:var(--accent2)}
+.icon-pink{background:rgba(244,114,182,0.12);color:var(--accent3)}
+.bento-card h3{font-size:19px;font-weight:700;margin-bottom:10px;letter-spacing:-0.3px}
+.bento-card p{color:var(--text2);font-size:14px;line-height:1.75}
+.bento-card .card-visual{margin-top:24px;padding:20px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);line-height:1.8;overflow:hidden}
+.bento-card .card-visual .hl-green{color:var(--accent)}
+.bento-card .card-visual .hl-indigo{color:var(--accent2)}
+.bento-card .card-visual .hl-pink{color:var(--accent3)}
+.bento-card .card-visual .hl-dim{color:var(--text3)}
+.card-glow{position:absolute;top:0;right:0;width:200px;height:200px;border-radius:50%;filter:blur(80px);opacity:0.08;pointer-events:none}
+
+/* ========== HOW IT WORKS ========== */
+.how-section{position:relative;z-index:1;padding:120px 24px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.how-section .section-header{text-align:center;margin-bottom:72px}
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
+.timeline::before{content:'';position:absolute;top:36px;left:calc(16.67% + 12px);right:calc(16.67% + 12px);height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));opacity:0.3;border-radius:2px}
+.timeline-step{text-align:center;position:relative}
+.step-number{width:72px;height:72px;border-radius:50%;background:var(--bg);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 28px;position:relative;z-index:1;transition:all 0.3s}
+.timeline-step:nth-child(1) .step-number{color:var(--accent)}
+.timeline-step:nth-child(2) .step-number{color:var(--accent2)}
+.timeline-step:nth-child(3) .step-number{color:var(--accent3)}
+.timeline-step:hover .step-number{border-color:currentColor;transform:scale(1.08)}
+.timeline-step h3{font-size:18px;font-weight:700;margin-bottom:12px;letter-spacing:-0.3px}
+.timeline-step p{color:var(--text2);font-size:14px;line-height:1.7;max-width:300px;margin:0 auto}
+.step-endpoint{display:inline-block;margin-top:16px;padding:6px 14px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}
+
+/* ========== API DEMO ========== */
+.api-section{position:relative;z-index:1;padding:120px 24px}
+.api-section .section-header{text-align:center;margin-bottom:64px}
+.api-demo{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1000px;margin:0 auto}
+.code-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.code-panel-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.code-panel-header .dots{display:flex;gap:6px}
+.code-panel-header .dot{width:10px;height:10px;border-radius:50%}
+.dot-red{background:#ff5f57}.dot-yellow{background:#febc2e}.dot-green{background:#28c840}
+.code-panel-header .panel-title{margin-left:auto;font-size:12px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.code-panel pre{padding:24px;margin:0;font-size:13px;line-height:1.9;overflow-x:auto}
+.code-panel pre .cm{color:var(--text3)}
+.code-panel pre .str{color:var(--accent)}
+.code-panel pre .key{color:var(--accent2)}
+.code-panel pre .val{color:var(--accent3)}
+.code-panel pre .num{color:#fbbf24}
+.code-panel.response{background:rgba(110,231,183,0.02)}
+
+/* ========== PRICING ========== */
+.pricing-section{position:relative;z-index:1;padding:120px 24px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.pricing-section .section-header{text-align:center;margin-bottom:64px}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1100px;margin:0 auto}
+.price-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:36px;display:flex;flex-direction:column;transition:all 0.3s}
+.price-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.price-card.featured{border-color:rgba(129,140,248,0.4);background:linear-gradient(180deg,rgba(129,140,248,0.06) 0%,var(--bg) 100%);position:relative}
+.price-card.featured::before{content:'Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent2);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px}
+.price-tier{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:12px}
+.price-amount{font-size:42px;font-weight:900;letter-spacing:-2px;margin-bottom:4px}
+.price-amount span{font-size:16px;font-weight:500;color:var(--text2);letter-spacing:0}
+.price-desc{font-size:13px;color:var(--text3);margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid var(--border)}
 .price-features{list-style:none;margin-bottom:32px;flex:1}
-.price-features li{font-size:14px;color:var(--text2);padding:6px 0;padding-left:20px;position:relative}
-.price-features li::before{content:'';position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.price-features li{font-size:14px;color:var(--text2);padding:7px 0;padding-left:24px;position:relative}
+.price-features li::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;border:1.5px solid var(--accent);background:transparent}
+.price-features li::after{content:'';position:absolute;left:4px;top:50%;transform:translateY(-50%) rotate(45deg);width:4px;height:8px;border-bottom:1.5px solid var(--accent);border-right:1.5px solid var(--accent)}
 .price-card .btn{width:100%}
 
-/* Code */
-.code-section{background:#1e1e2e;border:1px solid #2a2a3e;border-radius:var(--radius);overflow:hidden}
-.code-header{padding:12px 20px;border-bottom:1px solid #2a2a3e;display:flex;align-items:center;gap:8px}
-.code-dot{width:10px;height:10px;border-radius:50%;background:#3a3a4e}
-.code-dot.red{background:#ff5f57}.code-dot.yellow{background:#febc2e}.code-dot.green{background:#28c840}
-.code-header span{color:#9ca3af;font-size:13px;margin-left:auto}
-pre{padding:24px;overflow-x:auto;font-size:13px;line-height:1.8;color:#cdd6f4}
-pre .comment{color:#6c7086}
-pre .string{color:#a6e3a1}
-pre .key{color:#cba6f7}
+/* ========== CTA ========== */
+.cta-section{position:relative;z-index:1;padding:140px 24px;text-align:center}
+.cta-box{max-width:720px;margin:0 auto;padding:80px 48px;border-radius:24px;background:var(--bg2);border:1px solid var(--border);position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;top:-50%;left:-50%;right:-50%;bottom:-50%;background:conic-gradient(from 180deg,transparent,var(--accent),transparent,var(--accent2),transparent,var(--accent3),transparent);animation:spin 8s linear infinite;opacity:0.03}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cta-box h2{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-1.5px;margin-bottom:16px;position:relative}
+.cta-box p{color:var(--text2);font-size:17px;margin-bottom:36px;position:relative}
+.cta-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
 
-/* Footer */
-footer{border-top:1px solid var(--border);padding:48px 24px;text-align:center}
-footer p{color:var(--text2);font-size:14px}
-footer .footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
-footer .footer-links a{color:var(--text2);font-size:14px}
-footer .footer-links a:hover{color:var(--text)}
+/* ========== FOOTER ========== */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60px 24px 40px}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:40px}
+.footer-brand{max-width:280px}
+.footer-brand .logo{margin-bottom:12px}
+.footer-brand p{color:var(--text3);font-size:13px;line-height:1.7}
+.footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);margin-bottom:16px}
+.footer-col a{display:block;color:var(--text3);font-size:14px;padding:4px 0;transition:color 0.2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-bottom p{color:var(--text3);font-size:13px}
+.footer-bottom .footer-socials{display:flex;gap:16px}
+.footer-bottom .footer-socials a{color:var(--text3);transition:color 0.2s}
+.footer-bottom .footer-socials a:hover{color:var(--text)}
 
-/* Animations */
-.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
-.fade-in.visible{opacity:1;transform:translateY(0)}
+/* ========== ANIMATIONS ========== */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
 
-/* Responsive */
+/* ========== RESPONSIVE ========== */
+@media(max-width:1024px){
+  .bento-grid{grid-template-columns:1fr 1fr}
+  .bento-card.span-2{grid-column:span 2}
+  .pricing-grid{grid-template-columns:repeat(2,1fr)}
+  .api-demo{grid-template-columns:1fr}
+  .timeline::before{display:none}
+}
 @media(max-width:768px){
   .nav-links{display:none}
-  .features-grid{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}
-  .steps{grid-template-columns:1fr}
-  section{padding:60px 16px}
-  .hero{padding:120px 16px 80px}
+  .bento-grid{grid-template-columns:1fr}
+  .bento-card.span-2{grid-column:span 1}
+  .pricing-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .timeline{grid-template-columns:1fr;gap:48px}
+  .hero{padding:140px 16px 100px}
+  .bento-section,.how-section,.api-section,.pricing-section,.cta-section{padding:80px 16px}
+  .footer-inner{flex-direction:column}
+  .cta-box{padding:48px 24px}
+}
+@media(max-width:480px){
+  .hero h1{font-size:36px;letter-spacing:-1.5px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .hero-buttons{flex-direction:column;align-items:center}
 }
 </style>
 </head>
 <body>
 
-<nav>
+<!-- Animated mesh gradient background -->
+<div class="mesh-gradient">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+
+<!-- Nav -->
+<nav id="nav">
   <div class="nav-inner">
-    <div class="logo">Govern<span>Layer</span></div>
+    <div class="logo">
+      <div class="logo-mark">G</div>
+      GovernLayer
+    </div>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#pricing">Pricing</a>
-      <a href="https://api.governlayer.ai/docs" class="btn btn-secondary" style="padding:8px 16px">API Docs</a>
-      <a href="https://api.governlayer.ai/docs" class="btn btn-primary" style="padding:8px 16px">Get Started</a>
+      <a href="https://api.governlayer.ai/docs" class="btn btn-ghost" style="padding:8px 18px">Docs</a>
+      <a href="https://api.governlayer.ai/docs" class="btn btn-primary" style="padding:8px 18px">Get Started</a>
     </div>
   </div>
 </nav>
@@ -127,106 +238,234 @@ footer .footer-links a:hover{color:var(--text)}
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">Now live -- 25 compliance frameworks supported</div>
-    <h1>AI Governance<br>Control Plane</h1>
-    <p class="subtitle">Enterprise compliance auditing, behavioral drift detection, deterministic risk scoring, and immutable audit ledgers for AI systems. One API to govern them all.</p>
-    <div class="hero-buttons">
-      <a href="https://api.governlayer.ai/docs" class="btn btn-primary" style="padding:14px 32px;font-size:16px">Get Started</a>
-      <a href="https://api.governlayer.ai/redoc" class="btn btn-secondary" style="padding:14px 32px;font-size:16px">View Docs</a>
+    <div class="hero-badge reveal">
+      <span class="badge-dot"></span>
+      Now live with 25 compliance frameworks
+      <span class="badge-tag">v2.0</span>
+    </div>
+    <h1 class="reveal reveal-delay-1">The governance layer<br>for <span class="gradient-text">every AI system</span></h1>
+    <p class="subtitle reveal reveal-delay-2">Compliance auditing, behavioral drift detection, risk scoring, and immutable audit ledgers. One API to govern them all.</p>
+    <div class="hero-buttons reveal reveal-delay-3">
+      <a href="https://api.governlayer.ai/docs" class="btn btn-gradient btn-lg">
+        Start building
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+      <a href="https://api.governlayer.ai/redoc" class="btn btn-ghost btn-lg">Read the docs</a>
     </div>
   </div>
 </section>
 
-<!-- Features -->
-<section id="features">
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item">NIST AI RMF</div>
+    <div class="trust-item">EU AI Act</div>
+    <div class="trust-item">ISO 42001</div>
+    <div class="trust-item">SOC 2</div>
+    <div class="trust-item">HIPAA</div>
+    <div class="trust-item">GDPR</div>
+    <div class="trust-item">MITRE ATLAS</div>
+    <div class="trust-item">OWASP AI</div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
   <div class="container">
-    <div class="section-label">Capabilities</div>
-    <h2 class="section-title">Everything you need to govern AI</h2>
-    <p class="section-desc">A complete governance platform purpose-built for enterprise AI compliance, safety, and auditability.</p>
-    <div class="features-grid">
-      <div class="feature-card fade-in">
-        <div class="feature-icon green">D</div>
+    <div class="stats-grid reveal">
+      <div class="stat">
+        <div class="stat-number">25</div>
+        <div class="stat-label">Compliance Frameworks</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">42</div>
+        <div class="stat-label">API Endpoints</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">14</div>
+        <div class="stat-label">LLM Models</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">&lt;50ms</div>
+        <div class="stat-label">Risk Scoring</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Bento -->
+<section id="features" class="bento-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag reveal">Capabilities</div>
+      <h2 class="section-title reveal reveal-delay-1">Built for enterprise AI governance</h2>
+      <p class="section-desc reveal reveal-delay-2">A complete governance control plane. Purpose-built for compliance, safety, and auditability.</p>
+    </div>
+
+    <div class="bento-grid">
+      <!-- Drift Detection - wide -->
+      <div class="bento-card span-2 reveal">
+        <div class="card-glow" style="background:var(--accent)"></div>
+        <div class="card-icon icon-emerald">D</div>
         <h3>Behavioral Drift Detection</h3>
-        <p>Sentence-transformer embeddings detect when AI reasoning drifts from safety manifolds. Real-time monitoring with configurable thresholds and automatic veto on dangerous outputs.</p>
+        <p>Sentence-transformer embeddings detect when AI reasoning drifts from safety manifolds. Real-time monitoring with configurable thresholds and automatic veto.</p>
+        <div class="card-visual">
+          <span class="hl-dim">analyzing reasoning trace...</span><br>
+          <span class="hl-green">cosine_similarity:</span> 0.847<br>
+          <span class="hl-green">drift_coefficient:</span> <span class="hl-pink">0.153</span> <span class="hl-dim">// below threshold 0.30</span><br>
+          <span class="hl-green">status:</span> <span class="hl-indigo">SAFE</span> <span class="hl-dim">// no drift detected</span>
+        </div>
       </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon purple">R</div>
+
+      <!-- Risk Scoring -->
+      <div class="bento-card reveal reveal-delay-1">
+        <div class="card-glow" style="background:var(--accent2)"></div>
+        <div class="card-icon icon-indigo">R</div>
         <h3>Deterministic Risk Scoring</h3>
-        <p>Six-dimension scoring across privacy, autonomy, infrastructure, oversight, transparency, and fairness. No LLM required -- instant, reproducible results every time.</p>
+        <p>Six-dimension scoring across privacy, autonomy, infrastructure, oversight, transparency, and fairness. No LLM required. Instant, reproducible.</p>
       </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon green">L</div>
+
+      <!-- Audit Ledger -->
+      <div class="bento-card reveal reveal-delay-2">
+        <div class="card-glow" style="background:var(--accent3)"></div>
+        <div class="card-icon icon-pink">L</div>
         <h3>Immutable Audit Ledger</h3>
-        <p>SHA-256 hash-chained audit trail with integrity verification. Every governance decision is cryptographically linked. Tamper-evident by design.</p>
+        <p>SHA-256 hash-chained audit trail. Every governance decision is cryptographically linked. Tamper-evident by design.</p>
       </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon purple">C</div>
+
+      <!-- Consensus -->
+      <div class="bento-card reveal reveal-delay-3">
+        <div class="card-icon icon-indigo">C</div>
         <h3>Multi-LLM Consensus</h3>
-        <p>Three anti-hallucination strategies: Voting (3+ models agree), Chain-of-Verification (generate, question, verify, synthesize), and Adversarial Debate (claim, critique, judge).</p>
+        <p>Three anti-hallucination strategies: Voting, Chain-of-Verification, and Adversarial Debate across 14 models.</p>
       </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon green">F</div>
-        <h3>25 Compliance Frameworks</h3>
-        <p>EU AI Act, NIST AI RMF, ISO 42001, HIPAA, GDPR, SOC2, MITRE ATLAS, OWASP AI, CCPA, IEEE Ethics, OECD AI, and 14 more -- all in one API.</p>
-      </div>
-      <div class="feature-card fade-in">
-        <div class="feature-icon purple">E</div>
-        <h3>Enterprise Multi-Tenancy</h3>
-        <p>Organizations, scoped API keys, role-based access control, plan-based rate limiting, HMAC-signed webhooks, and per-request usage metering.</p>
+
+      <!-- Frameworks + Multi-Tenancy - wide -->
+      <div class="bento-card span-2 reveal reveal-delay-4">
+        <div class="card-glow" style="background:var(--accent)"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+          <div>
+            <div class="card-icon icon-emerald">F</div>
+            <h3>25 Frameworks</h3>
+            <p>EU AI Act, NIST AI RMF, ISO 42001, HIPAA, GDPR, SOC2, MITRE ATLAS, OWASP AI, and 17 more. All in one API.</p>
+          </div>
+          <div>
+            <div class="card-icon icon-pink">E</div>
+            <h3>Enterprise Multi-Tenancy</h3>
+            <p>Organizations, scoped API keys, RBAC, plan-based rate limiting, HMAC-signed webhooks, and per-request usage metering.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- How It Works -->
-<section id="how-it-works" style="background:var(--bg2)">
+<section id="how-it-works" class="how-section">
   <div class="container">
-    <div class="section-label">Integration</div>
-    <h2 class="section-title">Three steps to govern your AI</h2>
-    <p class="section-desc">Go from zero to full governance in under five minutes. No infrastructure to manage.</p>
-    <div class="steps">
-      <div class="step fade-in">
+    <div class="section-header">
+      <div class="section-tag reveal">Integration</div>
+      <h2 class="section-title reveal reveal-delay-1">Three steps to govern your AI</h2>
+      <p class="section-desc reveal reveal-delay-2">Go from zero to full governance in under five minutes.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-step reveal reveal-delay-1">
+        <div class="step-number">1</div>
         <h3>Create an Organization</h3>
-        <p>Register your company as a tenant. Choose a plan that fits your scale. Each org gets isolated usage tracking and billing.</p>
-        <p style="margin-top:12px"><code>POST /v1/enterprise/orgs</code></p>
+        <p>Register your company as a tenant. Choose a plan that fits your scale. Isolated usage tracking and billing.</p>
+        <div class="step-endpoint">POST /v1/enterprise/orgs</div>
       </div>
-      <div class="step fade-in">
+      <div class="timeline-step reveal reveal-delay-2">
+        <div class="step-number">2</div>
         <h3>Generate an API Key</h3>
-        <p>Create scoped API keys with configurable permissions. Control exactly which endpoints each key can access: govern, audit, risk, or scan.</p>
-        <p style="margin-top:12px"><code>POST /v1/enterprise/orgs/{slug}/api-keys</code></p>
+        <p>Create scoped API keys with configurable permissions. Control which endpoints each key can access.</p>
+        <div class="step-endpoint">POST /v1/.../api-keys</div>
       </div>
-      <div class="step fade-in">
+      <div class="timeline-step reveal reveal-delay-3">
+        <div class="step-number">3</div>
         <h3>Govern Your AI</h3>
-        <p>Send your AI system's reasoning traces to GovernLayer. Get drift analysis, risk scores, compliance audits, and governance decisions in one call.</p>
-        <p style="margin-top:12px"><code>POST /v1/govern</code></p>
+        <p>Send reasoning traces to GovernLayer. Get drift analysis, risk scores, compliance audits in one call.</p>
+        <div class="step-endpoint">POST /v1/govern</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API Demo -->
+<section class="api-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag reveal">Developer Experience</div>
+      <h2 class="section-title reveal reveal-delay-1">One API call. Full governance.</h2>
+      <p class="section-desc reveal reveal-delay-2">Clean REST API with comprehensive documentation. Ship governance in minutes.</p>
+    </div>
+
+    <div class="api-demo reveal reveal-delay-3">
+      <div class="code-panel">
+        <div class="code-panel-header">
+          <div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span class="panel-title">Request</span>
+        </div>
+<pre><span class="cm">// Run governance check</span>
+curl -X POST <span class="str">api.governlayer.ai/v1/govern</span> \
+  -H <span class="str">"Authorization: Bearer gl_..."</span> \
+  -d '{
+    <span class="key">"system_name"</span>: <span class="str">"loan-model"</span>,
+    <span class="key">"reasoning_trace"</span>: <span class="str">"Evaluating
+      credit score, income..."</span>,
+    <span class="key">"use_case"</span>: <span class="str">"loan_approval"</span>,
+    <span class="key">"handles_personal_data"</span>: <span class="val">true</span>,
+    <span class="key">"has_human_oversight"</span>: <span class="val">true</span>
+  }'</pre>
+      </div>
+      <div class="code-panel response">
+        <div class="code-panel-header">
+          <div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
+          <span class="panel-title">Response</span>
+        </div>
+<pre>{
+  <span class="key">"decision"</span>: <span class="str">"APPROVED"</span>,
+  <span class="key">"risk_score"</span>: <span class="num">34</span>,
+  <span class="key">"drift"</span>: {
+    <span class="key">"coefficient"</span>: <span class="num">0.12</span>,
+    <span class="key">"status"</span>: <span class="str">"safe"</span>
+  },
+  <span class="key">"frameworks_checked"</span>: <span class="num">25</span>,
+  <span class="key">"ledger_hash"</span>: <span class="str">"a3f8c2..."</span>,
+  <span class="key">"latency_ms"</span>: <span class="num">47</span>
+}</pre>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Pricing -->
-<section id="pricing">
+<section id="pricing" class="pricing-section">
   <div class="container">
-    <div class="section-label">Pricing</div>
-    <h2 class="section-title">Simple, transparent pricing</h2>
-    <p class="section-desc">Start free. Scale as your AI governance needs grow.</p>
+    <div class="section-header">
+      <div class="section-tag reveal">Pricing</div>
+      <h2 class="section-title reveal reveal-delay-1">Start free. Scale infinitely.</h2>
+      <p class="section-desc reveal reveal-delay-2">Transparent pricing that grows with your AI governance needs.</p>
+    </div>
+
     <div class="pricing-grid">
-      <div class="price-card fade-in">
-        <div class="price-name">Free</div>
+      <div class="price-card reveal">
+        <div class="price-tier">Free</div>
         <div class="price-amount">$0<span>/mo</span></div>
-        <div class="price-desc">For evaluation and development</div>
+        <div class="price-desc">For evaluation and prototyping</div>
         <ul class="price-features">
           <li>20 requests / minute</li>
           <li>All 25 frameworks</li>
           <li>Drift detection</li>
           <li>Risk scoring</li>
-          <li>Hash-chained ledger</li>
-          <li>Community support</li>
+          <li>Audit ledger</li>
         </ul>
-        <a href="https://api.governlayer.ai/docs" class="btn btn-secondary">Get Started</a>
+        <a href="https://api.governlayer.ai/docs" class="btn btn-ghost">Get started</a>
       </div>
-      <div class="price-card fade-in">
-        <div class="price-name">Starter</div>
+
+      <div class="price-card reveal reveal-delay-1">
+        <div class="price-tier">Starter</div>
         <div class="price-amount">$49<span>/mo</span></div>
         <div class="price-desc">For teams shipping AI products</div>
         <ul class="price-features">
@@ -234,101 +473,153 @@ footer .footer-links a:hover{color:var(--text)}
           <li>Everything in Free</li>
           <li>LLM compliance audits</li>
           <li>Threat analysis</li>
-          <li>Webhook notifications</li>
-          <li>Email support</li>
+          <li>Webhooks</li>
         </ul>
-        <a href="https://api.governlayer.ai/docs" class="btn btn-secondary">Start Trial</a>
+        <a href="https://api.governlayer.ai/docs" class="btn btn-ghost">Start trial</a>
       </div>
-      <div class="price-card featured fade-in">
-        <div class="price-name">Pro</div>
+
+      <div class="price-card featured reveal reveal-delay-2">
+        <div class="price-tier">Pro</div>
         <div class="price-amount">$199<span>/mo</span></div>
         <div class="price-desc">For scaling AI-first companies</div>
         <ul class="price-features">
           <li>500 requests / minute</li>
           <li>Everything in Starter</li>
           <li>Multi-LLM consensus</li>
-          <li>Full automation pipeline</li>
-          <li>Usage analytics</li>
+          <li>Full automation</li>
           <li>Priority support</li>
         </ul>
-        <a href="https://api.governlayer.ai/docs" class="btn btn-primary">Start Trial</a>
+        <a href="https://api.governlayer.ai/docs" class="btn btn-gradient">Start trial</a>
       </div>
-      <div class="price-card fade-in">
-        <div class="price-name">Enterprise</div>
+
+      <div class="price-card reveal reveal-delay-3">
+        <div class="price-tier">Enterprise</div>
         <div class="price-amount">Custom</div>
         <div class="price-desc">For regulated industries at scale</div>
         <ul class="price-features">
-          <li>2,000+ requests / minute</li>
+          <li>2,000+ requests / min</li>
           <li>Everything in Pro</li>
-          <li>Dedicated infrastructure</li>
+          <li>Dedicated infra</li>
           <li>Custom frameworks</li>
-          <li>On-premise deployment</li>
-          <li>SLA + dedicated support</li>
+          <li>SLA + support</li>
         </ul>
-        <a href="mailto:founders@governlayer.ai" class="btn btn-secondary">Contact Sales</a>
+        <a href="mailto:founders@governlayer.ai" class="btn btn-ghost">Contact sales</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- API Example -->
-<section style="background:var(--bg2)">
+<!-- CTA -->
+<section class="cta-section">
   <div class="container">
-    <div class="section-label">Developer Experience</div>
-    <h2 class="section-title">One API call to govern your AI</h2>
-    <p class="section-desc">Clean REST API with comprehensive Swagger documentation. Ship governance in minutes, not months.</p>
-    <div class="code-section fade-in">
-      <div class="code-header">
-        <div class="code-dot red"></div>
-        <div class="code-dot yellow"></div>
-        <div class="code-dot green"></div>
-        <span>terminal</span>
+    <div class="cta-box reveal">
+      <h2>Ready to govern your AI?</h2>
+      <p>Join the companies building responsible AI with GovernLayer.</p>
+      <div class="cta-buttons">
+        <a href="https://api.governlayer.ai/docs" class="btn btn-gradient btn-lg">
+          Get started free
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+        <a href="mailto:founders@governlayer.ai" class="btn btn-ghost btn-lg">Talk to us</a>
       </div>
-<pre><span class="comment"># Run a full governance check on your AI system</span>
-curl -X POST https://api.governlayer.ai/v1/govern \
-  -H <span class="string">"Authorization: Bearer gl_your_api_key"</span> \
-  -H <span class="string">"Content-Type: application/json"</span> \
-  -d '{
-    <span class="key">"system_name"</span>: <span class="string">"loan-approval-model"</span>,
-    <span class="key">"reasoning_trace"</span>: <span class="string">"Evaluating applicant based on credit score, income, and employment history..."</span>,
-    <span class="key">"use_case"</span>: <span class="string">"loan_approval"</span>,
-    <span class="key">"handles_personal_data"</span>: true,
-    <span class="key">"makes_autonomous_decisions"</span>: true,
-    <span class="key">"has_human_oversight"</span>: true,
-    <span class="key">"is_explainable"</span>: true,
-    <span class="key">"has_bias_testing"</span>: true
-  }'
-
-<span class="comment"># Response: drift analysis + risk scores + governance decision + ledger hash</span></pre>
     </div>
   </div>
 </section>
 
 <!-- Footer -->
 <footer>
-  <div class="container">
-    <div class="footer-links">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">
+        <div class="logo-mark">G</div>
+        GovernLayer
+      </div>
+      <p>AI Governance Control Plane. Compliance auditing, drift detection, and risk scoring for enterprise AI systems.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
       <a href="https://api.governlayer.ai/docs">API Docs</a>
       <a href="https://api.governlayer.ai/redoc">Reference</a>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
       <a href="https://api.governlayer.ai/frameworks">Frameworks</a>
       <a href="https://github.com/Governlayer-stack/Governlayer">GitHub</a>
-      <a href="mailto:founders@governlayer.ai">Contact</a>
+      <a href="https://api.governlayer.ai/api">Status</a>
     </div>
-    <p>GovernLayer -- AI Governance Control Plane. Built for enterprise.</p>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="mailto:founders@governlayer.ai">Contact</a>
+      <a href="mailto:founders@governlayer.ai">Partnerships</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>2026 GovernLayer. All rights reserved.</p>
+    <div class="footer-socials">
+      <a href="https://github.com/Governlayer-stack/Governlayer" aria-label="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      </a>
+    </div>
   </div>
 </footer>
 
 <script>
-// Scroll-triggered fade-in animations
-const observer = new IntersectionObserver((entries) => {
+// Scroll-triggered reveal animations
+const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+// Nav scroll effect
+const nav = document.getElementById('nav');
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+      ticking = false;
+    });
+    ticking = true;
+  }
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Animate stats on scroll
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.stat-number').forEach(el => {
+        const text = el.textContent;
+        const num = parseInt(text);
+        if (!isNaN(num) && num > 0) {
+          let current = 0;
+          const step = Math.ceil(num / 30);
+          const timer = setInterval(() => {
+            current += step;
+            if (current >= num) { el.textContent = text; clearInterval(timer); }
+            else el.textContent = current;
+          }, 30);
+        }
+      });
+      statObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stats-grid').forEach(el => statObserver.observe(el));
 </script>
 </body>
 </html>
