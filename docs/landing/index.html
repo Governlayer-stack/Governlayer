@@ -260,8 +260,8 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
       <a href="#features">Features</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#pricing">Pricing</a>
-      <a href="https://api.governlayer.ai/docs" class="btn btn-ghost" style="padding:8px 18px">Docs</a>
-      <a href="https://api.governlayer.ai/docs" class="btn btn-primary" style="padding:8px 18px">Get Started</a>
+      <a href="https://api.governlayer.ai/dashboard" class="btn btn-ghost" style="padding:8px 18px">Dashboard</a>
+      <a href="https://api.governlayer.ai/docs" class="btn btn-primary" style="padding:8px 18px">API Docs</a>
     </div>
   </div>
 </nav>
@@ -271,11 +271,11 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
   <div class="container">
     <div class="hero-badge reveal">
       <span class="badge-dot"></span>
-      Now live with 25 compliance frameworks
-      <span class="badge-tag">v2.0</span>
+      Now live with Agent Registry, Shadow AI Detection, and 25 frameworks
+      <span class="badge-tag">v3.0</span>
     </div>
     <h1 class="reveal reveal-delay-1">The governance layer<br>for <span class="gradient-text">every AI system</span></h1>
-    <p class="subtitle reveal reveal-delay-2">Compliance auditing, behavioral drift detection, risk scoring, and immutable audit ledgers. One API to govern them all.</p>
+    <p class="subtitle reveal reveal-delay-2">Agent registry, shadow AI discovery, compliance auditing, behavioral drift detection, risk scoring, policy engine, and immutable audit ledgers. One platform to govern them all.</p>
     <div class="hero-buttons reveal reveal-delay-3">
       <a href="https://api.governlayer.ai/docs" class="btn btn-gradient btn-lg">
         Start building
@@ -309,7 +309,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
         <div class="stat-label">Compliance Frameworks</div>
       </div>
       <div class="stat">
-        <div class="stat-number">42</div>
+        <div class="stat-number">80+</div>
         <div class="stat-label">API Endpoints</div>
       </div>
       <div class="stat">
@@ -371,8 +371,25 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
         <p>Three anti-hallucination strategies: Voting, Chain-of-Verification, and Adversarial Debate across 14 models.</p>
       </div>
 
-      <!-- Frameworks + Multi-Tenancy - wide -->
+      <!-- Agent Registry + Shadow AI - wide -->
       <div class="bento-card span-2 reveal reveal-delay-4">
+        <div class="card-glow" style="background:var(--accent3)"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+          <div>
+            <div class="card-icon icon-pink">A</div>
+            <h3>Agent Registry</h3>
+            <p>Register, govern, and monitor every AI agent. Agent cards, dependency graphs, approval workflows, and autonomy-level tracking.</p>
+          </div>
+          <div>
+            <div class="card-icon icon-indigo">S</div>
+            <h3>Shadow AI Discovery</h3>
+            <p>Scan for unauthorized AI usage across 15+ providers. Detect unregistered OpenAI, Anthropic, Google, Azure, Bedrock, and more.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frameworks + Multi-Tenancy - wide -->
+      <div class="bento-card span-2 reveal">
         <div class="card-glow" style="background:var(--accent)"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
           <div>
@@ -384,6 +401,42 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
             <div class="card-icon icon-pink">E</div>
             <h3>Enterprise Multi-Tenancy</h3>
             <p>Organizations, scoped API keys, RBAC, plan-based rate limiting, HMAC-signed webhooks, and per-request usage metering.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard + Policy Engine + Security -->
+      <div class="bento-card reveal">
+        <div class="card-icon icon-emerald">D</div>
+        <h3>Governance Dashboard</h3>
+        <p>10-page SPA with health scores, agent registry, model lifecycle, incident management, compliance views, and security scanning.</p>
+      </div>
+
+      <div class="bento-card reveal reveal-delay-1">
+        <div class="card-icon icon-indigo">P</div>
+        <h3>Policy-as-Code Engine</h3>
+        <p>Define governance rules as code. Evaluate models against custom or default policies. Allow, warn, or block decisions in real-time.</p>
+      </div>
+
+      <div class="bento-card reveal reveal-delay-2">
+        <div class="card-icon icon-pink">G</div>
+        <h3>Knowledge Graph</h3>
+        <p>Regulatory intelligence mapping 8 regulations to 12 controls to 6 risk categories. Gap analysis and advisory recommendations.</p>
+      </div>
+
+      <!-- Security + Reports -->
+      <div class="bento-card span-2 reveal reveal-delay-3">
+        <div class="card-glow" style="background:var(--accent2)"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+          <div>
+            <div class="card-icon icon-indigo">X</div>
+            <h3>Security Scanner</h3>
+            <p>Prompt injection detection with 20+ attack patterns, PII scanning (SSN, email, phone, credit cards), automatic redaction.</p>
+          </div>
+          <div>
+            <div class="card-icon icon-emerald">R</div>
+            <h3>Compliance Reports</h3>
+            <p>Generate regulatory reports for EU AI Act, NIST RMF, ISO 42001, SOC 2, GDPR, HIPAA, HITRUST, and NYC LL144.</p>
           </div>
         </div>
       </div>
@@ -438,7 +491,8 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
           <button class="endpoint-tab active" data-endpoint="api" data-method="GET">GET /api</button>
           <button class="endpoint-tab" data-endpoint="frameworks" data-method="GET">GET /frameworks</button>
           <button class="endpoint-tab" data-endpoint="risk" data-method="POST">POST /risk-score</button>
-          <button class="endpoint-tab" data-endpoint="docs" data-method="GET">GET /docs</button>
+          <button class="endpoint-tab" data-endpoint="dashboard" data-method="GET">GET /v1/dashboard</button>
+          <button class="endpoint-tab" data-endpoint="agents" data-method="GET">GET /v1/agents</button>
         </div>
         <button class="run-btn" id="runBtn" onclick="runApiCall()">
           <svg viewBox="0 0 16 16" fill="currentColor"><polygon points="4,2 14,8 4,14"/></svg>
@@ -494,9 +548,9 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
         <ul class="price-features">
           <li>20 requests / minute</li>
           <li>All 25 frameworks</li>
-          <li>Drift detection</li>
-          <li>Risk scoring</li>
-          <li>Audit ledger</li>
+          <li>Drift detection + risk scoring</li>
+          <li>Agent registry</li>
+          <li>Governance dashboard</li>
         </ul>
         <a href="https://api.governlayer.ai/docs" class="btn btn-ghost">Get started</a>
       </div>
@@ -508,9 +562,9 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
         <ul class="price-features">
           <li>100 requests / minute</li>
           <li>Everything in Free</li>
-          <li>LLM compliance audits</li>
-          <li>Threat analysis</li>
-          <li>Webhooks</li>
+          <li>Shadow AI discovery</li>
+          <li>Policy engine + security scans</li>
+          <li>Compliance reports + webhooks</li>
         </ul>
         <a href="https://api.governlayer.ai/docs" class="btn btn-ghost">Start trial</a>
       </div>
@@ -523,8 +577,8 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
           <li>500 requests / minute</li>
           <li>Everything in Starter</li>
           <li>Multi-LLM consensus</li>
-          <li>Full automation</li>
-          <li>Priority support</li>
+          <li>Knowledge graph + GRC connectors</li>
+          <li>Full automation + priority support</li>
         </ul>
         <a href="https://api.governlayer.ai/docs" class="btn btn-gradient">Start trial</a>
       </div>
@@ -536,9 +590,9 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
         <ul class="price-features">
           <li>2,000+ requests / min</li>
           <li>Everything in Pro</li>
-          <li>Dedicated infra</li>
-          <li>Custom frameworks</li>
-          <li>SLA + support</li>
+          <li>SSO/SAML + RBAC views</li>
+          <li>SLA monitoring + status page</li>
+          <li>Dedicated infra + custom frameworks</li>
         </ul>
         <a href="mailto:founders@governlayer.ai" class="btn btn-ghost">Contact sales</a>
       </div>
@@ -571,20 +625,21 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
         <div class="logo-mark">G</div>
         GovernLayer
       </div>
-      <p>AI Governance Control Plane. Compliance auditing, drift detection, and risk scoring for enterprise AI systems.</p>
+      <p>AI Governance Control Plane. Agent registry, shadow AI discovery, compliance auditing, drift detection, policy engine, and risk scoring for enterprise AI systems.</p>
     </div>
     <div class="footer-col">
       <h4>Product</h4>
+      <a href="https://api.governlayer.ai/dashboard">Dashboard</a>
       <a href="#features">Features</a>
       <a href="#pricing">Pricing</a>
       <a href="https://api.governlayer.ai/docs">API Docs</a>
-      <a href="https://api.governlayer.ai/redoc">Reference</a>
     </div>
     <div class="footer-col">
       <h4>Resources</h4>
       <a href="https://api.governlayer.ai/frameworks">Frameworks</a>
+      <a href="https://api.governlayer.ai/v1/enterprise/status">Status</a>
+      <a href="https://api.governlayer.ai/v1/enterprise/changelog">Changelog</a>
       <a href="https://github.com/Governlayer-stack/Governlayer">GitHub</a>
-      <a href="https://api.governlayer.ai/api">Status</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
@@ -684,11 +739,15 @@ const ENDPOINTS = {
     },
     request: `<span class="cm">// Score risk across 6 dimensions</span>\n<span class="val">POST</span> <span class="str">${API_BASE}/risk-score</span>\n\n<span class="key">Content-Type</span>: <span class="str">application/json</span>\n\n{\n  <span class="key">"system_name"</span>: <span class="str">"demo-ai-model"</span>,\n  <span class="key">"handles_personal_data"</span>: <span class="val">true</span>,\n  <span class="key">"makes_autonomous_decisions"</span>: <span class="val">true</span>,\n  <span class="key">"has_human_oversight"</span>: <span class="val">true</span>,\n  <span class="key">"is_transparent"</span>: <span class="val">true</span>,\n  <span class="key">"has_bias_testing"</span>: <span class="val">false</span>,\n  <span class="key">"critical_infrastructure"</span>: <span class="val">false</span>\n}`,
   },
-  docs: {
+  dashboard: {
     method: 'GET',
-    path: '/docs',
-    request: `<span class="cm">// Interactive Swagger UI</span>\n<span class="val">GET</span> <span class="str">${API_BASE}/docs</span>\n\n<span class="cm">// Opens in browser</span>\n<span class="cm">// Full OpenAPI documentation</span>\n<span class="cm">// Try all 42 endpoints</span>`,
-    redirect: true,
+    path: '/v1/dashboard',
+    request: `<span class="cm">// Organization health dashboard</span>\n<span class="val">GET</span> <span class="str">${API_BASE}/v1/dashboard</span>\n\n<span class="cm">// Returns health score, models,</span>\n<span class="cm">// incidents, policies, and quick actions</span>\n\n<span class="key">Accept</span>: <span class="str">application/json</span>`,
+  },
+  agents: {
+    method: 'GET',
+    path: '/v1/agents',
+    request: `<span class="cm">// List all registered AI agents</span>\n<span class="val">GET</span> <span class="str">${API_BASE}/v1/agents</span>\n\n<span class="cm">// Returns agent registry with</span>\n<span class="cm">// governance status and shadow AI counts</span>\n\n<span class="key">Accept</span>: <span class="str">application/json</span>`,
   },
 };
 
@@ -768,7 +827,7 @@ async function runApiCall() {
   if (ep.redirect) {
     window.open(API_BASE + ep.path, '_blank');
     responseMeta.innerHTML = '<span class="status-ok">Opened in new tab</span>';
-    responsePanel.innerHTML = `<pre style="min-height:260px"><span class="cm">// Swagger UI opened in new tab</span>\n<span class="cm">// Explore all 42 endpoints interactively</span>\n\n<span class="str">Visit: ${API_BASE}/docs</span></pre>`;
+    responsePanel.innerHTML = `<pre style="min-height:260px"><span class="cm">// Swagger UI opened in new tab</span>\n<span class="cm">// Explore all 80+ endpoints interactively</span>\n\n<span class="str">Visit: ${API_BASE}/docs</span></pre>`;
     return;
   }
 
