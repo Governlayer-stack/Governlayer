@@ -1,7 +1,11 @@
 """GovernLayer API — application factory."""
 
+import os
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import achonye, audit, auth, automation, billing, enterprise, governance, ledger, risk, threats, v1
@@ -84,8 +88,24 @@ def create_app() -> FastAPI:
     def startup():
         create_tables()
 
+    # Load landing page HTML once at startup
+    _landing_html = None
+    _landing_paths = [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "landing", "index.html"),
+        os.path.join("/app", "docs", "landing", "index.html"),
+    ]
+    for _path in _landing_paths:
+        if os.path.exists(_path):
+            with open(_path) as f:
+                _landing_html = f.read()
+            break
+
     @app.get("/")
-    def root():
+    def root(request: Request):
+        # Serve landing page to browsers, JSON to API clients
+        accept = request.headers.get("accept", "")
+        if _landing_html and "text/html" in accept:
+            return HTMLResponse(_landing_html)
         return {
             "name": "GovernLayer API",
             "version": settings.policy_version,
@@ -103,6 +123,17 @@ def create_app() -> FastAPI:
                 "management": "/v1/enterprise/orgs, /v1/enterprise/orgs/{slug}/api-keys",
                 "legacy": "/govern, /audit, /risk-score, /drift",
             },
+        }
+
+    @app.get("/api")
+    def api_status():
+        """JSON API status — always returns JSON regardless of Accept header."""
+        return {
+            "name": "GovernLayer API",
+            "version": settings.policy_version,
+            "status": "operational",
+            "frameworks": len(FRAMEWORKS),
+            "docs": "/docs",
         }
 
     @app.get("/frameworks")

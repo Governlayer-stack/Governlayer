@@ -20,6 +20,7 @@ COPY --from=builder /install /usr/local
 COPY src/ src/
 COPY alembic/ alembic/
 COPY alembic.ini .
+COPY docs/landing/ docs/landing/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app
