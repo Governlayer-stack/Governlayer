@@ -101,7 +101,7 @@ def create_api_key(slug: str, req: CreateApiKeyRequest, email: str = Depends(ver
         "warning": "Save this key now. It cannot be retrieved again.",
         "usage": {
             "header": "Authorization: Bearer " + full_key,
-            "example": f"curl -H 'Authorization: Bearer {full_key}' https://api.governlayer.ai/v1/govern",
+            "example": f"curl -H 'Authorization: Bearer {full_key}' https://governlayer.ai/v1/govern",
         },
     }
 

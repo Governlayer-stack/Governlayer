@@ -12,11 +12,11 @@ class GovernLayer:
     """GovernLayer API client.
 
     Usage:
-        gl = GovernLayer(api_key="gl_xxxxx", base_url="https://api.governlayer.ai")
+        gl = GovernLayer(api_key="gl_xxxxx", base_url="https://governlayer.ai")
         result = gl.govern(system_name="my-model", use_case="classification")
     """
 
-    def __init__(self, api_key: str, base_url: str = "https://api.governlayer.ai"):
+    def __init__(self, api_key: str, base_url: str = "https://governlayer.ai"):
         self.api_key = api_key
         self.base_url = base_url.rstrip("/")
         self._headers = {
