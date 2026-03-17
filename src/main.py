@@ -1,11 +1,13 @@
 """GovernLayer API — application factory."""
 
+import logging
 import os
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text as sa_text
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import (
@@ -15,9 +17,126 @@ from src.api import (
     registry, reports, risk, threats, v1,
 )
 from src.config import get_settings
-from src.models.database import create_tables
+from src.models.database import create_tables, SessionLocal
 from src.models.schemas import DriftRequest
 from src.security.auth import verify_token
+
+logger = logging.getLogger("governlayer")
+
+
+def _seed_demo_data():
+    """Seed demo data on first startup so the dashboard isn't empty."""
+    db = SessionLocal()
+    try:
+        from src.models.registry import RegisteredModel, Incident, ModelLifecycle, IncidentSeverity, IncidentStatus
+        from src.models.policy import GovernancePolicy
+        from src.models.agents import AIAgent, AgentType, AgentStatus, DiscoverySource
+        from datetime import datetime
+
+        # Only seed if DB is empty
+        if db.query(RegisteredModel).count() > 0:
+            return
+
+        # Seed models
+        models = [
+            RegisteredModel(name="loan-approval-v3", version="3.2.1", framework="xgboost",
+                            description="Credit risk scoring model for consumer loans",
+                            owner="ml-platform@company.com", use_case="Credit decisioning",
+                            lifecycle=ModelLifecycle.PRODUCTION, governance_status="compliant", risk_score=34.0),
+            RegisteredModel(name="fraud-detector", version="2.1.0", framework="pytorch",
+                            description="Real-time transaction fraud detection",
+                            owner="fraud-team@company.com", use_case="Fraud prevention",
+                            lifecycle=ModelLifecycle.PRODUCTION, governance_status="compliant", risk_score=45.0),
+            RegisteredModel(name="content-moderator", version="1.5.0", framework="transformers",
+                            description="User-generated content safety classifier",
+                            owner="trust-safety@company.com", use_case="Content moderation",
+                            lifecycle=ModelLifecycle.STAGING, governance_status="pending", risk_score=62.0),
+            RegisteredModel(name="resume-screener", version="0.9.0", framework="sklearn",
+                            description="Candidate resume ranking model",
+                            owner="hr-tech@company.com", use_case="Hiring automation",
+                            lifecycle=ModelLifecycle.DEVELOPMENT, governance_status="non_compliant", risk_score=78.0),
+            RegisteredModel(name="chatbot-support", version="4.0.0", framework="openai",
+                            description="Customer support conversational AI",
+                            owner="cx-team@company.com", use_case="Customer support",
+                            lifecycle=ModelLifecycle.PRODUCTION, governance_status="compliant", risk_score=22.0),
+        ]
+        db.add_all(models)
+
+        # Seed incidents
+        incidents = [
+            Incident(title="Data drift detected in fraud-detector inputs",
+                     description="PSI score exceeded threshold on transaction_amount feature",
+                     severity=IncidentSeverity.HIGH, status=IncidentStatus.INVESTIGATING,
+                     affected_system="fraud-detector", category="data_drift",
+                     reporter="monitoring-bot"),
+            Incident(title="Resume screener bias flag — gender disparity",
+                     description="Disparate impact ratio dropped below 0.8 for gender dimension",
+                     severity=IncidentSeverity.CRITICAL, status=IncidentStatus.OPEN,
+                     affected_system="resume-screener", category="fairness",
+                     reporter="fairness-audit"),
+            Incident(title="Content moderator false positive spike",
+                     description="False positive rate increased 15% after model update",
+                     severity=IncidentSeverity.MEDIUM, status=IncidentStatus.OPEN,
+                     affected_system="content-moderator", category="performance",
+                     reporter="ml-ops"),
+        ]
+        db.add_all(incidents)
+
+        # Seed policy
+        policy = GovernancePolicy(
+            name="Enterprise Default Policy",
+            version="1.0",
+            description="Standard governance policy for all production AI models",
+            is_active=True,
+            rules=[
+                {"name": "risk_threshold", "condition": "risk_score <= 70", "action": "allow", "message": "Risk score within acceptable range"},
+                {"name": "drift_threshold", "condition": "drift_coefficient <= 0.30", "action": "allow", "message": "Drift within acceptable range"},
+                {"name": "human_oversight", "condition": "has_human_oversight == True", "action": "warn", "message": "Human oversight recommended"},
+                {"name": "fairness_check", "condition": "fairness_score >= 70", "action": "allow", "message": "Fairness score acceptable"},
+                {"name": "high_risk_block", "condition": "risk_score <= 90", "action": "allow", "message": "Extreme risk blocked"},
+            ],
+        )
+        db.add(policy)
+
+        # Seed agents
+        agents = [
+            AIAgent(name="support-chatbot-v2", agent_type=AgentType.CHATBOT,
+                    status=AgentStatus.APPROVED, description="Customer support conversational AI",
+                    owner="cx-team@company.com", team="Customer Experience",
+                    purpose="Handle tier-1 support tickets via chat",
+                    model_provider="OpenAI", model_name="gpt-4o",
+                    tools=["ticket_lookup", "knowledge_base", "escalation"],
+                    autonomy_level=2, risk_tier="medium", risk_score=35.0,
+                    governance_status="compliant", discovery_source=DiscoverySource.MANUAL,
+                    is_shadow=False, approved_by="ciso@company.com",
+                    approved_at=datetime.utcnow(), first_seen_at=datetime.utcnow()),
+            AIAgent(name="code-review-agent", agent_type=AgentType.TOOL_AGENT,
+                    status=AgentStatus.APPROVED, description="Automated code review assistant",
+                    owner="devtools@company.com", team="Engineering",
+                    purpose="Review PRs for security vulnerabilities and code quality",
+                    model_provider="Anthropic", model_name="claude-sonnet-4-20250514",
+                    tools=["github_api", "static_analysis", "dependency_check"],
+                    autonomy_level=1, risk_tier="low", risk_score=18.0,
+                    governance_status="compliant", discovery_source=DiscoverySource.MANUAL,
+                    is_shadow=False, first_seen_at=datetime.utcnow()),
+            AIAgent(name="unknown-gpt-usage", agent_type=AgentType.AUTONOMOUS,
+                    status=AgentStatus.UNDER_REVIEW, description="Unregistered GPT-4 API usage detected in marketing department",
+                    owner="unknown", team="Marketing",
+                    purpose="Unknown — detected via API traffic scan",
+                    model_provider="OpenAI", model_name="gpt-4",
+                    autonomy_level=3, risk_tier="high", risk_score=72.0,
+                    governance_status="non_compliant", discovery_source=DiscoverySource.API_SCAN,
+                    is_shadow=True, first_seen_at=datetime.utcnow()),
+        ]
+        db.add_all(agents)
+
+        db.commit()
+        logger.info("Seeded demo data: 5 models, 3 incidents, 1 policy, 3 agents")
+    except Exception as e:
+        db.rollback()
+        logger.warning("Demo seed skipped: %s", e)
+    finally:
+        db.close()
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -104,6 +223,24 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     def startup():
         create_tables()
+        _seed_demo_data()
+
+    @app.get("/health")
+    def health_check():
+        """Lightweight health check for load balancers and monitoring."""
+        from src.models.database import SessionLocal
+        try:
+            db = SessionLocal()
+            db.execute(sa_text("SELECT 1"))
+            db.close()
+            db_status = "connected"
+        except Exception:
+            db_status = "unavailable"
+        return {
+            "status": "healthy" if db_status == "connected" else "degraded",
+            "version": settings.policy_version,
+            "database": db_status,
+        }
 
     # Load landing page HTML once at startup
     _landing_html = None
