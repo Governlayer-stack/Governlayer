@@ -165,8 +165,9 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="GovernLayer API",
         description=(
-            "AI Governance Control Plane — compliance auditing, behavioral drift detection, "
-            "risk scoring, and immutable audit ledger for enterprise AI systems.\n\n"
+            "The Governance Layer for Agentic AI — agent registry, shadow AI discovery, "
+            "compliance auditing, drift detection, risk scoring, policy engine, "
+            "and immutable audit ledger for enterprise AI systems.\n\n"
             "## Quick Start\n"
             "1. Create an organization: `POST /v1/enterprise/orgs`\n"
             "2. Generate an API key: `POST /v1/enterprise/orgs/{slug}/api-keys`\n"
@@ -261,7 +262,8 @@ def create_app() -> FastAPI:
         if _landing_html and "text/html" in accept:
             return HTMLResponse(_landing_html)
         return {
-            "name": "GovernLayer API",
+            "name": "GovernLayer",
+            "tagline": "The Governance Layer for Agentic AI",
             "version": settings.policy_version,
             "status": "operational",
             "frameworks": len(FRAMEWORKS),
@@ -283,7 +285,8 @@ def create_app() -> FastAPI:
     def api_status():
         """JSON API status — always returns JSON regardless of Accept header."""
         return {
-            "name": "GovernLayer API",
+            "name": "GovernLayer",
+            "tagline": "The Governance Layer for Agentic AI",
             "version": settings.policy_version,
             "status": "operational",
             "frameworks": len(FRAMEWORKS),

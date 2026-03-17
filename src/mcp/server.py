@@ -10,7 +10,7 @@ from langchain_groq import ChatGroq
 
 load_dotenv()
 
-mcp = FastMCP("GovernLayer AI Governance")
+mcp = FastMCP("GovernLayer — The Governance Layer for Agentic AI")
 llm = ChatGroq(model="llama-3.3-70b-versatile")
 search = DuckDuckGoSearchRun()
 
