@@ -9,8 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import (
-    achonye, analytics, audit, auth, automation, billing, dashboard,
-    enterprise, governance, incidents, ledger, policies, registry,
+    achonye, agent_registry, analytics, audit, auth, automation, billing,
+    dashboard, enterprise, governance, incidents, integrations,
+    knowledge_graph, ledger, policies, rbac_views, registry,
     reports, risk, threats, v1,
 )
 from src.config import get_settings
@@ -93,6 +94,10 @@ def create_app() -> FastAPI:
     app.include_router(policies.router)
     app.include_router(reports.router)
     app.include_router(dashboard.router)
+    app.include_router(agent_registry.router)
+    app.include_router(integrations.router)
+    app.include_router(knowledge_graph.router)
+    app.include_router(rbac_views.router)
 
     @app.on_event("startup")
     def startup():

@@ -1,4 +1,4 @@
-"""Regulatory Report Generator — EU AI Act, NIST AI RMF, ISO 42001."""
+"""Regulatory Report Generator — EU AI Act, NIST AI RMF, ISO 42001, HITRUST, NYC LL144, Colorado SB169, SOC2, GDPR."""
 
 from datetime import datetime
 from typing import Any, Dict, Optional
@@ -177,4 +177,258 @@ def generate_iso_42001_report(
             "total": len(clauses),
         },
         "certification_ready": conforming == len(clauses),
+    }
+
+
+def generate_hitrust_report(
+    system_name: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict:
+    """Generate HITRUST AI Assurance report for healthcare AI systems."""
+    ctx = context or {}
+    now = datetime.utcnow().isoformat()
+
+    domains = {
+        "data_protection": {
+            "status": "compliant" if not ctx.get("pii_detected", True) else "non_compliant",
+            "description": "Protected health information (PHI) and data protection controls",
+            "evidence": f"PII/PHI scan: {'clean' if not ctx.get('pii_detected', True) else 'findings detected'}",
+        },
+        "access_control": {
+            "status": "compliant" if ctx.get("has_rbac", False) else "needs_review",
+            "description": "Role-based access controls for AI systems",
+        },
+        "audit_logging": {
+            "status": "compliant" if ctx.get("has_audit_trail", False) else "non_compliant",
+            "description": "Comprehensive audit trail for AI decisions",
+            "evidence": f"Audit ledger: {'active' if ctx.get('has_audit_trail', False) else 'not configured'}",
+        },
+        "incident_response": {
+            "status": "compliant" if ctx.get("has_incident_process", False) else "non_compliant",
+            "description": "AI incident detection, response, and remediation",
+        },
+        "vendor_management": {
+            "status": "compliant" if ctx.get("models_registered", False) else "needs_review",
+            "description": "Third-party AI model and vendor risk management",
+        },
+        "model_validation": {
+            "status": "compliant" if ctx.get("fairness_tested", False) else "non_compliant",
+            "description": "AI model validation including bias and fairness testing",
+        },
+    }
+
+    compliant = sum(1 for d in domains.values() if d["status"] == "compliant")
+    total = len(domains)
+
+    return {
+        "report_type": "HITRUST AI Assurance",
+        "system_name": system_name,
+        "generated_at": now,
+        "compliance_score": round(compliant / total * 100, 1),
+        "domains": domains,
+        "summary": {
+            "compliant": compliant,
+            "non_compliant": sum(1 for d in domains.values() if d["status"] == "non_compliant"),
+            "needs_review": sum(1 for d in domains.values() if d["status"] == "needs_review"),
+            "total": total,
+        },
+        "recommendation": "System meets HITRUST AI requirements" if compliant == total else "Remediation required for HITRUST AI certification",
+    }
+
+
+def generate_nyc_ll144_report(
+    system_name: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict:
+    """Generate NYC Local Law 144 compliance report for automated employment decisions."""
+    ctx = context or {}
+    now = datetime.utcnow().isoformat()
+
+    requirements = {
+        "bias_audit": {
+            "status": "compliant" if ctx.get("fairness_tested", False) else "non_compliant",
+            "description": "Annual independent bias audit conducted",
+            "evidence": f"Fairness testing: {'completed' if ctx.get('fairness_tested', False) else 'not conducted'}",
+            "penalty": "Up to $1,500 per violation",
+        },
+        "public_notice": {
+            "status": "compliant" if ctx.get("public_notice_posted", False) else "non_compliant",
+            "description": "Bias audit results publicly posted on employer's website",
+        },
+        "candidate_notification": {
+            "status": "compliant" if ctx.get("candidate_notified", False) else "non_compliant",
+            "description": "Candidates notified that AEDT is being used within 10 business days",
+        },
+        "disparate_impact": {
+            "status": "compliant" if ctx.get("disparate_impact_ratio", 0) >= 0.8 else "non_compliant",
+            "description": "Disparate impact ratio meets 4/5ths rule across protected classes",
+            "evidence": f"DI ratio: {ctx.get('disparate_impact_ratio', 'N/A')}",
+        },
+        "annual_audit": {
+            "status": "compliant" if ctx.get("last_audit_within_year", False) else "non_compliant",
+            "description": "Bias audit conducted within the last year",
+        },
+    }
+
+    compliant = sum(1 for r in requirements.values() if r["status"] == "compliant")
+    total = len(requirements)
+
+    return {
+        "report_type": "NYC Local Law 144 (AEDT)",
+        "system_name": system_name,
+        "generated_at": now,
+        "jurisdiction": "New York City",
+        "applies_to": "Automated Employment Decision Tools (AEDT)",
+        "compliance_score": round(compliant / total * 100, 1),
+        "requirements": requirements,
+        "summary": {"compliant": compliant, "non_compliant": total - compliant, "total": total},
+        "recommendation": "System meets NYC LL144 requirements" if compliant == total else "Non-compliant with NYC LL144 — risk of fines up to $1,500 per violation",
+    }
+
+
+def generate_colorado_sb169_report(
+    system_name: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict:
+    """Generate Colorado SB 21-169 compliance report for insurance AI."""
+    ctx = context or {}
+    now = datetime.utcnow().isoformat()
+
+    requirements = {
+        "impact_assessment": {
+            "status": "compliant" if ctx.get("impact_assessment_done", False) else "non_compliant",
+            "description": "Algorithmic impact assessment conducted before deployment",
+        },
+        "bias_testing": {
+            "status": "compliant" if ctx.get("fairness_tested", False) else "non_compliant",
+            "description": "Testing for unfairly discriminatory outcomes",
+            "evidence": f"Fairness testing: {'completed' if ctx.get('fairness_tested', False) else 'not conducted'}",
+        },
+        "consumer_disclosure": {
+            "status": "compliant" if ctx.get("consumer_disclosed", False) else "non_compliant",
+            "description": "Consumers informed of algorithmic decision-making use",
+        },
+        "opt_out_mechanism": {
+            "status": "compliant" if ctx.get("opt_out_available", False) else "non_compliant",
+            "description": "Consumers can opt out of algorithmic decision-making",
+        },
+        "governance_framework": {
+            "status": "compliant" if ctx.get("has_policy", False) else "non_compliant",
+            "description": "AI governance framework established and documented",
+        },
+    }
+
+    compliant = sum(1 for r in requirements.values() if r["status"] == "compliant")
+    total = len(requirements)
+
+    return {
+        "report_type": "Colorado SB 21-169",
+        "system_name": system_name,
+        "generated_at": now,
+        "jurisdiction": "Colorado",
+        "applies_to": "Insurance industry AI/algorithmic systems",
+        "compliance_score": round(compliant / total * 100, 1),
+        "requirements": requirements,
+        "summary": {"compliant": compliant, "non_compliant": total - compliant, "total": total},
+        "recommendation": "System meets Colorado SB 21-169 requirements" if compliant == total else "Action required for Colorado algorithmic compliance",
+    }
+
+
+def generate_soc2_report(
+    system_name: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict:
+    """Generate SOC 2 Type II readiness report for AI systems."""
+    ctx = context or {}
+    now = datetime.utcnow().isoformat()
+
+    criteria = {
+        "security": {
+            "status": "compliant" if not ctx.get("injection_detected", True) else "non_compliant",
+            "description": "System protected against unauthorized access and adversarial inputs",
+        },
+        "availability": {
+            "status": "compliant",
+            "description": "System operates and is available as committed",
+        },
+        "processing_integrity": {
+            "status": "compliant" if ctx.get("drift_score", 1.0) < 0.3 else "non_compliant",
+            "description": "System processing is complete, valid, accurate, and authorized",
+        },
+        "confidentiality": {
+            "status": "compliant" if not ctx.get("pii_detected", True) else "non_compliant",
+            "description": "Confidential information is protected as committed",
+        },
+        "privacy": {
+            "status": "compliant" if ctx.get("data_governance_active", False) else "needs_review",
+            "description": "Personal information collected, used, retained, and disposed properly",
+        },
+    }
+
+    compliant = sum(1 for c in criteria.values() if c["status"] == "compliant")
+    total = len(criteria)
+
+    return {
+        "report_type": "SOC 2 Type II Readiness",
+        "system_name": system_name,
+        "generated_at": now,
+        "compliance_score": round(compliant / total * 100, 1),
+        "trust_service_criteria": criteria,
+        "summary": {"compliant": compliant, "non_compliant": total - compliant, "total": total},
+        "recommendation": "Ready for SOC 2 Type II audit" if compliant == total else "Remediation needed before SOC 2 audit engagement",
+    }
+
+
+def generate_gdpr_report(
+    system_name: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict:
+    """Generate GDPR compliance report for AI systems processing personal data."""
+    ctx = context or {}
+    now = datetime.utcnow().isoformat()
+
+    principles = {
+        "lawful_processing": {
+            "status": "compliant" if ctx.get("legal_basis_documented", False) else "needs_review",
+            "description": "Legal basis for processing established (Art. 6)",
+        },
+        "data_minimization": {
+            "status": "compliant" if ctx.get("data_minimized", False) else "needs_review",
+            "description": "Only necessary data collected and processed (Art. 5(1)(c))",
+        },
+        "purpose_limitation": {
+            "status": "compliant" if ctx.get("purpose_documented", False) else "needs_review",
+            "description": "Data processed only for specified purposes (Art. 5(1)(b))",
+        },
+        "accuracy": {
+            "status": "compliant" if ctx.get("drift_score", 1.0) < 0.3 else "non_compliant",
+            "description": "Data and model outputs are accurate and up to date (Art. 5(1)(d))",
+        },
+        "right_to_explanation": {
+            "status": "compliant" if ctx.get("has_explanation", False) else "non_compliant",
+            "description": "Meaningful information about automated decision logic (Art. 22)",
+        },
+        "dpia_completed": {
+            "status": "compliant" if ctx.get("dpia_done", False) else "non_compliant",
+            "description": "Data Protection Impact Assessment completed (Art. 35)",
+        },
+        "data_protection": {
+            "status": "compliant" if not ctx.get("pii_detected", True) else "non_compliant",
+            "description": "Technical measures to protect personal data (Art. 32)",
+        },
+    }
+
+    compliant = sum(1 for p in principles.values() if p["status"] == "compliant")
+    total = len(principles)
+
+    return {
+        "report_type": "GDPR AI Compliance",
+        "system_name": system_name,
+        "generated_at": now,
+        "jurisdiction": "European Union",
+        "compliance_score": round(compliant / total * 100, 1),
+        "principles": principles,
+        "summary": {"compliant": compliant, "non_compliant": total - compliant, "needs_review": sum(1 for p in principles.values() if p["status"] == "needs_review"), "total": total},
+        "penalties": {"max_fine": "4% of annual global turnover or EUR 20M (whichever is greater)"},
+        "recommendation": "System meets GDPR requirements" if compliant == total else "GDPR compliance gaps detected — risk of significant fines",
     }
