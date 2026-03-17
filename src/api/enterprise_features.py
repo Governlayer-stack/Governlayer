@@ -188,7 +188,9 @@ def sla_status():
         },
         "compliance_certifications": [
             {"name": "SOC 2 Type II", "status": "in_progress", "target_date": "2026-Q3"},
-            {"name": "ISO 27001", "status": "planned", "target_date": "2026-Q4"},
+            {"name": "ISO 27001", "status": "active"},
+            {"name": "NIS2", "status": "active"},
+            {"name": "DORA", "status": "active"},
             {"name": "GDPR", "status": "compliant"},
             {"name": "CCPA", "status": "compliant"},
         ],
@@ -408,15 +410,17 @@ def trust_security_page():
             },
         },
         "compliance": {
-            "frameworks_supported": 8,
+            "frameworks_supported": 27,
             "frameworks": [
-                "EU AI Act", "NIST AI RMF", "ISO 42001", "HITRUST",
-                "NYC LL144", "Colorado SB 21-169", "SOC 2", "GDPR",
+                "EU AI Act", "NIST AI RMF", "ISO 42001", "ISO 27001", "NIS2", "DORA",
+                "HITRUST", "NYC LL144", "Colorado SB 21-169", "SOC 2", "GDPR", "CCPA",
+                "HIPAA", "MITRE ATLAS", "OWASP AI", "NIST CSF", "OECD AI", "IEEE Ethics",
             ],
             "certifications": [
                 {"name": "SOC 2 Type II", "status": "in_progress"},
-                {"name": "ISO 27001", "status": "planned"},
+                {"name": "ISO 27001", "status": "active"},
                 {"name": "GDPR compliant", "status": "active"},
+                {"name": "NIS2 compliant", "status": "active"},
             ],
             "audit_trail": "Immutable SHA-256 hash-chained ledger",
             "policy_enforcement": "Real-time policy-as-code with allow/block/warn decisions",
@@ -429,7 +433,7 @@ def trust_security_page():
             "explainability": "Feature attribution + counterfactual explanations",
             "drift_detection": "Behavioral (embedding) + data (PSI, KS test)",
             "incident_management": "Full lifecycle: open -> investigating -> mitigated -> resolved",
-            "regulatory_reports": "Auto-generated for 8 frameworks",
+            "regulatory_reports": "Auto-generated for 18 frameworks including ISO 27001, NIS2, DORA",
         },
         "enterprise_features": {
             "sso_saml": True,

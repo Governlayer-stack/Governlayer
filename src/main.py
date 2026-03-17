@@ -151,11 +151,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         return response
 
 FRAMEWORKS = [
-    "NIST_AI_RMF", "EU_AI_ACT", "ISO_42001", "MITRE_ATLAS", "OWASP_AI",
-    "SOC2", "GDPR", "CCPA", "HIPAA", "IEEE_ETHICS", "OECD_AI", "UNESCO_AI",
-    "SINGAPORE_AI", "UK_AI", "CANADA_AIDA", "CHINA_AI", "COBIT", "ITIL",
-    "ISO_27001", "NIST_CSF", "ZERO_TRUST", "CIS_CONTROLS", "FAIR_RISK",
-    "CSA_AI", "US_EO_AI",
+    "NIST_AI_RMF", "EU_AI_ACT", "ISO_42001", "ISO_27001", "NIS2", "DORA",
+    "MITRE_ATLAS", "OWASP_AI", "SOC2", "GDPR", "CCPA", "HIPAA",
+    "IEEE_ETHICS", "OECD_AI", "NIST_CSF", "UNESCO_AI", "SINGAPORE_AI",
+    "UK_AI", "CANADA_AIDA", "CHINA_AI", "COBIT", "ITIL",
+    "ZERO_TRUST", "CIS_CONTROLS", "FAIR_RISK", "CSA_AI", "US_EO_AI",
 ]
 
 

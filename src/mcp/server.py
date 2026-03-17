@@ -18,14 +18,18 @@ FRAMEWORKS = {
     "NIST_AI_RMF": "NIST AI Risk Management Framework",
     "EU_AI_ACT": "EU AI Act - risk based regulation",
     "ISO_42001": "ISO 42001 - AI management systems standard",
-    "MITRE_ATLAS": "MITRE ATLAS - adversarial threat landscape",
-    "OWASP_AI": "OWASP AI Security - top 10 AI security risks",
+    "ISO_27001": "ISO/IEC 27001:2022 - information security management system",
+    "NIS2": "NIS2 Directive (EU 2022/2555) - network and information security",
+    "DORA": "DORA (EU 2022/2554) - digital operational resilience for financial sector",
+    "MITRE_ATLAS": "MITRE ATLAS - adversarial threat landscape for AI systems",
+    "OWASP_AI": "OWASP AI Security - top 10 AI/ML security risks",
     "SOC2": "SOC 2 - security trust service criteria",
     "GDPR": "GDPR - EU data protection regulation",
     "CCPA": "CCPA - California consumer privacy act",
     "HIPAA": "HIPAA - healthcare data protection",
-    "IEEE_ETHICS": "IEEE Ethics Guidelines - algorithmic bias prevention",
-    "OECD_AI": "OECD AI Principles - human oversight and robustness",
+    "IEEE_ETHICS": "IEEE Ethically Aligned Design - algorithmic bias prevention",
+    "OECD_AI": "OECD AI Principles - human oversight, robustness, accountability",
+    "NIST_CSF": "NIST Cybersecurity Framework 2.0 - govern, identify, protect, detect, respond, recover",
     "UNESCO_AI": "UNESCO AI Ethics - human rights and fairness",
     "SINGAPORE_AI": "Singapore AI Governance Framework",
     "UK_AI": "UK AI Whitepaper - pro innovation regulation",
@@ -33,8 +37,6 @@ FRAMEWORKS = {
     "CHINA_AI": "China AI Regulations - algorithm recommendations",
     "COBIT": "COBIT - IT governance framework",
     "ITIL": "ITIL - IT service management",
-    "ISO_27001": "ISO 27001 - information security management",
-    "NIST_CSF": "NIST CSF - cybersecurity framework",
     "ZERO_TRUST": "Zero Trust Architecture - never trust always verify",
     "CIS_CONTROLS": "CIS Controls - critical security controls",
     "FAIR_RISK": "FAIR Risk Framework - information risk analysis",
@@ -45,8 +47,8 @@ FRAMEWORKS = {
 
 @mcp.tool()
 def list_frameworks() -> str:
-    """List all 25 AI governance frameworks in GovernLayer"""
-    result = "# GovernLayer 25 AI Governance Frameworks\n\n"
+    """List all 27 AI governance frameworks in GovernLayer"""
+    result = "# GovernLayer 27 AI Governance Frameworks\n\n"
     for i, (key, value) in enumerate(FRAMEWORKS.items(), 1):
         result += f"{i}. **{key}**: {value}\n"
     return result
