@@ -10,7 +10,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import (
     achonye, agent_registry, analytics, audit, auth, automation, billing,
-    dashboard, enterprise, enterprise_features, governance, incidents,
+    dashboard, enterprise, enterprise_features, governance, growth, incidents,
     integrations, knowledge_graph, ledger, policies, rbac_views,
     registry, reports, risk, threats, v1,
 )
@@ -99,6 +99,7 @@ def create_app() -> FastAPI:
     app.include_router(knowledge_graph.router)
     app.include_router(rbac_views.router)
     app.include_router(enterprise_features.router)
+    app.include_router(growth.router)
 
     @app.on_event("startup")
     def startup():

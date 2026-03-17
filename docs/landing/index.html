@@ -600,6 +600,21 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
   </div>
 </section>
 
+<!-- Waitlist / Email Capture -->
+<section class="cta-section" id="waitlist" style="padding-bottom:0">
+  <div class="container">
+    <div class="cta-box reveal" style="margin-bottom:0">
+      <h2>Get early access</h2>
+      <p>Join the waitlist for enterprise features, priority onboarding, and design partner program.</p>
+      <div style="display:flex;gap:12px;max-width:500px;margin:24px auto 0">
+        <input type="email" id="waitlistEmail" placeholder="your@company.com" style="flex:1;padding:14px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--bg2);color:var(--text);font-size:14px;font-family:inherit;outline:none">
+        <button onclick="joinWaitlist()" class="btn btn-gradient" style="white-space:nowrap;padding:14px 28px">Join Waitlist</button>
+      </div>
+      <div id="waitlistMsg" style="margin-top:12px;font-size:13px;min-height:20px"></div>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section">
   <div class="container">
@@ -611,7 +626,7 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
           Get started free
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
         </a>
-        <a href="mailto:founders@governlayer.ai" class="btn btn-ghost btn-lg">Talk to us</a>
+        <a href="https://api.governlayer.ai/v1/demo" class="btn btn-ghost btn-lg">Book a Demo</a>
       </div>
     </div>
   </div>
@@ -644,7 +659,9 @@ body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;pointer-even
     <div class="footer-col">
       <h4>Company</h4>
       <a href="mailto:founders@governlayer.ai">Contact</a>
-      <a href="mailto:founders@governlayer.ai">Partnerships</a>
+      <a href="https://api.governlayer.ai/v1/enterprise/trust">Trust & Security</a>
+      <a href="https://api.governlayer.ai/legal/terms">Terms of Service</a>
+      <a href="https://api.governlayer.ai/legal/privacy">Privacy Policy</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -879,6 +896,33 @@ document.addEventListener('keydown', e => {
     runApiCall();
   }
 });
+
+// ========== WAITLIST ==========
+async function joinWaitlist() {
+  const email = document.getElementById('waitlistEmail').value.trim();
+  const msg = document.getElementById('waitlistMsg');
+  if (!email || !email.includes('@')) {
+    msg.innerHTML = '<span style="color:#ef4444">Please enter a valid email address</span>';
+    return;
+  }
+  msg.innerHTML = '<span style="color:var(--text2)">Submitting...</span>';
+  try {
+    const resp = await fetch(API_BASE + '/v1/waitlist', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: email}),
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+      msg.innerHTML = '<span style="color:#00ffaa">You\'re on the list! We\'ll be in touch soon.</span>';
+      document.getElementById('waitlistEmail').value = '';
+    } else {
+      msg.innerHTML = '<span style="color:#ef4444">' + (data.detail || 'Something went wrong') + '</span>';
+    }
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#ef4444">Network error. Please try again.</span>';
+  }
+}
 </script>
 </body>
 </html>

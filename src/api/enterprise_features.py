@@ -256,6 +256,22 @@ def system_status():
 
 CHANGELOG = [
     {
+        "version": "3.0.0",
+        "date": "2026-03-16",
+        "title": "Enterprise Go-to-Market Launch",
+        "type": "major",
+        "changes": [
+            "10-page governance dashboard SPA with live API data",
+            "Enterprise features: SSO/SAML, audit export, SLA monitoring",
+            "Status page, changelog API, trust & security page",
+            "Compliance attestation document generator",
+            "Waitlist and demo booking with email capture",
+            "Terms of Service and Privacy Policy pages",
+            "Stripe billing integration: checkout, portal, webhooks",
+            "Landing page v3.0 with all new feature cards",
+        ],
+    },
+    {
         "version": "2.5.0",
         "date": "2026-03-16",
         "title": "Agent Registry, Shadow AI Discovery, Knowledge Graph",
@@ -448,7 +464,7 @@ def compliance_attestation():
                 "valid_until": (datetime.utcnow() + timedelta(days=90)).isoformat(),
                 "platform": {
                     "name": "GovernLayer",
-                    "version": "2.5.0",
+                    "version": "3.0.0",
                     "deployment": "Cloud (Railway) / Self-hosted (Docker)",
                 },
                 "capabilities_attested": {
