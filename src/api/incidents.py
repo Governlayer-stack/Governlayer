@@ -50,6 +50,14 @@ def create_incident(data: IncidentCreate,
     log_mutation(db, auth.identity, "create", "incident", details=f"Incident: {data.title}")
     db.commit()
     db.refresh(incident)
+
+    # Fire webhook for incident creation
+    from src.api.webhooks import dispatch_event
+    dispatch_event("incident.created", {
+        "id": incident.id, "title": data.title,
+        "severity": data.severity, "category": data.category,
+    }, auth.org_id, db)
+
     return {
         "id": incident.id,
         "title": incident.title,
@@ -161,6 +169,15 @@ def update_incident(incident_id: int, data: IncidentUpdate,
     log_mutation(db, auth.identity, "update", "incident", incident_id,
                  "; ".join(changes) if changes else "updated fields")
     db.commit()
+
+    # Fire webhook for incident updates
+    if changes:
+        from src.api.webhooks import dispatch_event
+        event_type = "incident.resolved" if data.status in ("resolved", "closed") else "incident.updated"
+        dispatch_event(event_type, {
+            "id": incident.id, "changes": changes,
+            "status": incident.status.value if incident.status else None,
+        }, auth.org_id, db)
 
     return {
         "id": incident.id,

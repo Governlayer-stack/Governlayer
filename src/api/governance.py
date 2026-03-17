@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.config import get_settings
 from src.drift.detection import analyze_reasoning
-from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
+from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash, log_mutation
 from src.models.schemas import GovernRequest
 from src.security.auth import verify_token
 
@@ -67,7 +67,18 @@ def govern_decision(request: GovernRequest, email: str = Depends(verify_token), 
         policy_version=settings.policy_version, previous_hash=previous_hash, current_hash=current_hash,
     )
     db.add(audit)
+    log_mutation(db, email, "create", "governance_decision", decision_id,
+                 f"{governance_action}: {request.system_name} risk={round(overall_risk)}")
     db.commit()
+
+    # Fire webhooks for governance events
+    from src.api.webhooks import dispatch_event
+    event_payload = {
+        "decision_id": decision_id, "system": request.system_name,
+        "action": governance_action, "risk_score": round(overall_risk),
+        "risk_level": risk_level,
+    }
+    dispatch_event(f"governance.{governance_action.lower()}", event_payload, None, db)
 
     return {
         "decision_id": decision_id, "system": request.system_name,
