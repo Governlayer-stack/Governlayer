@@ -28,6 +28,8 @@ class User(Base):
     company = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    reset_token = Column(String(64), nullable=True)
+    reset_token_expires_at = Column(DateTime, nullable=True)
 
 
 class AuditRecord(Base):

@@ -1,6 +1,9 @@
 """Tests for core API endpoints — root, health, frameworks, auth, dashboard."""
 
 import uuid
+from datetime import datetime, timedelta
+
+from src.models.database import SessionLocal, User
 
 
 def test_root_returns_json(client):
@@ -179,3 +182,99 @@ def test_security_headers(client):
     assert "strict-origin" in r.headers.get("Referrer-Policy", "")
     assert "max-age=" in r.headers.get("Strict-Transport-Security", "")
     assert "camera=()" in r.headers.get("Permissions-Policy", "")
+
+
+# --- Password reset tests ---
+
+
+def test_forgot_password_returns_ok(client):
+    """Forgot-password always returns 200, even for non-existent email."""
+    r = client.post("/auth/forgot-password", json={
+        "email": "nobody@nonexistent.test",
+    })
+    assert r.status_code == 200
+    assert r.json()["message"] == "If an account exists with that email, a reset link has been sent."
+
+
+def test_reset_password_flow(client):
+    """Full flow: register -> forgot-password -> read token from DB -> reset -> login with new password."""
+    email = f"reset-{uuid.uuid4().hex[:8]}@governlayer.test"
+    old_password = "OldPass123"
+    new_password = "NewPass456"
+
+    # Register
+    client.post("/auth/register", json={
+        "email": email,
+        "password": old_password,
+        "company": "ResetCorp",
+    })
+
+    # Request reset
+    r = client.post("/auth/forgot-password", json={"email": email})
+    assert r.status_code == 200
+
+    # Fetch token directly from DB
+    db = SessionLocal()
+    user = db.query(User).filter(User.email == email).first()
+    token = user.reset_token
+    db.close()
+    assert token is not None
+    assert len(token) == 64  # 32 bytes hex
+
+    # Reset password
+    r = client.post("/auth/reset-password", json={
+        "token": token,
+        "new_password": new_password,
+    })
+    assert r.status_code == 200
+    assert r.json()["message"] == "Password reset successfully. Please log in."
+
+    # Login with new password succeeds
+    r = client.post("/auth/login", json={"email": email, "password": new_password})
+    assert r.status_code == 200
+    assert "token" in r.json()
+
+    # Login with old password fails
+    r = client.post("/auth/login", json={"email": email, "password": old_password})
+    assert r.status_code == 401
+
+
+def test_reset_password_invalid_token(client):
+    """Bad token returns 400."""
+    r = client.post("/auth/reset-password", json={
+        "token": "a" * 64,
+        "new_password": "ValidPass1",
+    })
+    assert r.status_code == 400
+    assert r.json()["detail"] == "Invalid or expired reset token"
+
+
+def test_reset_password_expired_token(client):
+    """Expired token returns 400."""
+    email = f"expired-{uuid.uuid4().hex[:8]}@governlayer.test"
+
+    # Register
+    client.post("/auth/register", json={
+        "email": email,
+        "password": "OldPass123",
+        "company": "ExpiredCorp",
+    })
+
+    # Request reset
+    client.post("/auth/forgot-password", json={"email": email})
+
+    # Manually expire the token in DB
+    db = SessionLocal()
+    user = db.query(User).filter(User.email == email).first()
+    token = user.reset_token
+    user.reset_token_expires_at = datetime.utcnow() - timedelta(hours=1)
+    db.commit()
+    db.close()
+
+    # Attempt reset with expired token
+    r = client.post("/auth/reset-password", json={
+        "token": token,
+        "new_password": "NewPass456",
+    })
+    assert r.status_code == 400
+    assert r.json()["detail"] == "Invalid or expired reset token"

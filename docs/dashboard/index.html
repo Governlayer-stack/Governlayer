@@ -632,7 +632,7 @@ async function loadOverview() {
     document.getElementById('ov-models').textContent = d.models.total;
     document.getElementById('ov-models-sub').textContent = d.models.production_count + ' in production';
     document.getElementById('ov-incidents').textContent = d.incidents.open;
-    document.getElementById('ov-incidents-sub').textContent = d.incidents.critical_count + ' critical';
+    document.getElementById('ov-incidents-sub').textContent = d.incidents.critical_open + ' critical';
     document.getElementById('incBadge').textContent = d.incidents.open || '';
     document.getElementById('ov-risk-val').textContent = Math.round(d.models.average_risk_score || 0);
     document.getElementById('ov-gauge').style.setProperty('--pct', d.models.average_risk_score || 0);
@@ -655,16 +655,18 @@ async function loadOverview() {
       ).join('');
     }
   }
-  // Compliance bars
-  const compData = [
-    {name:'EU AI Act',pct:83},{name:'NIST AI RMF',pct:91},{name:'ISO 42001',pct:78},
-    {name:'SOC 2',pct:88},{name:'HIPAA',pct:95},{name:'GDPR',pct:72}
+  // Compliance bars — live data from report generators
+  const compSummary = await apiFetch('/v1/reports/compliance-summary?system_name=organization');
+  const compData = compSummary && compSummary.frameworks ? compSummary.frameworks : [
+    {name:'EU AI Act',pct:0},{name:'NIST AI RMF',pct:0},{name:'ISO 42001',pct:0},
+    {name:'SOC 2',pct:0},{name:'HIPAA',pct:0},{name:'GDPR',pct:0}
   ];
   document.getElementById('ov-compliance-bars').innerHTML = compData.map(c => {
-    const col = c.pct >= 80 ? 'var(--accent)' : 'var(--yellow)';
+    const col = c.pct >= 80 ? 'var(--accent)' : c.pct >= 50 ? 'var(--yellow)' : 'var(--red)';
     return `<div class="compliance-item"><span class="compliance-name">${c.name}</span><div class="compliance-bar"><div class="fill" style="width:${c.pct}%;background:${col}"></div></div><span class="compliance-pct" style="color:${col}">${c.pct}%</span></div>`;
   }).join('');
-  document.getElementById('ov-comp-avg').textContent = Math.round(compData.reduce((s,c)=>s+c.pct,0)/compData.length) + '% avg';
+  const compAvg = compSummary && compSummary.average ? compSummary.average : Math.round(compData.reduce((s,c)=>s+c.pct,0)/compData.length);
+  document.getElementById('ov-comp-avg').textContent = compAvg + '% avg';
   // Frameworks
   if (fw) {
     document.getElementById('ov-frameworks').textContent = fw.total;

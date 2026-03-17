@@ -162,3 +162,20 @@ def test_report_default_framework(client):
     assert r.status_code == 200
     data = r.json()
     assert data["report_type"] == "EU AI Act Compliance"
+
+
+def test_compliance_summary(client):
+    """Compliance summary returns live scores for 6 key frameworks."""
+    r = client.get("/v1/reports/compliance-summary?system_name=test-system")
+    assert r.status_code == 200
+    data = r.json()
+    assert "frameworks" in data
+    assert "average" in data
+    assert len(data["frameworks"]) == 6
+    for fw in data["frameworks"]:
+        assert "id" in fw
+        assert "name" in fw
+        assert "pct" in fw
+        assert 0 <= fw["pct"] <= 100
+    # Average should be reasonable
+    assert 0 <= data["average"] <= 100

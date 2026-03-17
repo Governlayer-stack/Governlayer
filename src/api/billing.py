@@ -186,6 +186,13 @@ def billing_usage(org_slug: str, email: str = Depends(verify_token),
     # Estimate cost based on plan
     plan_prices = {"free": 0, "starter": 49, "pro": 199, "enterprise": 0}
 
+    # Monthly cap info
+    from src.middleware.rate_limit import PLAN_MONTHLY_CAPS
+    monthly_cap = PLAN_MONTHLY_CAPS.get(org.plan)
+    usage_percentage = None
+    if monthly_cap is not None and monthly_cap > 0:
+        usage_percentage = round((total / monthly_cap) * 100, 2)
+
     return {
         "org": org.slug,
         "plan": org.plan,
@@ -193,4 +200,6 @@ def billing_usage(org_slug: str, email: str = Depends(verify_token),
         "total_requests": total,
         "requests_by_endpoint": by_endpoint,
         "plan_cost_usd": plan_prices.get(org.plan, 0),
+        "monthly_cap": monthly_cap,
+        "usage_percentage": usage_percentage,
     }

@@ -67,6 +67,29 @@ def generate_report(data: ReportRequest):
     return generator()
 
 
+@router.get("/compliance-summary")
+def compliance_summary(system_name: str = "organization"):
+    """Quick compliance score summary across key frameworks — powers dashboard charts."""
+    key_frameworks = [
+        ("eu_ai_act", "EU AI Act", lambda: generate_eu_ai_act_report(system_name=system_name, risk_tier="high", context={})),
+        ("nist_ai_rmf", "NIST AI RMF", lambda: generate_nist_ai_rmf_report(system_name=system_name, context={})),
+        ("iso_42001", "ISO 42001", lambda: generate_iso_42001_report(system_name=system_name, context={})),
+        ("soc2", "SOC 2", lambda: generate_soc2_report(system_name=system_name, context={})),
+        ("hipaa", "HIPAA", lambda: generate_hipaa_report(system_name=system_name, context={})),
+        ("gdpr", "GDPR", lambda: generate_gdpr_report(system_name=system_name, context={})),
+    ]
+    scores = []
+    for fw_id, fw_name, gen in key_frameworks:
+        try:
+            report = gen()
+            score = report.get("compliance_score", 0)
+        except Exception:
+            score = 0
+        scores.append({"id": fw_id, "name": fw_name, "pct": score})
+    avg = round(sum(s["pct"] for s in scores) / len(scores), 1) if scores else 0
+    return {"frameworks": scores, "average": avg}
+
+
 @router.get("/frameworks")
 def list_report_frameworks():
     """List all 18 supported regulatory frameworks for report generation."""
