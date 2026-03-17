@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GovernLayer — AI Governance Control Plane</title>
 <meta name="description" content="The governance layer for AI. Compliance auditing, behavioral drift detection, risk scoring, and immutable audit ledgers. 25 frameworks. One API.">
-<meta name="theme-color" content="#0f0f13">
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a10;--bg2:#12121a;--bg3:#1a1a24;--bg4:#22222e;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
-  --text:#f0f0f5;--text2:#8a8a9a;--text3:#55556a;
-  --accent:#6ee7b7;--accent2:#818cf8;--accent3:#f472b6;
-  --gradient:linear-gradient(135deg,#6ee7b7 0%,#818cf8 50%,#f472b6 100%);
+  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#eef0f4;--bg4:#e4e7ed;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
+  --text:#111827;--text2:#4b5563;--text3:#9ca3af;
+  --accent:#059669;--accent2:#6366f1;--accent3:#ec4899;
+  --gradient:linear-gradient(135deg,#059669 0%,#6366f1 50%,#ec4899 100%);
   --radius:16px;--radius-sm:10px;
 }
 html{scroll-behavior:smooth}
@@ -27,38 +27,38 @@ code,pre{font-family:'JetBrains Mono',monospace}
 
 /* ========== ANIMATED BACKGROUND ========== */
 .mesh-gradient{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
-.mesh-gradient .orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.15;animation:float 20s ease-in-out infinite}
-.mesh-gradient .orb:nth-child(1){width:600px;height:600px;background:#6ee7b7;top:-200px;left:-100px;animation-delay:0s}
-.mesh-gradient .orb:nth-child(2){width:500px;height:500px;background:#818cf8;top:30%;right:-150px;animation-delay:-7s}
-.mesh-gradient .orb:nth-child(3){width:400px;height:400px;background:#f472b6;bottom:-100px;left:30%;animation-delay:-14s}
+.mesh-gradient .orb{position:absolute;border-radius:50%;filter:blur(140px);opacity:0.12;animation:float 20s ease-in-out infinite}
+.mesh-gradient .orb:nth-child(1){width:600px;height:600px;background:#a7f3d0;top:-200px;left:-100px;animation-delay:0s}
+.mesh-gradient .orb:nth-child(2){width:500px;height:500px;background:#c7d2fe;top:30%;right:-150px;animation-delay:-7s}
+.mesh-gradient .orb:nth-child(3){width:400px;height:400px;background:#fbcfe8;bottom:-100px;left:30%;animation-delay:-14s}
 @keyframes float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(40px,-30px) scale(1.05)}50%{transform:translate(-20px,40px) scale(0.95)}75%{transform:translate(30px,20px) scale(1.02)}}
 
 /* ========== NAV ========== */
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 24px;transition:all 0.3s}
-nav.scrolled{background:rgba(10,10,16,0.8);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border)}
+nav.scrolled{background:rgba(255,255,255,0.85);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border)}
 .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
 .logo{font-size:21px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:10px}
-.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#0a0a10}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff}
 .nav-links{display:flex;gap:8px;align-items:center}
 .nav-links a{color:var(--text2);font-size:14px;font-weight:500;padding:8px 16px;border-radius:8px;transition:all 0.2s}
-.nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.05)}
+.nav-links a:hover{color:var(--text);background:rgba(0,0,0,0.04)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;transition:all 0.25s;border:none;cursor:pointer;position:relative}
-.btn-primary{background:var(--text);color:var(--bg);font-weight:700}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(255,255,255,0.15)}
-.btn-ghost{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border2)}
-.btn-ghost:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2)}
-.btn-gradient{background:var(--gradient);color:#0a0a10;font-weight:700}
-.btn-gradient:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(110,231,183,0.2)}
+.btn-primary{background:var(--text);color:#fff;font-weight:700}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,0.15)}
+.btn-ghost{background:rgba(0,0,0,0.03);color:var(--text);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.18)}
+.btn-gradient{background:var(--gradient);color:#fff;font-weight:700}
+.btn-gradient:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(5,150,105,0.25)}
 .btn-lg{padding:14px 32px;font-size:16px;border-radius:var(--radius)}
 .btn svg{width:16px;height:16px}
 
 /* ========== HERO ========== */
 .hero{padding:180px 24px 140px;text-align:center;position:relative;z-index:1}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 6px 6px 8px;border-radius:100px;font-size:13px;font-weight:500;color:var(--text2);border:1px solid var(--border2);background:rgba(255,255,255,0.03);margin-bottom:32px;backdrop-filter:blur(8px)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 6px 6px 8px;border-radius:100px;font-size:13px;font-weight:500;color:var(--text2);border:1px solid var(--border2);background:rgba(0,0,0,0.02);margin-bottom:32px;backdrop-filter:blur(8px)}
 .hero-badge .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s ease-in-out infinite}
-.hero-badge .badge-tag{padding:3px 10px;border-radius:100px;background:rgba(110,231,183,0.1);color:var(--accent);font-size:12px;font-weight:600;margin-left:4px}
+.hero-badge .badge-tag{padding:3px 10px;border-radius:100px;background:rgba(5,150,105,0.1);color:var(--accent);font-size:12px;font-weight:600;margin-left:4px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.hero h1{font-size:clamp(44px,7vw,82px);font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:28px}
+.hero h1{font-size:clamp(44px,7vw,82px);font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:28px;color:var(--text)}
 .hero h1 .gradient-text{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero .subtitle{font-size:clamp(17px,2vw,20px);color:var(--text2);max-width:580px;margin:0 auto 44px;line-height:1.7;font-weight:400}
 .hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
@@ -78,25 +78,25 @@ nav.scrolled{background:rgba(10,10,16,0.8);backdrop-filter:blur(24px) saturate(1
 /* ========== BENTO GRID ========== */
 .bento-section{position:relative;z-index:1;padding:120px 24px}
 .bento-section .section-header{text-align:center;margin-bottom:64px}
-.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:16px;padding:6px 14px;border-radius:100px;border:1px solid rgba(110,231,183,0.15);background:rgba(110,231,183,0.05)}
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:16px;padding:6px 14px;border-radius:100px;border:1px solid rgba(5,150,105,0.2);background:rgba(5,150,105,0.06)}
 .section-title{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-2px;line-height:1.1}
 .section-desc{color:var(--text2);font-size:17px;max-width:520px;margin:20px auto 0;line-height:1.7}
 .bento-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto;gap:16px}
 .bento-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.16,1,0.3,1)}
-.bento-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,0.2)}
+.bento-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,0.06)}
 .bento-card.span-2{grid-column:span 2}
 .bento-card.tall{grid-row:span 2}
 .bento-card .card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px;font-weight:800}
-.icon-emerald{background:rgba(110,231,183,0.12);color:var(--accent)}
-.icon-indigo{background:rgba(129,140,248,0.12);color:var(--accent2)}
-.icon-pink{background:rgba(244,114,182,0.12);color:var(--accent3)}
+.icon-emerald{background:rgba(5,150,105,0.1);color:var(--accent)}
+.icon-indigo{background:rgba(99,102,241,0.1);color:var(--accent2)}
+.icon-pink{background:rgba(236,72,153,0.1);color:var(--accent3)}
 .bento-card h3{font-size:19px;font-weight:700;margin-bottom:10px;letter-spacing:-0.3px}
 .bento-card p{color:var(--text2);font-size:14px;line-height:1.75}
-.bento-card .card-visual{margin-top:24px;padding:20px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);line-height:1.8;overflow:hidden}
-.bento-card .card-visual .hl-green{color:var(--accent)}
-.bento-card .card-visual .hl-indigo{color:var(--accent2)}
-.bento-card .card-visual .hl-pink{color:var(--accent3)}
-.bento-card .card-visual .hl-dim{color:var(--text3)}
+.bento-card .card-visual{margin-top:24px;padding:20px;background:#1e1e2e;border-radius:var(--radius-sm);border:1px solid #2a2a3e;font-family:'JetBrains Mono',monospace;font-size:12px;color:#cdd6f4;line-height:1.8;overflow:hidden}
+.bento-card .card-visual .hl-green{color:#a6e3a1}
+.bento-card .card-visual .hl-indigo{color:#89b4fa}
+.bento-card .card-visual .hl-pink{color:#f38ba8}
+.bento-card .card-visual .hl-dim{color:#6c7086}
 .card-glow{position:absolute;top:0;right:0;width:200px;height:200px;border-radius:50%;filter:blur(80px);opacity:0.08;pointer-events:none}
 
 /* ========== HOW IT WORKS ========== */
@@ -105,41 +105,61 @@ nav.scrolled{background:rgba(10,10,16,0.8);backdrop-filter:blur(24px) saturate(1
 .timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
 .timeline::before{content:'';position:absolute;top:36px;left:calc(16.67% + 12px);right:calc(16.67% + 12px);height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));opacity:0.3;border-radius:2px}
 .timeline-step{text-align:center;position:relative}
-.step-number{width:72px;height:72px;border-radius:50%;background:var(--bg);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 28px;position:relative;z-index:1;transition:all 0.3s}
+.step-number{width:72px;height:72px;border-radius:50%;background:#fff;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 28px;position:relative;z-index:1;transition:all 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.04)}
 .timeline-step:nth-child(1) .step-number{color:var(--accent)}
 .timeline-step:nth-child(2) .step-number{color:var(--accent2)}
 .timeline-step:nth-child(3) .step-number{color:var(--accent3)}
 .timeline-step:hover .step-number{border-color:currentColor;transform:scale(1.08)}
 .timeline-step h3{font-size:18px;font-weight:700;margin-bottom:12px;letter-spacing:-0.3px}
 .timeline-step p{color:var(--text2);font-size:14px;line-height:1.7;max-width:300px;margin:0 auto}
-.step-endpoint{display:inline-block;margin-top:16px;padding:6px 14px;border-radius:8px;background:var(--bg);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}
+.step-endpoint{display:inline-block;margin-top:16px;padding:6px 14px;border-radius:8px;background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.15);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)}
 
-/* ========== API DEMO ========== */
+/* ========== LIVE API PLAYGROUND ========== */
 .api-section{position:relative;z-index:1;padding:120px 24px}
 .api-section .section-header{text-align:center;margin-bottom:64px}
-.api-demo{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1000px;margin:0 auto}
-.code-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.code-panel-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.code-panel-header .dots{display:flex;gap:6px}
-.code-panel-header .dot{width:10px;height:10px;border-radius:50%}
-.dot-red{background:#ff5f57}.dot-yellow{background:#febc2e}.dot-green{background:#28c840}
-.code-panel-header .panel-title{margin-left:auto;font-size:12px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:1px}
-.code-panel pre{padding:24px;margin:0;font-size:13px;line-height:1.9;overflow-x:auto}
-.code-panel pre .cm{color:var(--text3)}
-.code-panel pre .str{color:var(--accent)}
-.code-panel pre .key{color:var(--accent2)}
-.code-panel pre .val{color:var(--accent3)}
-.code-panel pre .num{color:#fbbf24}
-.code-panel.response{background:rgba(110,231,183,0.02)}
+.playground{max-width:1000px;margin:0 auto;background:#1e1e2e;border:1px solid #2a2a3e;border-radius:var(--radius);overflow:hidden;color:#cdd6f4}
+.playground-toolbar{padding:16px 24px;border-bottom:1px solid #2a2a3e;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.endpoint-tabs{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.endpoint-tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:1px solid transparent;background:rgba(255,255,255,0.05);color:#9ca3af;font-family:'JetBrains Mono',monospace}
+.endpoint-tab:hover{background:rgba(255,255,255,0.08);color:#e2e8f0}
+.endpoint-tab.active{background:rgba(5,150,105,0.15);color:#6ee7b7;border-color:rgba(5,150,105,0.3)}
+.run-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:var(--gradient);color:#fff;transition:all 0.25s;display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif}
+.run-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(5,150,105,0.3)}
+.run-btn:active{transform:scale(0.97)}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+.run-btn svg{width:14px;height:14px}
+.playground-body{display:grid;grid-template-columns:1fr 1fr;min-height:340px}
+.panel{position:relative}
+.panel-header{padding:12px 20px;border-bottom:1px solid #2a2a3e;display:flex;align-items:center;justify-content:space-between}
+.panel-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#6c7086}
+.panel-meta{font-size:11px;color:#6c7086;font-family:'JetBrains Mono',monospace}
+.panel-meta .status-ok{color:#a6e3a1}
+.panel-meta .status-err{color:#f38ba8}
+.panel-meta .latency{color:#89b4fa}
+.panel:first-child{border-right:1px solid #2a2a3e}
+.panel pre{padding:20px;margin:0;font-size:12.5px;line-height:1.85;overflow-x:auto;min-height:260px;color:#bac2de}
+.panel pre .cm{color:#6c7086}
+.panel pre .str{color:#a6e3a1}
+.panel pre .key{color:#89b4fa}
+.panel pre .val{color:#f38ba8}
+.panel pre .num{color:#f9e2af}
+/* Loading spinner */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.2);border-top-color:#a6e3a1;border-radius:50%;animation:spin-fast 0.6s linear infinite}
+@keyframes spin-fast{to{transform:rotate(360deg)}}
+.response-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;color:#6c7086;gap:12px;font-size:14px}
+.response-placeholder .hint{font-size:12px;opacity:0.6}
+/* Typing effect for response */
+.typing-cursor::after{content:'_';animation:blink 0.8s step-end infinite;color:#a6e3a1}
+@keyframes blink{50%{opacity:0}}
 
 /* ========== PRICING ========== */
 .pricing-section{position:relative;z-index:1;padding:120px 24px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .pricing-section .section-header{text-align:center;margin-bottom:64px}
 .pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1100px;margin:0 auto}
-.price-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:36px;display:flex;flex-direction:column;transition:all 0.3s}
-.price-card:hover{border-color:var(--border2);transform:translateY(-2px)}
-.price-card.featured{border-color:rgba(129,140,248,0.4);background:linear-gradient(180deg,rgba(129,140,248,0.06) 0%,var(--bg) 100%);position:relative}
-.price-card.featured::before{content:'Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent2);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px}
+.price-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:36px;display:flex;flex-direction:column;transition:all 0.3s}
+.price-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.06)}
+.price-card.featured{border-color:rgba(99,102,241,0.3);background:linear-gradient(180deg,rgba(99,102,241,0.04) 0%,#fff 100%);position:relative}
+.price-card.featured::before{content:'Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:0.5px}
 .price-tier{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:12px}
 .price-amount{font-size:42px;font-weight:900;letter-spacing:-2px;margin-bottom:4px}
 .price-amount span{font-size:16px;font-weight:500;color:var(--text2);letter-spacing:0}
@@ -187,7 +207,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
   .bento-grid{grid-template-columns:1fr 1fr}
   .bento-card.span-2{grid-column:span 2}
   .pricing-grid{grid-template-columns:repeat(2,1fr)}
-  .api-demo{grid-template-columns:1fr}
+  .playground-body{grid-template-columns:1fr}
+  .panel:first-child{border-right:none;border-bottom:1px solid #2a2a3e}
   .timeline::before{display:none}
 }
 @media(max-width:768px){
@@ -392,49 +413,55 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
   </div>
 </section>
 
-<!-- API Demo -->
-<section class="api-section">
+<!-- Live API Playground -->
+<section class="api-section" id="playground">
   <div class="container">
     <div class="section-header">
-      <div class="section-tag reveal">Developer Experience</div>
-      <h2 class="section-title reveal reveal-delay-1">One API call. Full governance.</h2>
-      <p class="section-desc reveal reveal-delay-2">Clean REST API with comprehensive documentation. Ship governance in minutes.</p>
+      <div class="section-tag reveal">Live Playground</div>
+      <h2 class="section-title reveal reveal-delay-1">Try it now. Real API. Real responses.</h2>
+      <p class="section-desc reveal reveal-delay-2">Hit our live endpoints directly from this page. No signup required.</p>
     </div>
 
-    <div class="api-demo reveal reveal-delay-3">
-      <div class="code-panel">
-        <div class="code-panel-header">
-          <div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
-          <span class="panel-title">Request</span>
+    <div class="playground reveal reveal-delay-3">
+      <div class="playground-toolbar">
+        <div class="endpoint-tabs">
+          <button class="endpoint-tab active" data-endpoint="api" data-method="GET">GET /api</button>
+          <button class="endpoint-tab" data-endpoint="frameworks" data-method="GET">GET /frameworks</button>
+          <button class="endpoint-tab" data-endpoint="risk" data-method="POST">POST /risk-score</button>
+          <button class="endpoint-tab" data-endpoint="docs" data-method="GET">GET /docs</button>
         </div>
-<pre><span class="cm">// Run governance check</span>
-curl -X POST <span class="str">api.governlayer.ai/v1/govern</span> \
-  -H <span class="str">"Authorization: Bearer gl_..."</span> \
-  -d '{
-    <span class="key">"system_name"</span>: <span class="str">"loan-model"</span>,
-    <span class="key">"reasoning_trace"</span>: <span class="str">"Evaluating
-      credit score, income..."</span>,
-    <span class="key">"use_case"</span>: <span class="str">"loan_approval"</span>,
-    <span class="key">"handles_personal_data"</span>: <span class="val">true</span>,
-    <span class="key">"has_human_oversight"</span>: <span class="val">true</span>
-  }'</pre>
+        <button class="run-btn" id="runBtn" onclick="runApiCall()">
+          <svg viewBox="0 0 16 16" fill="currentColor"><polygon points="4,2 14,8 4,14"/></svg>
+          Run
+        </button>
       </div>
-      <div class="code-panel response">
-        <div class="code-panel-header">
-          <div class="dots"><div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div></div>
-          <span class="panel-title">Response</span>
+      <div class="playground-body">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-label">Request</span>
+            <span class="panel-meta" id="reqMethod">GET</span>
+          </div>
+          <pre id="requestPanel"><span class="cm">// Check API status</span>
+<span class="val">GET</span> <span class="str">https://api.governlayer.ai/api</span>
+
+<span class="cm">// No authentication required</span>
+<span class="cm">// No request body</span>
+
+<span class="key">Accept</span>: <span class="str">application/json</span></pre>
         </div>
-<pre>{
-  <span class="key">"decision"</span>: <span class="str">"APPROVED"</span>,
-  <span class="key">"risk_score"</span>: <span class="num">34</span>,
-  <span class="key">"drift"</span>: {
-    <span class="key">"coefficient"</span>: <span class="num">0.12</span>,
-    <span class="key">"status"</span>: <span class="str">"safe"</span>
-  },
-  <span class="key">"frameworks_checked"</span>: <span class="num">25</span>,
-  <span class="key">"ledger_hash"</span>: <span class="str">"a3f8c2..."</span>,
-  <span class="key">"latency_ms"</span>: <span class="num">47</span>
-}</pre>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-label">Response</span>
+            <span class="panel-meta" id="responseMeta"></span>
+          </div>
+          <div id="responsePanel">
+            <div class="response-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Click <strong>Run</strong> to hit the live API
+              <span class="hint">Response appears here in real-time</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -566,17 +593,15 @@ curl -X POST <span class="str">api.governlayer.ai/v1/govern</span> \
 </footer>
 
 <script>
-// Scroll-triggered reveal animations
+// ========== SCROLL REVEAL ==========
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
+    if (entry.isIntersecting) entry.target.classList.add('visible');
   });
 }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// Nav scroll effect
+// ========== NAV SCROLL ==========
 const nav = document.getElementById('nav');
 let ticking = false;
 window.addEventListener('scroll', () => {
@@ -589,7 +614,7 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// Smooth scroll for anchor links
+// ========== SMOOTH SCROLL ==========
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
@@ -598,7 +623,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// Animate stats on scroll
+// ========== STAT COUNTERS ==========
 const statObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -620,6 +645,171 @@ const statObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.5 });
 document.querySelectorAll('.stats-grid').forEach(el => statObserver.observe(el));
+
+// ========== LIVE API PLAYGROUND ==========
+const API_BASE = 'https://api.governlayer.ai';
+
+const ENDPOINTS = {
+  api: {
+    method: 'GET',
+    path: '/api',
+    request: `<span class="cm">// Check API status</span>\n<span class="val">GET</span> <span class="str">${API_BASE}/api</span>\n\n<span class="cm">// No authentication required</span>\n<span class="cm">// No request body</span>\n\n<span class="key">Accept</span>: <span class="str">application/json</span>`,
+  },
+  frameworks: {
+    method: 'GET',
+    path: '/frameworks',
+    request: `<span class="cm">// List all 25 compliance frameworks</span>\n<span class="val">GET</span> <span class="str">${API_BASE}/frameworks</span>\n\n<span class="cm">// No authentication required</span>\n<span class="cm">// Returns full framework registry</span>\n\n<span class="key">Accept</span>: <span class="str">application/json</span>`,
+  },
+  risk: {
+    method: 'POST',
+    path: '/risk-score',
+    body: {
+      system_name: 'demo-ai-model',
+      handles_personal_data: true,
+      makes_autonomous_decisions: true,
+      has_human_oversight: true,
+      is_transparent: true,
+      has_bias_testing: false,
+      critical_infrastructure: false
+    },
+    request: `<span class="cm">// Score risk across 6 dimensions</span>\n<span class="val">POST</span> <span class="str">${API_BASE}/risk-score</span>\n\n<span class="key">Content-Type</span>: <span class="str">application/json</span>\n\n{\n  <span class="key">"system_name"</span>: <span class="str">"demo-ai-model"</span>,\n  <span class="key">"handles_personal_data"</span>: <span class="val">true</span>,\n  <span class="key">"makes_autonomous_decisions"</span>: <span class="val">true</span>,\n  <span class="key">"has_human_oversight"</span>: <span class="val">true</span>,\n  <span class="key">"is_transparent"</span>: <span class="val">true</span>,\n  <span class="key">"has_bias_testing"</span>: <span class="val">false</span>,\n  <span class="key">"critical_infrastructure"</span>: <span class="val">false</span>\n}`,
+  },
+  docs: {
+    method: 'GET',
+    path: '/docs',
+    request: `<span class="cm">// Interactive Swagger UI</span>\n<span class="val">GET</span> <span class="str">${API_BASE}/docs</span>\n\n<span class="cm">// Opens in browser</span>\n<span class="cm">// Full OpenAPI documentation</span>\n<span class="cm">// Try all 42 endpoints</span>`,
+    redirect: true,
+  },
+};
+
+let activeEndpoint = 'api';
+
+// Tab switching
+document.querySelectorAll('.endpoint-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.endpoint-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeEndpoint = tab.dataset.endpoint;
+    const ep = ENDPOINTS[activeEndpoint];
+    document.getElementById('reqMethod').textContent = ep.method;
+    document.getElementById('requestPanel').innerHTML = ep.request;
+    document.getElementById('responseMeta').innerHTML = '';
+    document.getElementById('responsePanel').innerHTML = `<div class="response-placeholder">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Click <strong>Run</strong> to hit the live API
+      <span class="hint">Response appears here in real-time</span>
+    </div>`;
+  });
+});
+
+// Syntax highlight JSON
+function highlightJson(obj, indent) {
+  indent = indent || 0;
+  const pad = ' '.repeat(indent);
+  if (obj === null) return `<span class="val">null</span>`;
+  if (typeof obj === 'boolean') return `<span class="val">${obj}</span>`;
+  if (typeof obj === 'number') return `<span class="num">${obj}</span>`;
+  if (typeof obj === 'string') return `<span class="str">"${obj.length > 60 ? obj.slice(0, 57) + '...' : obj}"</span>`;
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return '[]';
+    const items = obj.map(item => pad + '  ' + highlightJson(item, indent + 2));
+    return '[\n' + items.join(',\n') + '\n' + pad + ']';
+  }
+  const keys = Object.keys(obj);
+  if (keys.length === 0) return '{}';
+  const entries = keys.map(k => {
+    return pad + '  ' + `<span class="key">"${k}"</span>: ` + highlightJson(obj[k], indent + 2);
+  });
+  return '{\n' + entries.join(',\n') + '\n' + pad + '}';
+}
+
+// Typewriter effect for response
+function typewrite(el, html, speed) {
+  speed = speed || 3;
+  return new Promise(resolve => {
+    let i = 0;
+    let inTag = false;
+    const write = () => {
+      let chunk = '';
+      let chars = 0;
+      while (i < html.length && chars < speed) {
+        const c = html[i];
+        if (c === '<') inTag = true;
+        if (inTag) { chunk += c; if (c === '>') inTag = false; }
+        else { chunk += c; chars++; }
+        i++;
+      }
+      el.innerHTML = html.slice(0, i);
+      if (i < html.length) requestAnimationFrame(write);
+      else resolve();
+    };
+    write();
+  });
+}
+
+// Run API call
+async function runApiCall() {
+  const ep = ENDPOINTS[activeEndpoint];
+  const btn = document.getElementById('runBtn');
+  const responsePanel = document.getElementById('responsePanel');
+  const responseMeta = document.getElementById('responseMeta');
+
+  // Docs - just open in new tab
+  if (ep.redirect) {
+    window.open(API_BASE + ep.path, '_blank');
+    responseMeta.innerHTML = '<span class="status-ok">Opened in new tab</span>';
+    responsePanel.innerHTML = `<pre style="min-height:260px"><span class="cm">// Swagger UI opened in new tab</span>\n<span class="cm">// Explore all 42 endpoints interactively</span>\n\n<span class="str">Visit: ${API_BASE}/docs</span></pre>`;
+    return;
+  }
+
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Running...';
+  responseMeta.innerHTML = '<span class="latency">connecting...</span>';
+  responsePanel.innerHTML = `<pre style="min-height:260px" class="typing-cursor"><span class="cm">// Waiting for response from api.governlayer.ai...</span>\n</pre>`;
+
+  const start = performance.now();
+
+  try {
+    const opts = { method: ep.method, headers: { 'Accept': 'application/json' } };
+    if (ep.body) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(ep.body);
+    }
+
+    const res = await fetch(API_BASE + ep.path, opts);
+    const elapsed = Math.round(performance.now() - start);
+    const data = await res.json();
+
+    // Show status + latency
+    const statusClass = res.ok ? 'status-ok' : 'status-err';
+    responseMeta.innerHTML = `<span class="${statusClass}">${res.status} ${res.statusText}</span> &middot; <span class="latency">${elapsed}ms</span>`;
+
+    // Typewrite the highlighted JSON
+    const highlighted = highlightJson(data);
+    const pre = document.createElement('pre');
+    pre.style.minHeight = '260px';
+    responsePanel.innerHTML = '';
+    responsePanel.appendChild(pre);
+    await typewrite(pre, highlighted, 4);
+
+  } catch (err) {
+    const elapsed = Math.round(performance.now() - start);
+    responseMeta.innerHTML = `<span class="status-err">Error</span> &middot; <span class="latency">${elapsed}ms</span>`;
+    responsePanel.innerHTML = `<pre style="min-height:260px"><span class="val">// Network error</span>\n<span class="str">"${err.message}"</span>\n\n<span class="cm">// The API may be redeploying.</span>\n<span class="cm">// Try again in a few seconds.</span></pre>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 16 16" fill="currentColor"><polygon points="4,2 14,8 4,14"/></svg> Run';
+}
+
+// Keyboard shortcut: Ctrl+Enter to run
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runApiCall();
+  }
+});
 </script>
 </body>
 </html>
