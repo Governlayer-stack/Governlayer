@@ -64,6 +64,29 @@ class RiskScoreRecord(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
 
+class MutationLog(Base):
+    """Tracks who changed what across all entities."""
+    __tablename__ = "mutation_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    actor = Column(String(255), nullable=False)  # email or api key identity
+    action = Column(String(50), nullable=False)   # create, update, delete
+    resource_type = Column(String(100), nullable=False)  # model, incident, agent, etc.
+    resource_id = Column(String(100), nullable=True)
+    details = Column(Text, nullable=True)  # JSON summary of what changed
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+
+def log_mutation(db, actor: str, action: str, resource_type: str,
+                 resource_id=None, details: str | None = None):
+    """Record a mutation in the audit trail."""
+    entry = MutationLog(
+        actor=actor, action=action, resource_type=resource_type,
+        resource_id=str(resource_id) if resource_id else None,
+        details=details,
+    )
+    db.add(entry)
+
+
 def get_db():
     db = SessionLocal()
     try:

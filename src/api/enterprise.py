@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from src.models.database import get_db
+from src.models.database import get_db, MutationLog
 from src.models.tenant import ApiKey, Organization, UsageRecord, Webhook, generate_api_key
 from src.security.auth import verify_token
 
@@ -227,3 +227,37 @@ def delete_webhook(slug: str, webhook_id: int, email: str = Depends(verify_token
     hook.is_active = False
     db.commit()
     return {"message": "Webhook deactivated"}
+
+
+# --- Mutation Audit Log ---
+
+@router.get("/audit-log")
+def get_mutation_log(resource_type: str | None = None, actor: str | None = None,
+                     page: int = 1, limit: int = 50,
+                     email: str = Depends(verify_token), db: Session = Depends(get_db)):
+    """View the mutation audit trail — who changed what and when."""
+    query = db.query(MutationLog)
+    if resource_type:
+        query = query.filter(MutationLog.resource_type == resource_type)
+    if actor:
+        query = query.filter(MutationLog.actor.ilike(f"%{actor}%"))
+    total = query.count()
+    entries = query.order_by(MutationLog.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit,
+        "entries": [
+            {
+                "id": e.id,
+                "actor": e.actor,
+                "action": e.action,
+                "resource_type": e.resource_type,
+                "resource_id": e.resource_id,
+                "details": e.details,
+                "created_at": e.created_at.isoformat(),
+            }
+            for e in entries
+        ],
+    }

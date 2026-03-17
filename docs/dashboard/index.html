@@ -122,8 +122,38 @@ select.form-input{appearance:auto}
     <div class="nav-item" data-page="security"><span class="icon">&#128274;</span> Security</div>
     <div class="nav-item" data-page="status"><span class="icon">&#128994;</span> Status</div>
   </div>
-  <div class="sidebar-footer">GovernLayer v2.0<br><span style="color:var(--text3)">Enterprise AI Governance</span></div>
+  <div class="sidebar-footer">
+    <div style="margin-bottom:8px;font-size:11px;color:var(--text3)" id="sidebar-user"></div>
+    <button onclick="doLogout()" style="background:none;border:1px solid var(--border2);color:var(--text2);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;width:100%">Logout</button>
+  </div>
 </aside>
+
+<!-- Login Screen -->
+<div id="loginScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center">
+  <div style="width:380px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#00ffaa,#7b61ff);display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#08080c;margin-bottom:16px">G</div>
+      <div style="font-size:20px;font-weight:800">GovernLayer</div>
+      <div style="font-size:13px;color:var(--text2);margin-top:4px">Sign in to your governance dashboard</div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" placeholder="you@company.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-group" id="login-company-group" style="display:none"><label>Company</label><input type="text" id="login-company" class="form-input" placeholder="Your Company"></div>
+    <div id="login-error" style="color:var(--red);font-size:13px;margin-bottom:12px;min-height:18px"></div>
+    <button onclick="doLogin()" class="btn-sm btn-accent" style="width:100%;padding:12px;font-size:14px">Sign In</button>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2)">
+      No account? <a href="#" onclick="document.getElementById('login-company-group').style.display='block';this.parentElement.innerHTML='<span style=color:var(--text3)>Fill in details and click Register</span>';return false" style="color:var(--accent)">Register</a>
+      <div style="margin-top:8px"><button onclick="doRegister()" class="btn-sm btn-outline" style="display:none;width:100%;padding:10px" id="register-btn">Create Account</button></div>
+    </div>
+    <script>
+      // Show register button when company field is visible
+      const co = document.getElementById('login-company-group');
+      new MutationObserver(() => {
+        document.getElementById('register-btn').style.display = co.style.display === 'none' ? 'none' : 'block';
+      }).observe(co, { attributes: true, attributeFilter: ['style'] });
+    </script>
+  </div>
+</div>
 
 <main class="main" id="mainContent">
 
@@ -465,6 +495,77 @@ select.form-input{appearance:auto}
 
 <script>
 const API = window.location.origin;
+let AUTH_TOKEN = localStorage.getItem('gl_token') || '';
+
+// --- Login Gate ---
+function showLogin() {
+  document.querySelector('.sidebar').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function hideLogin() {
+  document.querySelector('.sidebar').style.display = 'flex';
+  document.getElementById('mainContent').style.display = 'block';
+  document.getElementById('loginScreen').style.display = 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Email and password required'; return; }
+  try {
+    const resp = await fetch(API + '/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!resp.ok) { const d = await resp.json().catch(()=>({})); errEl.textContent = d.detail || 'Login failed'; return; }
+    const data = await resp.json();
+    AUTH_TOKEN = data.token;
+    localStorage.setItem('gl_token', AUTH_TOKEN);
+    localStorage.setItem('gl_email', data.email);
+    hideLogin();
+    loadOverview();
+  } catch (e) { errEl.textContent = 'Connection error'; }
+}
+
+async function doRegister() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const company = document.getElementById('login-company').value || 'My Company';
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Email and password required'; return; }
+  try {
+    const resp = await fetch(API + '/auth/register', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, company })
+    });
+    if (!resp.ok) { const d = await resp.json().catch(()=>({})); errEl.textContent = d.detail || 'Registration failed'; return; }
+    const data = await resp.json();
+    AUTH_TOKEN = data.token;
+    localStorage.setItem('gl_token', AUTH_TOKEN);
+    localStorage.setItem('gl_email', data.email);
+    hideLogin();
+    loadOverview();
+  } catch (e) { errEl.textContent = 'Connection error'; }
+}
+
+function doLogout() {
+  AUTH_TOKEN = '';
+  localStorage.removeItem('gl_token');
+  localStorage.removeItem('gl_email');
+  showLogin();
+}
+
+// Check auth on load
+if (!AUTH_TOKEN) { showLogin(); } else {
+  hideLogin();
+  const savedEmail = localStorage.getItem('gl_email');
+  if (savedEmail) document.getElementById('sidebar-user').textContent = savedEmail;
+}
 
 // Navigation
 document.querySelectorAll('.nav-item[data-page]').forEach(item => {
@@ -496,9 +597,12 @@ function toast(msg, isError) {
   setTimeout(() => t.remove(), 3000);
 }
 
-async function apiFetch(path, opts) {
+async function apiFetch(path, opts = {}) {
   try {
-    const resp = await fetch(API + path, { headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, ...opts });
+    const headers = { Accept: 'application/json', 'Content-Type': 'application/json' };
+    if (AUTH_TOKEN) headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
+    const resp = await fetch(API + path, { headers, ...opts });
+    if (resp.status === 401) { doLogout(); toast('Session expired — please log in again', true); return null; }
     if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
     return await resp.json();
   } catch (e) {
