@@ -8,7 +8,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from src.api import achonye, audit, auth, automation, billing, enterprise, governance, ledger, risk, threats, v1
+from src.api import (
+    achonye, analytics, audit, auth, automation, billing, dashboard,
+    enterprise, governance, incidents, ledger, policies, registry,
+    reports, risk, threats, v1,
+)
 from src.config import get_settings
 from src.models.database import create_tables
 from src.models.schemas import DriftRequest
@@ -83,6 +87,12 @@ def create_app() -> FastAPI:
     app.include_router(enterprise.router)
     app.include_router(billing.router)
     app.include_router(v1.router)
+    app.include_router(registry.router)
+    app.include_router(incidents.router)
+    app.include_router(analytics.router)
+    app.include_router(policies.router)
+    app.include_router(reports.router)
+    app.include_router(dashboard.router)
 
     @app.on_event("startup")
     def startup():

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#08080c;--bg2:#0e0e14;--bg3:#16161e;--bg4:#1e1e28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#eeeef0;--text2:#7a7a8e;--text3:#44445a;--accent:#00ffaa;--accent2:#7b61ff;--accent3:#ff3d8e;--red:#ef4444;--yellow:#fbbf24;--radius:12px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+code{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* Sidebar */
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-logo{padding:0 20px 24px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sidebar-logo .mark{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#00ffaa,#7b61ff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#08080c}
+.nav-section{padding:0 12px;margin-bottom:16px}
+.nav-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:8px 8px 4px;margin-bottom:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text)}
+.nav-item.active{background:rgba(0,255,170,0.08);color:var(--accent)}
+.nav-item .icon{width:18px;text-align:center;font-size:14px}
+.nav-item .badge{margin-left:auto;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(255,61,142,0.15);color:var(--accent3)}
+.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
+
+/* Main */
+.main{margin-left:240px;flex:1;padding:24px 32px;overflow-y:auto}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.page-title{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+.page-subtitle{font-size:14px;color:var(--text2);margin-top:4px}
+.header-actions{display:flex;gap:8px}
+.btn-sm{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s}
+.btn-accent{background:var(--accent);color:#08080c}.btn-accent:hover{opacity:0.9}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border2)}.btn-outline:hover{border-color:var(--text2)}
+
+/* Stats Row */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.stat-card .stat-label{font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.stat-card .stat-value{font-size:28px;font-weight:800;letter-spacing:-1px}
+.stat-card .stat-change{font-size:12px;margin-top:4px;font-weight:500}
+.stat-card .stat-change.up{color:var(--accent)}
+.stat-card .stat-change.down{color:var(--red)}
+
+/* Panels */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:14px;font-weight:700}
+.panel-body{padding:20px}
+
+/* Table */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
+td{font-size:13px;padding:12px;border-bottom:1px solid var(--border);color:var(--text2)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(0,255,170,0.1);color:var(--accent)}
+.badge-yellow{background:rgba(251,191,36,0.1);color:var(--yellow)}
+.badge-red{background:rgba(239,68,68,0.1);color:var(--red)}
+.badge-purple{background:rgba(123,97,255,0.1);color:var(--accent2)}
+.badge-pink{background:rgba(255,61,142,0.1);color:var(--accent3)}
+
+/* Compliance Bars */
+.compliance-item{display:flex;align-items:center;gap:12px;padding:8px 0}
+.compliance-name{font-size:13px;font-weight:500;width:120px;flex-shrink:0}
+.compliance-bar{flex:1;height:6px;border-radius:3px;background:var(--bg);overflow:hidden}
+.compliance-bar .fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.compliance-pct{font-size:12px;font-weight:700;width:40px;text-align:right}
+
+/* Risk Gauge */
+.gauge-container{display:flex;flex-direction:column;align-items:center;padding:20px 0}
+.gauge-ring{width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--accent) 0deg,var(--accent) calc(var(--pct) * 3.6deg),var(--bg) calc(var(--pct) * 3.6deg));display:flex;align-items:center;justify-content:center;position:relative}
+.gauge-ring::after{content:'';position:absolute;width:110px;height:110px;border-radius:50%;background:var(--bg2)}
+.gauge-value{position:relative;z-index:1;font-size:32px;font-weight:900;letter-spacing:-1px}
+.gauge-label{margin-top:12px;font-size:13px;color:var(--text2);font-weight:500}
+
+/* Activity */
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.activity-text{font-size:13px;color:var(--text2);line-height:1.5}
+.activity-text strong{color:var(--text);font-weight:600}
+.activity-time{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* Charts (CSS-only bar chart) */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:10px}
+.bar{flex:1;background:var(--accent);border-radius:4px 4px 0 0;transition:height 0.4s ease;position:relative;min-width:20px;opacity:0.7}
+.bar:hover{opacity:1}
+.bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text3);white-space:nowrap}
+
+/* Responsive */
+@media(max-width:1200px){.stats-row{grid-template-columns:repeat(3,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="mark">G</div>
+    GovernLayer
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Overview</div>
+    <div class="nav-item active" onclick="showPage('overview')"><span class="icon">&#9632;</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('models')"><span class="icon">&#9670;</span> Model Registry</div>
+    <div class="nav-item" onclick="showPage('incidents')"><span class="icon">&#9888;</span> Incidents <span class="badge">3</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Governance</div>
+    <div class="nav-item" onclick="showPage('compliance')"><span class="icon">&#10003;</span> Compliance</div>
+    <div class="nav-item" onclick="showPage('drift')"><span class="icon">&#8635;</span> Drift Monitor</div>
+    <div class="nav-item" onclick="showPage('fairness')"><span class="icon">&#9878;</span> Fairness</div>
+    <div class="nav-item" onclick="showPage('policies')"><span class="icon">&#9881;</span> Policies</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Tools</div>
+    <div class="nav-item" onclick="window.open('https://api.governlayer.ai/docs','_blank')"><span class="icon">&#128196;</span> API Docs</div>
+    <div class="nav-item" onclick="showPage('playground')"><span class="icon">&#9654;</span> Playground</div>
+    <div class="nav-item" onclick="showPage('reports')"><span class="icon">&#128202;</span> Reports</div>
+  </div>
+  <div class="sidebar-footer">
+    GovernLayer v2.0<br>
+    <a href="https://api.governlayer.ai" style="color:var(--text3)">api.governlayer.ai</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main" id="mainContent">
+
+  <!-- OVERVIEW PAGE -->
+  <div id="page-overview">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Governance Dashboard</div>
+        <div class="page-subtitle">Real-time AI governance monitoring and compliance</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-sm btn-outline" onclick="refreshData()">Refresh</button>
+        <button class="btn-sm btn-accent" onclick="window.open('https://api.governlayer.ai/docs','_blank')">API Docs</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-label">Models Governed</div>
+        <div class="stat-value" id="statModels">--</div>
+        <div class="stat-change up" id="statModelsChange"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Frameworks</div>
+        <div class="stat-value" id="statFrameworks">--</div>
+        <div class="stat-change up">25 active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">API Status</div>
+        <div class="stat-value" id="statStatus" style="color:var(--accent)">--</div>
+        <div class="stat-change" id="statLatency"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open Incidents</div>
+        <div class="stat-value" id="statIncidents" style="color:var(--accent3)">3</div>
+        <div class="stat-change down">1 critical</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg Risk Score</div>
+        <div class="stat-value" id="statRisk">34</div>
+        <div class="stat-change up">Low risk</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid-2">
+      <!-- Compliance Overview -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Compliance Posture</span>
+          <span class="badge badge-green">85% avg</span>
+        </div>
+        <div class="panel-body">
+          <div class="compliance-item">
+            <span class="compliance-name">EU AI Act</span>
+            <div class="compliance-bar"><div class="fill" style="width:83%;background:var(--accent)"></div></div>
+            <span class="compliance-pct" style="color:var(--accent)">83%</span>
+          </div>
+          <div class="compliance-item">
+            <span class="compliance-name">NIST AI RMF</span>
+            <div class="compliance-bar"><div class="fill" style="width:91%;background:var(--accent)"></div></div>
+            <span class="compliance-pct" style="color:var(--accent)">91%</span>
+          </div>
+          <div class="compliance-item">
+            <span class="compliance-name">ISO 42001</span>
+            <div class="compliance-bar"><div class="fill" style="width:78%;background:var(--yellow)"></div></div>
+            <span class="compliance-pct" style="color:var(--yellow)">78%</span>
+          </div>
+          <div class="compliance-item">
+            <span class="compliance-name">SOC 2</span>
+            <div class="compliance-bar"><div class="fill" style="width:88%;background:var(--accent)"></div></div>
+            <span class="compliance-pct" style="color:var(--accent)">88%</span>
+          </div>
+          <div class="compliance-item">
+            <span class="compliance-name">HIPAA</span>
+            <div class="compliance-bar"><div class="fill" style="width:95%;background:var(--accent)"></div></div>
+            <span class="compliance-pct" style="color:var(--accent)">95%</span>
+          </div>
+          <div class="compliance-item">
+            <span class="compliance-name">GDPR</span>
+            <div class="compliance-bar"><div class="fill" style="width:72%;background:var(--yellow)"></div></div>
+            <span class="compliance-pct" style="color:var(--yellow)">72%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk Gauge + Activity -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Risk Overview</span>
+          <span class="badge badge-green">Low</span>
+        </div>
+        <div class="panel-body" style="display:flex;gap:24px">
+          <div class="gauge-container" style="flex-shrink:0">
+            <div class="gauge-ring" style="--pct:34">
+              <span class="gauge-value">34</span>
+            </div>
+            <div class="gauge-label">Avg Risk Score</div>
+          </div>
+          <div style="flex:1;font-size:13px">
+            <div style="margin-bottom:12px"><strong>Risk Breakdown</strong></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">Privacy</span><span style="color:var(--accent)">Low</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">Autonomy</span><span style="color:var(--yellow)">Medium</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">Infrastructure</span><span style="color:var(--accent)">Low</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">Oversight</span><span style="color:var(--accent)">Low</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">Transparency</span><span style="color:var(--accent)">Low</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--text2)">Fairness</span><span style="color:var(--yellow)">Medium</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model Registry Preview + Recent Activity -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Model Registry</span>
+          <button class="btn-sm btn-outline" onclick="showPage('models')" style="font-size:12px;padding:4px 12px">View All</button>
+        </div>
+        <table>
+          <thead><tr><th>Model</th><th>Version</th><th>Lifecycle</th><th>Risk</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--text);font-weight:600">loan-approval-v3</td><td><code>3.2.1</code></td><td><span class="badge badge-green">Production</span></td><td>34</td><td><span class="badge badge-green">Approved</span></td></tr>
+            <tr><td style="color:var(--text);font-weight:600">fraud-detector</td><td><code>2.1.0</code></td><td><span class="badge badge-green">Production</span></td><td>45</td><td><span class="badge badge-green">Approved</span></td></tr>
+            <tr><td style="color:var(--text);font-weight:600">content-moderator</td><td><code>1.5.0</code></td><td><span class="badge badge-purple">Staging</span></td><td>62</td><td><span class="badge badge-yellow">Review</span></td></tr>
+            <tr><td style="color:var(--text);font-weight:600">resume-screener</td><td><code>0.9.0</code></td><td><span class="badge badge-yellow">Development</span></td><td>78</td><td><span class="badge badge-red">Blocked</span></td></tr>
+            <tr><td style="color:var(--text);font-weight:600">chatbot-support</td><td><code>4.0.0</code></td><td><span class="badge badge-green">Production</span></td><td>22</td><td><span class="badge badge-green">Approved</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Activity</span>
+          <span style="font-size:12px;color:var(--text3)">Live</span>
+        </div>
+        <div class="panel-body">
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--accent)"></div>
+            <div><div class="activity-text"><strong>loan-approval-v3</strong> passed governance check. Risk: 34, Drift: 0.08</div><div class="activity-time">2 minutes ago</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--accent3)"></div>
+            <div><div class="activity-text"><strong>resume-screener</strong> blocked — fairness score below threshold (52/100)</div><div class="activity-time">15 minutes ago</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--yellow)"></div>
+            <div><div class="activity-text"><strong>content-moderator</strong> flagged for review — drift coefficient 0.28</div><div class="activity-time">1 hour ago</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--accent2)"></div>
+            <div><div class="activity-text"><strong>Incident #47</strong> created — data drift detected in fraud-detector inputs</div><div class="activity-time">2 hours ago</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--accent)"></div>
+            <div><div class="activity-text"><strong>EU AI Act report</strong> generated for loan-approval-v3 — 83% compliant</div><div class="activity-time">3 hours ago</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Usage + Governance Pipeline -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">API Requests (7 days)</span>
+        </div>
+        <div class="panel-body">
+          <div class="bar-chart">
+            <div class="bar" style="height:45%"><span class="bar-label">Mon</span></div>
+            <div class="bar" style="height:62%"><span class="bar-label">Tue</span></div>
+            <div class="bar" style="height:78%"><span class="bar-label">Wed</span></div>
+            <div class="bar" style="height:55%"><span class="bar-label">Thu</span></div>
+            <div class="bar" style="height:90%"><span class="bar-label">Fri</span></div>
+            <div class="bar" style="height:35%;background:var(--accent2)"><span class="bar-label">Sat</span></div>
+            <div class="bar" style="height:28%;background:var(--accent2)"><span class="bar-label">Sun</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Governance Pipeline</span>
+        </div>
+        <div class="panel-body" style="display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap">
+          <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">DRIFT</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">0.08</div>
+          </div>
+          <span style="color:var(--text3);font-size:18px">&#8594;</span>
+          <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">RISK</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">34</div>
+          </div>
+          <span style="color:var(--text3);font-size:18px">&#8594;</span>
+          <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">POLICY</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">PASS</div>
+          </div>
+          <span style="color:var(--text3);font-size:18px">&#8594;</span>
+          <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">DECISION</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">APPROVED</div>
+          </div>
+          <span style="color:var(--text3);font-size:18px">&#8594;</span>
+          <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">LEDGER</div>
+            <div style="font-size:14px;font-weight:600;color:var(--accent2);font-family:'JetBrains Mono',monospace">a3f8c2...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frameworks Supported -->
+    <div class="panel" style="margin-bottom:24px">
+      <div class="panel-header">
+        <span class="panel-title">Supported Frameworks</span>
+        <span class="badge badge-green" id="fwCount">Loading...</span>
+      </div>
+      <div class="panel-body" id="frameworksList" style="display:flex;flex-wrap:wrap;gap:8px">
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const API = 'https://api.governlayer.ai';
+
+// Fetch live data on load
+async function refreshData() {
+  try {
+    // API Status
+    const t0 = performance.now();
+    const statusResp = await fetch(API + '/api', {headers:{Accept:'application/json'}});
+    const latency = Math.round(performance.now() - t0);
+    const status = await statusResp.json();
+
+    document.getElementById('statStatus').textContent = status.status === 'operational' ? 'Live' : status.status;
+    document.getElementById('statLatency').textContent = latency + 'ms response';
+    document.getElementById('statLatency').className = 'stat-change up';
+    document.getElementById('statFrameworks').textContent = status.frameworks || 25;
+
+    // Frameworks
+    const fwResp = await fetch(API + '/frameworks');
+    const fwData = await fwResp.json();
+    const fwList = document.getElementById('frameworksList');
+    const fwCount = document.getElementById('fwCount');
+    fwList.innerHTML = '';
+    fwCount.textContent = fwData.total + ' frameworks';
+    (fwData.frameworks || []).forEach(fw => {
+      const el = document.createElement('span');
+      el.className = 'badge badge-purple';
+      el.style.fontSize = '11px';
+      el.textContent = fw.replace(/_/g, ' ');
+      fwList.appendChild(el);
+    });
+
+    // Dashboard healthcheck
+    try {
+      const dashResp = await fetch(API + '/v1/dashboard');
+      const dashData = await dashResp.json();
+      const d = dashData.dashboard;
+
+      // Health score
+      const healthEl = document.getElementById('statStatus');
+      healthEl.textContent = d.health.status.charAt(0).toUpperCase() + d.health.status.slice(1);
+      if (d.health.status === 'healthy') healthEl.style.color = 'var(--accent)';
+      else if (d.health.status === 'warning') healthEl.style.color = 'var(--yellow)';
+      else healthEl.style.color = 'var(--red)';
+      document.getElementById('statLatency').textContent = 'Health: ' + d.health.score + '/100';
+      document.getElementById('statLatency').className = d.health.score >= 70 ? 'stat-change up' : 'stat-change down';
+
+      // Models
+      document.getElementById('statModels').textContent = d.models.total;
+      document.getElementById('statModelsChange').textContent = d.models.production_count + ' in production';
+
+      // Incidents
+      if (document.getElementById('statIncidents')) {
+        document.getElementById('statIncidents').textContent = d.incidents.open;
+      }
+
+      // Risk
+      if (document.getElementById('statRisk')) {
+        document.getElementById('statRisk').textContent = d.models.average_risk_score || '—';
+      }
+
+      // Health issues
+      if (d.health.issues.length > 0) {
+        const issueList = d.health.issues.map(i => '<div style="font-size:12px;color:var(--yellow);padding:4px 0">⚠ ' + i + '</div>').join('');
+        const panel = document.getElementById('healthIssues');
+        if (panel) panel.innerHTML = issueList;
+      }
+    } catch(e2) {
+      document.getElementById('statModels').textContent = '—';
+      document.getElementById('statModelsChange').textContent = 'Dashboard API unavailable';
+    }
+
+  } catch(e) {
+    document.getElementById('statStatus').textContent = 'Error';
+    document.getElementById('statStatus').style.color = 'var(--red)';
+  }
+}
+
+// Page navigation (placeholder for SPA)
+function showPage(page) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.target.closest('.nav-item').classList.add('active');
+  if (page === 'overview') {
+    // already shown
+  } else if (page === 'playground') {
+    window.open(API.replace('/api','') + '/#playground', '_blank');
+  } else {
+    // Show coming soon for other pages
+    const main = document.getElementById('page-overview');
+    // Keep overview visible, just show a toast
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);padding:12px 20px;border-radius:10px;font-size:13px;color:var(--text);z-index:9999;animation:fadeIn 0.3s';
+    toast.innerHTML = '<strong>' + page.charAt(0).toUpperCase() + page.slice(1) + '</strong> — full page coming soon. Data available via API.';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+}
+
+refreshData();
+</script>
+</body>
+</html>
