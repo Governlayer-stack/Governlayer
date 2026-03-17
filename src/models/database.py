@@ -30,6 +30,9 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     reset_token = Column(String(64), nullable=True)
     reset_token_expires_at = Column(DateTime, nullable=True)
+    mfa_secret = Column(String(32), nullable=True)
+    mfa_enabled = Column(Boolean, default=False, nullable=False)
+    mfa_backup_codes = Column(Text, nullable=True)  # JSON array of hashed backup codes
 
 
 class AuditRecord(Base):

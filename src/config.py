@@ -44,6 +44,15 @@ class Settings(BaseSettings):
     # Redis
     redis_url: str = "redis://localhost:6379/0"
 
+    # Email (Resend preferred, SMTP fallback)
+    resend_api_key: str = ""
+    email_from: str = "GovernLayer <noreply@governlayer.ai>"
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_use_tls: bool = True
+    smtp_user: str = ""
+    smtp_password: str = ""
+
     # Drift detection
     drift_model: str = "all-MiniLM-L6-v2"
     drift_threshold: float = 0.3

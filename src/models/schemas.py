@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -32,6 +33,7 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     email: str = Field(..., max_length=255)
     password: str = Field(..., max_length=72)
+    mfa_code: Optional[str] = Field(default=None, max_length=8)
 
 
 class AuditRequest(BaseModel):

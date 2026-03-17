@@ -11,9 +11,9 @@ from sqlalchemy import text as sa_text
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import (
-    achonye, agent_registry, analytics, audit, auth, automation, billing,
-    dashboard, enterprise, enterprise_features, governance, growth, incidents,
-    integrations, knowledge_graph, ledger, policies, rbac_views,
+    achonye, agent_registry, analytics, analytics_usage, audit, auth, automation,
+    billing, dashboard, enterprise, enterprise_features, governance, growth,
+    incidents, integrations, knowledge_graph, ledger, mfa, policies, rbac_views,
     registry, reports, risk, threats, v1,
 )
 from src.config import get_settings
@@ -198,6 +198,7 @@ def create_app() -> FastAPI:
 
     # Register routers
     app.include_router(auth.router)
+    app.include_router(mfa.router)
     app.include_router(governance.router)
     app.include_router(audit.router)
     app.include_router(risk.router)
@@ -211,6 +212,7 @@ def create_app() -> FastAPI:
     app.include_router(registry.router)
     app.include_router(incidents.router)
     app.include_router(analytics.router)
+    app.include_router(analytics_usage.router)
     app.include_router(policies.router)
     app.include_router(reports.router)
     app.include_router(dashboard.router)

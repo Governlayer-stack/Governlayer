@@ -58,6 +58,13 @@ def create_incident(data: IncidentCreate,
         "severity": data.severity, "category": data.category,
     }, auth.org_id, db)
 
+    # Email notification for high/critical incidents
+    if data.severity in ("high", "critical"):
+        from src.notifications.email import send_email
+        from src.notifications.templates import incident_alert_email
+        subject, html = incident_alert_email(data.title, data.severity, incident.id)
+        send_email(auth.identity, subject, html)
+
     return {
         "id": incident.id,
         "title": incident.title,

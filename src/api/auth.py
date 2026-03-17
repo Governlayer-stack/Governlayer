@@ -23,6 +23,10 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     token = create_token(user.email)
+    from src.notifications.email import send_email
+    from src.notifications.templates import welcome_email
+    subject, html = welcome_email(user.email, user.company)
+    send_email(user.email, subject, html)
     return {"message": f"Welcome to GovernLayer {user.company}", "token": token, "email": user.email}
 
 
@@ -31,6 +35,15 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not verify_password(user.password, db_user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    # Check MFA
+    if db_user.mfa_enabled:
+        if not user.mfa_code:
+            return {"mfa_required": True, "message": "MFA code required. Include mfa_code in request body."}
+        from src.api.mfa import verify_mfa_code
+        if not verify_mfa_code(db_user, user.mfa_code, db):
+            raise HTTPException(status_code=401, detail="Invalid MFA code")
+
     return {"token": create_token(user.email), "email": user.email}
 
 
@@ -43,6 +56,10 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
         user.reset_token_expires_at = datetime.utcnow() + timedelta(hours=1)
         db.commit()
         logger.info("Password reset token for %s: %s", req.email, token)
+        from src.notifications.email import send_email
+        from src.notifications.templates import password_reset_email
+        subject, html = password_reset_email(token, req.email)
+        send_email(req.email, subject, html)
     return {"message": "If an account exists with that email, a reset link has been sent."}
 
 
