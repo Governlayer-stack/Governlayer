@@ -15,31 +15,41 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "waitlist",
-        sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("email", sa.String(255), nullable=False, unique=True, index=True),
-        sa.Column("company", sa.String(255)),
-        sa.Column("role", sa.String(100)),
-        sa.Column("use_case", sa.Text()),
-        sa.Column("source", sa.String(100), server_default="website"),
-        sa.Column("status", sa.String(20), server_default="pending"),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now()),
-    )
+    conn = op.get_bind()
 
-    op.create_table(
-        "demo_requests",
-        sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("name", sa.String(255), nullable=False),
-        sa.Column("email", sa.String(255), nullable=False, index=True),
-        sa.Column("company", sa.String(255)),
-        sa.Column("role", sa.String(100)),
-        sa.Column("team_size", sa.String(50)),
-        sa.Column("use_case", sa.Text()),
-        sa.Column("frameworks_interested", sa.Text()),
-        sa.Column("status", sa.String(20), server_default="pending"),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now()),
-    )
+    conn.execute(sa.text("""
+        CREATE TABLE IF NOT EXISTS waitlist (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            company VARCHAR(255),
+            role VARCHAR(100),
+            use_case TEXT,
+            source VARCHAR(100) DEFAULT 'website',
+            status VARCHAR(20) DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """))
+    conn.execute(sa.text(
+        "CREATE INDEX IF NOT EXISTS ix_waitlist_email ON waitlist (email)"
+    ))
+
+    conn.execute(sa.text("""
+        CREATE TABLE IF NOT EXISTS demo_requests (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            company VARCHAR(255),
+            role VARCHAR(100),
+            team_size VARCHAR(50),
+            use_case TEXT,
+            frameworks_interested TEXT,
+            status VARCHAR(20) DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT NOW()
+        )
+    """))
+    conn.execute(sa.text(
+        "CREATE INDEX IF NOT EXISTS ix_demo_requests_email ON demo_requests (email)"
+    ))
 
 
 def downgrade() -> None:

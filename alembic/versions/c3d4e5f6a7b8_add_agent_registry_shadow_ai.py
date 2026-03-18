@@ -15,76 +15,84 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "ai_agents",
-        sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("name", sa.String(255), nullable=False, index=True),
-        sa.Column("agent_type", sa.String(20), server_default="autonomous"),
-        sa.Column("status", sa.String(20), server_default="under_review"),
-        sa.Column("description", sa.Text()),
-        sa.Column("owner", sa.String(255)),
-        sa.Column("team", sa.String(255)),
-        sa.Column("purpose", sa.Text()),
-        sa.Column("tools", sa.JSON(), server_default="[]"),
-        sa.Column("data_sources", sa.JSON(), server_default="[]"),
-        sa.Column("permissions", sa.JSON(), server_default="[]"),
-        sa.Column("guardrails", sa.JSON(), server_default="[]"),
-        sa.Column("autonomy_level", sa.Integer(), server_default="1"),
-        sa.Column("model_provider", sa.String(100)),
-        sa.Column("model_name", sa.String(255)),
-        sa.Column("model_id", sa.Integer(), sa.ForeignKey("registered_models.id"), nullable=True),
-        sa.Column("risk_tier", sa.String(50)),
-        sa.Column("risk_score", sa.Float()),
-        sa.Column("governance_status", sa.String(50), server_default="pending"),
-        sa.Column("last_audit_at", sa.DateTime()),
-        sa.Column("approved_by", sa.String(255)),
-        sa.Column("approved_at", sa.DateTime()),
-        sa.Column("dependencies", sa.JSON(), server_default="[]"),
-        sa.Column("upstream_services", sa.JSON(), server_default="[]"),
-        sa.Column("downstream_services", sa.JSON(), server_default="[]"),
-        sa.Column("discovery_source", sa.String(20), server_default="manual"),
-        sa.Column("is_shadow", sa.Boolean(), server_default="false"),
-        sa.Column("first_seen_at", sa.DateTime()),
-        sa.Column("last_activity_at", sa.DateTime()),
-        sa.Column("tags", sa.JSON(), server_default="[]"),
-        sa.Column("metadata", sa.JSON(), server_default="{}"),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.func.now()),
-    )
+    conn = op.get_bind()
 
-    op.create_table(
-        "agent_cards",
-        sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("agent_id", sa.Integer(), sa.ForeignKey("ai_agents.id"), nullable=False, unique=True),
-        sa.Column("intended_use", sa.Text()),
-        sa.Column("limitations", sa.Text()),
-        sa.Column("ethical_considerations", sa.Text()),
-        sa.Column("interaction_patterns", sa.JSON(), server_default="[]"),
-        sa.Column("failure_modes", sa.JSON(), server_default="[]"),
-        sa.Column("escalation_policy", sa.Text()),
-        sa.Column("data_retention", sa.Text()),
-        sa.Column("compliance_notes", sa.Text()),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.func.now()),
-    )
+    conn.execute(sa.text("""
+        CREATE TABLE IF NOT EXISTS ai_agents (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            agent_type VARCHAR(20) DEFAULT 'autonomous',
+            status VARCHAR(20) DEFAULT 'under_review',
+            description TEXT,
+            owner VARCHAR(255),
+            team VARCHAR(255),
+            purpose TEXT,
+            tools JSON DEFAULT '[]',
+            data_sources JSON DEFAULT '[]',
+            permissions JSON DEFAULT '[]',
+            guardrails JSON DEFAULT '[]',
+            autonomy_level INTEGER DEFAULT 1,
+            model_provider VARCHAR(100),
+            model_name VARCHAR(255),
+            model_id INTEGER REFERENCES registered_models(id),
+            risk_tier VARCHAR(50),
+            risk_score FLOAT,
+            governance_status VARCHAR(50) DEFAULT 'pending',
+            last_audit_at TIMESTAMP,
+            approved_by VARCHAR(255),
+            approved_at TIMESTAMP,
+            dependencies JSON DEFAULT '[]',
+            upstream_services JSON DEFAULT '[]',
+            downstream_services JSON DEFAULT '[]',
+            discovery_source VARCHAR(20) DEFAULT 'manual',
+            is_shadow BOOLEAN DEFAULT FALSE,
+            first_seen_at TIMESTAMP,
+            last_activity_at TIMESTAMP,
+            tags JSON DEFAULT '[]',
+            metadata JSON DEFAULT '{}',
+            created_at TIMESTAMP DEFAULT NOW(),
+            updated_at TIMESTAMP DEFAULT NOW()
+        )
+    """))
+    conn.execute(sa.text(
+        "CREATE INDEX IF NOT EXISTS ix_ai_agents_name ON ai_agents (name)"
+    ))
 
-    op.create_table(
-        "shadow_ai_detections",
-        sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column("detection_type", sa.String(100), nullable=False),
-        sa.Column("source", sa.String(255)),
-        sa.Column("description", sa.Text()),
-        sa.Column("evidence", sa.JSON(), server_default="{}"),
-        sa.Column("severity", sa.String(20), server_default="medium"),
-        sa.Column("status", sa.String(20), server_default="new"),
-        sa.Column("detected_service", sa.String(255)),
-        sa.Column("detected_model", sa.String(255)),
-        sa.Column("detected_by", sa.String(255)),
-        sa.Column("agent_id", sa.Integer(), sa.ForeignKey("ai_agents.id"), nullable=True),
-        sa.Column("remediation", sa.Text()),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.func.now()),
-    )
+    conn.execute(sa.text("""
+        CREATE TABLE IF NOT EXISTS agent_cards (
+            id SERIAL PRIMARY KEY,
+            agent_id INTEGER NOT NULL UNIQUE REFERENCES ai_agents(id),
+            intended_use TEXT,
+            limitations TEXT,
+            ethical_considerations TEXT,
+            interaction_patterns JSON DEFAULT '[]',
+            failure_modes JSON DEFAULT '[]',
+            escalation_policy TEXT,
+            data_retention TEXT,
+            compliance_notes TEXT,
+            created_at TIMESTAMP DEFAULT NOW(),
+            updated_at TIMESTAMP DEFAULT NOW()
+        )
+    """))
+
+    conn.execute(sa.text("""
+        CREATE TABLE IF NOT EXISTS shadow_ai_detections (
+            id SERIAL PRIMARY KEY,
+            detection_type VARCHAR(100) NOT NULL,
+            source VARCHAR(255),
+            description TEXT,
+            evidence JSON DEFAULT '{}',
+            severity VARCHAR(20) DEFAULT 'medium',
+            status VARCHAR(20) DEFAULT 'new',
+            detected_service VARCHAR(255),
+            detected_model VARCHAR(255),
+            detected_by VARCHAR(255),
+            agent_id INTEGER REFERENCES ai_agents(id),
+            remediation TEXT,
+            created_at TIMESTAMP DEFAULT NOW(),
+            updated_at TIMESTAMP DEFAULT NOW()
+        )
+    """))
 
 
 def downgrade() -> None:
