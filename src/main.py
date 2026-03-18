@@ -226,7 +226,28 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     def startup():
         create_tables()
+        _ensure_schema_columns()
         _seed_demo_data()
+
+    def _ensure_schema_columns():
+        """Add columns that create_tables() won't add to existing tables."""
+        from src.models.database import SessionLocal
+        db = SessionLocal()
+        try:
+            for stmt in [
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token VARCHAR(64)",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expires_at TIMESTAMP",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_secret VARCHAR(32)",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_enabled BOOLEAN DEFAULT FALSE NOT NULL",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_backup_codes TEXT",
+            ]:
+                db.execute(sa_text(stmt))
+            db.commit()
+        except Exception as e:
+            logging.getLogger(__name__).warning(f"Schema migration skip: {e}")
+            db.rollback()
+        finally:
+            db.close()
 
     @app.get("/health")
     def health_check():

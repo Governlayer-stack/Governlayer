@@ -19,7 +19,7 @@ click==8.3.1
 cryptography==46.0.5
 cyclopts==4.6.0
 dataclasses-json==0.6.7
-ddgs==9.11.1
+ddgs>=9.11.3
 distro==1.9.0
 dnspython==2.8.0
 docstring_parser==0.17.0
