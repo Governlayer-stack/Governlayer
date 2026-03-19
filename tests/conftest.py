@@ -5,6 +5,20 @@ from fastapi.testclient import TestClient
 os.environ["TESTING"] = "1"
 
 from src.main import app
+from src.models.database import Base, engine, create_tables
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_database():
+    """Create all tables before any tests run."""
+    create_tables()
+    # Also import tenant models to register them
+    try:
+        import src.models.tenant  # noqa: F401
+    except Exception:
+        pass
+    Base.metadata.create_all(bind=engine)
+    yield
 
 
 @pytest.fixture
