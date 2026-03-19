@@ -266,6 +266,24 @@ def create_app() -> FastAPI:
             "database": db_status,
         }
 
+    # Load documentation page HTML once at startup
+    _docs_html = None
+    _docs_paths = [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "documentation", "index.html"),
+        os.path.join("/app", "docs", "documentation", "index.html"),
+    ]
+    for _dpath in _docs_paths:
+        if os.path.exists(_dpath):
+            with open(_dpath) as f:
+                _docs_html = f.read()
+            break
+
+    @app.get("/documentation")
+    def documentation_page():
+        if _docs_html:
+            return HTMLResponse(_docs_html)
+        return {"error": "Documentation page not found"}
+
     # Load landing page HTML once at startup
     _landing_html = None
     _landing_paths = [

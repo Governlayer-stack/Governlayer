@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer Documentation — The Governance Layer for Agentic AI</title>
+<meta name="description" content="Complete API reference, guides, and architecture documentation for GovernLayer — the governance platform for agentic AI systems.">
+<meta name="theme-color" content="#08080c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#08080c;--bg2:#0e0e14;--bg3:#16161e;--bg4:#1e1e28;--bg5:#252530;
+--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.15);
+--text:#eeeef0;--text2:#a0a0b8;--text3:#6a6a82;
+--purple:#6c5ce7;--purple2:#7c6cf7;--purple-bg:rgba(108,92,231,0.08);--purple-border:rgba(108,92,231,0.25);
+--green:#00d68f;--green-bg:rgba(0,214,143,0.08);--green-border:rgba(0,214,143,0.25);
+--red:#ff4757;--red-bg:rgba(255,71,87,0.08);
+--yellow:#ffa502;--yellow-bg:rgba(255,165,2,0.08);
+--blue:#3b82f6;--blue-bg:rgba(59,130,246,0.08);
+--cyan:#00d2d3;
+--radius:12px;--radius-sm:8px;--radius-xs:6px;
+--sidebar-w:280px;--toc-w:220px;
+--font-sans:'Inter',system-ui,-apple-system,sans-serif;
+--font-mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--purple2);text-decoration:none;transition:color .2s}
+a:hover{color:#9d8fff}
+code,pre{font-family:var(--font-mono)}
+img{max-width:100%;display:block}
+button{cursor:pointer;font-family:inherit}
+
+/* ===== LAYOUT ===== */
+.docs-layout{display:flex;min-height:100vh}
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:4px}
+.main-content{margin-left:var(--sidebar-w);flex:1;min-width:0}
+.content-area{max-width:860px;margin:0 auto;padding:40px 48px 120px}
+
+/* ===== TOPBAR ===== */
+.topbar{position:sticky;top:0;z-index:90;background:rgba(8,8,12,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 48px;margin-left:0;height:56px;display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.breadcrumb{font-size:.8rem;color:var(--text3)}
+.breadcrumb span{color:var(--text2)}
+.search-container{position:relative;width:320px}
+.search-input{width:100%;padding:8px 16px 8px 36px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-size:.85rem;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--purple)}
+.search-input::placeholder{color:var(--text3)}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.85rem}
+.search-shortcut{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.65rem;color:var(--text3);background:var(--bg4);padding:2px 6px;border-radius:4px;border:1px solid var(--border)}
+.search-results{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:400px;overflow-y:auto;display:none;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.search-results.active{display:block}
+.search-result-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.search-result-item:hover{background:var(--purple-bg)}
+.search-result-item:last-child{border-bottom:none}
+.search-result-title{font-size:.85rem;font-weight:600;color:var(--text)}
+.search-result-section{font-size:.75rem;color:var(--purple2);margin-top:2px}
+.search-result-snippet{font-size:.75rem;color:var(--text3);margin-top:4px}
+
+/* ===== SIDEBAR CONTENT ===== */
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-logo{width:28px;height:28px;background:linear-gradient(135deg,#00ffaa,#7b61ff,#ff3d8e);border-radius:8px;position:relative;flex-shrink:0}
+.sidebar-logo::after{content:'';position:absolute;inset:3px;background:var(--bg2);border-radius:5px}
+.sidebar-title{font-size:1rem;font-weight:700;letter-spacing:-.02em}
+.sidebar-subtitle{font-size:.7rem;color:var(--text3);display:block;margin-top:1px}
+.sidebar-version{font-size:.65rem;color:var(--purple2);background:var(--purple-bg);padding:2px 8px;border-radius:10px;margin-left:auto}
+.sidebar-nav{padding:12px 0}
+.nav-section{margin-bottom:4px}
+.nav-section-title{padding:8px 20px 6px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.nav-section-title:hover{color:var(--text2)}
+.nav-section-title .chevron{transition:transform .2s;font-size:.6rem}
+.nav-section-title .chevron.collapsed{transform:rotate(-90deg)}
+.nav-section-items{overflow:hidden;transition:max-height .3s ease}
+.nav-section-items.collapsed{max-height:0 !important}
+.nav-item{display:block;padding:6px 20px 6px 28px;font-size:.82rem;color:var(--text2);transition:all .15s;border-left:2px solid transparent;position:relative}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.02)}
+.nav-item.active{color:var(--purple2);border-left-color:var(--purple);background:var(--purple-bg);font-weight:500}
+.nav-item .method-badge{font-size:.6rem;font-weight:700;padding:1px 5px;border-radius:3px;margin-right:6px;font-family:var(--font-mono);letter-spacing:.02em;display:inline-block;min-width:32px;text-align:center}
+.method-get{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.method-post{background:var(--purple-bg);color:var(--purple2);border:1px solid var(--purple-border)}
+.method-put{background:var(--yellow-bg);color:var(--yellow)}
+.method-patch{background:var(--yellow-bg);color:var(--yellow)}
+.method-delete{background:var(--red-bg);color:var(--red)}
+
+/* ===== MOBILE ===== */
+.mobile-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;width:40px;height:40px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-xs);align-items:center;justify-content:center;color:var(--text)}
+.mobile-toggle span{display:block;width:18px;height:2px;background:var(--text);margin:3px auto;transition:all .2s}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+@media(max-width:900px){
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.sidebar-overlay.open{display:block}
+.mobile-toggle{display:flex}
+.main-content{margin-left:0}
+.content-area{padding:24px 20px 100px}
+.topbar{padding:0 20px;padding-left:56px}
+.search-container{width:200px}
+}
+@media(max-width:600px){
+.search-container{width:160px}
+}
+
+/* ===== CONTENT TYPOGRAPHY ===== */
+.content-area h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:8px;background:linear-gradient(135deg,var(--text),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.content-area h2{font-size:1.5rem;font-weight:700;letter-spacing:-.02em;margin-top:56px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);scroll-margin-top:80px}
+.content-area h3{font-size:1.15rem;font-weight:600;margin-top:36px;margin-bottom:12px;color:var(--text);scroll-margin-top:80px}
+.content-area h4{font-size:.95rem;font-weight:600;margin-top:24px;margin-bottom:8px;color:var(--text2);scroll-margin-top:80px}
+.content-area p{color:var(--text2);margin-bottom:16px;font-size:.9rem}
+.content-area ul,.content-area ol{color:var(--text2);margin-bottom:16px;padding-left:24px;font-size:.9rem}
+.content-area li{margin-bottom:6px}
+.content-area li code{font-size:.8rem}
+.section-description{font-size:1.05rem;color:var(--text2);margin-bottom:32px;line-height:1.8}
+.callout{padding:16px 20px;border-radius:var(--radius-sm);margin:20px 0;font-size:.85rem;line-height:1.6}
+.callout-info{background:var(--blue-bg);border-left:3px solid var(--blue)}
+.callout-warn{background:var(--yellow-bg);border-left:3px solid var(--yellow)}
+.callout-success{background:var(--green-bg);border-left:3px solid var(--green)}
+.callout-danger{background:var(--red-bg);border-left:3px solid var(--red)}
+.callout-title{font-weight:600;color:var(--text);margin-bottom:4px}
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.7rem;font-weight:600;letter-spacing:.03em}
+.badge-purple{background:var(--purple-bg);color:var(--purple2);border:1px solid var(--purple-border)}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+
+/* ===== CODE BLOCKS ===== */
+.code-block{position:relative;margin:16px 0 24px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border2)}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--bg4);border-bottom:1px solid var(--border);font-size:.75rem}
+.code-lang{color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.code-copy{background:none;border:1px solid var(--border2);color:var(--text3);padding:3px 10px;border-radius:4px;font-size:.7rem;font-family:var(--font-sans);transition:all .2s}
+.code-copy:hover{color:var(--text);border-color:var(--text3)}
+.code-copy.copied{color:var(--green);border-color:var(--green)}
+.code-block pre{margin:0;padding:16px 20px;overflow-x:auto;background:var(--bg3);font-size:.8rem;line-height:1.7;color:var(--text2)}
+.code-block pre::-webkit-scrollbar{height:4px}
+.code-block pre::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:4px}
+code:not(pre code){background:var(--bg4);padding:2px 7px;border-radius:4px;font-size:.8rem;color:var(--purple2);border:1px solid var(--border)}
+
+/* ===== ENDPOINT CARDS ===== */
+.endpoint{margin:28px 0;border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;transition:border-color .2s}
+.endpoint:hover{border-color:var(--border3)}
+.endpoint-header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bg3);cursor:pointer;user-select:none}
+.endpoint-method{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:4px;font-family:var(--font-mono);letter-spacing:.03em;min-width:52px;text-align:center}
+.endpoint-method.get{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.endpoint-method.post{background:var(--purple-bg);color:var(--purple2);border:1px solid var(--purple-border)}
+.endpoint-method.put{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,165,2,.25)}
+.endpoint-method.patch{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(255,165,2,.25)}
+.endpoint-method.delete{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,71,87,.25)}
+.endpoint-path{font-family:var(--font-mono);font-size:.85rem;color:var(--text);font-weight:500}
+.endpoint-desc{margin-left:auto;font-size:.78rem;color:var(--text3);max-width:300px;text-align:right}
+.endpoint-body{padding:20px;border-top:1px solid var(--border);display:none}
+.endpoint-body.open{display:block}
+.endpoint-body p{font-size:.85rem}
+.param-table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:.82rem}
+.param-table th{text-align:left;padding:8px 12px;background:var(--bg4);color:var(--text3);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.param-table td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+.param-table td:first-child{font-family:var(--font-mono);color:var(--text);font-weight:500;white-space:nowrap}
+.param-type{color:var(--purple2);font-size:.75rem}
+.param-required{color:var(--red);font-size:.65rem;font-weight:700}
+.param-optional{color:var(--text3);font-size:.65rem}
+
+/* ===== TABLES ===== */
+.data-table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:.82rem;border:1px solid var(--border2);border-radius:var(--radius-sm);overflow:hidden}
+.data-table th{text-align:left;padding:10px 16px;background:var(--bg4);color:var(--text3);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+.data-table td{padding:10px 16px;border-top:1px solid var(--border);color:var(--text2)}
+.data-table tr:hover td{background:rgba(255,255,255,.015)}
+
+/* ===== ARCHITECTURE DIAGRAM ===== */
+.arch-diagram{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;margin:20px 0;overflow-x:auto}
+.arch-diagram pre{font-size:.72rem;line-height:1.5;color:var(--green);margin:0;white-space:pre}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--border)}
+.tab{padding:8px 20px;font-size:.82rem;color:var(--text3);font-weight:500;background:none;border:none;border-bottom:2px solid transparent;transition:all .2s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--purple2);border-bottom-color:var(--purple)}
+.tab-content{display:none;padding-top:16px}
+.tab-content.active{display:block}
+
+/* ===== SCROLL INDICATOR ===== */
+.progress-bar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:2px;background:var(--bg);z-index:200}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--green));width:0%;transition:width .1s}
+@media(max-width:900px){.progress-bar{left:0}}
+</style>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-bar-fill" id="progressBar"></div></div>
+
+<button class="mobile-toggle" id="mobileToggle" aria-label="Toggle sidebar"><span></span><span></span><span></span></button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR -->
+<div class="docs-layout">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="sidebar-logo"></div>
+<div><span class="sidebar-title">GovernLayer</span><span class="sidebar-subtitle">Documentation</span></div>
+<span class="sidebar-version">v3.0</span>
+</div>
+<nav class="sidebar-nav">
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="getting-started">Getting Started <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="getting-started">
+<a class="nav-item active" href="#overview">Overview</a>
+<a class="nav-item" href="#quickstart">Quickstart</a>
+<a class="nav-item" href="#authentication">Authentication</a>
+<a class="nav-item" href="#rate-limits">Rate Limits &amp; Plans</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="concepts">Core Concepts <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="concepts">
+<a class="nav-item" href="#governance-decisions">Governance Decisions</a>
+<a class="nav-item" href="#drift-detection">Drift Detection</a>
+<a class="nav-item" href="#risk-scoring">Risk Scoring</a>
+<a class="nav-item" href="#audit-ledger">Audit Ledger</a>
+<a class="nav-item" href="#consensus-engine">Consensus Engine</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-governance">API: Governance <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-governance">
+<a class="nav-item" href="#api-govern"><span class="method-badge method-post">POST</span>/v1/govern</a>
+<a class="nav-item" href="#api-drift"><span class="method-badge method-post">POST</span>/v1/drift</a>
+<a class="nav-item" href="#api-risk"><span class="method-badge method-post">POST</span>/v1/risk</a>
+<a class="nav-item" href="#api-scan"><span class="method-badge method-post">POST</span>/v1/scan</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-audit">API: Audit &amp; Reports <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-audit">
+<a class="nav-item" href="#api-audit-system"><span class="method-badge method-post">POST</span>/audit</a>
+<a class="nav-item" href="#api-audit-history"><span class="method-badge method-get">GET</span>/v1/audit/{system}</a>
+<a class="nav-item" href="#api-reports"><span class="method-badge method-post">POST</span>/v1/reports</a>
+<a class="nav-item" href="#api-compliance-summary"><span class="method-badge method-get">GET</span>compliance-summary</a>
+<a class="nav-item" href="#api-frameworks"><span class="method-badge method-get">GET</span>/v1/reports/frameworks</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-agents">API: Agent Registry <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-agents">
+<a class="nav-item" href="#api-register-agent"><span class="method-badge method-post">POST</span>/v1/agents</a>
+<a class="nav-item" href="#api-list-agents"><span class="method-badge method-get">GET</span>/v1/agents</a>
+<a class="nav-item" href="#api-agent-governance"><span class="method-badge method-post">POST</span>governance</a>
+<a class="nav-item" href="#api-shadow-scan"><span class="method-badge method-post">POST</span>discovery/scan</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-models">API: Model Registry <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-models">
+<a class="nav-item" href="#api-register-model"><span class="method-badge method-post">POST</span>/v1/models</a>
+<a class="nav-item" href="#api-list-models"><span class="method-badge method-get">GET</span>/v1/models</a>
+<a class="nav-item" href="#api-model-lifecycle"><span class="method-badge method-put">PUT</span>lifecycle</a>
+<a class="nav-item" href="#api-model-card"><span class="method-badge method-post">POST</span>model card</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-incidents">API: Incidents &amp; Policies <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-incidents">
+<a class="nav-item" href="#api-create-incident"><span class="method-badge method-post">POST</span>/v1/incidents</a>
+<a class="nav-item" href="#api-list-incidents"><span class="method-badge method-get">GET</span>/v1/incidents</a>
+<a class="nav-item" href="#api-update-incident"><span class="method-badge method-patch">PATCH</span>incidents</a>
+<a class="nav-item" href="#api-create-policy"><span class="method-badge method-post">POST</span>/v1/policies</a>
+<a class="nav-item" href="#api-evaluate-policy"><span class="method-badge method-post">POST</span>evaluate</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-analytics">API: Analytics <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-analytics">
+<a class="nav-item" href="#api-usage-summary"><span class="method-badge method-get">GET</span>usage/summary</a>
+<a class="nav-item" href="#api-usage-trends"><span class="method-badge method-get">GET</span>usage/trends</a>
+<a class="nav-item" href="#api-top-endpoints"><span class="method-badge method-get">GET</span>top-endpoints</a>
+<a class="nav-item" href="#api-governance-analytics"><span class="method-badge method-get">GET</span>governance</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="api-threats">API: Threats <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="api-threats">
+<a class="nav-item" href="#api-threats"><span class="method-badge method-post">POST</span>/threats</a>
+<a class="nav-item" href="#api-incident-response"><span class="method-badge method-post">POST</span>incident-response</a>
+<a class="nav-item" href="#api-jurisdiction"><span class="method-badge method-post">POST</span>/jurisdiction</a>
+<a class="nav-item" href="#api-deadlines"><span class="method-badge method-post">POST</span>/deadlines</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="frameworks">Regulatory Frameworks <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="frameworks">
+<a class="nav-item" href="#frameworks-overview">All 18 Frameworks</a>
+<a class="nav-item" href="#fw-eu-ai-act">EU AI Act</a>
+<a class="nav-item" href="#fw-nist">NIST AI RMF</a>
+<a class="nav-item" href="#fw-iso42001">ISO 42001</a>
+<a class="nav-item" href="#fw-gdpr">GDPR</a>
+<a class="nav-item" href="#fw-hipaa">HIPAA</a>
+<a class="nav-item" href="#fw-soc2">SOC 2</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="enterprise">Enterprise Features <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="enterprise">
+<a class="nav-item" href="#multi-tenancy">Multi-Tenancy</a>
+<a class="nav-item" href="#api-key-management">API Key Management</a>
+<a class="nav-item" href="#webhooks">Webhooks</a>
+<a class="nav-item" href="#mfa">MFA (TOTP)</a>
+<a class="nav-item" href="#billing">Billing</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="architecture">Architecture <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="architecture">
+<a class="nav-item" href="#achonye">Achonye Multi-LLM</a>
+<a class="nav-item" href="#model-providers">Model Providers</a>
+<a class="nav-item" href="#task-router">Task Router</a>
+<a class="nav-item" href="#agent-orchestration">Agent Orchestration</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="integrations">Integrations <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="integrations">
+<a class="nav-item" href="#mcp-server">MCP Server</a>
+<a class="nav-item" href="#n8n-workflows">n8n Workflows</a>
+<a class="nav-item" href="#autonomous-daemon">Autonomous Daemon</a>
+<a class="nav-item" href="#webhook-consumers">Webhook Consumers</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="sdks">SDKs &amp; Examples <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="sdks">
+<a class="nav-item" href="#python-examples">Python</a>
+<a class="nav-item" href="#curl-examples">curl</a>
+<a class="nav-item" href="#full-pipeline-example">Full Pipeline</a>
+<a class="nav-item" href="#shadow-ai-example">Shadow AI Discovery</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="security">Security <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="security">
+<a class="nav-item" href="#security-overview">Overview</a>
+<a class="nav-item" href="#webhook-verification">Webhook Verification</a>
+<a class="nav-item" href="#data-handling">Data Handling</a>
+</div>
+</div>
+
+<div class="nav-section">
+<div class="nav-section-title" data-section="changelog">Changelog <span class="chevron">&#9662;</span></div>
+<div class="nav-section-items" data-section-items="changelog">
+<a class="nav-item" href="#v3-changelog">v3.0.0</a>
+</div>
+</div>
+
+</nav>
+</aside>
+<!-- MAIN CONTENT -->
+<main class="main-content">
+<div class="topbar">
+<div class="topbar-left">
+<div class="breadcrumb">Docs <span>&rsaquo;</span> <span id="breadcrumbSection">Getting Started</span></div>
+</div>
+<div class="search-container">
+<span class="search-icon">&#x1F50D;</span>
+<input type="text" class="search-input" id="searchInput" placeholder="Search documentation..." autocomplete="off">
+<span class="search-shortcut">/</span>
+<div class="search-results" id="searchResults"></div>
+</div>
+</div>
+
+<div class="content-area">
+
+<!-- ============================================================ -->
+<!-- GETTING STARTED -->
+<!-- ============================================================ -->
+
+<section id="overview">
+<h1>GovernLayer Documentation</h1>
+<p class="section-description">GovernLayer is the governance layer for agentic AI. It provides compliance auditing, behavioral drift detection, deterministic risk scoring, agent and model registries, shadow AI discovery, policy enforcement, and an immutable hash-chained audit ledger for every AI decision your organization makes.</p>
+
+<div class="callout callout-info">
+<div class="callout-title">Built for the Agentic Era</div>
+GovernLayer governs not just models, but autonomous AI agents. Register every agent, detect unauthorized (shadow) AI usage, enforce policies, and maintain a tamper-proof audit trail across 18 regulatory frameworks.
+</div>
+
+<h3>Key Capabilities</h3>
+<ul>
+<li><strong>Governance Decisions</strong> &mdash; Automated APPROVE / BLOCK / ESCALATE decisions with full audit trail</li>
+<li><strong>Behavioral Drift Detection</strong> &mdash; Sentence-transformer embeddings measure how far AI reasoning drifts from safety manifolds</li>
+<li><strong>6-Dimension Risk Scoring</strong> &mdash; Deterministic, instant risk assessment across Privacy, Autonomy, Infrastructure, Oversight, Transparency, and Fairness</li>
+<li><strong>Agent Registry</strong> &mdash; Register, govern, and monitor every AI agent in your organization</li>
+<li><strong>Shadow AI Discovery</strong> &mdash; Detect unauthorized AI usage across 15+ provider patterns</li>
+<li><strong>Model Registry</strong> &mdash; Track model lifecycle from development through production with model cards</li>
+<li><strong>18 Regulatory Frameworks</strong> &mdash; Generate compliance reports for EU AI Act, NIST AI RMF, ISO 42001, GDPR, HIPAA, SOC 2, and more</li>
+<li><strong>Immutable Audit Ledger</strong> &mdash; SHA-256 hash-chained records that cannot be altered after creation</li>
+<li><strong>Policy Engine</strong> &mdash; Define, evaluate, and enforce governance policies programmatically</li>
+<li><strong>Incident Management</strong> &mdash; Full lifecycle tracking from detection through resolution</li>
+<li><strong>Multi-LLM Consensus</strong> &mdash; Voting, Chain-of-Verification, and Adversarial Debate to prevent hallucinations in critical decisions</li>
+<li><strong>Enterprise Multi-Tenancy</strong> &mdash; Organizations, API keys, RBAC, webhooks, and usage metering</li>
+</ul>
+
+<h3>Architecture Overview</h3>
+<div class="arch-diagram">
+<pre>
+                    +---------------------------+
+                    |      GovernLayer API       |
+                    |       (FastAPI v3.0)       |
+                    +---------------------------+
+                    |   /v1/govern   /v1/risk    |
+                    |   /v1/drift    /v1/scan    |
+                    |   /v1/agents   /v1/models  |
+                    |   /v1/reports  /v1/policies|
+                    +-------------+-------------+
+                                  |
+          +-----------------------+-----------------------+
+          |                       |                       |
+  +-------v--------+   +---------v--------+   +----------v---------+
+  |  Drift Engine   |   |  Risk Scorer     |   | Compliance Auditor |
+  | (Embeddings +   |   | (6-Dimension     |   | (LLM-Powered +     |
+  |  Safety         |   |  Deterministic)  |   |  18 Frameworks)    |
+  |  Manifolds)     |   |                  |   |                    |
+  +-------+--------+   +------------------+   +--------------------+
+          |
+  +-------v--------+   +------------------+   +--------------------+
+  | Audit Ledger    |   |  Policy Engine   |   |  Agent Registry    |
+  | (SHA-256 Hash   |   | (Rule-Based      |   | (Shadow AI +       |
+  |  Chain)         |   |  Evaluation)     |   |  Governance)       |
+  +----------------+   +------------------+   +--------------------+
+          |
+  +-------v----------------------------------------------------+
+  |               Achonye Multi-LLM Orchestrator                |
+  |  Leader (Opus) -> Board (Sonnet, Gemini, GPT-4o)            |
+  |  -> Validator (Consensus Engine) -> Operators (14 models)   |
+  +-------------------------------------------------------------+
+  |  Ollama (Local)  |  Groq (Fast)  |  OpenRouter (Universal)  |
+  +------------------+---------------+--------------------------+
+</pre>
+</div>
+
+<h3>Two Interfaces</h3>
+<p>GovernLayer offers two ways to integrate:</p>
+<ul>
+<li><strong>REST API</strong> &mdash; Full-featured FastAPI server with OpenAPI docs at <code>/docs</code>. Supports JWT and API key authentication.</li>
+<li><strong>MCP Server</strong> &mdash; FastMCP server with 12 tools for integration with Claude Desktop, IDEs, and other MCP-compatible clients. Runs via stdio.</li>
+</ul>
+</section>
+
+<!-- QUICKSTART -->
+<section id="quickstart">
+<h2>Quickstart</h2>
+<p>Get your first governance decision in under 5 minutes.</p>
+
+<h3>Step 1: Register an Account</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@yourcompany.com",
+    "password": "SecurePass123",
+    "company": "YourCompany"
+  }'</pre>
+</div>
+<p>Response:</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "bearer",
+  "email": "admin@yourcompany.com"
+}</pre>
+</div>
+
+<h3>Step 2: Create an Organization</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/enterprise/orgs \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "YourCompany",
+    "slug": "yourcompany",
+    "plan": "starter"
+  }'</pre>
+</div>
+
+<h3>Step 3: Generate an API Key</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/enterprise/orgs/yourcompany/api-keys \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "production",
+    "scopes": "govern,audit,risk,scan"
+  }'</pre>
+</div>
+<p>Response:</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "api_key": "gl_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+  "prefix": "gl_a1b2c3",
+  "name": "production",
+  "scopes": ["govern", "audit", "risk", "scan"],
+  "expires_at": null,
+  "warning": "Save this key now. It cannot be retrieved again."
+}</pre>
+</div>
+
+<div class="callout callout-warn">
+<div class="callout-title">Save Your API Key</div>
+The full API key is only returned once at creation time. GovernLayer stores a SHA-256 hash of the key, not the key itself. If you lose it, revoke it and generate a new one.
+</div>
+
+<h3>Step 4: Make Your First Governance Decision</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/govern \
+  -H "Authorization: Bearer gl_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "system_name": "loan-scorer",
+    "reasoning_trace": "I will evaluate this loan application based on creditworthiness and financial history to determine approval.",
+    "use_case": "loan_approval",
+    "handles_personal_data": true,
+    "makes_autonomous_decisions": false,
+    "has_human_oversight": true,
+    "is_explainable": true,
+    "has_bias_testing": true
+  }'</pre>
+</div>
+<p>Response:</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "decision_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "system": "loan-scorer",
+  "action": "APPROVE",
+  "reason": "Within safe boundaries (risk=66, drift=0.0812)",
+  "risk": {
+    "score": 66,
+    "level": "MEDIUM",
+    "dimensions": {
+      "privacy": 40,
+      "autonomy": 100,
+      "infrastructure": 100,
+      "oversight": 100,
+      "transparency": 100,
+      "fairness": 100
+    }
+  },
+  "drift": {
+    "coefficient": 0.0812,
+    "vetoed": false,
+    "flags": 0
+  },
+  "ledger": {
+    "hash": "a3f2b8c91d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0",
+    "policy_version": "3.0.0"
+  },
+  "timestamp": "2026-03-18T14:23:01.456789"
+}</pre>
+</div>
+
+<div class="callout callout-success">
+<div class="callout-title">You are now governing AI</div>
+Every governance decision is recorded in an immutable SHA-256 hash-chained ledger. The decision above has been cryptographically linked to every previous decision, creating a tamper-proof audit trail.
+</div>
+</section>
+
+<!-- AUTHENTICATION -->
+<section id="authentication">
+<h2>Authentication</h2>
+<p>GovernLayer supports two authentication methods. Both can be used interchangeably on all <code>/v1/</code> endpoints.</p>
+
+<h3>API Keys (Recommended)</h3>
+<p>API keys use the <code>gl_</code> prefix and are scoped to an organization. Pass them in the <code>Authorization</code> header:</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">http</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>Authorization: Bearer gl_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6</pre>
+</div>
+
+<h4>Scopes</h4>
+<p>Each API key is assigned scopes that control which endpoints it can access:</p>
+<table class="data-table">
+<thead><tr><th>Scope</th><th>Endpoints</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>govern</code></td><td><code>/v1/govern</code>, <code>/v1/agents</code>, <code>/v1/models</code>, <code>/v1/incidents</code>, <code>/v1/policies</code></td><td>Full governance pipeline, registry management, incident and policy management</td></tr>
+<tr><td><code>audit</code></td><td><code>/v1/audit/{system}</code>, <code>/audit</code></td><td>Compliance auditing and audit history retrieval</td></tr>
+<tr><td><code>risk</code></td><td><code>/v1/risk</code></td><td>Risk scoring operations</td></tr>
+<tr><td><code>scan</code></td><td><code>/v1/scan</code>, <code>/v1/drift</code>, <code>/v1/agents/discovery/scan</code></td><td>Quick scans, drift detection, shadow AI discovery</td></tr>
+</tbody>
+</table>
+
+<h3>JWT Tokens</h3>
+<p>JWT tokens are issued on registration or login. They are primarily used for account management operations (creating orgs, generating API keys, MFA setup).</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@yourcompany.com",
+    "password": "SecurePass123"
+  }'</pre>
+</div>
+
+<p>If MFA is enabled, include the TOTP code:</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "email": "admin@yourcompany.com",
+  "password": "SecurePass123",
+  "mfa_code": "482937"
+}</pre>
+</div>
+
+<h3>Password Requirements</h3>
+<ul>
+<li>Minimum 8 characters, maximum 72 characters</li>
+<li>At least one uppercase letter</li>
+<li>At least one lowercase letter</li>
+<li>At least one digit</li>
+</ul>
+</section>
+
+<!-- RATE LIMITS -->
+<section id="rate-limits">
+<h2>Rate Limits &amp; Plans</h2>
+<p>GovernLayer enforces rate limits per API key, backed by Redis. Limits are applied per minute and per month based on your plan tier.</p>
+
+<table class="data-table">
+<thead><tr><th>Plan</th><th>Price</th><th>Requests/min</th><th>Requests/month</th><th>Frameworks</th><th>Support</th></tr></thead>
+<tbody>
+<tr><td><strong>Free</strong></td><td>$0</td><td>20</td><td>500</td><td>5</td><td>Community</td></tr>
+<tr><td><strong>Starter</strong></td><td>$49/mo</td><td>100</td><td>10,000</td><td>18</td><td>Email</td></tr>
+<tr><td><strong>Pro</strong></td><td>$199/mo</td><td>500</td><td>100,000</td><td>18</td><td>Priority</td></tr>
+<tr><td><strong>Enterprise</strong></td><td>Custom</td><td>2,000+</td><td>Unlimited</td><td>18 + Custom</td><td>Dedicated</td></tr>
+</tbody>
+</table>
+
+<p>When you exceed your rate limit, the API returns HTTP <code>429 Too Many Requests</code> with a <code>Retry-After</code> header indicating when you can make the next request.</p>
+
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "detail": "Rate limit exceeded. 20 requests per minute on free plan.",
+  "retry_after": 42
+}</pre>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CORE CONCEPTS -->
+<!-- ============================================================ -->
+
+<section id="governance-decisions">
+<h2>Governance Decisions</h2>
+<p>The governance decision pipeline is the core of GovernLayer. When you call <code>POST /v1/govern</code>, the platform runs a multi-stage pipeline and returns one of three actions:</p>
+
+<table class="data-table">
+<thead><tr><th>Action</th><th>Meaning</th><th>Trigger Conditions</th></tr></thead>
+<tbody>
+<tr><td><span style="color:var(--green);font-weight:700">APPROVE</span></td><td>AI action is safe to proceed</td><td>Risk level LOW or MEDIUM with no semantic flags, drift coefficient within threshold</td></tr>
+<tr><td><span style="color:var(--yellow);font-weight:700">ESCALATE_HUMAN</span></td><td>Requires human review before proceeding</td><td>Risk level HIGH, or MEDIUM risk with semantic risk flags detected</td></tr>
+<tr><td><span style="color:var(--red);font-weight:700">BLOCK</span></td><td>AI action is blocked immediately</td><td>Behavioral drift coefficient exceeds safety threshold (default 0.3)</td></tr>
+</tbody>
+</table>
+
+<h3>Pipeline Stages</h3>
+<ol>
+<li><strong>Drift Detection</strong> &mdash; The AI's reasoning trace is embedded using sentence-transformers and compared against pre-built safety manifolds for the use case. Outputs a drift coefficient (D<sub>c</sub>).</li>
+<li><strong>Risk Scoring</strong> &mdash; Six boolean inputs are mapped to deterministic dimension scores. No LLM involved &mdash; instant and reproducible.</li>
+<li><strong>Decision Logic</strong> &mdash; If drift is vetoed, BLOCK. If risk is HIGH, ESCALATE. If MEDIUM with semantic flags, ESCALATE. Otherwise, APPROVE.</li>
+<li><strong>Ledger Recording</strong> &mdash; The decision is cryptographically recorded in the hash-chained audit ledger with the previous record's hash.</li>
+<li><strong>Webhook Dispatch</strong> &mdash; If webhooks are configured, a <code>governance.decision</code> event is fired asynchronously.</li>
+</ol>
+</section>
+
+<section id="drift-detection">
+<h2>Drift Detection</h2>
+<p>Behavioral drift detection measures how far an AI system's reasoning has deviated from its intended safety boundaries. GovernLayer uses sentence-transformer embeddings to compute a drift coefficient.</p>
+
+<h3>How It Works</h3>
+<ol>
+<li><strong>Safety Manifolds</strong> &mdash; For each use case (loan approval, hiring, medical diagnosis, content moderation, general), a set of reference sentences defines "safe" reasoning behavior. These are pre-embedded at startup.</li>
+<li><strong>Trace Embedding</strong> &mdash; The AI's reasoning trace is embedded into the same vector space using <code>sentence-transformers</code>.</li>
+<li><strong>Drift Coefficient (D<sub>c</sub>)</strong> &mdash; Calculated as <code>1 - cos(v_t, m_s)</code> where <code>v_t</code> is the trace vector and <code>m_s</code> is the manifold centroid. Range: 0.0 (identical) to 2.0 (opposite).</li>
+<li><strong>Threshold Check</strong> &mdash; Default threshold is 0.3. If D<sub>c</sub> > threshold, the action is vetoed (BLOCK).</li>
+</ol>
+
+<h3>Alignment Levels</h3>
+<table class="data-table">
+<thead><tr><th>D<sub>c</sub> Range</th><th>Alignment</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>0.00 &ndash; 0.15</td><td>STRONGLY_ALIGNED</td><td>PROCEED</td></tr>
+<tr><td>0.15 &ndash; 0.30</td><td>ALIGNED</td><td>PROCEED</td></tr>
+<tr><td>0.30 &ndash; 0.50</td><td>DRIFTING</td><td>VETO</td></tr>
+<tr><td>0.50 &ndash; 0.80</td><td>HIGH_DRIFT</td><td>VETO</td></tr>
+<tr><td>0.80 &ndash; 2.00</td><td>CRITICAL_DRIFT</td><td>VETO</td></tr>
+</tbody>
+</table>
+
+<h3>Semantic Risk Patterns</h3>
+<p>In addition to embedding-based drift, GovernLayer scans for dangerous keyword patterns in reasoning traces:</p>
+<ul>
+<li><strong>Destructive actions</strong>: delete, destroy, remove, eliminate, wipe</li>
+<li><strong>Bypass attempts</strong>: bypass, ignore, skip, override, circumvent</li>
+<li><strong>Discrimination signals</strong>: discriminat*, bias, race, gender, religion, ethnicity</li>
+<li><strong>Manipulation</strong>: manipulat*, deceiv*, trick, mislead, exploit</li>
+<li><strong>Authorization violations</strong>: unauthorized, illegal, prohibited, forbidden</li>
+</ul>
+
+<h3>Graceful Degradation</h3>
+<p>When <code>sentence-transformers</code> is unavailable (e.g., in lightweight Docker builds without PyTorch), the drift engine falls back to keyword-only analysis. If dangerous patterns are detected in keyword-only mode, the drift coefficient is set to 0.5 and the action is vetoed.</p>
+</section>
+
+<section id="risk-scoring">
+<h2>Risk Scoring</h2>
+<p>Risk scoring is fully deterministic &mdash; no LLM calls, no network requests, instant response. Six boolean inputs map to fixed scores across six dimensions.</p>
+
+<h3>Dimensions</h3>
+<table class="data-table">
+<thead><tr><th>Dimension</th><th>True Score</th><th>False Score</th><th>Input Field</th></tr></thead>
+<tbody>
+<tr><td>Privacy</td><td>40</td><td>100</td><td><code>handles_personal_data</code></td></tr>
+<tr><td>Autonomy</td><td>30</td><td>100</td><td><code>makes_autonomous_decisions</code></td></tr>
+<tr><td>Infrastructure</td><td>25</td><td>100</td><td><code>used_in_critical_infrastructure</code></td></tr>
+<tr><td>Oversight</td><td>100</td><td>20</td><td><code>has_human_oversight</code></td></tr>
+<tr><td>Transparency</td><td>100</td><td>30</td><td><code>is_explainable</code></td></tr>
+<tr><td>Fairness</td><td>100</td><td>25</td><td><code>has_bias_testing</code></td></tr>
+</tbody>
+</table>
+
+<p>The overall score is the mean of all six dimensions. Risk levels are assigned as:</p>
+<ul>
+<li><strong>LOW</strong> &mdash; Score &ge; 80</li>
+<li><strong>MEDIUM</strong> &mdash; Score &ge; 50 and &lt; 80</li>
+<li><strong>HIGH</strong> &mdash; Score &lt; 50</li>
+</ul>
+
+<div class="callout callout-info">
+<div class="callout-title">Worst-Case Score</div>
+An AI system that handles personal data, makes autonomous decisions, operates in critical infrastructure, has no human oversight, is not explainable, and has no bias testing receives a score of 28.3 (HIGH risk). Such a system would be automatically escalated for human review.
+</div>
+</section>
+
+<section id="audit-ledger">
+<h2>Audit Ledger</h2>
+<p>Every governance decision is recorded in a SHA-256 hash-chained audit ledger, providing an immutable, tamper-evident record of all AI governance activity.</p>
+
+<h3>Hash Chain Construction</h3>
+<ol>
+<li>The <strong>genesis record</strong> uses <code>SHA256("GOVERNLAYER_GENESIS")</code> as its previous hash.</li>
+<li>Each subsequent record includes: decision_id, system_name, governance_action, drift_coefficient, risk_score, policy_version, created_at, and the previous record's hash.</li>
+<li>The <strong>current_hash</strong> is computed as <code>SHA256(JSON(record_data + previous_hash))</code>.</li>
+<li>Any modification to a historical record would break the hash chain, making tampering detectable.</li>
+</ol>
+
+<h3>Ledger Fields</h3>
+<table class="data-table">
+<thead><tr><th>Field</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>decision_id</code></td><td>UUID v4 unique identifier for this decision</td></tr>
+<tr><td><code>system_name</code></td><td>Name of the AI system being governed</td></tr>
+<tr><td><code>governance_action</code></td><td>APPROVE, ESCALATE_HUMAN, BLOCK, or AUDIT_COMPLETE</td></tr>
+<tr><td><code>risk_score</code></td><td>Calculated risk score (0-100)</td></tr>
+<tr><td><code>risk_level</code></td><td>LOW, MEDIUM, or HIGH</td></tr>
+<tr><td><code>previous_hash</code></td><td>SHA-256 hash of the preceding record</td></tr>
+<tr><td><code>current_hash</code></td><td>SHA-256 hash of this record (includes previous_hash)</td></tr>
+<tr><td><code>policy_version</code></td><td>GovernLayer policy version at time of decision</td></tr>
+<tr><td><code>created_at</code></td><td>ISO 8601 timestamp</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="consensus-engine">
+<h2>Consensus Engine</h2>
+<p>For critical governance decisions, GovernLayer can route through its multi-LLM consensus engine to prevent hallucinations and ensure reliability. Three strategies are available:</p>
+
+<h3>1. Voting</h3>
+<p>Three or more LLMs independently evaluate the same prompt. The majority answer is selected. Confidence is calculated as the percentage of models that agree. This is the fastest consensus strategy.</p>
+
+<h3>2. Chain-of-Verification</h3>
+<p>A four-stage pipeline designed to catch hallucinations:</p>
+<ol>
+<li><strong>Generate</strong> &mdash; A primary model produces an initial response</li>
+<li><strong>Question</strong> &mdash; A second model generates verification questions about claims in the response</li>
+<li><strong>Verify</strong> &mdash; A third model independently answers those verification questions</li>
+<li><strong>Synthesize</strong> &mdash; A fourth model reconciles discrepancies and produces the final, verified response</li>
+</ol>
+
+<h3>3. Adversarial Debate</h3>
+<p>The most rigorous strategy, used for the highest-stakes decisions:</p>
+<ol>
+<li><strong>Claim</strong> &mdash; A model states a position on the governance question</li>
+<li><strong>Critique</strong> &mdash; A different model challenges the position, identifying weaknesses and counter-arguments</li>
+<li><strong>Judge</strong> &mdash; A third model evaluates both sides and renders a final verdict with reasoning</li>
+</ol>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: GOVERNANCE -->
+<!-- ============================================================ -->
+
+<section id="api-govern">
+<h2>API: Governance</h2>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/govern</span>
+<span class="endpoint-desc">Full governance pipeline</span>
+</div>
+<div class="endpoint-body open">
+<p>Run the complete governance pipeline: drift detection, risk scoring, decision logic, and ledger recording. Returns APPROVE, ESCALATE_HUMAN, or BLOCK with a full audit trail.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>govern</code> scope</p>
+
+<h4>Request Body</h4>
+<table class="param-table">
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>system_name</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Name of the AI system being governed</td></tr>
+<tr><td>reasoning_trace</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>The AI's reasoning output to be analyzed for drift (max 10,000 chars)</td></tr>
+<tr><td>use_case</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Use case for drift manifold selection: <code>loan_approval</code>, <code>hiring</code>, <code>medical_diagnosis</code>, <code>content_moderation</code>, <code>general</code>. Default: <code>general</code></td></tr>
+<tr><td>handles_personal_data</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+<tr><td>makes_autonomous_decisions</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+<tr><td>used_in_critical_infrastructure</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+<tr><td>has_human_oversight</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>true</code></td></tr>
+<tr><td>is_explainable</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>true</code></td></tr>
+<tr><td>has_bias_testing</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+</tbody>
+</table>
+
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "decision_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "system": "loan-scorer",
+  "action": "APPROVE",
+  "reason": "Within safe boundaries (risk=66, drift=0.0812)",
+  "risk": {
+    "score": 66,
+    "level": "MEDIUM",
+    "dimensions": {
+      "privacy": 40, "autonomy": 100, "infrastructure": 100,
+      "oversight": 100, "transparency": 100, "fairness": 100
+    }
+  },
+  "drift": {
+    "coefficient": 0.0812,
+    "vetoed": false,
+    "flags": 0
+  },
+  "ledger": {
+    "hash": "a3f2b8c91d4e5f6a7b8c9d0e...",
+    "policy_version": "3.0.0"
+  },
+  "timestamp": "2026-03-18T14:23:01.456789"
+}</pre>
+</div>
+
+<h4>curl Example</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/govern \
+  -H "Authorization: Bearer gl_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "system_name": "fraud-detector",
+    "reasoning_trace": "Analyzing transaction patterns to identify anomalous behavior consistent with fraud.",
+    "use_case": "general",
+    "handles_personal_data": true,
+    "makes_autonomous_decisions": true,
+    "has_human_oversight": true,
+    "is_explainable": true,
+    "has_bias_testing": false
+  }'</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-drift">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/drift</span>
+<span class="endpoint-desc">Analyze behavioral drift</span>
+</div>
+<div class="endpoint-body open">
+<p>Analyze an AI reasoning trace for behavioral drift from safety manifolds. Returns the drift coefficient without creating a governance decision or ledger entry.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>scan</code> scope</p>
+
+<h4>Request Body</h4>
+<table class="param-table">
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>reasoning_trace</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>AI reasoning text to analyze (max 10,000 chars)</td></tr>
+<tr><td>use_case</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>general</code></td></tr>
+<tr><td>threshold</td><td><span class="param-type">float</span></td><td><span class="param-optional">optional</span></td><td>Drift threshold (0.0&ndash;1.0). Default: <code>0.3</code></td></tr>
+</tbody>
+</table>
+
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "coefficient": 0.1245,
+  "vetoed": false,
+  "flags": 0,
+  "explanation": "Drift coefficient d_c=0.1245 within safety threshold t=0.3. Reasoning trace is aligned.",
+  "timestamp": "2026-03-18T14:25:00.123456"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-risk">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/risk</span>
+<span class="endpoint-desc">Deterministic risk scoring</span>
+</div>
+<div class="endpoint-body open">
+<p>Calculate a deterministic 6-dimension risk score. No LLM calls &mdash; instant response. Uses the same scoring algorithm as the governance pipeline.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>risk</code> scope</p>
+
+<h4>Request Body</h4>
+<table class="param-table">
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>system_name</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Name of the AI system</td></tr>
+<tr><td>handles_personal_data</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+<tr><td>makes_autonomous_decisions</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+<tr><td>used_in_critical_infrastructure</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+<tr><td>has_human_oversight</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>true</code></td></tr>
+<tr><td>is_explainable</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>true</code></td></tr>
+<tr><td>has_bias_testing</td><td><span class="param-type">boolean</span></td><td><span class="param-optional">optional</span></td><td>Default: <code>false</code></td></tr>
+</tbody>
+</table>
+
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "system": "chatbot-support",
+  "score": 100,
+  "level": "LOW",
+  "dimensions": {
+    "privacy": 100, "autonomy": 100, "infrastructure": 100,
+    "oversight": 100, "transparency": 100, "fairness": 100
+  },
+  "timestamp": "2026-03-18T14:26:00.789012"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-scan">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/scan</span>
+<span class="endpoint-desc">Quick deterministic scan</span>
+</div>
+<div class="endpoint-body open">
+<p>Quick scan combining drift detection and risk scoring without LLM calls. Returns an instant APPROVE/ESCALATE/BLOCK decision without recording to the ledger.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>scan</code> scope</p>
+
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "system": "content-moderator",
+  "action": "APPROVE",
+  "risk_score": 83,
+  "drift_coefficient": 0.0923,
+  "vetoed": false,
+  "timestamp": "2026-03-18T14:27:00.345678"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: AUDIT & REPORTS -->
+<!-- ============================================================ -->
+
+<section id="api-audit-system">
+<h2>API: Audit &amp; Reports</h2>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/audit</span>
+<span class="endpoint-desc">LLM-powered compliance audit</span>
+</div>
+<div class="endpoint-body open">
+<p>Run a full compliance audit against specified frameworks using LLM analysis. Creates a ledger entry with <code>AUDIT_COMPLETE</code> action.</p>
+<p><strong>Auth:</strong> JWT</p>
+
+<h4>Request Body</h4>
+<table class="param-table">
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>system_name</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Name of the system to audit</td></tr>
+<tr><td>system_description</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Detailed description (max 5,000 chars)</td></tr>
+<tr><td>industry</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Industry vertical (e.g., "healthcare", "finance")</td></tr>
+<tr><td>frameworks</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Comma-separated frameworks: <code>NIST_AI_RMF,EU_AI_ACT,HIPAA</code></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="api-audit-history">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/audit/{system_name}</span>
+<span class="endpoint-desc">Retrieve audit history</span>
+</div>
+<div class="endpoint-body open">
+<p>Retrieve governance audit history for a specific system, ordered by most recent first.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>audit</code> scope</p>
+
+<h4>Query Parameters</h4>
+<table class="param-table">
+<thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>limit</td><td><span class="param-type">integer</span></td><td>50</td><td>Max records to return (capped at 100)</td></tr>
+</tbody>
+</table>
+
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "system": "loan-scorer",
+  "total": 3,
+  "records": [
+    {
+      "decision_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "action": "APPROVE",
+      "risk_score": 66.0,
+      "risk_level": "MEDIUM",
+      "hash": "a3f2b8c91d4e5f6a...",
+      "created_at": "2026-03-18T14:23:01"
+    }
+  ]
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-reports">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/reports</span>
+<span class="endpoint-desc">Generate compliance report</span>
+</div>
+<div class="endpoint-body open">
+<p>Generate a regulatory compliance report for any of the 18 supported frameworks.</p>
+
+<h4>Request Body</h4>
+<table class="param-table">
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>system_name</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Name of the system</td></tr>
+<tr><td>framework</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Framework ID (see table below). Default: <code>eu_ai_act</code></td></tr>
+<tr><td>risk_tier</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Risk classification: <code>high</code>, <code>limited</code>, <code>minimal</code>. Default: <code>high</code></td></tr>
+<tr><td>context</td><td><span class="param-type">object</span></td><td><span class="param-optional">optional</span></td><td>Additional context data for the report generator</td></tr>
+</tbody>
+</table>
+
+<h4>curl Example</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/reports \
+  -H "Content-Type: application/json" \
+  -d '{
+    "system_name": "loan-approval-v3",
+    "framework": "eu_ai_act",
+    "risk_tier": "high"
+  }'</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-compliance-summary">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/reports/compliance-summary</span>
+<span class="endpoint-desc">Cross-framework compliance scores</span>
+</div>
+<div class="endpoint-body open">
+<p>Quick compliance score summary across 6 key frameworks. Powers dashboard charts.</p>
+<h4>Query: <code>?system_name=loan-approval-v3</code></h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "frameworks": [
+    {"id": "eu_ai_act", "name": "EU AI Act", "pct": 72},
+    {"id": "nist_ai_rmf", "name": "NIST AI RMF", "pct": 85},
+    {"id": "iso_42001", "name": "ISO 42001", "pct": 68},
+    {"id": "soc2", "name": "SOC 2", "pct": 91},
+    {"id": "hipaa", "name": "HIPAA", "pct": 55},
+    {"id": "gdpr", "name": "GDPR", "pct": 78}
+  ],
+  "average": 74.8
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-frameworks">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/reports/frameworks</span>
+<span class="endpoint-desc">List all 18 supported frameworks</span>
+</div>
+<div class="endpoint-body open">
+<p>Returns metadata for all 18 regulatory frameworks supported by the report generator, including jurisdiction, description, and applicable industries.</p>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: AGENT REGISTRY -->
+<!-- ============================================================ -->
+
+<section id="api-register-agent">
+<h2>API: Agent Registry</h2>
+<p>The Agent Registry enables you to register, discover, and govern every AI agent in your organization. It also provides shadow AI detection to find unauthorized AI usage.</p>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/agents</span>
+<span class="endpoint-desc">Register an AI agent</span>
+</div>
+<div class="endpoint-body open">
+<p>Register an AI agent in the governance registry. Newly registered agents start with <code>pending_review</code> status.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>govern</code> scope</p>
+
+<h4>Request Body</h4>
+<table class="param-table">
+<thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>name</td><td><span class="param-type">string</span></td><td><span class="param-required">required</span></td><td>Unique agent name</td></tr>
+<tr><td>agent_type</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td><code>autonomous</code>, <code>chatbot</code>, <code>tool_agent</code>, <code>workflow</code>, <code>copilot</code>. Default: <code>autonomous</code></td></tr>
+<tr><td>description</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>What this agent does</td></tr>
+<tr><td>owner</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Owner email or team</td></tr>
+<tr><td>team</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Organizational team</td></tr>
+<tr><td>purpose</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Business purpose</td></tr>
+<tr><td>tools</td><td><span class="param-type">string[]</span></td><td><span class="param-optional">optional</span></td><td>Tools the agent has access to</td></tr>
+<tr><td>model_provider</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>LLM provider (OpenAI, Anthropic, etc.)</td></tr>
+<tr><td>model_name</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td>Model identifier (gpt-4o, claude-sonnet-4-20250514, etc.)</td></tr>
+<tr><td>autonomy_level</td><td><span class="param-type">integer</span></td><td><span class="param-optional">optional</span></td><td>1 (supervised) to 5 (fully autonomous). Default: <code>1</code></td></tr>
+<tr><td>risk_tier</td><td><span class="param-type">string</span></td><td><span class="param-optional">optional</span></td><td><code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code></td></tr>
+</tbody>
+</table>
+
+<h4>curl Example</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/agents \
+  -H "Authorization: Bearer gl_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "support-chatbot-v2",
+    "agent_type": "chatbot",
+    "description": "Customer support conversational AI",
+    "owner": "cx-team@company.com",
+    "team": "Customer Experience",
+    "purpose": "Handle tier-1 support tickets via chat",
+    "model_provider": "OpenAI",
+    "model_name": "gpt-4o",
+    "tools": ["ticket_lookup", "knowledge_base", "escalation"],
+    "autonomy_level": 2,
+    "risk_tier": "medium"
+  }'</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-list-agents">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/agents</span>
+<span class="endpoint-desc">List registered agents</span>
+</div>
+<div class="endpoint-body open">
+<p>List all registered agents with filtering and pagination.</p>
+<h4>Query Parameters</h4>
+<table class="param-table">
+<thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>status</td><td><span class="param-type">string</span></td><td>Filter: <code>approved</code>, <code>pending_review</code>, <code>under_review</code>, <code>rejected</code>, <code>suspended</code></td></tr>
+<tr><td>agent_type</td><td><span class="param-type">string</span></td><td>Filter: <code>autonomous</code>, <code>chatbot</code>, <code>tool_agent</code>, <code>workflow</code>, <code>copilot</code></td></tr>
+<tr><td>is_shadow</td><td><span class="param-type">boolean</span></td><td>Filter for shadow (unregistered) AI agents</td></tr>
+<tr><td>team</td><td><span class="param-type">string</span></td><td>Filter by organizational team</td></tr>
+<tr><td>page</td><td><span class="param-type">integer</span></td><td>Page number (default 1)</td></tr>
+<tr><td>limit</td><td><span class="param-type">integer</span></td><td>Results per page (default 50)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="api-agent-governance">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/agents/{agent_id}/governance</span>
+<span class="endpoint-desc">Approve, reject, or suspend</span>
+</div>
+<div class="endpoint-body open">
+<p>Update an agent's governance status. Available actions: <code>approve</code>, <code>reject</code>, <code>suspend</code>, <code>activate</code>, <code>review</code>.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>govern</code> scope</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "action": "approve",
+  "approved_by": "ciso@company.com",
+  "reason": "Passed security review and bias testing"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-shadow-scan">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/agents/discovery/scan</span>
+<span class="endpoint-desc">Shadow AI discovery scan</span>
+</div>
+<div class="endpoint-body open">
+<p>Scan for unauthorized or unregistered AI usage across your organization. Detects 15+ AI provider patterns including OpenAI, Anthropic, Google AI, Azure OpenAI, AWS Bedrock, HuggingFace, Cohere, Replicate, Groq, Mistral, Together AI, LangChain, CrewAI, AutoGen, and local Ollama instances.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>scan</code> scope</p>
+
+<h4>Request Body</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "scan_type": "api_patterns",
+  "targets": [
+    "api.openai.com/v1/chat/completions",
+    "api.anthropic.com/v1/messages",
+    "api-inference.huggingface.co/models/gpt2",
+    "localhost:11434/api/generate"
+  ]
+}</pre>
+</div>
+
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "scan_type": "api_patterns",
+  "targets_scanned": 4,
+  "total_detections": 4,
+  "unregistered_ai": 3,
+  "risk_level": "critical",
+  "detections": [
+    {"provider": "OpenAI", "severity": "high", "source": "api.openai.com/v1/chat/completions", "registered": false},
+    {"provider": "Anthropic", "severity": "high", "source": "api.anthropic.com/v1/messages", "registered": false},
+    {"provider": "HuggingFace", "severity": "medium", "source": "api-inference.huggingface.co/models/gpt2", "registered": false},
+    {"provider": "Ollama (Local)", "severity": "low", "registered": true, "agent_id": 5}
+  ],
+  "recommendation": "Found 3 unregistered AI service(s). Register via POST /v1/agents.",
+  "known_patterns": 15
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: MODEL REGISTRY -->
+<!-- ============================================================ -->
+
+<section id="api-register-model">
+<h2>API: Model Registry</h2>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/models</span>
+<span class="endpoint-desc">Register an AI model</span>
+</div>
+<div class="endpoint-body open">
+<p>Register a new AI model in the governance registry. Models track lifecycle stages from development through retirement.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>govern</code> scope</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/models \
+  -H "Authorization: Bearer gl_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "fraud-detector",
+    "version": "2.1.0",
+    "provider": "pytorch",
+    "description": "Real-time transaction fraud detection",
+    "owner": "fraud-team@company.com",
+    "risk_tier": "high"
+  }'</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-list-models">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/models</span>
+<span class="endpoint-desc">List registered models</span>
+</div>
+<div class="endpoint-body open">
+<p>List all registered models with optional filtering by lifecycle stage and governance status. Supports pagination.</p>
+<h4>Query Parameters: <code>?lifecycle=production&amp;governance_status=compliant&amp;page=1&amp;limit=50</code></h4>
+</div>
+</div>
+</section>
+
+<section id="api-model-lifecycle">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method put">PUT</span>
+<span class="endpoint-path">/v1/models/{model_id}/lifecycle</span>
+<span class="endpoint-desc">Update model lifecycle</span>
+</div>
+<div class="endpoint-body open">
+<p>Promote or demote a model through lifecycle stages: <code>development</code>, <code>staging</code>, <code>production</code>, <code>deprecated</code>, <code>retired</code>.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{ "lifecycle": "production" }</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-model-card">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/models/{model_id}/card</span>
+<span class="endpoint-desc">Create model card</span>
+</div>
+<div class="endpoint-body open">
+<p>Create a transparency model card documenting intended use, limitations, training data, evaluation metrics, ethical considerations, and fairness analysis.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "intended_use": "Credit risk scoring for consumer loans under $50,000",
+  "limitations": "Not validated for commercial loans or international markets",
+  "training_data_summary": "5M anonymized loan applications, 2018-2025",
+  "evaluation_metrics": {"accuracy": 0.94, "auc_roc": 0.97, "f1": 0.91},
+  "ethical_considerations": "Tested for disparate impact across race, gender, and age",
+  "fairness_analysis": {"disparate_impact_ratio": 0.85, "equalized_odds": true}
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: INCIDENTS & POLICIES -->
+<!-- ============================================================ -->
+
+<section id="api-create-incident">
+<h2>API: Incidents &amp; Policies</h2>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/incidents</span>
+<span class="endpoint-desc">Report a governance incident</span>
+</div>
+<div class="endpoint-body open">
+<p>Report a new AI governance incident. Automatically triggers webhooks for high/critical severity and sends email notifications.</p>
+<p><strong>Auth:</strong> API Key or JWT &mdash; requires <code>govern</code> scope</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/incidents \
+  -H "Authorization: Bearer gl_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Resume screener bias flag - gender disparity",
+    "description": "Disparate impact ratio dropped below 0.8 for gender dimension",
+    "severity": "critical",
+    "category": "fairness",
+    "reporter": "fairness-audit"
+  }'</pre>
+</div>
+<h4>Response</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "id": 42,
+  "title": "Resume screener bias flag - gender disparity",
+  "severity": "critical",
+  "status": "open",
+  "created_at": "2026-03-18T15:30:00.123456"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-list-incidents">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/incidents</span>
+<span class="endpoint-desc">List all incidents</span>
+</div>
+<div class="endpoint-body open">
+<p>List all incidents with optional filters by status (<code>open</code>, <code>investigating</code>, <code>mitigating</code>, <code>resolved</code>, <code>closed</code>) and severity (<code>low</code>, <code>medium</code>, <code>high</code>, <code>critical</code>). Supports pagination.</p>
+</div>
+</div>
+</section>
+
+<section id="api-update-incident">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method patch">PATCH</span>
+<span class="endpoint-path">/v1/incidents/{incident_id}</span>
+<span class="endpoint-desc">Update incident status</span>
+</div>
+<div class="endpoint-body open">
+<p>Update incident status, severity, assignment, root cause, resolution, or impact. All changes are tracked in a timeline array within the incident record.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "status": "investigating",
+  "assignee": "ml-ops@company.com",
+  "root_cause": "Training data distribution shift after Q4 data refresh",
+  "impact": "Affected 2,400 candidate evaluations over 3 days"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-create-policy">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/policies</span>
+<span class="endpoint-desc">Create governance policy</span>
+</div>
+<div class="endpoint-body open">
+<p>Create a new governance policy with rules that can be evaluated against AI system contexts.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST https://api.governlayer.ai/v1/policies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Production AI Safety Policy",
+    "version": "1.0",
+    "description": "Standard governance rules for production AI systems",
+    "rules": [
+      {"name": "risk_threshold", "condition": "risk_score <= 70", "action": "allow", "message": "Risk score within acceptable range"},
+      {"name": "drift_threshold", "condition": "drift_coefficient <= 0.30", "action": "allow", "message": "Drift within acceptable range"},
+      {"name": "human_oversight", "condition": "has_human_oversight == True", "action": "warn", "message": "Human oversight recommended"},
+      {"name": "fairness_check", "condition": "fairness_score >= 70", "action": "allow", "message": "Fairness acceptable"},
+      {"name": "high_risk_block", "condition": "risk_score <= 90", "action": "allow", "message": "Extreme risk blocked"}
+    ]
+  }'</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-evaluate-policy">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/v1/policies/evaluate</span>
+<span class="endpoint-desc">Evaluate context against policy</span>
+</div>
+<div class="endpoint-body open">
+<p>Evaluate a context object against a specific policy or the default policy. Returns per-rule results indicating pass/fail/warn status.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "policy_id": 1,
+  "context": {
+    "risk_score": 45,
+    "drift_coefficient": 0.22,
+    "has_human_oversight": true,
+    "fairness_score": 82
+  }
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: ANALYTICS -->
+<!-- ============================================================ -->
+
+<section id="api-usage-summary">
+<h2>API: Analytics</h2>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/analytics/usage/summary</span>
+<span class="endpoint-desc">Usage summary</span>
+</div>
+<div class="endpoint-body open">
+<p>High-level usage summary including total requests, success/error rates, average latency, and active API keys.</p>
+<h4>Query: <code>?days=30</code></h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "period_days": 30,
+  "total_requests": 14523,
+  "success_count": 14201,
+  "error_count": 322,
+  "error_rate": 2.22,
+  "average_latency_ms": 127.45,
+  "active_api_keys": 8,
+  "requests_per_day": 484.1
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-usage-trends">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/analytics/usage/trends</span>
+<span class="endpoint-desc">Request volume over time</span>
+</div>
+<div class="endpoint-body open">
+<p>Time-series data for request volume, latency, and error counts. Supports <code>hour</code>, <code>day</code>, or <code>week</code> granularity.</p>
+<h4>Query: <code>?days=7&amp;granularity=day</code></h4>
+</div>
+</div>
+</section>
+
+<section id="api-top-endpoints">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/analytics/usage/top-endpoints</span>
+<span class="endpoint-desc">Most-used endpoints</span>
+</div>
+<div class="endpoint-body open">
+<p>Ranked list of most-used API endpoints with request counts, average latency, and error counts.</p>
+</div>
+</div>
+</section>
+
+<section id="api-governance-analytics">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method get">GET</span>
+<span class="endpoint-path">/v1/analytics/usage/governance</span>
+<span class="endpoint-desc">Governance decision analytics</span>
+</div>
+<div class="endpoint-body open">
+<p>Breakdown of governance decisions by action type (APPROVE/BLOCK/ESCALATE) with average risk scores per action.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "period_days": 30,
+  "total_decisions": 847,
+  "by_action": [
+    {"action": "APPROVE", "count": 712, "percentage": 84.1, "avg_risk_score": 78.3},
+    {"action": "ESCALATE_HUMAN", "count": 98, "percentage": 11.6, "avg_risk_score": 42.1},
+    {"action": "BLOCK", "count": 37, "percentage": 4.4, "avg_risk_score": 31.5}
+  ]
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- API REFERENCE: THREATS -->
+<!-- ============================================================ -->
+
+<section id="api-threats">
+<h2>API: Threats</h2>
+
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/threats</span>
+<span class="endpoint-desc">AI threat analysis</span>
+</div>
+<div class="endpoint-body open">
+<p>Analyze AI-specific threats using MITRE ATLAS and OWASP AI Security frameworks. Uses LLM analysis combined with live search.</p>
+<p><strong>Auth:</strong> JWT</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "system_type": "recommendation_engine",
+  "deployment_context": "production"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-incident-response">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/incident-response</span>
+<span class="endpoint-desc">Generate response plan</span>
+</div>
+<div class="endpoint-body open">
+<p>Generate a detailed AI incident response plan including containment, investigation, regulatory notification, stakeholder communication, and remediation steps.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "incident_type": "data_poisoning",
+  "system_name": "fraud-detector",
+  "affected_users": 50000,
+  "industry": "finance"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-jurisdiction">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/jurisdiction</span>
+<span class="endpoint-desc">Map jurisdiction requirements</span>
+</div>
+<div class="endpoint-body open">
+<p>Map which AI regulations apply based on operating countries, industry, and AI system type. Returns applicable laws, deadlines, penalties, and data residency requirements.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "countries": "Germany, United States, Singapore",
+  "industry": "healthcare",
+  "ai_system_type": "diagnostic_assistant"
+}</pre>
+</div>
+</div>
+</div>
+</section>
+
+<section id="api-deadlines">
+<div class="endpoint">
+<div class="endpoint-header" onclick="toggleEndpoint(this)">
+<span class="endpoint-method post">POST</span>
+<span class="endpoint-path">/deadlines</span>
+<span class="endpoint-desc">Track compliance deadlines</span>
+</div>
+<div class="endpoint-body open">
+<p>Track upcoming AI regulatory compliance deadlines globally. Uses live search to find the latest deadline information, sorted by urgency.</p>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- REGULATORY FRAMEWORKS -->
+<!-- ============================================================ -->
+
+<section id="frameworks-overview">
+<h2>Regulatory Frameworks</h2>
+<p>GovernLayer supports 18 regulatory frameworks for compliance report generation. Each framework has a dedicated report generator that maps GovernLayer's governance data to framework-specific controls.</p>
+
+<table class="data-table">
+<thead><tr><th>Framework</th><th>ID</th><th>Jurisdiction</th><th>Focus Area</th></tr></thead>
+<tbody>
+<tr><td><strong>EU AI Act</strong></td><td><code>eu_ai_act</code></td><td>European Union</td><td>AI risk classification, transparency, human oversight</td></tr>
+<tr><td><strong>NIST AI RMF</strong></td><td><code>nist_ai_rmf</code></td><td>United States</td><td>AI Risk Management: Govern, Map, Measure, Manage</td></tr>
+<tr><td><strong>ISO 42001</strong></td><td><code>iso_42001</code></td><td>International</td><td>AI Management System certification</td></tr>
+<tr><td><strong>ISO/IEC 27001</strong></td><td><code>iso_27001</code></td><td>International</td><td>Information Security Management for AI</td></tr>
+<tr><td><strong>GDPR</strong></td><td><code>gdpr</code></td><td>European Union</td><td>Data protection, automated decision-making rights</td></tr>
+<tr><td><strong>HIPAA</strong></td><td><code>hipaa</code></td><td>United States</td><td>Health data protection for AI processing PHI</td></tr>
+<tr><td><strong>SOC 2 Type II</strong></td><td><code>soc2</code></td><td>United States</td><td>Trust Service Criteria: security, availability</td></tr>
+<tr><td><strong>NIS2 Directive</strong></td><td><code>nis2</code></td><td>European Union</td><td>Cybersecurity for essential/important entities</td></tr>
+<tr><td><strong>DORA</strong></td><td><code>dora</code></td><td>European Union</td><td>Digital operational resilience (financial sector)</td></tr>
+<tr><td><strong>CCPA/CPRA</strong></td><td><code>ccpa</code></td><td>California, USA</td><td>Consumer privacy, automated decision-making</td></tr>
+<tr><td><strong>MITRE ATLAS</strong></td><td><code>mitre_atlas</code></td><td>International</td><td>Adversarial threat landscape for AI</td></tr>
+<tr><td><strong>OWASP AI Top 10</strong></td><td><code>owasp_ai</code></td><td>International</td><td>Top 10 security risks for AI/ML</td></tr>
+<tr><td><strong>NIST CSF 2.0</strong></td><td><code>nist_csf</code></td><td>United States</td><td>Cybersecurity Framework functions</td></tr>
+<tr><td><strong>OECD AI Principles</strong></td><td><code>oecd_ai</code></td><td>International (46 countries)</td><td>Fairness, transparency, accountability</td></tr>
+<tr><td><strong>IEEE Ethically Aligned</strong></td><td><code>ieee_ethics</code></td><td>International</td><td>Ethical autonomous/intelligent systems</td></tr>
+<tr><td><strong>HITRUST AI</strong></td><td><code>hitrust</code></td><td>United States</td><td>Healthcare AI assurance</td></tr>
+<tr><td><strong>NYC Local Law 144</strong></td><td><code>nyc_ll144</code></td><td>New York City</td><td>Automated employment decision bias audit</td></tr>
+<tr><td><strong>Colorado SB 21-169</strong></td><td><code>colorado_sb169</code></td><td>Colorado</td><td>Insurance algorithmic discrimination prevention</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="fw-eu-ai-act">
+<h3>EU AI Act</h3>
+<p>The EU AI Act classifies AI systems into risk tiers and imposes requirements proportional to the risk level. GovernLayer maps its governance data to EU AI Act requirements automatically.</p>
+<ul>
+<li><strong>Unacceptable Risk</strong> &mdash; Banned outright (social scoring, real-time biometric surveillance)</li>
+<li><strong>High Risk</strong> &mdash; Requires conformity assessment, risk management, human oversight, transparency, data governance, and registration in the EU database</li>
+<li><strong>Limited Risk</strong> &mdash; Transparency obligations (disclose AI interaction)</li>
+<li><strong>Minimal Risk</strong> &mdash; Voluntary codes of practice</li>
+</ul>
+<p>GovernLayer automatically assesses: risk management system documentation, data governance practices, transparency and explainability, human oversight provisions, accuracy and robustness metrics, and bias testing compliance.</p>
+</section>
+
+<section id="fw-nist">
+<h3>NIST AI RMF</h3>
+<p>The NIST AI Risk Management Framework provides four core functions:</p>
+<ul>
+<li><strong>GOVERN</strong> &mdash; Organizational policies, roles, and accountability for AI risk</li>
+<li><strong>MAP</strong> &mdash; Identify and categorize AI risks in context</li>
+<li><strong>MEASURE</strong> &mdash; Assess and quantify identified risks using metrics</li>
+<li><strong>MANAGE</strong> &mdash; Prioritize and act on risks, monitor residual risk</li>
+</ul>
+<p>GovernLayer maps each function to specific platform capabilities: governance decisions map to GOVERN, drift detection and risk scoring map to MEASURE, audit ledger maps to MAP, and policy enforcement maps to MANAGE.</p>
+</section>
+
+<section id="fw-iso42001">
+<h3>ISO 42001</h3>
+<p>ISO 42001 is the international standard for AI Management Systems (AIMS). It follows the Annex SL structure familiar from ISO 27001 and ISO 9001, making it integrable with existing management systems. GovernLayer reports map to clauses covering: context of the organization, leadership and commitment, planning for risks and opportunities, support and resources, operational planning and control, performance evaluation, and continual improvement.</p>
+</section>
+
+<section id="fw-gdpr">
+<h3>GDPR</h3>
+<p>For AI systems processing personal data of EU residents, GovernLayer assesses GDPR compliance including: lawful basis for processing, data minimization, purpose limitation, automated decision-making safeguards (Article 22), data protection impact assessment (DPIA) requirements, right to explanation, data subject rights, and international transfer safeguards.</p>
+</section>
+
+<section id="fw-hipaa">
+<h3>HIPAA</h3>
+<p>For AI systems in healthcare processing Protected Health Information (PHI), GovernLayer evaluates: administrative safeguards, physical safeguards, technical safeguards, organizational requirements, minimum necessary standard compliance, business associate agreements, breach notification procedures, and audit trail requirements. The platform's immutable audit ledger directly supports HIPAA's audit trail requirements.</p>
+</section>
+
+<section id="fw-soc2">
+<h3>SOC 2 Type II</h3>
+<p>GovernLayer maps governance data to SOC 2 Trust Service Criteria: Security (CC1-CC9), Availability (A1), Processing Integrity (PI1), Confidentiality (C1), and Privacy (P1-P8). The platform's hash-chained audit ledger, access controls, and continuous monitoring directly support SOC 2 evidence requirements.</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- ENTERPRISE FEATURES -->
+<!-- ============================================================ -->
+
+<section id="multi-tenancy">
+<h2>Enterprise Features</h2>
+<h3>Multi-Tenancy</h3>
+<p>GovernLayer supports full multi-tenancy through Organizations. Each organization has its own API keys, usage records, webhooks, and billing.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre># Create organization
+curl -X POST https://api.governlayer.ai/v1/enterprise/orgs \
+  -H "Authorization: Bearer $JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Acme Corp", "slug": "acme-corp", "plan": "pro"}'
+
+# Get organization details
+curl https://api.governlayer.ai/v1/enterprise/orgs/acme-corp \
+  -H "Authorization: Bearer $JWT_TOKEN"
+
+# Get usage statistics
+curl "https://api.governlayer.ai/v1/enterprise/orgs/acme-corp/usage?days=30" \
+  -H "Authorization: Bearer $JWT_TOKEN"</pre>
+</div>
+</section>
+
+<section id="api-key-management">
+<h3>API Key Management</h3>
+<p>API keys use the <code>gl_</code> prefix and are scoped to specific permissions. Keys are hashed with SHA-256 before storage &mdash; the raw key is only returned once at creation time.</p>
+<ul>
+<li><strong>Create</strong>: <code>POST /v1/enterprise/orgs/{slug}/api-keys</code> &mdash; generates a new key with specified scopes and optional expiration</li>
+<li><strong>List</strong>: <code>GET /v1/enterprise/orgs/{slug}/api-keys</code> &mdash; returns key metadata (prefix, scopes, last used) but never the full key</li>
+<li><strong>Revoke</strong>: <code>DELETE /v1/enterprise/orgs/{slug}/api-keys/{key_id}</code> &mdash; deactivates a key immediately</li>
+</ul>
+<div class="callout callout-warn">
+<div class="callout-title">Key Rotation</div>
+To rotate a key, generate a new key, update your integration to use the new key, then revoke the old key. GovernLayer does not support in-place key rotation to avoid service interruption.
+</div>
+</section>
+
+<section id="webhooks">
+<h3>Webhooks</h3>
+<p>Webhooks notify your systems when governance events occur. Each webhook delivery includes an HMAC-SHA256 signature for verification.</p>
+
+<h4>Event Types</h4>
+<table class="data-table">
+<thead><tr><th>Event</th><th>Trigger</th></tr></thead>
+<tbody>
+<tr><td><code>governance.decision</code></td><td>Any governance decision (APPROVE, BLOCK, ESCALATE)</td></tr>
+<tr><td><code>governance.approve</code></td><td>AI action approved</td></tr>
+<tr><td><code>governance.block</code></td><td>AI action blocked</td></tr>
+<tr><td><code>governance.escalate_human</code></td><td>AI action escalated for human review</td></tr>
+<tr><td><code>audit.complete</code></td><td>Compliance audit completed</td></tr>
+<tr><td><code>incident.created</code></td><td>New incident reported</td></tr>
+<tr><td><code>incident.updated</code></td><td>Incident status changed</td></tr>
+<tr><td><code>incident.resolved</code></td><td>Incident resolved or closed</td></tr>
+<tr><td><code>*</code></td><td>All events (wildcard)</td></tr>
+</tbody>
+</table>
+
+<h4>Webhook Payload</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "event": "governance.decision",
+  "data": {
+    "decision_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "system": "loan-scorer",
+    "action": "APPROVE",
+    "risk_score": 66,
+    "risk_level": "MEDIUM"
+  }
+}</pre>
+</div>
+
+<h4>Headers</h4>
+<table class="data-table">
+<thead><tr><th>Header</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>X-GovernLayer-Event</code></td><td>Event type (e.g., <code>governance.decision</code>)</td></tr>
+<tr><td><code>X-GovernLayer-Signature</code></td><td>HMAC-SHA256 signature: <code>sha256={hex_digest}</code></td></tr>
+<tr><td><code>Content-Type</code></td><td><code>application/json</code></td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="mfa">
+<h3>Multi-Factor Authentication (TOTP)</h3>
+<p>GovernLayer supports TOTP-based MFA compatible with Google Authenticator, Authy, 1Password, and any standard authenticator app.</p>
+
+<h4>Setup Flow</h4>
+<ol>
+<li><code>POST /auth/mfa/setup</code> &mdash; generates a TOTP secret, provisioning URI, QR code (base64 PNG), and 10 backup codes</li>
+<li>Scan the QR code with your authenticator app</li>
+<li><code>POST /auth/mfa/verify</code> with a 6-digit code &mdash; enables MFA on your account</li>
+</ol>
+
+<h4>Login with MFA</h4>
+<p>When MFA is enabled, include the <code>mfa_code</code> field in your login request. Alternatively, use one of your 10 backup codes (each can be used once).</p>
+
+<h4>Disable MFA</h4>
+<p><code>POST /auth/mfa/disable</code> with a valid TOTP code or backup code to disable MFA.</p>
+</section>
+
+<section id="billing">
+<h3>Billing</h3>
+<p>GovernLayer uses Stripe for billing and subscription management. Each organization can have a Stripe subscription linked to their plan tier.</p>
+<ul>
+<li><strong>Checkout</strong>: <code>POST /billing/checkout</code> &mdash; creates a Stripe checkout session for plan upgrades</li>
+<li><strong>Portal</strong>: <code>GET /billing/portal/{slug}</code> &mdash; redirects to the Stripe customer portal for managing subscriptions, payment methods, and invoices</li>
+<li><strong>Usage</strong>: <code>GET /billing/usage/{slug}</code> &mdash; returns usage metrics for the current billing period</li>
+<li><strong>Webhooks</strong>: <code>POST /billing/webhook</code> &mdash; Stripe webhook endpoint for subscription lifecycle events</li>
+</ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- ARCHITECTURE -->
+<!-- ============================================================ -->
+
+<section id="achonye">
+<h2>Architecture</h2>
+<h3>Achonye Multi-LLM Orchestrator</h3>
+<p>Achonye (pronounced "ah-CHON-yeh") is GovernLayer's hierarchical multi-LLM orchestration system. It routes tasks to the optimal model based on complexity, capability requirements, and cost optimization.</p>
+
+<h4>Hierarchy</h4>
+<div class="arch-diagram">
+<pre>
+  +------------------------------------------+
+  |           LEADER: Claude Opus 4.6         |
+  |    Supreme orchestrator, final arbiter    |
+  +--------------------+---------------------+
+                       |
+  +--------------------v---------------------+
+  |                  BOARD                    |
+  |  Claude Sonnet | Gemini Pro | GPT-4o     |
+  |  Strategic verification and governance   |
+  +--------------------+---------------------+
+                       |
+  +--------------------v---------------------+
+  |              VALIDATOR                    |
+  |  Multi-LLM Consensus Engine              |
+  |  Voting | Chain-of-Verification | Debate |
+  +--------------------+---------------------+
+                       |
+  +--------------------v---------------------+
+  |              OPERATORS (14 models)        |
+  | Local: Llama3, Mistral, DeepSeek-R1,     |
+  |        Qwen3, Phi-3                       |
+  | Cloud: Groq Llama, DeepSeek V3, Devstral,|
+  |        Grok, Kimi                         |
+  +------------------------------------------+
+</pre>
+</div>
+
+<h4>Token Economics</h4>
+<table class="data-table">
+<thead><tr><th>Task Complexity</th><th>Routing</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><td>Trivial</td><td>Local Ollama (Phi-3, Llama3)</td><td>$0.00 (free)</td></tr>
+<tr><td>Simple</td><td>Local Ollama or Groq</td><td>$0.00 &ndash; $0.0006/1K tokens</td></tr>
+<tr><td>Complex</td><td>Standard cloud (Gemini, GPT-4o, DeepSeek V3)</td><td>$0.001 &ndash; $0.003/1K tokens</td></tr>
+<tr><td>Critical</td><td>Multi-LLM consensus (3+ models)</td><td>$0.003 &ndash; $0.015/1K tokens</td></tr>
+</tbody>
+</table>
+</section>
+
+<section id="model-providers">
+<h3>Model Providers</h3>
+<p>GovernLayer integrates with three provider tiers:</p>
+
+<h4>Ollama (Local)</h4>
+<p>Zero cost, full privacy. All data stays on your infrastructure. Models: Llama 3 8B, Mistral 7B, DeepSeek-R1 14B, Qwen 3 8B, Phi-3 Mini.</p>
+
+<h4>Groq (Fast Cloud)</h4>
+<p>Hardware-accelerated inference for Llama 3.3 70B. Extremely fast response times at minimal cost ($0.00059/1K tokens). Used for tasks that need cloud-level capability with speed.</p>
+
+<h4>OpenRouter (Universal Gateway)</h4>
+<p>Single API key, 500+ models. Routes to Gemini 2.5 Pro (1M context), GPT-4o, DeepSeek V3, Devstral 2, Grok 4.1, Kimi K2.5, Claude Sonnet 4.6, and Claude Opus 4.6. All non-Groq, non-Ollama models route through OpenRouter.</p>
+</section>
+
+<section id="task-router">
+<h3>Task Router</h3>
+<p>The intelligent task router analyzes each request and selects the optimal model based on:</p>
+<ul>
+<li><strong>Task Complexity</strong> &mdash; Trivial, simple, moderate, complex, or critical</li>
+<li><strong>Required Capability</strong> &mdash; Reasoning, code generation, fact retrieval, verification, math, multimodal, privacy-sensitive, governance</li>
+<li><strong>Cost Preference</strong> &mdash; When <code>prefer_local</code> is true, routes to local models first (saves tokens)</li>
+<li><strong>Consensus Requirement</strong> &mdash; Critical tasks automatically trigger multi-LLM validation</li>
+</ul>
+</section>
+
+<section id="agent-orchestration">
+<h3>Agent Orchestration</h3>
+<p>GovernLayer uses LangGraph StateGraph for agent orchestration. The governance pipeline is modeled as a directed graph with conditional edges:</p>
+<ul>
+<li><strong>Drift Node</strong> &mdash; Analyzes reasoning trace for behavioral drift</li>
+<li><strong>Risk Node</strong> &mdash; Computes 6-dimension risk score</li>
+<li><strong>Decision Node</strong> &mdash; Applies decision logic (APPROVE/ESCALATE/BLOCK)</li>
+<li><strong>Escalation Edge</strong> &mdash; Conditional edge to human-in-the-loop when ESCALATE_HUMAN is the decision</li>
+<li><strong>Ledger Node</strong> &mdash; Records the decision in the hash-chained audit ledger</li>
+</ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- INTEGRATIONS -->
+<!-- ============================================================ -->
+
+<section id="mcp-server">
+<h2>Integrations</h2>
+<h3>MCP Server</h3>
+<p>GovernLayer provides a FastMCP server with 12 tools for integration with Claude Desktop, Cursor, and other MCP-compatible clients. The MCP server runs standalone via stdio and does not require authentication or a database connection.</p>
+
+<h4>Available Tools</h4>
+<table class="data-table">
+<thead><tr><th>Tool</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>list_frameworks</code></td><td>List all 27 AI governance frameworks</td></tr>
+<tr><td><code>calculate_risk_score</code></td><td>6-dimension risk score calculation</td></tr>
+<tr><td><code>search_regulations</code></td><td>Search latest AI regulations and news</td></tr>
+<tr><td><code>audit_ai_system</code></td><td>Full compliance audit against top frameworks</td></tr>
+<tr><td><code>get_framework_details</code></td><td>Detailed framework compliance guide</td></tr>
+<tr><td><code>analyze_policy_gaps</code></td><td>Gap analysis between existing policies and frameworks</td></tr>
+<tr><td><code>map_jurisdiction_requirements</code></td><td>Map applicable regulations by country and industry</td></tr>
+<tr><td><code>generate_incident_response_plan</code></td><td>AI incident response plan generation</td></tr>
+<tr><td><code>track_compliance_deadlines</code></td><td>Upcoming regulatory compliance deadlines</td></tr>
+<tr><td><code>analyze_ai_threats</code></td><td>MITRE ATLAS and OWASP AI threat analysis</td></tr>
+<tr><td><code>achonye_route</code></td><td>Route a task through the intelligent multi-LLM system</td></tr>
+<tr><td><code>achonye_ecosystem</code></td><td>View the full multi-LLM ecosystem status</td></tr>
+</tbody>
+</table>
+
+<h4>Running the MCP Server</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre># From the project root
+make mcp
+
+# Or directly
+python -m src.mcp.server</pre>
+</div>
+
+<h4>Claude Desktop Configuration</h4>
+<p>Add to your <code>~/.claude/claude_desktop_config.json</code>:</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">json</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "mcpServers": {
+    "governlayer": {
+      "command": "python",
+      "args": ["-m", "src.mcp.server"],
+      "cwd": "/path/to/governlayer-ai"
+    }
+  }
+}</pre>
+</div>
+</section>
+
+<section id="n8n-workflows">
+<h3>n8n Workflows</h3>
+<p>GovernLayer ships with an importable n8n workflow that runs the full governance pipeline hourly. The workflow is located at <code>n8n-workflows/governlayer_full_pipeline.json</code>.</p>
+<h4>Setup</h4>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre># Start n8n
+make n8n-start
+
+# Open UI and import the workflow
+make n8n-ui
+# Import: n8n-workflows/governlayer_full_pipeline.json</pre>
+</div>
+</section>
+
+<section id="autonomous-daemon">
+<h3>Autonomous Daemon</h3>
+<p>The governance daemon (<code>scripts/governlayer_daemon.py</code>) runs the full pipeline autonomously on a schedule. It can run once or loop at a configurable interval.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre># Run pipeline once
+make daemon-run
+
+# Start hourly daemon
+make daemon-start
+
+# Check health
+make daemon-health
+
+# Stop daemon
+make daemon-stop</pre>
+</div>
+</section>
+
+<section id="webhook-consumers">
+<h3>Webhook Consumers</h3>
+<p>To receive and verify GovernLayer webhooks, implement an HTTPS endpoint that validates the HMAC-SHA256 signature.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">python</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>import hmac
+import hashlib
+from flask import Flask, request, abort
+
+app = Flask(__name__)
+WEBHOOK_SECRET = "your_webhook_secret"
+
+@app.route("/webhook", methods=["POST"])
+def handle_webhook():
+    body = request.get_data()
+    signature = request.headers.get("X-GovernLayer-Signature", "")
+    expected = "sha256=" + hmac.new(
+        WEBHOOK_SECRET.encode(), body, hashlib.sha256
+    ).hexdigest()
+
+    if not hmac.compare_digest(signature, expected):
+        abort(401, "Invalid signature")
+
+    event = request.headers.get("X-GovernLayer-Event")
+    data = request.get_json()
+
+    if event == "governance.block":
+        alert_security_team(data["data"])
+    elif event == "incident.created":
+        create_jira_ticket(data["data"])
+
+    return {"status": "ok"}, 200</pre>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SDKs & EXAMPLES -->
+<!-- ============================================================ -->
+
+<section id="python-examples">
+<h2>SDKs &amp; Examples</h2>
+<h3>Python</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">python</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>import requests
+
+BASE_URL = "https://api.governlayer.ai"
+API_KEY = "gl_your_api_key"
+headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
+
+# Governance decision
+resp = requests.post(f"{BASE_URL}/v1/govern", headers=headers, json={
+    "system_name": "loan-scorer",
+    "reasoning_trace": "Evaluating loan based on credit score and income.",
+    "use_case": "loan_approval",
+    "handles_personal_data": True,
+    "has_human_oversight": True,
+    "is_explainable": True,
+})
+decision = resp.json()
+print(f"Action: {decision['action']}, Risk: {decision['risk']['score']}")
+
+# Risk scoring
+resp = requests.post(f"{BASE_URL}/v1/risk", headers=headers, json={
+    "system_name": "chatbot",
+    "handles_personal_data": False,
+    "has_human_oversight": True,
+    "is_explainable": True,
+})
+risk = resp.json()
+print(f"Risk Level: {risk['level']}, Score: {risk['score']}")
+
+# Register an agent
+resp = requests.post(f"{BASE_URL}/v1/agents", headers=headers, json={
+    "name": "support-chatbot-v3",
+    "agent_type": "chatbot",
+    "owner": "cx-team@company.com",
+    "model_provider": "OpenAI",
+    "model_name": "gpt-4o",
+    "autonomy_level": 2,
+})
+print(f"Agent registered: {resp.json()['id']}")</pre>
+</div>
+</section>
+
+<section id="curl-examples">
+<h3>curl Examples</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">bash</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre># Quick scan (no LLM, instant)
+curl -X POST https://api.governlayer.ai/v1/scan \
+  -H "Authorization: Bearer gl_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{"system_name": "chatbot", "reasoning_trace": "Helping user with product question."}'
+
+# Generate EU AI Act report
+curl -X POST https://api.governlayer.ai/v1/reports \
+  -H "Content-Type: application/json" \
+  -d '{"system_name": "hiring-ai", "framework": "eu_ai_act", "risk_tier": "high"}'
+
+# List all incidents
+curl https://api.governlayer.ai/v1/incidents?status=open&amp;severity=critical \
+  -H "Authorization: Bearer gl_your_api_key"
+
+# Governance analytics
+curl "https://api.governlayer.ai/v1/analytics/usage/governance?days=30"</pre>
+</div>
+</section>
+
+<section id="full-pipeline-example">
+<h3>Full Pipeline Example</h3>
+<p>This example runs the complete governance lifecycle: drift analysis, risk scoring, governance decision, compliance audit, and ledger verification.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">python</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>import requests
+
+BASE = "https://api.governlayer.ai"
+KEY = "gl_your_api_key"
+H = {"Authorization": f"Bearer {KEY}", "Content-Type": "application/json"}
+
+system = "loan-approval-v3"
+trace = "I will evaluate this loan based on credit score, income, and employment history."
+
+# Step 1: Drift detection
+drift = requests.post(f"{BASE}/v1/drift", headers=H, json={
+    "reasoning_trace": trace, "use_case": "loan_approval", "threshold": 0.3
+}).json()
+print(f"Drift: {drift['coefficient']} ({'VETOED' if drift['vetoed'] else 'OK'})")
+
+# Step 2: Risk scoring
+risk = requests.post(f"{BASE}/v1/risk", headers=H, json={
+    "system_name": system, "handles_personal_data": True,
+    "has_human_oversight": True, "is_explainable": True, "has_bias_testing": True,
+}).json()
+print(f"Risk: {risk['score']}/100 ({risk['level']})")
+
+# Step 3: Full governance decision (includes ledger entry)
+decision = requests.post(f"{BASE}/v1/govern", headers=H, json={
+    "system_name": system, "reasoning_trace": trace,
+    "use_case": "loan_approval", "handles_personal_data": True,
+    "has_human_oversight": True, "is_explainable": True, "has_bias_testing": True,
+}).json()
+print(f"Decision: {decision['action']} (hash: {decision['ledger']['hash'][:16]}...)")
+
+# Step 4: Generate compliance report
+report = requests.post(f"{BASE}/v1/reports", json={
+    "system_name": system, "framework": "eu_ai_act", "risk_tier": "high"
+}).json()
+print(f"EU AI Act compliance: {report.get('compliance_score', 'N/A')}%")
+
+# Step 5: Verify audit trail
+history = requests.get(f"{BASE}/v1/audit/{system}?limit=5", headers=H).json()
+print(f"Audit records: {history['total']}")
+for r in history['records']:
+    print(f"  {r['action']} | Risk: {r['risk_score']} | {r['created_at']}")</pre>
+</div>
+</section>
+
+<section id="shadow-ai-example">
+<h3>Shadow AI Discovery Example</h3>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">python</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>import requests
+
+BASE = "https://api.governlayer.ai"
+H = {"Authorization": "Bearer gl_your_api_key", "Content-Type": "application/json"}
+
+# Scan network traffic patterns for unauthorized AI usage
+scan = requests.post(f"{BASE}/v1/agents/discovery/scan", headers=H, json={
+    "scan_type": "api_patterns",
+    "targets": [
+        "api.openai.com/v1/chat/completions",
+        "api.anthropic.com/v1/messages",
+        "api-inference.huggingface.co/models/bert-base",
+        "bedrock-runtime.us-east-1.amazonaws.com",
+        "generativelanguage.googleapis.com/v1beta/models"
+    ]
+}).json()
+
+print(f"Scanned {scan['targets_scanned']} targets")
+print(f"Risk level: {scan['risk_level']}")
+print(f"Unregistered AI services: {scan['unregistered_ai']}")
+
+for d in scan['detections']:
+    status = "REGISTERED" if d.get('registered') else "UNREGISTERED"
+    print(f"  [{status}] {d['provider']} (severity: {d['severity']})")
+
+# Register discovered agents
+for d in scan['detections']:
+    if not d.get('registered'):
+        requests.post(f"{BASE}/v1/agents", headers=H, json={
+            "name": f"discovered-{d['provider'].lower().replace(' ', '-')}",
+            "agent_type": "autonomous",
+            "model_provider": d["provider"],
+            "description": f"Auto-discovered via shadow AI scan",
+            "risk_tier": d["severity"],
+        })
+        print(f"  Registered: {d['provider']}")</pre>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECURITY -->
+<!-- ============================================================ -->
+
+<section id="security-overview">
+<h2>Security</h2>
+<h3>Overview</h3>
+<p>GovernLayer implements defense-in-depth security practices across all layers.</p>
+
+<h4>Transport Security</h4>
+<ul>
+<li><strong>HSTS</strong> &mdash; <code>Strict-Transport-Security: max-age=63072000; includeSubDomains; preload</code> (2-year max-age)</li>
+<li><strong>CORS</strong> &mdash; Locked to <code>governlayer.ai</code> origin. Methods restricted to specific HTTP verbs. Headers restricted to <code>Authorization</code>, <code>Content-Type</code>, <code>X-API-Key</code></li>
+</ul>
+
+<h4>Response Headers</h4>
+<table class="data-table">
+<thead><tr><th>Header</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td><code>X-Content-Type-Options</code></td><td><code>nosniff</code></td></tr>
+<tr><td><code>X-Frame-Options</code></td><td><code>DENY</code></td></tr>
+<tr><td><code>X-XSS-Protection</code></td><td><code>1; mode=block</code></td></tr>
+<tr><td><code>Referrer-Policy</code></td><td><code>strict-origin-when-cross-origin</code></td></tr>
+<tr><td><code>Permissions-Policy</code></td><td><code>camera=(), microphone=(), geolocation=()</code></td></tr>
+</tbody>
+</table>
+
+<h4>Authentication Security</h4>
+<ul>
+<li><strong>Passwords</strong> &mdash; Hashed with bcrypt. Minimum 8 characters with uppercase, lowercase, and digit requirements</li>
+<li><strong>API Keys</strong> &mdash; Stored as SHA-256 hashes. Raw keys never persisted. Prefix (<code>gl_</code> + first 6 chars) stored for identification</li>
+<li><strong>JWT</strong> &mdash; HS256 signed with a 64-byte secret key. Short-lived tokens</li>
+<li><strong>MFA</strong> &mdash; TOTP (RFC 6238) with backup codes. Backup codes hashed with SHA-256</li>
+</ul>
+
+<h4>Infrastructure</h4>
+<ul>
+<li><strong>Rate Limiting</strong> &mdash; Redis-backed, per API key, with plan-based tiers</li>
+<li><strong>Input Validation</strong> &mdash; Pydantic models with strict field validation, max lengths, and regex patterns</li>
+<li><strong>SQL Injection</strong> &mdash; SQLAlchemy ORM with parameterized queries throughout</li>
+<li><strong>Docker</strong> &mdash; Multi-stage builds, non-root user, health checks</li>
+<li><strong>Secrets</strong> &mdash; All secrets via environment variables, never hardcoded. <code>pydantic-settings</code> for centralized config</li>
+</ul>
+</section>
+
+<section id="webhook-verification">
+<h3>Webhook Signature Verification</h3>
+<p>Every webhook delivery is signed with HMAC-SHA256 using the webhook secret generated at creation time. Always verify signatures before processing webhook payloads.</p>
+<div class="code-block">
+<div class="code-header"><span class="code-lang">python</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>import hmac
+import hashlib
+
+def verify_signature(body: bytes, signature: str, secret: str) -> bool:
+    """Verify GovernLayer webhook HMAC-SHA256 signature."""
+    expected = "sha256=" + hmac.new(
+        secret.encode(), body, hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(signature, expected)</pre>
+</div>
+
+<div class="code-block">
+<div class="code-header"><span class="code-lang">javascript</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div>
+<pre>const crypto = require('crypto');
+
+function verifySignature(body, signature, secret) {
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(body)
+    .digest('hex');
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expected)
+  );
+}</pre>
+</div>
+</section>
+
+<section id="data-handling">
+<h3>Data Handling</h3>
+<ul>
+<li><strong>Reasoning traces</strong> are processed for drift analysis and then stored only as SHA-256 hashes in the audit ledger. Raw traces are not persisted beyond the request lifecycle</li>
+<li><strong>Audit records</strong> are immutable once written to the hash-chained ledger. They cannot be modified or deleted</li>
+<li><strong>API keys</strong> are hashed before storage. GovernLayer never stores raw API keys</li>
+<li><strong>Passwords</strong> are hashed with bcrypt with appropriate work factor</li>
+<li><strong>MFA secrets</strong> and backup codes are stored encrypted/hashed in the database</li>
+<li><strong>Webhook secrets</strong> are generated with <code>secrets.token_hex(32)</code> (256-bit entropy)</li>
+</ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHANGELOG -->
+<!-- ============================================================ -->
+
+<section id="v3-changelog">
+<h2>Changelog</h2>
+<h3>v3.0.0 <span class="badge badge-purple">Current</span></h3>
+<p><strong>Released: March 2026</strong></p>
+
+<h4>Agent Registry &amp; Shadow AI</h4>
+<ul>
+<li>Full CRUD API for AI agent registration and governance</li>
+<li>Shadow AI discovery with 15+ provider detection patterns</li>
+<li>Agent cards for transparency documentation</li>
+<li>Dependency graph tracking between agents</li>
+<li>Governance lifecycle: approve, reject, suspend, activate</li>
+</ul>
+
+<h4>Model Registry</h4>
+<ul>
+<li>Model lifecycle management: development, staging, production, deprecated, retired</li>
+<li>Model cards with intended use, limitations, evaluation metrics, fairness analysis</li>
+<li>Governance status tracking per model</li>
+</ul>
+
+<h4>Policy Engine</h4>
+<ul>
+<li>Programmable governance policies with rule-based evaluation</li>
+<li>Default policy with risk, drift, oversight, and fairness rules</li>
+<li>Policy versioning and soft-delete deactivation</li>
+</ul>
+
+<h4>Incident Management</h4>
+<ul>
+<li>Full incident lifecycle: open, investigating, mitigating, resolved, closed</li>
+<li>Severity levels: low, medium, high, critical</li>
+<li>Timeline tracking with actor attribution</li>
+<li>Automatic webhook and email notifications for high/critical incidents</li>
+</ul>
+
+<h4>Analytics &amp; Reporting</h4>
+<ul>
+<li>Usage analytics: summary, trends, top endpoints, latency percentiles, error breakdown</li>
+<li>Governance analytics: decision breakdown by action type</li>
+<li>18 regulatory framework report generators</li>
+<li>Cross-framework compliance summary</li>
+</ul>
+
+<h4>Enterprise</h4>
+<ul>
+<li>Multi-tenancy with organizations</li>
+<li>Self-service API key provisioning with scopes</li>
+<li>Redis-backed rate limiting with plan tiers</li>
+<li>Webhooks with HMAC-SHA256 signatures</li>
+<li>Usage metering per API key</li>
+<li>Stripe billing integration</li>
+<li>TOTP multi-factor authentication with backup codes</li>
+</ul>
+
+<h4>Architecture</h4>
+<ul>
+<li>Achonye multi-LLM orchestration with 14-model registry</li>
+<li>Intelligent task router (complexity + capability analysis)</li>
+<li>Three consensus strategies: Voting, Chain-of-Verification, Adversarial Debate</li>
+<li>OpenRouter universal gateway for cloud models</li>
+<li>Ollama for local inference (zero cost, full privacy)</li>
+</ul>
+
+<h4>Security</h4>
+<ul>
+<li>CORS locked to governlayer.ai</li>
+<li>HSTS with 2-year max-age and preload</li>
+<li>Permissions-Policy header (camera/mic/geo disabled)</li>
+<li>API key SHA-256 hashing (raw keys never stored)</li>
+<li>Mutation audit log for all write operations</li>
+</ul>
+</section>
+
+</div><!-- end content-area -->
+</main>
+</div><!-- end docs-layout -->
+
+<script>
+// ===== SIDEBAR TOGGLE =====
+const sidebar = document.getElementById('sidebar');
+const mobileToggle = document.getElementById('mobileToggle');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+mobileToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  sidebarOverlay.classList.toggle('open');
+});
+sidebarOverlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  sidebarOverlay.classList.remove('open');
+});
+
+// ===== COLLAPSIBLE SECTIONS =====
+document.querySelectorAll('.nav-section-title').forEach(title => {
+  const chevron = title.querySelector('.chevron');
+  const items = title.nextElementSibling;
+  // Set initial max-height
+  items.style.maxHeight = items.scrollHeight + 'px';
+  title.addEventListener('click', () => {
+    if (items.classList.contains('collapsed')) {
+      items.classList.remove('collapsed');
+      items.style.maxHeight = items.scrollHeight + 'px';
+      chevron.classList.remove('collapsed');
+    } else {
+      items.classList.add('collapsed');
+      items.style.maxHeight = '0px';
+      chevron.classList.add('collapsed');
+    }
+  });
+});
+
+// ===== ACTIVE NAV ITEM =====
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('section[id]');
+const breadcrumb = document.getElementById('breadcrumbSection');
+
+const sectionNames = {
+  'overview': 'Getting Started', 'quickstart': 'Getting Started', 'authentication': 'Getting Started', 'rate-limits': 'Getting Started',
+  'governance-decisions': 'Core Concepts', 'drift-detection': 'Core Concepts', 'risk-scoring': 'Core Concepts', 'audit-ledger': 'Core Concepts', 'consensus-engine': 'Core Concepts',
+  'api-govern': 'Governance API', 'api-drift': 'Governance API', 'api-risk': 'Governance API', 'api-scan': 'Governance API',
+  'api-audit-system': 'Audit & Reports', 'api-audit-history': 'Audit & Reports', 'api-reports': 'Audit & Reports', 'api-compliance-summary': 'Audit & Reports', 'api-frameworks': 'Audit & Reports',
+  'api-register-agent': 'Agent Registry', 'api-list-agents': 'Agent Registry', 'api-agent-governance': 'Agent Registry', 'api-shadow-scan': 'Agent Registry',
+  'api-register-model': 'Model Registry', 'api-list-models': 'Model Registry', 'api-model-lifecycle': 'Model Registry', 'api-model-card': 'Model Registry',
+  'api-create-incident': 'Incidents & Policies', 'api-list-incidents': 'Incidents & Policies', 'api-update-incident': 'Incidents & Policies', 'api-create-policy': 'Incidents & Policies', 'api-evaluate-policy': 'Incidents & Policies',
+  'api-usage-summary': 'Analytics', 'api-usage-trends': 'Analytics', 'api-top-endpoints': 'Analytics', 'api-governance-analytics': 'Analytics',
+  'api-threats': 'Threats', 'api-incident-response': 'Threats', 'api-jurisdiction': 'Threats', 'api-deadlines': 'Threats',
+  'frameworks-overview': 'Frameworks', 'fw-eu-ai-act': 'Frameworks', 'fw-nist': 'Frameworks', 'fw-iso42001': 'Frameworks', 'fw-gdpr': 'Frameworks', 'fw-hipaa': 'Frameworks', 'fw-soc2': 'Frameworks',
+  'multi-tenancy': 'Enterprise', 'api-key-management': 'Enterprise', 'webhooks': 'Enterprise', 'mfa': 'Enterprise', 'billing': 'Enterprise',
+  'achonye': 'Architecture', 'model-providers': 'Architecture', 'task-router': 'Architecture', 'agent-orchestration': 'Architecture',
+  'mcp-server': 'Integrations', 'n8n-workflows': 'Integrations', 'autonomous-daemon': 'Integrations', 'webhook-consumers': 'Integrations',
+  'python-examples': 'SDKs & Examples', 'curl-examples': 'SDKs & Examples', 'full-pipeline-example': 'SDKs & Examples', 'shadow-ai-example': 'SDKs & Examples',
+  'security-overview': 'Security', 'webhook-verification': 'Security', 'data-handling': 'Security',
+  'v3-changelog': 'Changelog',
+};
+
+function updateActiveNav() {
+  let current = '';
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top <= 120) current = section.id;
+  });
+  if (!current) return;
+  navItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+  });
+  if (sectionNames[current]) breadcrumb.textContent = sectionNames[current];
+}
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+// Close mobile sidebar on nav click
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('open');
+  });
+});
+
+// ===== PROGRESS BAR =====
+const progressBar = document.getElementById('progressBar');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  progressBar.style.width = pct + '%';
+}, { passive: true });
+
+// ===== ENDPOINT TOGGLE =====
+function toggleEndpoint(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ===== COPY CODE =====
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ===== SEARCH =====
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+// Build search index
+const searchIndex = [];
+document.querySelectorAll('.content-area section[id]').forEach(section => {
+  const title = section.querySelector('h2, h3');
+  const text = section.textContent.substring(0, 500);
+  if (title) {
+    searchIndex.push({
+      id: section.id,
+      title: title.textContent.trim(),
+      section: sectionNames[section.id] || '',
+      text: text.toLowerCase(),
+    });
+  }
+});
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (q.length < 2) { searchResults.classList.remove('active'); return; }
+  const matches = searchIndex.filter(item =>
+    item.title.toLowerCase().includes(q) || item.text.includes(q) || item.section.toLowerCase().includes(q)
+  ).slice(0, 8);
+  if (matches.length === 0) { searchResults.classList.remove('active'); return; }
+  searchResults.innerHTML = matches.map(m => {
+    const idx = m.text.indexOf(q);
+    const snippet = idx >= 0 ? '...' + m.text.substring(Math.max(0, idx - 30), idx + 60) + '...' : '';
+    return `<div class="search-result-item" onclick="goToSection('${m.id}')">
+      <div class="search-result-title">${m.title}</div>
+      <div class="search-result-section">${m.section}</div>
+      ${snippet ? `<div class="search-result-snippet">${snippet}</div>` : ''}
+    </div>`;
+  }).join('');
+  searchResults.classList.add('active');
+});
+
+searchInput.addEventListener('blur', () => { setTimeout(() => searchResults.classList.remove('active'), 200); });
+
+function goToSection(id) {
+  searchResults.classList.remove('active');
+  searchInput.value = '';
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// Keyboard shortcut: / to focus search
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+  }
+  if (e.key === 'Escape') {
+    searchInput.blur();
+    searchResults.classList.remove('active');
+  }
+});
+</script>
+</body>
+</html>
