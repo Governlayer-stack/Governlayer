@@ -3,989 +3,1223 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GovernLayer Dashboard — The Governance Layer for Agentic AI</title>
+<title>GovernLayer Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#08080c;--bg2:#0e0e14;--bg3:#16161e;--bg4:#1e1e28;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#eeeef0;--text2:#7a7a8e;--text3:#44445a;--accent:#00ffaa;--accent2:#7b61ff;--accent3:#ff3d8e;--red:#ef4444;--yellow:#fbbf24;--radius:12px}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
-a{color:var(--accent);text-decoration:none}
-code{font-family:'JetBrains Mono',monospace;font-size:12px}
-.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
-.sidebar-logo{padding:0 20px 24px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:16px}
-.sidebar-logo .mark{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,#00ffaa,#7b61ff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#08080c}
-.nav-section{padding:0 12px;margin-bottom:16px}
-.nav-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:8px 8px 4px;margin-bottom:4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.15s}
-.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text)}
-.nav-item.active{background:rgba(0,255,170,0.08);color:var(--accent)}
-.nav-item .icon{width:18px;text-align:center;font-size:14px}
-.nav-item .badge{margin-left:auto;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(255,61,142,0.15);color:var(--accent3)}
-.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
-.main{margin-left:240px;flex:1;padding:24px 32px;overflow-y:auto}
-.page{display:none}.page.active{display:block}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
-.page-title{font-size:24px;font-weight:800;letter-spacing:-0.5px}
-.page-subtitle{font-size:14px;color:var(--text2);margin-top:4px}
-.header-actions{display:flex;gap:8px}
-.btn-sm{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s}
-.btn-accent{background:var(--accent);color:#08080c}.btn-accent:hover{opacity:0.9}
-.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border2)}.btn-outline:hover{border-color:var(--text2)}
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:32px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.stat-card .stat-label{font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
-.stat-card .stat-value{font-size:28px;font-weight:800;letter-spacing:-1px}
-.stat-card .stat-change{font-size:12px;margin-top:4px;font-weight:500}
-.stat-card .stat-change.up{color:var(--accent)}
-.stat-card .stat-change.down{color:var(--red)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.panel-title{font-size:14px;font-weight:700}
-.panel-body{padding:20px}
-table{width:100%;border-collapse:collapse}
-th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);text-align:left;padding:10px 12px;border-bottom:1px solid var(--border)}
-td{font-size:13px;padding:12px;border-bottom:1px solid var(--border);color:var(--text2)}
-tr:hover td{background:rgba(255,255,255,0.02)}
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600}
-.badge-green{background:rgba(0,255,170,0.1);color:var(--accent)}
-.badge-yellow{background:rgba(251,191,36,0.1);color:var(--yellow)}
-.badge-red{background:rgba(239,68,68,0.1);color:var(--red)}
-.badge-purple{background:rgba(123,97,255,0.1);color:var(--accent2)}
-.badge-pink{background:rgba(255,61,142,0.1);color:var(--accent3)}
-.badge-blue{background:rgba(59,130,246,0.1);color:#3b82f6}
-.compliance-item{display:flex;align-items:center;gap:12px;padding:8px 0}
-.compliance-name{font-size:13px;font-weight:500;width:120px;flex-shrink:0}
-.compliance-bar{flex:1;height:6px;border-radius:3px;background:var(--bg);overflow:hidden}
-.compliance-bar .fill{height:100%;border-radius:3px;transition:width 0.6s ease}
-.compliance-pct{font-size:12px;font-weight:700;width:40px;text-align:right}
-.gauge-container{display:flex;flex-direction:column;align-items:center;padding:20px 0}
-.gauge-ring{width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--accent) 0deg,var(--accent) calc(var(--pct) * 3.6deg),var(--bg) calc(var(--pct) * 3.6deg));display:flex;align-items:center;justify-content:center;position:relative}
-.gauge-ring::after{content:'';position:absolute;width:110px;height:110px;border-radius:50%;background:var(--bg2)}
-.gauge-value{position:relative;z-index:1;font-size:32px;font-weight:900;letter-spacing:-1px}
-.gauge-label{margin-top:12px;font-size:13px;color:var(--text2);font-weight:500}
-.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.activity-item:last-child{border:none}
-.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
-.activity-text{font-size:13px;color:var(--text2);line-height:1.5}
-.activity-text strong{color:var(--text);font-weight:600}
-.activity-time{font-size:11px;color:var(--text3);margin-top:2px}
-.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:10px}
-.bar{flex:1;background:var(--accent);border-radius:4px 4px 0 0;transition:height 0.4s ease;position:relative;min-width:20px;opacity:0.7}
-.bar:hover{opacity:1}
-.bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text3);white-space:nowrap}
-.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
-.empty-state .empty-icon{font-size:48px;margin-bottom:16px;opacity:0.3}
-.empty-state p{font-size:14px;margin-bottom:8px}
-.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px}
-.loading::before{content:'';width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite;margin-right:10px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);padding:12px 20px;border-radius:10px;font-size:13px;color:var(--text);z-index:9999;animation:slideUp 0.3s ease}
-@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.kv-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
-.kv-row:last-child{border:none}
-.kv-label{color:var(--text2)}
-.kv-value{color:var(--text);font-weight:600}
-.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:var(--bg);border:1px solid var(--border);color:var(--text2);margin:2px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
-.form-input{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;outline:none}
-.form-input:focus{border-color:var(--accent)}
-textarea.form-input{min-height:80px;resize:vertical}
-select.form-input{appearance:auto}
-@media(max-width:1200px){.stats-row{grid-template-columns:repeat(3,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}}
-@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}}
+:root {
+  --bg: #08080c;
+  --bg2: #0d0d13;
+  --bg3: #13131b;
+  --bg4: #1a1a24;
+  --bg5: #22222e;
+  --border: rgba(108,92,231,0.12);
+  --border2: rgba(108,92,231,0.22);
+  --text: #eeeef0;
+  --text2: #9090a8;
+  --text3: #5a5a72;
+  --accent: #6c5ce7;
+  --accent-light: #a29bfe;
+  --accent-glow: rgba(108,92,231,0.15);
+  --green: #00e676;
+  --green-dim: rgba(0,230,118,0.12);
+  --yellow: #ffab00;
+  --yellow-dim: rgba(255,171,0,0.12);
+  --red: #ff5252;
+  --red-dim: rgba(255,82,82,0.12);
+  --cyan: #18ffff;
+  --orange: #ff6e40;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.5), 0 16px 48px rgba(0,0,0,0.3);
+  --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+html { scroll-behavior: smooth }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+code, .mono { font-family: 'JetBrains Mono', monospace }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px }
+::-webkit-scrollbar-track { background: var(--bg2) }
+::-webkit-scrollbar-thumb { background: var(--bg5); border-radius: 3px }
+::-webkit-scrollbar-thumb:hover { background: var(--accent) }
+
+/* ── Auth Screen ── */
+#auth-screen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at 50% 20%, rgba(108,92,231,0.08) 0%, transparent 60%);
+}
+.auth-card {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+.auth-card h1 {
+  font-size: 28px; font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 6px; text-align: center;
+}
+.auth-card .subtitle { color: var(--text2); text-align: center; margin-bottom: 32px; font-size: 14px }
+.auth-card label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px }
+.auth-card input {
+  width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 14px;
+  font-family: inherit; margin-bottom: 16px; outline: none; transition: border var(--transition);
+}
+.auth-card input:focus { border-color: var(--accent) }
+.auth-card input::placeholder { color: var(--text3) }
+.auth-card .btn-primary {
+  width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: var(--radius-sm);
+  color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit;
+  transition: all var(--transition); margin-top: 8px;
+}
+.auth-card .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px) }
+.auth-card .toggle { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text2) }
+.auth-card .toggle a { color: var(--accent-light); cursor: pointer; text-decoration: none; font-weight: 600 }
+.auth-card .toggle a:hover { text-decoration: underline }
+.auth-error { color: var(--red); font-size: 13px; margin-bottom: 12px; display: none; text-align: center }
+
+/* ── Dashboard ── */
+#dashboard { display: none }
+
+/* ── Top Bar ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(8,8,12,0.85); backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px }
+.topbar-logo {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px; color: #fff;
+}
+.topbar-title { font-size: 18px; font-weight: 700; color: var(--text) }
+.topbar-title span { color: var(--text3); font-weight: 400; margin-left: 8px; font-size: 14px }
+.topbar-right { display: flex; align-items: center; gap: 16px }
+.topbar-user { font-size: 13px; color: var(--text2) }
+.topbar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green) }
+.btn-logout {
+  padding: 7px 16px; background: var(--bg4); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text2); font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: all var(--transition);
+}
+.btn-logout:hover { color: var(--red); border-color: var(--red) }
+
+/* ── Main Container ── */
+.main-content {
+  max-width: 1360px; margin: 0 auto; padding: 32px;
+}
+
+/* ── Section Headers ── */
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; margin-top: 40px;
+}
+.section-header:first-child { margin-top: 0 }
+.section-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent) }
+.section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text2) }
+
+/* ── Cards ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover { border-color: var(--border2); box-shadow: var(--shadow-lg) }
+
+/* ── Health Score Hero ── */
+.hero-row { display: flex; gap: 24px; align-items: stretch }
+.health-hero {
+  flex: 0 0 320px; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 36px 24px; text-align: center;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
+}
+.health-hero::before {
+  content: ''; position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+  pointer-events: none;
+}
+.gauge-container { position: relative; width: 180px; height: 180px; margin-bottom: 16px }
+.gauge-bg { fill: none; stroke: var(--bg4); stroke-width: 10 }
+.gauge-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1), stroke 0.6s ease }
+.gauge-text { font-size: 42px; font-weight: 800; fill: var(--text); dominant-baseline: central; text-anchor: middle }
+.gauge-pct { font-size: 16px; font-weight: 400; fill: var(--text2); dominant-baseline: central; text-anchor: middle }
+.health-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); margin-top: 4px }
+
+/* ── Metrics Row ── */
+.metrics-grid { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px }
+.metric-card {
+  padding: 24px; display: flex; flex-direction: column; gap: 8px;
+}
+.metric-icon {
+  width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 4px;
+}
+.metric-icon.purple { background: var(--accent-glow); color: var(--accent-light) }
+.metric-icon.green { background: var(--green-dim); color: var(--green) }
+.metric-icon.red { background: var(--red-dim); color: var(--red) }
+.metric-icon.yellow { background: var(--yellow-dim); color: var(--yellow) }
+.metric-value { font-size: 36px; font-weight: 800; line-height: 1 }
+.metric-label { font-size: 13px; color: var(--text2); font-weight: 500 }
+.metric-trend { font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 6px }
+.metric-trend.up { background: var(--green-dim); color: var(--green) }
+.metric-trend.down { background: var(--red-dim); color: var(--red) }
+.metric-trend.neutral { background: var(--accent-glow); color: var(--accent-light) }
+
+/* ── Compliance Bars ── */
+.compliance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px }
+.compliance-item { padding: 20px }
+.compliance-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px }
+.compliance-name { font-size: 14px; font-weight: 600 }
+.compliance-pct { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace }
+.compliance-bar { height: 8px; background: var(--bg4); border-radius: 4px; overflow: hidden }
+.compliance-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1) }
+
+/* ── Two Column Layout ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px }
+.full-width { grid-column: 1 / -1 }
+
+/* ── Ledger Table ── */
+.ledger-table { width: 100%; border-collapse: collapse }
+.ledger-table th {
+  text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+.ledger-table td {
+  padding: 12px 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--text2); vertical-align: middle;
+}
+.ledger-table tr:hover td { background: rgba(108,92,231,0.04) }
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.badge-approve { background: var(--green-dim); color: var(--green) }
+.badge-block { background: var(--red-dim); color: var(--red) }
+.badge-escalate { background: var(--yellow-dim); color: var(--yellow) }
+.hash-cell { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3) }
+
+/* ── Risk Distribution ── */
+.risk-bars { display: flex; flex-direction: column; gap: 16px; padding: 8px 0 }
+.risk-bar-row { display: flex; align-items: center; gap: 16px }
+.risk-bar-label { width: 80px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px }
+.risk-bar-track { flex: 1; height: 32px; background: var(--bg4); border-radius: 8px; overflow: hidden; position: relative }
+.risk-bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 12px; font-weight: 700; color: #fff; transition: width 1s cubic-bezier(0.4,0,0.2,1); min-width: 30px }
+.risk-bar-count { width: 40px; text-align: right; font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace }
+
+/* ── Incident Timeline ── */
+.incidents-list { display: flex; flex-direction: column; gap: 12px; max-height: 380px; overflow-y: auto; padding-right: 4px }
+.incident-card {
+  padding: 16px 20px; background: var(--bg3); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--text3); transition: all var(--transition);
+}
+.incident-card:hover { background: var(--bg4) }
+.incident-card.sev-critical { border-left-color: var(--red) }
+.incident-card.sev-high { border-left-color: var(--orange) }
+.incident-card.sev-medium { border-left-color: var(--yellow) }
+.incident-card.sev-low { border-left-color: var(--green) }
+.incident-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px }
+.incident-title { font-size: 13px; font-weight: 600; color: var(--text) }
+.incident-badges { display: flex; gap: 6px }
+.badge-severity { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase }
+.badge-severity.critical { background: var(--red-dim); color: var(--red) }
+.badge-severity.high { background: rgba(255,110,64,0.15); color: var(--orange) }
+.badge-severity.medium { background: var(--yellow-dim); color: var(--yellow) }
+.badge-severity.low { background: var(--green-dim); color: var(--green) }
+.badge-status { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: var(--bg5); color: var(--text2) }
+.incident-meta { font-size: 11px; color: var(--text3) }
+
+/* ── Shadow AI Scanner ── */
+.scanner-trigger { display: flex; align-items: center; gap: 16px; margin-bottom: 20px }
+.scanner-input {
+  flex: 1; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+  outline: none;
+}
+.scanner-input:focus { border-color: var(--accent) }
+.btn-scan {
+  padding: 12px 24px; background: var(--accent); border: none; border-radius: var(--radius-sm);
+  color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;
+  transition: all var(--transition); white-space: nowrap;
+}
+.btn-scan:hover { background: var(--accent-light); transform: translateY(-1px) }
+.btn-scan:disabled { opacity: 0.5; cursor: not-allowed; transform: none }
+.scan-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px }
+.scan-card {
+  padding: 16px; background: var(--bg3); border-radius: var(--radius-sm); border: 1px solid var(--border);
+}
+.scan-provider { font-weight: 700; font-size: 14px; margin-bottom: 4px }
+.scan-status { font-size: 12px; display: flex; align-items: center; gap: 6px }
+.scan-dot { width: 8px; height: 8px; border-radius: 50% }
+.scan-dot.safe { background: var(--green) }
+.scan-dot.warn { background: var(--yellow) }
+.scan-dot.danger { background: var(--red) }
+
+/* ── Quick Actions ── */
+.actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px }
+.action-btn {
+  padding: 20px; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; transition: all var(--transition);
+  text-align: center; font-family: inherit;
+}
+.action-btn:hover { border-color: var(--accent); background: var(--bg4); transform: translateY(-2px); box-shadow: var(--shadow-lg) }
+.action-icon { font-size: 28px; margin-bottom: 10px; display: block }
+.action-label { font-size: 13px; font-weight: 600; color: var(--text); display: block }
+.action-desc { font-size: 11px; color: var(--text3); margin-top: 4px; display: block }
+
+/* ── Report Select ── */
+.report-select-wrap { display: flex; gap: 12px; align-items: center }
+.report-select {
+  flex: 1; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 13px; font-family: inherit;
+  outline: none; appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239090a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.report-select:focus { border-color: var(--accent) }
+
+/* ── Loading States ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg3) 25%, var(--bg4) 50%, var(--bg3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.skeleton-text { height: 14px; margin-bottom: 8px }
+.skeleton-big { height: 40px; width: 80px }
+
+/* ── Pulse ── */
+@keyframes pulse-glow { 0%,100%{opacity:0.5} 50%{opacity:1} }
+.pulse { animation: pulse-glow 2s ease-in-out infinite }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  padding: 14px 24px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; color: #fff;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.toast.show { transform: translateY(0); opacity: 1 }
+.toast.success { background: #1a472a; border: 1px solid var(--green) }
+.toast.error { background: #4a1a1a; border: 1px solid var(--red) }
+.toast.info { background: #1a1a4a; border: 1px solid var(--accent) }
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center; z-index: 200;
+}
+.modal-overlay.open { display: flex }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px;
+  padding: 32px; width: 100%; max-width: 520px; max-height: 80vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px }
+.modal label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px }
+.modal input, .modal textarea, .modal select {
+  width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 13px; font-family: inherit;
+  margin-bottom: 14px; outline: none;
+}
+.modal textarea { min-height: 80px; resize: vertical }
+.modal input:focus, .modal textarea:focus, .modal select:focus { border-color: var(--accent) }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px }
+.btn-cancel {
+  padding: 10px 20px; background: var(--bg4); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text2); font-weight: 600; font-size: 13px;
+  cursor: pointer; font-family: inherit;
+}
+.btn-submit {
+  padding: 10px 24px; background: var(--accent); border: none; border-radius: var(--radius-sm);
+  color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;
+  transition: all var(--transition);
+}
+.btn-submit:hover { background: var(--accent-light) }
+
+/* ── Empty State ── */
+.empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 13px }
+.empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .hero-row { flex-direction: column }
+  .health-hero { flex: none }
+  .two-col { grid-template-columns: 1fr }
+  .compliance-grid { grid-template-columns: 1fr }
+  .actions-grid { grid-template-columns: repeat(2, 1fr) }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr) }
+}
+@media (max-width: 640px) {
+  .main-content { padding: 16px }
+  .topbar { padding: 0 16px }
+  .actions-grid { grid-template-columns: 1fr }
+  .metrics-grid { grid-template-columns: 1fr }
+}
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sidebar-logo"><div class="mark">G</div>GovernLayer</div>
-  <div class="nav-section">
-    <div class="nav-section-title">Overview</div>
-    <div class="nav-item active" data-page="overview"><span class="icon">&#9632;</span> Dashboard</div>
-    <div class="nav-item" data-page="agents"><span class="icon">&#9881;</span> Agent Registry</div>
-    <div class="nav-item" data-page="models"><span class="icon">&#9670;</span> Model Registry</div>
-    <div class="nav-item" data-page="incidents"><span class="icon">&#9888;</span> Incidents <span class="badge" id="incBadge"></span></div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-section-title">Governance</div>
-    <div class="nav-item" data-page="compliance"><span class="icon">&#10003;</span> Compliance</div>
-    <div class="nav-item" data-page="policies"><span class="icon">&#9878;</span> Policies</div>
-    <div class="nav-item" data-page="knowledge"><span class="icon">&#128279;</span> Knowledge Graph</div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-section-title">Operations</div>
-    <div class="nav-item" data-page="reports"><span class="icon">&#128202;</span> Reports</div>
-    <div class="nav-item" data-page="security"><span class="icon">&#128274;</span> Security</div>
-    <div class="nav-item" data-page="status"><span class="icon">&#128994;</span> Status</div>
-  </div>
-  <div class="sidebar-footer">
-    <div style="margin-bottom:8px;font-size:11px;color:var(--text3)" id="sidebar-user"></div>
-    <button onclick="doLogout()" style="background:none;border:1px solid var(--border2);color:var(--text2);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;width:100%">Logout</button>
-  </div>
-</aside>
+<!-- ════════════════════════ AUTH SCREEN ════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <h1>GovernLayer</h1>
+    <p class="subtitle">The Governance Layer for Agentic AI</p>
+    <div id="auth-error" class="auth-error"></div>
 
-<!-- Login Screen -->
-<div id="loginScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center">
-  <div style="width:380px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px">
-    <div style="text-align:center;margin-bottom:32px">
-      <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#00ffaa,#7b61ff);display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#08080c;margin-bottom:16px">G</div>
-      <div style="font-size:20px;font-weight:800">GovernLayer</div>
-      <div style="font-size:13px;color:var(--text2);margin-top:4px">Sign in to your governance dashboard</div>
-    </div>
-    <div class="form-group"><label>Email</label><input type="email" id="login-email" class="form-input" placeholder="you@company.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="login-password" class="form-input" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <div class="form-group" id="login-company-group" style="display:none"><label>Company</label><input type="text" id="login-company" class="form-input" placeholder="Your Company"></div>
-    <div id="login-error" style="color:var(--red);font-size:13px;margin-bottom:12px;min-height:18px"></div>
-    <button onclick="doLogin()" class="btn-sm btn-accent" style="width:100%;padding:12px;font-size:14px">Sign In</button>
-    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2)">
-      No account? <a href="#" onclick="document.getElementById('login-company-group').style.display='block';this.parentElement.innerHTML='<span style=color:var(--text3)>Fill in details and click Register</span>';return false" style="color:var(--accent)">Register</a>
-      <div style="margin-top:8px"><button onclick="doRegister()" class="btn-sm btn-outline" style="display:none;width:100%;padding:10px" id="register-btn">Create Account</button></div>
-    </div>
-    <script>
-      // Show register button when company field is visible
-      const co = document.getElementById('login-company-group');
-      new MutationObserver(() => {
-        document.getElementById('register-btn').style.display = co.style.display === 'none' ? 'none' : 'block';
-      }).observe(co, { attributes: true, attributeFilter: ['style'] });
-    </script>
+    <!-- Login Form -->
+    <form id="login-form" onsubmit="return handleLogin(event)">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="you@company.com" required autocomplete="email">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+      <button type="submit" class="btn-primary" id="login-btn">Sign In</button>
+      <div class="toggle">New to GovernLayer? <a onclick="toggleAuth('register')">Create account</a></div>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" style="display:none" onsubmit="return handleRegister(event)">
+      <label>Email</label>
+      <input type="email" id="reg-email" placeholder="you@company.com" required autocomplete="email">
+      <label>Company</label>
+      <input type="text" id="reg-company" placeholder="Acme Corp" required>
+      <label>Password</label>
+      <input type="password" id="reg-password" placeholder="Min 8 characters" required minlength="8" autocomplete="new-password">
+      <button type="submit" class="btn-primary" id="reg-btn">Create Account</button>
+      <div class="toggle">Already have an account? <a onclick="toggleAuth('login')">Sign in</a></div>
+    </form>
   </div>
 </div>
 
-<main class="main" id="mainContent">
+<!-- ════════════════════════ DASHBOARD ════════════════════════ -->
+<div id="dashboard">
 
-<!-- ===== OVERVIEW ===== -->
-<div class="page active" id="page-overview">
-  <div class="page-header">
-    <div><div class="page-title">Governance Dashboard</div><div class="page-subtitle">Real-time AI governance monitoring and compliance</div></div>
-    <div class="header-actions">
-      <button class="btn-sm btn-outline" onclick="loadOverview()">Refresh</button>
-      <button class="btn-sm btn-accent" onclick="navigateTo('reports')">Generate Report</button>
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">G</div>
+      <div class="topbar-title">GovernLayer <span>Dashboard</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-dot"></div>
+      <span class="topbar-user" id="user-email"></span>
+      <button class="btn-logout" onclick="logout()">Sign Out</button>
     </div>
   </div>
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Health Score</div><div class="stat-value" id="ov-health">--</div><div class="stat-change up" id="ov-health-sub"></div></div>
-    <div class="stat-card"><div class="stat-label">Models Governed</div><div class="stat-value" id="ov-models">--</div><div class="stat-change up" id="ov-models-sub"></div></div>
-    <div class="stat-card"><div class="stat-label">AI Agents</div><div class="stat-value" id="ov-agents">--</div><div class="stat-change up" id="ov-agents-sub"></div></div>
-    <div class="stat-card"><div class="stat-label">Open Incidents</div><div class="stat-value" id="ov-incidents" style="color:var(--accent3)">--</div><div class="stat-change down" id="ov-incidents-sub"></div></div>
-    <div class="stat-card"><div class="stat-label">Frameworks</div><div class="stat-value" id="ov-frameworks">--</div><div class="stat-change up">Active</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Compliance Posture</span><span class="badge badge-green" id="ov-comp-avg"></span></div>
-      <div class="panel-body" id="ov-compliance-bars"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Risk Overview</span><span class="badge badge-green" id="ov-risk-badge">--</span></div>
-      <div class="panel-body" style="display:flex;gap:24px">
-        <div class="gauge-container" style="flex-shrink:0">
-          <div class="gauge-ring" id="ov-gauge" style="--pct:0"><span class="gauge-value" id="ov-risk-val">--</span></div>
-          <div class="gauge-label">Avg Risk Score</div>
+
+  <div class="main-content">
+
+    <!-- ── Hero: Health Score + Key Metrics ── -->
+    <div class="hero-row">
+      <div class="health-hero card">
+        <div class="gauge-container">
+          <svg viewBox="0 0 180 180" id="health-gauge">
+            <circle cx="90" cy="90" r="74" class="gauge-bg"/>
+            <circle cx="90" cy="90" r="74" class="gauge-fill" id="gauge-fill"
+              stroke-dasharray="465" stroke-dashoffset="465"
+              transform="rotate(-90 90 90)"/>
+            <text x="90" y="84" class="gauge-text" id="gauge-value">--</text>
+            <text x="90" y="108" class="gauge-pct">%</text>
+          </svg>
         </div>
-        <div style="flex:1;font-size:13px" id="ov-risk-breakdown"><div style="color:var(--text3)">Loading...</div></div>
+        <div class="health-label">Governance Health Score</div>
       </div>
-    </div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Governance Pipeline</span></div>
-      <div class="panel-body" style="display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap">
-        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">DRIFT</div><div style="font-size:20px;font-weight:800;color:var(--accent)">Detect</div></div>
-        <span style="color:var(--text3);font-size:18px">&#8594;</span>
-        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">RISK</div><div style="font-size:20px;font-weight:800;color:var(--accent)">Score</div></div>
-        <span style="color:var(--text3);font-size:18px">&#8594;</span>
-        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">POLICY</div><div style="font-size:20px;font-weight:800;color:var(--accent)">Evaluate</div></div>
-        <span style="color:var(--text3);font-size:18px">&#8594;</span>
-        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">DECIDE</div><div style="font-size:20px;font-weight:800;color:var(--accent)">Act</div></div>
-        <span style="color:var(--text3);font-size:18px">&#8594;</span>
-        <div style="text-align:center;padding:12px 16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><div style="font-size:11px;color:var(--text3);margin-bottom:4px">LEDGER</div><div style="font-size:14px;font-weight:600;color:var(--accent2);font-family:'JetBrains Mono',monospace">Immutable</div></div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Supported Frameworks</span><span class="badge badge-green" id="ov-fw-count"></span></div>
-      <div class="panel-body" id="ov-frameworks-list" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-    </div>
-  </div>
-  <div class="panel" id="ov-health-issues" style="display:none;margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title" style="color:var(--yellow)">Health Issues</span></div>
-    <div class="panel-body" id="ov-issues-list"></div>
-  </div>
-</div>
 
-<!-- ===== AGENT REGISTRY ===== -->
-<div class="page" id="page-agents">
-  <div class="page-header">
-    <div><div class="page-title">Agent Registry</div><div class="page-subtitle">Discover, govern, and monitor AI agents across your organization</div></div>
-    <div class="header-actions">
-      <button class="btn-sm btn-outline" onclick="scanShadowAI()">Scan Shadow AI</button>
-      <button class="btn-sm btn-accent" onclick="showAgentForm()">Register Agent</button>
-    </div>
-  </div>
-  <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
-    <div class="stat-card"><div class="stat-label">Total Agents</div><div class="stat-value" id="ag-total">--</div></div>
-    <div class="stat-card"><div class="stat-label">Approved</div><div class="stat-value" id="ag-approved" style="color:var(--accent)">--</div></div>
-    <div class="stat-card"><div class="stat-label">Shadow AI</div><div class="stat-value" id="ag-shadow" style="color:var(--accent3)">--</div></div>
-    <div class="stat-card"><div class="stat-label">Under Review</div><div class="stat-value" id="ag-review" style="color:var(--yellow)">--</div></div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Registered Agents</span></div>
-    <div id="ag-table-container"><div class="loading">Loading agents...</div></div>
-  </div>
-  <div class="panel" id="ag-form-panel" style="display:none;margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Register New Agent</span><button class="btn-sm btn-outline" onclick="document.getElementById('ag-form-panel').style.display='none'" style="padding:4px 12px;font-size:12px">Close</button></div>
-    <div class="panel-body">
-      <div class="grid-2">
-        <div class="form-group"><label>Agent Name</label><input class="form-input" id="ag-name" placeholder="e.g., support-chatbot-v2"></div>
-        <div class="form-group"><label>Type</label><select class="form-input" id="ag-type"><option value="autonomous">Autonomous</option><option value="semi_autonomous">Semi-Autonomous</option><option value="supervised">Supervised</option><option value="tool_agent">Tool Agent</option><option value="workflow">Workflow</option><option value="chatbot">Chatbot</option></select></div>
-        <div class="form-group"><label>Owner</label><input class="form-input" id="ag-owner" placeholder="e.g., ml-team@company.com"></div>
-        <div class="form-group"><label>Team</label><input class="form-input" id="ag-team" placeholder="e.g., Customer Support"></div>
+      <div class="metrics-grid">
+        <div class="card metric-card">
+          <div class="metric-icon purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="metric-value" id="metric-models"><span class="skeleton skeleton-big">&nbsp;</span></div>
+          <div class="metric-label">Models Registered</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-icon green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div class="metric-value" id="metric-agents"><span class="skeleton skeleton-big">&nbsp;</span></div>
+          <div class="metric-label">Active Agents</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-icon red">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/></svg>
+          </div>
+          <div class="metric-value" id="metric-incidents"><span class="skeleton skeleton-big">&nbsp;</span></div>
+          <div class="metric-label">Open Incidents</div>
+        </div>
+        <div class="card metric-card">
+          <div class="metric-icon yellow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <div class="metric-value" id="metric-policies"><span class="skeleton skeleton-big">&nbsp;</span></div>
+          <div class="metric-label">Policies Active</div>
+        </div>
       </div>
-      <div class="form-group"><label>Purpose</label><textarea class="form-input" id="ag-purpose" placeholder="Describe what this agent does..."></textarea></div>
-      <div class="grid-2">
-        <div class="form-group"><label>Model Provider</label><input class="form-input" id="ag-provider" placeholder="e.g., OpenAI, Anthropic"></div>
-        <div class="form-group"><label>Model Name</label><input class="form-input" id="ag-model" placeholder="e.g., gpt-4o, claude-3-sonnet"></div>
-      </div>
-      <button class="btn-sm btn-accent" onclick="registerAgent()">Register Agent</button>
     </div>
-  </div>
-  <div class="panel" id="ag-shadow-results" style="display:none">
-    <div class="panel-header"><span class="panel-title">Shadow AI Scan Results</span></div>
-    <div class="panel-body" id="ag-shadow-body"></div>
-  </div>
-</div>
 
-<!-- ===== MODEL REGISTRY ===== -->
-<div class="page" id="page-models">
-  <div class="page-header">
-    <div><div class="page-title">Model Registry</div><div class="page-subtitle">Track AI model lifecycle from development to retirement</div></div>
-    <div class="header-actions"><button class="btn-sm btn-accent" onclick="showModelForm()">Register Model</button></div>
-  </div>
-  <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
-    <div class="stat-card"><div class="stat-label">Total Models</div><div class="stat-value" id="md-total">--</div></div>
-    <div class="stat-card"><div class="stat-label">Production</div><div class="stat-value" id="md-prod" style="color:var(--accent)">--</div></div>
-    <div class="stat-card"><div class="stat-label">Staging</div><div class="stat-value" id="md-staging" style="color:var(--accent2)">--</div></div>
-    <div class="stat-card"><div class="stat-label">Avg Risk</div><div class="stat-value" id="md-risk">--</div></div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Registered Models</span></div>
-    <div id="md-table-container"><div class="loading">Loading models...</div></div>
-  </div>
-  <div class="panel" id="md-form-panel" style="display:none;margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Register New Model</span><button class="btn-sm btn-outline" onclick="document.getElementById('md-form-panel').style.display='none'" style="padding:4px 12px;font-size:12px">Close</button></div>
-    <div class="panel-body">
-      <div class="grid-3">
-        <div class="form-group"><label>Model Name</label><input class="form-input" id="md-name" placeholder="e.g., fraud-detector-v3"></div>
-        <div class="form-group"><label>Version</label><input class="form-input" id="md-version" placeholder="e.g., 1.0.0"></div>
-        <div class="form-group"><label>Framework</label><input class="form-input" id="md-framework" placeholder="e.g., pytorch, tensorflow"></div>
-      </div>
-      <div class="form-group"><label>Description</label><textarea class="form-input" id="md-desc" placeholder="Model description..."></textarea></div>
-      <div class="grid-2">
-        <div class="form-group"><label>Owner</label><input class="form-input" id="md-owner" placeholder="team@company.com"></div>
-        <div class="form-group"><label>Use Case</label><input class="form-input" id="md-usecase" placeholder="e.g., Fraud detection in payments"></div>
-      </div>
-      <button class="btn-sm btn-accent" onclick="registerModel()">Register Model</button>
+    <!-- ── Compliance Bars ── -->
+    <div class="section-header"><div class="section-dot"></div><span class="section-title">Framework Compliance</span></div>
+    <div class="compliance-grid" id="compliance-grid">
+      <div class="card compliance-item"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton" style="height:8px;margin-top:12px"></div></div>
+      <div class="card compliance-item"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton" style="height:8px;margin-top:12px"></div></div>
+      <div class="card compliance-item"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton" style="height:8px;margin-top:12px"></div></div>
+      <div class="card compliance-item"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton" style="height:8px;margin-top:12px"></div></div>
+      <div class="card compliance-item"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton" style="height:8px;margin-top:12px"></div></div>
+      <div class="card compliance-item"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton" style="height:8px;margin-top:12px"></div></div>
     </div>
-  </div>
-</div>
 
-<!-- ===== INCIDENTS ===== -->
-<div class="page" id="page-incidents">
-  <div class="page-header">
-    <div><div class="page-title">Incident Management</div><div class="page-subtitle">Track and resolve AI governance incidents</div></div>
-    <div class="header-actions"><button class="btn-sm btn-accent" onclick="showIncidentForm()">Report Incident</button></div>
-  </div>
-  <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
-    <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="inc-total">--</div></div>
-    <div class="stat-card"><div class="stat-label">Open</div><div class="stat-value" id="inc-open" style="color:var(--accent3)">--</div></div>
-    <div class="stat-card"><div class="stat-label">Critical</div><div class="stat-value" id="inc-critical" style="color:var(--red)">--</div></div>
-    <div class="stat-card"><div class="stat-label">Resolved</div><div class="stat-value" id="inc-resolved" style="color:var(--accent)">--</div></div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Incidents</span></div>
-    <div id="inc-table-container"><div class="loading">Loading incidents...</div></div>
-  </div>
-  <div class="panel" id="inc-form-panel" style="display:none;margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Report New Incident</span><button class="btn-sm btn-outline" onclick="document.getElementById('inc-form-panel').style.display='none'" style="padding:4px 12px;font-size:12px">Close</button></div>
-    <div class="panel-body">
-      <div class="grid-2">
-        <div class="form-group"><label>Title</label><input class="form-input" id="inc-title" placeholder="Brief incident title"></div>
-        <div class="form-group"><label>Severity</label><select class="form-input" id="inc-severity"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option><option value="critical">Critical</option></select></div>
+    <!-- ── Ledger + Risk Distribution ── -->
+    <div class="two-col">
+      <div>
+        <div class="section-header"><div class="section-dot"></div><span class="section-title">Recent Governance Decisions</span></div>
+        <div class="card" style="overflow-x:auto">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>System</th>
+                <th>Decision</th>
+                <th>Risk</th>
+                <th>Hash</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-body">
+              <tr><td colspan="5" style="text-align:center;padding:32px"><div class="skeleton skeleton-text" style="width:80%;margin:0 auto"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="form-group"><label>Description</label><textarea class="form-input" id="inc-description" placeholder="Describe the incident..."></textarea></div>
-      <div class="form-group"><label>Affected System</label><input class="form-input" id="inc-system" placeholder="e.g., loan-approval-model"></div>
-      <button class="btn-sm btn-accent" onclick="createIncident()">Create Incident</button>
-    </div>
-  </div>
-</div>
 
-<!-- ===== COMPLIANCE ===== -->
-<div class="page" id="page-compliance">
-  <div class="page-header">
-    <div><div class="page-title">Compliance Center</div><div class="page-subtitle">Framework coverage, gap analysis, and regulatory advisory</div></div>
-    <div class="header-actions"><button class="btn-sm btn-accent" onclick="navigateTo('reports')">Generate Report</button></div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Regulatory Coverage</span></div>
-      <div class="panel-body" id="comp-regulations"><div class="loading">Loading...</div></div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Control Framework</span></div>
-      <div class="panel-body" id="comp-controls"><div class="loading">Loading...</div></div>
-    </div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Gap Analysis</span></div>
-    <div class="panel-body" id="comp-gaps"><div class="loading">Loading gap analysis...</div></div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span class="panel-title">Advisory Recommendations</span></div>
-    <div class="panel-body" id="comp-advisory"><div class="loading">Loading advisory...</div></div>
-  </div>
-</div>
+      <div>
+        <div class="section-header"><div class="section-dot"></div><span class="section-title">Risk Distribution</span></div>
+        <div class="card">
+          <div class="risk-bars" id="risk-bars">
+            <div class="risk-bar-row">
+              <span class="risk-bar-label" style="color:var(--green)">Low</span>
+              <div class="risk-bar-track"><div class="risk-bar-fill" id="risk-low" style="width:0;background:var(--green)"></div></div>
+              <span class="risk-bar-count" id="risk-low-n">--</span>
+            </div>
+            <div class="risk-bar-row">
+              <span class="risk-bar-label" style="color:var(--yellow)">Medium</span>
+              <div class="risk-bar-track"><div class="risk-bar-fill" id="risk-medium" style="width:0;background:var(--yellow)"></div></div>
+              <span class="risk-bar-count" id="risk-medium-n">--</span>
+            </div>
+            <div class="risk-bar-row">
+              <span class="risk-bar-label" style="color:var(--orange)">High</span>
+              <div class="risk-bar-track"><div class="risk-bar-fill" id="risk-high" style="width:0;background:var(--orange)"></div></div>
+              <span class="risk-bar-count" id="risk-high-n">--</span>
+            </div>
+            <div class="risk-bar-row">
+              <span class="risk-bar-label" style="color:var(--red)">Critical</span>
+              <div class="risk-bar-track"><div class="risk-bar-fill" id="risk-critical" style="width:0;background:var(--red)"></div></div>
+              <span class="risk-bar-count" id="risk-critical-n">--</span>
+            </div>
+          </div>
+        </div>
 
-<!-- ===== POLICIES ===== -->
-<div class="page" id="page-policies">
-  <div class="page-header">
-    <div><div class="page-title">Policy Engine</div><div class="page-subtitle">Define and evaluate governance policies as code</div></div>
-    <div class="header-actions"><button class="btn-sm btn-accent" onclick="showPolicyForm()">Create Policy</button></div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Active Policies</span></div>
-    <div id="pol-table-container"><div class="loading">Loading policies...</div></div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Test Policy Evaluation</span></div>
-    <div class="panel-body">
-      <div class="grid-2">
-        <div class="form-group"><label>Risk Score</label><input class="form-input" id="pol-risk" type="number" value="45" min="0" max="100"></div>
-        <div class="form-group"><label>Drift Coefficient</label><input class="form-input" id="pol-drift" type="number" value="0.15" step="0.01" min="0" max="1"></div>
+        <div class="section-header"><div class="section-dot"></div><span class="section-title">Ledger Integrity</span></div>
+        <div class="card" id="ledger-integrity" style="display:flex;align-items:center;gap:16px">
+          <div class="skeleton" style="width:40px;height:40px;border-radius:50%"></div>
+          <div><div class="skeleton skeleton-text" style="width:180px"></div></div>
+        </div>
       </div>
-      <div class="grid-2">
-        <div class="form-group"><label>Has Human Oversight</label><select class="form-input" id="pol-oversight"><option value="true">Yes</option><option value="false">No</option></select></div>
-        <div class="form-group"><label>Fairness Score</label><input class="form-input" id="pol-fairness" type="number" value="85" min="0" max="100"></div>
-      </div>
-      <button class="btn-sm btn-accent" onclick="evaluatePolicy()">Evaluate</button>
-      <div id="pol-eval-result" style="margin-top:16px"></div>
     </div>
-  </div>
-  <div class="panel" id="pol-form-panel" style="display:none">
-    <div class="panel-header"><span class="panel-title">Create New Policy</span><button class="btn-sm btn-outline" onclick="document.getElementById('pol-form-panel').style.display='none'" style="padding:4px 12px;font-size:12px">Close</button></div>
-    <div class="panel-body">
-      <div class="grid-2">
-        <div class="form-group"><label>Policy Name</label><input class="form-input" id="pol-name" placeholder="e.g., High Risk Threshold"></div>
-        <div class="form-group"><label>Version</label><input class="form-input" id="pol-version" placeholder="1.0"></div>
-      </div>
-      <div class="form-group"><label>Description</label><textarea class="form-input" id="pol-desc" placeholder="Policy description..."></textarea></div>
-      <button class="btn-sm btn-accent" onclick="createPolicy()">Create Policy</button>
-    </div>
-  </div>
-</div>
 
-<!-- ===== KNOWLEDGE GRAPH ===== -->
-<div class="page" id="page-knowledge">
-  <div class="page-header">
-    <div><div class="page-title">Knowledge Graph</div><div class="page-subtitle">Regulatory intelligence mapping regulations, controls, and risks</div></div>
-  </div>
-  <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
-    <div class="stat-card"><div class="stat-label">Regulations</div><div class="stat-value" id="kg-regs">--</div></div>
-    <div class="stat-card"><div class="stat-label">Controls</div><div class="stat-value" id="kg-controls">--</div></div>
-    <div class="stat-card"><div class="stat-label">Risk Categories</div><div class="stat-value" id="kg-risks">--</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Regulations</span></div>
-      <div class="panel-body" id="kg-regs-list"><div class="loading">Loading...</div></div>
+    <!-- ── Incidents Timeline ── -->
+    <div class="section-header"><div class="section-dot"></div><span class="section-title">Incident Timeline</span></div>
+    <div class="card">
+      <div class="incidents-list" id="incidents-list">
+        <div class="incident-card"><div class="skeleton skeleton-text" style="width:70%"></div><div class="skeleton skeleton-text" style="width:40%;margin-top:8px"></div></div>
+        <div class="incident-card"><div class="skeleton skeleton-text" style="width:60%"></div><div class="skeleton skeleton-text" style="width:35%;margin-top:8px"></div></div>
+      </div>
     </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Controls</span></div>
-      <div class="panel-body" id="kg-controls-list"><div class="loading">Loading...</div></div>
-    </div>
-  </div>
-  <div class="panel">
-    <div class="panel-header"><span class="panel-title">Risk Categories</span></div>
-    <div class="panel-body" id="kg-risks-list"><div class="loading">Loading...</div></div>
-  </div>
-</div>
 
-<!-- ===== REPORTS ===== -->
-<div class="page" id="page-reports">
-  <div class="page-header">
-    <div><div class="page-title">Report Generator</div><div class="page-subtitle">Generate compliance reports for regulatory frameworks</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Generate Report</span></div>
-      <div class="panel-body">
-        <div class="form-group"><label>Framework</label><select class="form-input" id="rpt-framework">
-          <option value="eu_ai_act">EU AI Act</option>
-          <option value="nist_ai_rmf">NIST AI RMF</option>
-          <option value="iso_42001">ISO 42001</option>
-          <option value="soc2">SOC 2</option>
-          <option value="gdpr">GDPR</option>
-          <option value="hipaa">HIPAA</option>
-          <option value="hitrust">HITRUST</option>
-          <option value="nyc_ll144">NYC LL144</option>
-        </select></div>
-        <div class="form-group"><label>System Name</label><input class="form-input" id="rpt-system" placeholder="e.g., loan-approval-v3"></div>
-        <div class="form-group"><label>Organization</label><input class="form-input" id="rpt-org" placeholder="Your company name"></div>
-        <button class="btn-sm btn-accent" onclick="generateReport()">Generate Report</button>
+    <!-- ── Shadow AI Scanner ── -->
+    <div class="section-header"><div class="section-dot"></div><span class="section-title">Shadow AI Scanner</span></div>
+    <div class="card">
+      <div class="scanner-trigger">
+        <input class="scanner-input" id="scan-targets" placeholder="Enter targets: api.openai.com, api.anthropic.com, api.groq.com" />
+        <button class="btn-scan" id="scan-btn" onclick="runShadowScan()">Scan Now</button>
       </div>
+      <div class="scan-results" id="scan-results"></div>
     </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Available Frameworks</span></div>
-      <div class="panel-body" id="rpt-frameworks-list"><div class="loading">Loading...</div></div>
-    </div>
-  </div>
-  <div class="panel" id="rpt-result-panel" style="display:none;margin-top:24px">
-    <div class="panel-header"><span class="panel-title">Generated Report</span><button class="btn-sm btn-outline" onclick="copyReport()" style="padding:4px 12px;font-size:12px">Copy JSON</button></div>
-    <div class="panel-body"><pre id="rpt-result" style="white-space:pre-wrap;font-size:12px;color:var(--text2);max-height:500px;overflow-y:auto"></pre></div>
-  </div>
-</div>
 
-<!-- ===== SECURITY ===== -->
-<div class="page" id="page-security">
-  <div class="page-header">
-    <div><div class="page-title">Security Scanner</div><div class="page-subtitle">Prompt injection detection, PII scanning, and guardrails</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Security Scan</span></div>
-      <div class="panel-body">
-        <div class="form-group"><label>Text to Scan</label><textarea class="form-input" id="sec-text" rows="6" placeholder="Paste text to scan for injection attacks, PII, and security issues..."></textarea></div>
-        <div class="form-group"><label>Model Name (optional)</label><input class="form-input" id="sec-model" placeholder="e.g., my-chatbot"></div>
-        <button class="btn-sm btn-accent" onclick="runSecurityScan()">Scan</button>
-      </div>
+    <!-- ── Quick Actions ── -->
+    <div class="section-header"><div class="section-dot"></div><span class="section-title">Quick Actions</span></div>
+    <div class="actions-grid">
+      <button class="action-btn" onclick="runGovernanceScan()">
+        <span class="action-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent-light)" stroke-width="1.5" style="display:inline"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        <span class="action-label">Run Governance Scan</span>
+        <span class="action-desc">Drift + risk analysis</span>
+      </button>
+      <button class="action-btn" onclick="openReportModal()">
+        <span class="action-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5" style="display:inline"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        </span>
+        <span class="action-label">Generate Report</span>
+        <span class="action-desc">18 regulatory frameworks</span>
+      </button>
+      <button class="action-btn" onclick="openModelModal()">
+        <span class="action-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="1.5" style="display:inline"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </span>
+        <span class="action-label">Register Model</span>
+        <span class="action-desc">Add to governance registry</span>
+      </button>
+      <button class="action-btn" onclick="openIncidentModal()">
+        <span class="action-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" style="display:inline"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <span class="action-label">Create Incident</span>
+        <span class="action-desc">Report a governance issue</span>
+      </button>
     </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Scan Results</span></div>
-      <div class="panel-body" id="sec-results">
-        <div class="empty-state"><div class="empty-icon">&#128274;</div><p>Run a scan to see results</p></div>
-      </div>
+
+  </div><!-- /main-content -->
+</div><!-- /dashboard -->
+
+<!-- ════════════════════════ MODALS ════════════════════════ -->
+
+<!-- Report Modal -->
+<div class="modal-overlay" id="report-modal">
+  <div class="modal">
+    <h2>Generate Compliance Report</h2>
+    <label>System Name</label>
+    <input type="text" id="report-system" placeholder="e.g. fraud-detector" value="organization">
+    <label>Framework</label>
+    <select id="report-framework">
+      <option value="eu_ai_act">EU AI Act</option>
+      <option value="nist_ai_rmf">NIST AI RMF</option>
+      <option value="iso_42001">ISO 42001</option>
+      <option value="iso_27001">ISO/IEC 27001</option>
+      <option value="soc2">SOC 2 Type II</option>
+      <option value="gdpr">GDPR</option>
+      <option value="hipaa">HIPAA</option>
+      <option value="ccpa">CCPA/CPRA</option>
+      <option value="nis2">NIS2 Directive</option>
+      <option value="dora">DORA</option>
+      <option value="mitre_atlas">MITRE ATLAS</option>
+      <option value="owasp_ai">OWASP AI Top 10</option>
+      <option value="nist_csf">NIST CSF 2.0</option>
+      <option value="oecd_ai">OECD AI Principles</option>
+      <option value="ieee_ethics">IEEE Ethics</option>
+      <option value="hitrust">HITRUST</option>
+      <option value="nyc_ll144">NYC Local Law 144</option>
+      <option value="colorado_sb169">Colorado SB 21-169</option>
+    </select>
+    <label>Risk Tier</label>
+    <select id="report-tier">
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('report-modal')">Cancel</button>
+      <button class="btn-submit" onclick="generateReport()">Generate</button>
     </div>
   </div>
 </div>
 
-<!-- ===== STATUS PAGE ===== -->
-<div class="page" id="page-status">
-  <div class="page-header">
-    <div><div class="page-title">System Status</div><div class="page-subtitle">Platform health, SLA monitoring, and service status</div></div>
-    <div class="header-actions"><button class="btn-sm btn-outline" onclick="loadStatus()">Refresh</button></div>
-  </div>
-  <div class="panel" style="margin-bottom:24px">
-    <div class="panel-header"><span class="panel-title">Service Status</span><span class="badge badge-green" id="st-overall">Loading...</span></div>
-    <div id="st-components"><div class="loading">Loading status...</div></div>
-  </div>
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">SLA Monitoring</span></div>
-      <div class="panel-body" id="st-sla"><div class="loading">Loading...</div></div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><span class="panel-title">Recent Changes</span></div>
-      <div class="panel-body" id="st-changelog"><div class="loading">Loading...</div></div>
+<!-- Model Modal -->
+<div class="modal-overlay" id="model-modal">
+  <div class="modal">
+    <h2>Register AI Model</h2>
+    <label>Model Name</label>
+    <input type="text" id="model-name" placeholder="e.g. loan-approval-v3" required>
+    <label>Version</label>
+    <input type="text" id="model-version" placeholder="e.g. 1.0.0" value="1.0.0">
+    <label>Description</label>
+    <textarea id="model-desc" placeholder="What does this model do?"></textarea>
+    <label>Owner</label>
+    <input type="text" id="model-owner" placeholder="team@company.com">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('model-modal')">Cancel</button>
+      <button class="btn-submit" onclick="registerModel()">Register</button>
     </div>
   </div>
 </div>
 
-</main>
+<!-- Incident Modal -->
+<div class="modal-overlay" id="incident-modal">
+  <div class="modal">
+    <h2>Report Incident</h2>
+    <label>Title</label>
+    <input type="text" id="incident-title" placeholder="Brief description of the issue" required>
+    <label>Description</label>
+    <textarea id="incident-desc" placeholder="Detailed description"></textarea>
+    <label>Severity</label>
+    <select id="incident-severity">
+      <option value="low">Low</option>
+      <option value="medium" selected>Medium</option>
+      <option value="high">High</option>
+      <option value="critical">Critical</option>
+    </select>
+    <label>Category</label>
+    <input type="text" id="incident-category" placeholder="e.g. data_drift, fairness, performance">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('incident-modal')">Cancel</button>
+      <button class="btn-submit" onclick="createIncident()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Governance Scan Modal -->
+<div class="modal-overlay" id="scan-modal">
+  <div class="modal">
+    <h2>Run Governance Scan</h2>
+    <label>System Name</label>
+    <input type="text" id="scan-system" placeholder="e.g. chatbot-support" required>
+    <label>Reasoning Trace</label>
+    <textarea id="scan-trace" placeholder="Paste the AI system's reasoning output here...">The model processed the loan application and determined creditworthiness based on financial history, employment duration, and credit score metrics.</textarea>
+    <label>Use Case</label>
+    <input type="text" id="scan-usecase" placeholder="e.g. Credit decisioning" value="General AI">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('scan-modal')">Cancel</button>
+      <button class="btn-submit" onclick="executeGovernanceScan()">Run Scan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
-const API = window.location.origin;
-let AUTH_TOKEN = localStorage.getItem('gl_token') || '';
+/* ═══════════════════════════════════════════════════════════════
+   GovernLayer Dashboard — JavaScript Controller
+   ═══════════════════════════════════════════════════════════════ */
 
-// --- Login Gate ---
-function showLogin() {
-  document.querySelector('.sidebar').style.display = 'none';
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
+const API = '';
+let TOKEN = localStorage.getItem('gl_token');
+let USER_EMAIL = localStorage.getItem('gl_email');
+
+// ── Auth ──
+function toggleAuth(mode) {
+  document.getElementById('login-form').style.display = mode === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('auth-error').style.display = 'none';
 }
 
-function hideLogin() {
-  document.querySelector('.sidebar').style.display = 'flex';
-  document.getElementById('mainContent').style.display = 'block';
-  document.getElementById('loginScreen').style.display = 'none';
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-async function doLogin() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  const errEl = document.getElementById('login-error');
-  errEl.textContent = '';
-  if (!email || !password) { errEl.textContent = 'Email and password required'; return; }
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
   try {
-    const resp = await fetch(API + '/auth/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+    const res = await fetch(API + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: document.getElementById('login-email').value,
+        password: document.getElementById('login-password').value,
+      }),
     });
-    if (!resp.ok) { const d = await resp.json().catch(()=>({})); errEl.textContent = d.detail || 'Login failed'; return; }
-    const data = await resp.json();
-    AUTH_TOKEN = data.token;
-    localStorage.setItem('gl_token', AUTH_TOKEN);
-    localStorage.setItem('gl_email', data.email);
-    hideLogin();
-    loadOverview();
-  } catch (e) { errEl.textContent = 'Connection error'; }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Login failed');
+    if (data.mfa_required) { showAuthError('MFA required. Contact admin.'); return; }
+    TOKEN = data.token;
+    USER_EMAIL = data.email;
+    localStorage.setItem('gl_token', TOKEN);
+    localStorage.setItem('gl_email', USER_EMAIL);
+    showDashboard();
+  } catch (err) {
+    showAuthError(err.message);
+  } finally {
+    btn.textContent = 'Sign In'; btn.disabled = false;
+  }
+  return false;
 }
 
-async function doRegister() {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-  const company = document.getElementById('login-company').value || 'My Company';
-  const errEl = document.getElementById('login-error');
-  errEl.textContent = '';
-  if (!email || !password) { errEl.textContent = 'Email and password required'; return; }
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('reg-btn');
+  btn.textContent = 'Creating...'; btn.disabled = true;
   try {
-    const resp = await fetch(API + '/auth/register', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, company })
+    const res = await fetch(API + '/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: document.getElementById('reg-email').value,
+        password: document.getElementById('reg-password').value,
+        company: document.getElementById('reg-company').value,
+      }),
     });
-    if (!resp.ok) { const d = await resp.json().catch(()=>({})); errEl.textContent = d.detail || 'Registration failed'; return; }
-    const data = await resp.json();
-    AUTH_TOKEN = data.token;
-    localStorage.setItem('gl_token', AUTH_TOKEN);
-    localStorage.setItem('gl_email', data.email);
-    hideLogin();
-    loadOverview();
-  } catch (e) { errEl.textContent = 'Connection error'; }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Registration failed');
+    TOKEN = data.token;
+    USER_EMAIL = data.email;
+    localStorage.setItem('gl_token', TOKEN);
+    localStorage.setItem('gl_email', USER_EMAIL);
+    showDashboard();
+  } catch (err) {
+    showAuthError(err.message);
+  } finally {
+    btn.textContent = 'Create Account'; btn.disabled = false;
+  }
+  return false;
 }
 
-function doLogout() {
-  AUTH_TOKEN = '';
+function logout() {
+  TOKEN = null; USER_EMAIL = null;
   localStorage.removeItem('gl_token');
   localStorage.removeItem('gl_email');
-  showLogin();
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
 }
 
-// Check auth on load
-if (!AUTH_TOKEN) { showLogin(); } else {
-  hideLogin();
-  const savedEmail = localStorage.getItem('gl_email');
-  if (savedEmail) document.getElementById('sidebar-user').textContent = savedEmail;
+// ── API Helper ──
+async function apiFetch(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...opts.headers };
+  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+  const res = await fetch(API + path, { ...opts, headers });
+  if (res.status === 401 || res.status === 403) {
+    logout();
+    throw new Error('Session expired');
+  }
+  return res;
 }
 
-// Navigation
-document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-  item.addEventListener('click', () => navigateTo(item.dataset.page));
+async function apiJSON(path, opts = {}) {
+  const res = await apiFetch(path, opts);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `API error ${res.status}`);
+  }
+  return res.json();
+}
+
+// ── Color Helpers ──
+function scoreColor(pct) {
+  if (pct >= 80) return 'var(--green)';
+  if (pct >= 60) return 'var(--yellow)';
+  return 'var(--red)';
+}
+function scoreBgColor(pct) {
+  if (pct >= 80) return 'var(--green-dim)';
+  if (pct >= 60) return 'var(--yellow-dim)';
+  return 'var(--red-dim)';
+}
+
+// ── Time Formatting ──
+function timeAgo(iso) {
+  if (!iso) return '--';
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ── Toast ──
+function toast(msg, type = 'info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type;
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Modal ──
+function openModal(id) { document.getElementById(id).classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open') });
 });
 
-function navigateTo(page) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navItem = document.querySelector(`[data-page="${page}"]`);
-  if (navItem) navItem.classList.add('active');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const pageEl = document.getElementById('page-' + page);
-  if (pageEl) pageEl.classList.add('active');
-  // Load page data
-  const loaders = {
-    overview: loadOverview, agents: loadAgents, models: loadModels,
-    incidents: loadIncidents, compliance: loadCompliance, policies: loadPolicies,
-    knowledge: loadKnowledge, reports: loadReports, security: ()=>{}, status: loadStatus
-  };
-  if (loaders[page]) loaders[page]();
+// ── Show Dashboard ──
+function showDashboard() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('user-email').textContent = USER_EMAIL || 'user';
+  loadAllData();
 }
 
-function toast(msg, isError) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  if (isError) t.style.borderColor = 'var(--red)';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+// ── Data Loading ──
+async function loadAllData() {
+  loadHealthScore();
+  loadMetrics();
+  loadCompliance();
+  loadLedger();
+  loadIncidents();
+  loadLedgerIntegrity();
 }
 
-async function apiFetch(path, opts = {}) {
+async function loadHealthScore() {
   try {
-    const headers = { Accept: 'application/json', 'Content-Type': 'application/json' };
-    if (AUTH_TOKEN) headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
-    const resp = await fetch(API + path, { headers, ...opts });
-    if (resp.status === 401) { doLogout(); toast('Session expired — please log in again', true); return null; }
-    if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
-    return await resp.json();
+    const data = await apiJSON('/v1/reports/compliance-summary');
+    const pct = Math.round(data.average || 0);
+    const circumference = 2 * Math.PI * 74; // ~465
+    const offset = circumference - (pct / 100) * circumference;
+    const fill = document.getElementById('gauge-fill');
+    fill.style.stroke = scoreColor(pct);
+    fill.setAttribute('stroke-dashoffset', offset);
+    document.getElementById('gauge-value').textContent = pct;
   } catch (e) {
-    console.error('API error:', path, e);
-    return null;
+    document.getElementById('gauge-value').textContent = '--';
   }
 }
 
-function badgeFor(status) {
-  const map = { active:'green', approved:'green', production:'green', compliant:'green', resolved:'green', closed:'green',
-    under_review:'yellow', staging:'purple', pending:'yellow', medium:'yellow', investigating:'yellow', warning:'yellow',
-    critical:'red', high:'red', rejected:'red', suspended:'red', non_compliant:'red',
-    development:'blue', low:'blue', new:'pink' };
-  return 'badge-' + (map[status] || 'purple');
-}
-
-// ===== OVERVIEW =====
-async function loadOverview() {
-  const [dash, fw, status] = await Promise.all([
-    apiFetch('/v1/dashboard'), apiFetch('/frameworks'), apiFetch('/api')
-  ]);
-  if (dash && dash.dashboard) {
-    const d = dash.dashboard;
-    document.getElementById('ov-health').textContent = d.health.score + '/100';
-    document.getElementById('ov-health').style.color = d.health.score >= 70 ? 'var(--accent)' : d.health.score >= 40 ? 'var(--yellow)' : 'var(--red)';
-    document.getElementById('ov-health-sub').textContent = d.health.status;
-    document.getElementById('ov-models').textContent = d.models.total;
-    document.getElementById('ov-models-sub').textContent = d.models.production_count + ' in production';
-    document.getElementById('ov-incidents').textContent = d.incidents.open;
-    document.getElementById('ov-incidents-sub').textContent = d.incidents.critical_open + ' critical';
-    document.getElementById('incBadge').textContent = d.incidents.open || '';
-    document.getElementById('ov-risk-val').textContent = Math.round(d.models.average_risk_score || 0);
-    document.getElementById('ov-gauge').style.setProperty('--pct', d.models.average_risk_score || 0);
-    const riskLevel = (d.models.average_risk_score||0) < 40 ? 'Low' : (d.models.average_risk_score||0) < 70 ? 'Medium' : 'High';
-    document.getElementById('ov-risk-badge').textContent = riskLevel;
-    document.getElementById('ov-risk-badge').className = 'badge ' + badgeFor(riskLevel.toLowerCase());
-    // Risk breakdown
-    const dims = ['Privacy', 'Autonomy', 'Infrastructure', 'Oversight', 'Transparency', 'Fairness'];
-    document.getElementById('ov-risk-breakdown').innerHTML = '<div style="margin-bottom:12px"><strong>Risk Dimensions</strong></div>' +
-      dims.map(d => `<div class="kv-row"><span class="kv-label">${d}</span><span class="kv-value" style="color:var(--accent)">Monitored</span></div>`).join('');
-    // Agents
-    const agData = await apiFetch('/v1/agents');
-    document.getElementById('ov-agents').textContent = agData ? agData.total : '0';
-    document.getElementById('ov-agents-sub').textContent = (agData ? agData.approved : 0) + ' approved';
-    // Health issues
-    if (d.health.issues && d.health.issues.length) {
-      document.getElementById('ov-health-issues').style.display = 'block';
-      document.getElementById('ov-issues-list').innerHTML = d.health.issues.map(i =>
-        `<div style="padding:6px 0;font-size:13px;color:var(--yellow);border-bottom:1px solid var(--border)">&#9888; ${i}</div>`
-      ).join('');
-    }
-  }
-  // Compliance bars — live data from report generators
-  const compSummary = await apiFetch('/v1/reports/compliance-summary?system_name=organization');
-  const compData = compSummary && compSummary.frameworks ? compSummary.frameworks : [
-    {name:'EU AI Act',pct:0},{name:'NIST AI RMF',pct:0},{name:'ISO 42001',pct:0},
-    {name:'SOC 2',pct:0},{name:'HIPAA',pct:0},{name:'GDPR',pct:0}
-  ];
-  document.getElementById('ov-compliance-bars').innerHTML = compData.map(c => {
-    const col = c.pct >= 80 ? 'var(--accent)' : c.pct >= 50 ? 'var(--yellow)' : 'var(--red)';
-    return `<div class="compliance-item"><span class="compliance-name">${c.name}</span><div class="compliance-bar"><div class="fill" style="width:${c.pct}%;background:${col}"></div></div><span class="compliance-pct" style="color:${col}">${c.pct}%</span></div>`;
-  }).join('');
-  const compAvg = compSummary && compSummary.average ? compSummary.average : Math.round(compData.reduce((s,c)=>s+c.pct,0)/compData.length);
-  document.getElementById('ov-comp-avg').textContent = compAvg + '% avg';
-  // Frameworks
-  if (fw) {
-    document.getElementById('ov-frameworks').textContent = fw.total;
-    document.getElementById('ov-fw-count').textContent = fw.total + ' frameworks';
-    document.getElementById('ov-frameworks-list').innerHTML = (fw.frameworks||[]).map(f =>
-      `<span class="tag">${f.replace(/_/g,' ')}</span>`
-    ).join('');
-  }
-}
-
-// ===== AGENTS =====
-async function loadAgents() {
-  const data = await apiFetch('/v1/agents');
-  if (!data) { document.getElementById('ag-table-container').innerHTML = '<div class="empty-state"><p>Could not load agents</p></div>'; return; }
-  document.getElementById('ag-total').textContent = data.total;
-  document.getElementById('ag-approved').textContent = data.approved;
-  document.getElementById('ag-shadow').textContent = data.shadow_detected;
-  document.getElementById('ag-review').textContent = data.total - data.approved - data.shadow_detected;
-  if (!data.agents.length) {
-    document.getElementById('ag-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">&#9881;</div><p>No agents registered yet</p><p style="color:var(--text3)">Click "Register Agent" to add your first AI agent</p></div>';
-    return;
-  }
-  document.getElementById('ag-table-container').innerHTML = `<table><thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Owner</th><th>Shadow</th><th>Risk</th></tr></thead><tbody>${
-    data.agents.map(a => `<tr><td style="color:var(--text);font-weight:600">${a.name}</td><td><span class="tag">${a.agent_type||'--'}</span></td><td><span class="badge ${badgeFor(a.status)}">${a.status||'--'}</span></td><td>${a.owner||'--'}</td><td>${a.is_shadow?'<span class="badge badge-red">Shadow</span>':'<span class="badge badge-green">Governed</span>'}</td><td>${a.risk_score||'--'}</td></tr>`
-  ).join('')}</tbody></table>`;
-}
-
-function showAgentForm() { document.getElementById('ag-form-panel').style.display = 'block'; }
-
-async function registerAgent() {
-  const body = {
-    name: document.getElementById('ag-name').value,
-    agent_type: document.getElementById('ag-type').value,
-    owner: document.getElementById('ag-owner').value,
-    team: document.getElementById('ag-team').value,
-    purpose: document.getElementById('ag-purpose').value,
-    model_provider: document.getElementById('ag-provider').value,
-    model_name: document.getElementById('ag-model').value,
-  };
-  if (!body.name) { toast('Agent name is required', true); return; }
-  const result = await apiFetch('/v1/agents', { method: 'POST', body: JSON.stringify(body) });
-  if (result) { toast('Agent registered successfully'); document.getElementById('ag-form-panel').style.display='none'; loadAgents(); }
-  else toast('Failed to register agent', true);
-}
-
-async function scanShadowAI() {
-  const result = await apiFetch('/v1/agents/discovery/scan', {
-    method: 'POST',
-    body: JSON.stringify({ scan_type: 'api_patterns', targets: ['api.openai.com/v1/chat', 'api.anthropic.com/v1/messages', 'api-inference.huggingface.co', 'generativelanguage.googleapis.com', 'api.groq.com'] })
+async function loadMetrics() {
+  // Models
+  apiJSON('/v1/models').then(d => {
+    document.getElementById('metric-models').textContent = d.total || 0;
+  }).catch(() => {
+    document.getElementById('metric-models').innerHTML = '<span style="color:var(--text3)">--</span>';
   });
-  const panel = document.getElementById('ag-shadow-results');
-  panel.style.display = 'block';
-  if (result) {
-    document.getElementById('ag-shadow-body').innerHTML = `
-      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-        <div class="stat-card"><div class="stat-label">Targets Scanned</div><div class="stat-value">${result.targets_scanned}</div></div>
-        <div class="stat-card"><div class="stat-label">Unregistered AI</div><div class="stat-value" style="color:${result.unregistered_ai?'var(--red)':'var(--accent)'}">${result.unregistered_ai}</div></div>
-        <div class="stat-card"><div class="stat-label">Risk Level</div><div class="stat-value"><span class="badge ${badgeFor(result.risk_level)}">${result.risk_level}</span></div></div>
-      </div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">${result.recommendation}</p>
-      ${result.detections.map(d => `<div class="kv-row"><span class="kv-label">${d.provider}</span><span class="kv-value"><span class="badge ${badgeFor(d.severity)}">${d.severity}</span> ${d.registered?'Registered':'Unregistered'}</span></div>`).join('')}
-    `;
+
+  // Agents
+  apiJSON('/v1/agents').then(d => {
+    document.getElementById('metric-agents').textContent = d.total || 0;
+  }).catch(() => {
+    document.getElementById('metric-agents').innerHTML = '<span style="color:var(--text3)">--</span>';
+  });
+
+  // Open Incidents
+  apiJSON('/v1/incidents?status=open').then(d => {
+    document.getElementById('metric-incidents').textContent = d.total || 0;
+  }).catch(() => {
+    document.getElementById('metric-incidents').innerHTML = '<span style="color:var(--text3)">--</span>';
+  });
+
+  // Policies
+  apiJSON('/v1/policies').then(d => {
+    document.getElementById('metric-policies').textContent = d.total || 0;
+  }).catch(() => {
+    document.getElementById('metric-policies').innerHTML = '<span style="color:var(--text3)">--</span>';
+  });
+}
+
+async function loadCompliance() {
+  const grid = document.getElementById('compliance-grid');
+  try {
+    const data = await apiJSON('/v1/reports/compliance-summary');
+    const frameworks = data.frameworks || [];
+    grid.innerHTML = frameworks.map(fw => {
+      const pct = Math.round(fw.pct || 0);
+      const color = scoreColor(pct);
+      return `
+        <div class="card compliance-item">
+          <div class="compliance-row">
+            <span class="compliance-name">${fw.name}</span>
+            <span class="compliance-pct" style="color:${color}">${pct}%</span>
+          </div>
+          <div class="compliance-bar">
+            <div class="compliance-fill" style="width:${pct}%;background:${color}"></div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    grid.innerHTML = '<div class="card compliance-item"><div class="empty-state"><div class="empty-icon">--</div>Unable to load compliance data</div></div>';
   }
 }
 
-// ===== MODELS =====
-async function loadModels() {
-  const data = await apiFetch('/v1/models');
-  if (!data) { document.getElementById('md-table-container').innerHTML = '<div class="empty-state"><p>Could not load models</p></div>'; return; }
-  const models = data.models || [];
-  document.getElementById('md-total').textContent = data.total || models.length;
-  document.getElementById('md-prod').textContent = models.filter(m=>m.lifecycle==='production').length;
-  document.getElementById('md-staging').textContent = models.filter(m=>m.lifecycle==='staging').length;
-  const risks = models.filter(m=>m.risk_score!=null).map(m=>m.risk_score);
-  document.getElementById('md-risk').textContent = risks.length ? Math.round(risks.reduce((a,b)=>a+b,0)/risks.length) : '--';
-  if (!models.length) {
-    document.getElementById('md-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">&#9670;</div><p>No models registered yet</p></div>';
-    return;
+async function loadLedger() {
+  const tbody = document.getElementById('ledger-body');
+  try {
+    const data = await apiJSON('/ledger?per_page=10');
+    const records = (data.ledger || []).reverse(); // newest first
+    if (records.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No governance decisions yet. Run a scan to create your first entry.</td></tr>';
+      updateRiskDistribution([]);
+      return;
+    }
+    tbody.innerHTML = records.map(r => {
+      const action = r.governance_action || 'UNKNOWN';
+      let badgeClass = 'badge-approve';
+      if (action === 'BLOCK') badgeClass = 'badge-block';
+      else if (action.includes('ESCALATE')) badgeClass = 'badge-escalate';
+      const riskScore = r.risk_score != null ? Math.round(r.risk_score) : '--';
+      const hash = (r.current_hash || '').substring(0, 12);
+      return `
+        <tr>
+          <td>${timeAgo(r.created_at)}</td>
+          <td style="color:var(--text);font-weight:500">${r.system_name || '--'}</td>
+          <td><span class="badge ${badgeClass}">${action}</span></td>
+          <td>${riskScore}</td>
+          <td class="hash-cell">${hash}...</td>
+        </tr>`;
+    }).join('');
+    updateRiskDistribution(records);
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Unable to load ledger data</td></tr>';
+    updateRiskDistribution([]);
   }
-  document.getElementById('md-table-container').innerHTML = `<table><thead><tr><th>Name</th><th>Version</th><th>Lifecycle</th><th>Risk</th><th>Framework</th></tr></thead><tbody>${
-    models.map(m => `<tr><td style="color:var(--text);font-weight:600">${m.name}</td><td><code>${m.version||'--'}</code></td><td><span class="badge ${badgeFor(m.lifecycle)}">${m.lifecycle||'--'}</span></td><td>${m.risk_score||'--'}</td><td>${m.framework||'--'}</td></tr>`
-  ).join('')}</tbody></table>`;
 }
 
-function showModelForm() { document.getElementById('md-form-panel').style.display = 'block'; }
+function updateRiskDistribution(records) {
+  const counts = { low: 0, medium: 0, high: 0, critical: 0 };
+  records.forEach(r => {
+    const level = (r.risk_level || '').toLowerCase();
+    if (level === 'low') counts.low++;
+    else if (level === 'medium') counts.medium++;
+    else if (level === 'high') counts.high++;
+    else if (level === 'critical') counts.critical++;
+    else {
+      // Derive from score if level not present
+      const s = r.risk_score || 0;
+      if (s >= 80) counts.low++;
+      else if (s >= 50) counts.medium++;
+      else if (s >= 25) counts.high++;
+      else counts.critical++;
+    }
+  });
+  const total = Math.max(counts.low + counts.medium + counts.high + counts.critical, 1);
+  ['low', 'medium', 'high', 'critical'].forEach(level => {
+    const pct = (counts[level] / total) * 100;
+    const bar = document.getElementById('risk-' + level);
+    const num = document.getElementById('risk-' + level + '-n');
+    if (bar) bar.style.width = Math.max(pct, counts[level] > 0 ? 8 : 0) + '%';
+    if (num) num.textContent = counts[level];
+  });
+}
+
+async function loadLedgerIntegrity() {
+  const el = document.getElementById('ledger-integrity');
+  try {
+    const data = await apiJSON('/ledger/verify');
+    const valid = data.valid;
+    const total = data.total_records || 0;
+    const color = valid ? 'var(--green)' : 'var(--red)';
+    const icon = valid
+      ? '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+      : '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    el.innerHTML = `
+      <div style="flex-shrink:0">${icon}</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:${color}">${valid ? 'Chain Verified' : 'Chain Broken'}</div>
+        <div style="font-size:12px;color:var(--text3)">${total} record${total !== 1 ? 's' : ''} in immutable ledger${!valid ? ' | ' + (data.broken_links || []).length + ' broken link(s)' : ''}</div>
+      </div>`;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--text3);font-size:13px">Unable to verify ledger integrity</div>';
+  }
+}
+
+async function loadIncidents() {
+  const list = document.getElementById('incidents-list');
+  try {
+    const data = await apiJSON('/v1/incidents?limit=10');
+    const incidents = data.incidents || [];
+    if (incidents.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">--</div>No incidents reported</div>';
+      return;
+    }
+    list.innerHTML = incidents.map(i => {
+      const sev = (i.severity || 'medium').toLowerCase();
+      const status = (i.status || 'open').replace(/_/g, ' ');
+      return `
+        <div class="incident-card sev-${sev}">
+          <div class="incident-top">
+            <span class="incident-title">${escapeHtml(i.title || 'Untitled')}</span>
+            <div class="incident-badges">
+              <span class="badge-severity ${sev}">${sev}</span>
+              <span class="badge-status">${status}</span>
+            </div>
+          </div>
+          <div class="incident-meta">${i.category ? i.category + ' &middot; ' : ''}${i.affected_system || i.reporter || ''} &middot; ${timeAgo(i.created_at)}</div>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<div class="empty-state">Unable to load incidents</div>';
+  }
+}
+
+// ── Actions ──
+function runGovernanceScan() { openModal('scan-modal') }
+function openReportModal() { openModal('report-modal') }
+function openModelModal() { openModal('model-modal') }
+function openIncidentModal() { openModal('incident-modal') }
+
+async function executeGovernanceScan() {
+  const system = document.getElementById('scan-system').value;
+  const trace = document.getElementById('scan-trace').value;
+  const usecase = document.getElementById('scan-usecase').value;
+  if (!system || !trace) { toast('System name and reasoning trace are required', 'error'); return; }
+  try {
+    const data = await apiJSON('/v1/scan', {
+      method: 'POST',
+      body: JSON.stringify({
+        system_name: system,
+        reasoning_trace: trace,
+        use_case: usecase,
+        handles_personal_data: false,
+        makes_autonomous_decisions: false,
+        used_in_critical_infrastructure: false,
+        has_human_oversight: true,
+        is_explainable: true,
+        has_bias_testing: true,
+      }),
+    });
+    closeModal('scan-modal');
+    toast(`Scan complete: ${data.action} (risk: ${data.risk_score}, drift: ${data.drift_coefficient})`, data.action === 'APPROVE' ? 'success' : 'error');
+    loadLedger();
+    loadMetrics();
+  } catch (e) {
+    toast('Scan failed: ' + e.message, 'error');
+  }
+}
+
+async function generateReport() {
+  const system = document.getElementById('report-system').value || 'organization';
+  const framework = document.getElementById('report-framework').value;
+  const tier = document.getElementById('report-tier').value;
+  try {
+    const data = await apiJSON('/v1/reports', {
+      method: 'POST',
+      body: JSON.stringify({ system_name: system, framework: framework, risk_tier: tier }),
+    });
+    closeModal('report-modal');
+    toast('Report generated: ' + (data.framework_name || framework), 'success');
+    // Open a simple display
+    const w = window.open('', '_blank', 'width=800,height=600');
+    w.document.write('<html><head><title>GovernLayer Report</title><style>body{background:#08080c;color:#eee;font-family:Inter,sans-serif;padding:40px;line-height:1.6}pre{background:#13131b;padding:20px;border-radius:12px;overflow:auto;font-size:13px;white-space:pre-wrap}</style></head><body>');
+    w.document.write('<h1 style="color:#a29bfe">' + (data.framework_name || framework) + ' Report</h1>');
+    w.document.write('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+    w.document.write('</body></html>');
+    w.document.close();
+  } catch (e) {
+    toast('Report generation failed: ' + e.message, 'error');
+  }
+}
 
 async function registerModel() {
-  const body = {
-    name: document.getElementById('md-name').value,
-    version: document.getElementById('md-version').value,
-    framework: document.getElementById('md-framework').value,
-    description: document.getElementById('md-desc').value,
-    owner: document.getElementById('md-owner').value,
-    use_case: document.getElementById('md-usecase').value,
-  };
-  if (!body.name) { toast('Model name is required', true); return; }
-  const result = await apiFetch('/v1/models', { method: 'POST', body: JSON.stringify(body) });
-  if (result) { toast('Model registered successfully'); document.getElementById('md-form-panel').style.display='none'; loadModels(); }
-  else toast('Failed to register model', true);
-}
-
-// ===== INCIDENTS =====
-async function loadIncidents() {
-  const data = await apiFetch('/v1/incidents');
-  if (!data) { document.getElementById('inc-table-container').innerHTML = '<div class="empty-state"><p>Could not load incidents</p></div>'; return; }
-  const incidents = data.incidents || [];
-  document.getElementById('inc-total').textContent = data.total || incidents.length;
-  document.getElementById('inc-open').textContent = incidents.filter(i=>['open','investigating'].includes(i.status)).length;
-  document.getElementById('inc-critical').textContent = incidents.filter(i=>i.severity==='critical').length;
-  document.getElementById('inc-resolved').textContent = incidents.filter(i=>['resolved','closed'].includes(i.status)).length;
-  if (!incidents.length) {
-    document.getElementById('inc-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">&#9888;</div><p>No incidents reported</p></div>';
-    return;
+  const name = document.getElementById('model-name').value;
+  const version = document.getElementById('model-version').value;
+  if (!name) { toast('Model name is required', 'error'); return; }
+  try {
+    await apiJSON('/v1/models', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: name,
+        version: version || '1.0.0',
+        description: document.getElementById('model-desc').value,
+        owner: document.getElementById('model-owner').value,
+      }),
+    });
+    closeModal('model-modal');
+    toast('Model registered: ' + name, 'success');
+    loadMetrics();
+  } catch (e) {
+    toast('Registration failed: ' + e.message, 'error');
   }
-  document.getElementById('inc-table-container').innerHTML = `<table><thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Status</th><th>System</th><th>Created</th></tr></thead><tbody>${
-    incidents.map(i => `<tr><td>#${i.id}</td><td style="color:var(--text);font-weight:600">${i.title}</td><td><span class="badge ${badgeFor(i.severity)}">${i.severity}</span></td><td><span class="badge ${badgeFor(i.status)}">${i.status}</span></td><td>${i.affected_system||'--'}</td><td style="font-size:12px">${i.created_at?new Date(i.created_at).toLocaleDateString():'--'}</td></tr>`
-  ).join('')}</tbody></table>`;
 }
-
-function showIncidentForm() { document.getElementById('inc-form-panel').style.display = 'block'; }
 
 async function createIncident() {
-  const body = {
-    title: document.getElementById('inc-title').value,
-    severity: document.getElementById('inc-severity').value,
-    description: document.getElementById('inc-description').value,
-    affected_system: document.getElementById('inc-system').value,
-  };
-  if (!body.title) { toast('Title is required', true); return; }
-  const result = await apiFetch('/v1/incidents', { method: 'POST', body: JSON.stringify(body) });
-  if (result) { toast('Incident created'); document.getElementById('inc-form-panel').style.display='none'; loadIncidents(); }
-  else toast('Failed to create incident', true);
-}
-
-// ===== COMPLIANCE =====
-async function loadCompliance() {
-  const [graph, gaps, advisory] = await Promise.all([
-    apiFetch('/v1/knowledge/graph'), apiFetch('/v1/knowledge/gap-analysis'), apiFetch('/v1/knowledge/advisory')
-  ]);
-  if (graph) {
-    document.getElementById('comp-regulations').innerHTML = (graph.regulations||[]).map(r =>
-      `<div class="kv-row"><span class="kv-label">${r.name||r.id}</span><span class="kv-value"><span class="badge badge-purple">${r.jurisdiction||'Global'}</span></span></div>`
-    ).join('') || '<div style="color:var(--text3)">No regulations loaded</div>';
-    document.getElementById('comp-controls').innerHTML = (graph.controls||[]).map(c =>
-      `<div class="kv-row"><span class="kv-label">${c.name||c.id}</span><span class="kv-value"><span class="tag">${c.category||'--'}</span></span></div>`
-    ).join('') || '<div style="color:var(--text3)">No controls loaded</div>';
-  }
-  if (gaps) {
-    const gapItems = gaps.gaps || gaps.gap_analysis || [];
-    document.getElementById('comp-gaps').innerHTML = gapItems.length ?
-      gapItems.map(g => `<div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600;margin-bottom:4px">${g.area||g.regulation||'Gap'}</div><div style="font-size:13px;color:var(--text2)">${g.description||g.recommendation||''}</div><span class="badge ${badgeFor(g.severity||g.priority||'medium')}" style="margin-top:8px">${g.severity||g.priority||'medium'}</span></div>`).join('') :
-      '<div style="color:var(--accent)">No compliance gaps detected</div>';
-  }
-  if (advisory) {
-    const recs = advisory.recommendations || advisory.advisory || [];
-    document.getElementById('comp-advisory').innerHTML = recs.length ?
-      recs.map((r,i) => `<div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600;margin-bottom:4px">${i+1}. ${r.title||r.action||'Recommendation'}</div><div style="font-size:13px;color:var(--text2)">${r.description||r.rationale||''}</div>${r.regulation?`<span class="tag" style="margin-top:8px">${r.regulation}</span>`:''}</div>`).join('') :
-      '<div style="color:var(--text3)">No recommendations at this time</div>';
+  const title = document.getElementById('incident-title').value;
+  if (!title) { toast('Incident title is required', 'error'); return; }
+  try {
+    await apiJSON('/v1/incidents', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: title,
+        description: document.getElementById('incident-desc').value,
+        severity: document.getElementById('incident-severity').value,
+        category: document.getElementById('incident-category').value,
+      }),
+    });
+    closeModal('incident-modal');
+    toast('Incident reported: ' + title, 'success');
+    loadIncidents();
+    loadMetrics();
+  } catch (e) {
+    toast('Failed to create incident: ' + e.message, 'error');
   }
 }
 
-// ===== POLICIES =====
-async function loadPolicies() {
-  const data = await apiFetch('/v1/policies');
-  if (!data) return;
-  const policies = data.policies || [];
-  if (!policies.length) {
-    document.getElementById('pol-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">&#9878;</div><p>No custom policies yet</p><p style="color:var(--text3)">Default governance policy is always active</p></div>';
-    return;
+async function runShadowScan() {
+  const input = document.getElementById('scan-targets').value;
+  const targets = input.split(',').map(s => s.trim()).filter(Boolean);
+  if (targets.length === 0) {
+    // Default targets
+    targets.push('api.openai.com', 'api.anthropic.com', 'api.groq.com', 'api.mistral.ai', 'localhost:11434');
   }
-  document.getElementById('pol-table-container').innerHTML = `<table><thead><tr><th>Name</th><th>Version</th><th>Status</th><th>Rules</th><th>Created</th></tr></thead><tbody>${
-    policies.map(p => `<tr><td style="color:var(--text);font-weight:600">${p.name}</td><td><code>${p.version||'1.0'}</code></td><td><span class="badge ${p.is_active?'badge-green':'badge-yellow'}">${p.is_active?'Active':'Inactive'}</span></td><td>${(p.rules||[]).length}</td><td style="font-size:12px">${p.created_at?new Date(p.created_at).toLocaleDateString():'--'}</td></tr>`
-  ).join('')}</tbody></table>`;
-}
-
-function showPolicyForm() { document.getElementById('pol-form-panel').style.display = 'block'; }
-
-async function createPolicy() {
-  const body = {
-    name: document.getElementById('pol-name').value,
-    version: document.getElementById('pol-version').value,
-    description: document.getElementById('pol-desc').value,
-  };
-  if (!body.name) { toast('Policy name is required', true); return; }
-  const result = await apiFetch('/v1/policies', { method: 'POST', body: JSON.stringify(body) });
-  if (result) { toast('Policy created'); document.getElementById('pol-form-panel').style.display='none'; loadPolicies(); }
-  else toast('Failed to create policy', true);
-}
-
-async function evaluatePolicy() {
-  const body = {
-    inputs: {
-      risk_score: parseFloat(document.getElementById('pol-risk').value),
-      drift_coefficient: parseFloat(document.getElementById('pol-drift').value),
-      has_human_oversight: document.getElementById('pol-oversight').value === 'true',
-      fairness_score: parseFloat(document.getElementById('pol-fairness').value),
+  const btn = document.getElementById('scan-btn');
+  btn.textContent = 'Scanning...'; btn.disabled = true;
+  const results = document.getElementById('scan-results');
+  try {
+    const data = await apiJSON('/v1/agents/discovery/scan', {
+      method: 'POST',
+      body: JSON.stringify({ scan_type: 'api_patterns', targets: targets }),
+    });
+    const detections = data.detections || [];
+    if (detections.length === 0) {
+      results.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No AI services detected in the scanned targets.</div>';
+    } else {
+      results.innerHTML = detections.map(d => {
+        const registered = d.registered;
+        const dotClass = registered ? 'safe' : (d.severity === 'high' ? 'danger' : 'warn');
+        const statusText = registered ? 'Governed (ID: ' + d.agent_id + ')' : 'UNREGISTERED';
+        return `
+          <div class="scan-card">
+            <div class="scan-provider">${escapeHtml(d.provider)}</div>
+            <div class="scan-status">
+              <span class="scan-dot ${dotClass}"></span>
+              <span style="color:${registered ? 'var(--green)' : 'var(--red)'}">${statusText}</span>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Severity: ${d.severity || 'unknown'}</div>
+          </div>`;
+      }).join('');
     }
-  };
-  const result = await apiFetch('/v1/policies/evaluate', { method: 'POST', body: JSON.stringify(body) });
-  const el = document.getElementById('pol-eval-result');
-  if (result) {
-    const dec = result.decision || 'unknown';
-    el.innerHTML = `<div class="panel" style="margin-top:12px"><div class="panel-body">
-      <div style="font-size:18px;font-weight:800;margin-bottom:12px"><span class="badge ${dec==='allow'?'badge-green':dec==='warn'?'badge-yellow':'badge-red'}" style="font-size:14px;padding:6px 16px">${dec.toUpperCase()}</span></div>
-      ${(result.violations||[]).length ? '<div style="margin-top:12px"><strong>Violations:</strong></div>' + result.violations.map(v=>`<div style="padding:4px 0;font-size:13px;color:var(--red)">&#8226; ${v.rule||v}: ${v.message||''}</div>`).join('') : '<div style="color:var(--accent);font-size:13px;margin-top:8px">All policy rules passed</div>'}
-    </div></div>`;
-  } else el.innerHTML = '<div style="color:var(--red)">Evaluation failed</div>';
-}
-
-// ===== KNOWLEDGE GRAPH =====
-async function loadKnowledge() {
-  const data = await apiFetch('/v1/knowledge/graph');
-  if (!data) return;
-  document.getElementById('kg-regs').textContent = (data.regulations||[]).length;
-  document.getElementById('kg-controls').textContent = (data.controls||[]).length;
-  document.getElementById('kg-risks').textContent = (data.risk_categories||[]).length;
-  document.getElementById('kg-regs-list').innerHTML = (data.regulations||[]).map(r =>
-    `<div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">${r.name||r.id}</div><div style="font-size:12px;color:var(--text2);margin-top:4px">${r.description||''}</div><div style="margin-top:6px"><span class="badge badge-purple">${r.jurisdiction||'Global'}</span> ${(r.controls||[]).map(c=>`<span class="tag">${c}</span>`).join('')}</div></div>`
-  ).join('') || '<div style="color:var(--text3)">No data</div>';
-  document.getElementById('kg-controls-list').innerHTML = (data.controls||[]).map(c =>
-    `<div style="padding:12px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">${c.name||c.id}</div><div style="font-size:12px;color:var(--text2);margin-top:4px">${c.description||''}</div><span class="tag" style="margin-top:6px">${c.category||'General'}</span></div>`
-  ).join('') || '<div style="color:var(--text3)">No data</div>';
-  document.getElementById('kg-risks-list').innerHTML = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">' +
-    (data.risk_categories||[]).map(r =>
-      `<div class="panel" style="border:1px solid var(--border)"><div class="panel-body"><div style="font-weight:700;margin-bottom:8px">${r.name||r.id}</div><div style="font-size:12px;color:var(--text2)">${r.description||''}</div></div></div>`
-    ).join('') + '</div>' || '<div style="color:var(--text3)">No data</div>';
-}
-
-// ===== REPORTS =====
-async function loadReports() {
-  const data = await apiFetch('/v1/reports/frameworks');
-  if (data && data.frameworks) {
-    document.getElementById('rpt-frameworks-list').innerHTML = data.frameworks.map(f =>
-      `<div class="kv-row"><span class="kv-label">${f.name||f}</span><span class="kv-value"><span class="badge badge-green">Available</span></span></div>`
-    ).join('');
-  } else {
-    document.getElementById('rpt-frameworks-list').innerHTML = ['EU AI Act','NIST AI RMF','ISO 42001','SOC 2','GDPR','HIPAA','HITRUST','NYC LL144'].map(f =>
-      `<div class="kv-row"><span class="kv-label">${f}</span><span class="kv-value"><span class="badge badge-green">Available</span></span></div>`
-    ).join('');
+    toast(`Scan complete: ${data.total_detections} detected, ${data.unregistered_ai} unregistered`, data.unregistered_ai > 0 ? 'error' : 'success');
+  } catch (e) {
+    results.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Scan failed: ' + escapeHtml(e.message) + '</div>';
+    toast('Shadow scan failed: ' + e.message, 'error');
+  } finally {
+    btn.textContent = 'Scan Now'; btn.disabled = false;
   }
 }
 
-let lastReport = null;
-async function generateReport() {
-  const body = {
-    framework: document.getElementById('rpt-framework').value,
-    system_name: document.getElementById('rpt-system').value || 'ai-system',
-    organization: document.getElementById('rpt-org').value || 'Organization',
-  };
-  toast('Generating report...');
-  const result = await apiFetch('/v1/reports', { method: 'POST', body: JSON.stringify(body) });
-  const panel = document.getElementById('rpt-result-panel');
-  if (result) {
-    lastReport = result;
-    panel.style.display = 'block';
-    document.getElementById('rpt-result').textContent = JSON.stringify(result, null, 2);
-    toast('Report generated');
-  } else {
-    panel.style.display = 'none';
-    toast('Failed to generate report', true);
-  }
+// ── Utilities ──
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
 }
 
-function copyReport() {
-  if (lastReport) { navigator.clipboard.writeText(JSON.stringify(lastReport, null, 2)); toast('Copied to clipboard'); }
+// ── Init ──
+if (TOKEN) {
+  showDashboard();
+} else {
+  document.getElementById('auth-screen').style.display = 'flex';
 }
-
-// ===== SECURITY =====
-async function runSecurityScan() {
-  const text = document.getElementById('sec-text').value;
-  if (!text) { toast('Enter text to scan', true); return; }
-  const body = { text, model_name: document.getElementById('sec-model').value || 'unknown' };
-  const result = await apiFetch('/v1/analytics/security-scan', { method: 'POST', body: JSON.stringify(body) });
-  const el = document.getElementById('sec-results');
-  if (result) {
-    const safe = !result.injection_detected && !result.pii_detected;
-    el.innerHTML = `
-      <div style="text-align:center;padding:16px;margin-bottom:16px;background:${safe?'rgba(0,255,170,0.05)':'rgba(239,68,68,0.05)'};border-radius:8px;border:1px solid ${safe?'rgba(0,255,170,0.2)':'rgba(239,68,68,0.2)'}">
-        <div style="font-size:24px;margin-bottom:8px">${safe?'&#128994;':'&#128308;'}</div>
-        <div style="font-size:16px;font-weight:700;color:${safe?'var(--accent)':'var(--red)'}">${safe?'CLEAN':'THREATS DETECTED'}</div>
-      </div>
-      <div class="kv-row"><span class="kv-label">Injection Attack</span><span class="kv-value">${result.injection_detected?'<span class="badge badge-red">Detected</span>':'<span class="badge badge-green">Clean</span>'}</span></div>
-      <div class="kv-row"><span class="kv-label">PII Detected</span><span class="kv-value">${result.pii_detected?'<span class="badge badge-red">Found</span>':'<span class="badge badge-green">None</span>'}</span></div>
-      ${result.injection_patterns?`<div style="margin-top:12px"><strong>Patterns:</strong></div>${result.injection_patterns.map(p=>`<div style="font-size:12px;color:var(--red);padding:2px 0">&#8226; ${p}</div>`).join('')}`:''}
-      ${result.pii_types?`<div style="margin-top:12px"><strong>PII Types:</strong></div>${result.pii_types.map(p=>`<span class="badge badge-yellow" style="margin:2px">${p}</span>`).join('')}`:''}
-      ${result.redacted_text?`<div style="margin-top:16px"><strong>Redacted:</strong></div><pre style="font-size:12px;color:var(--text2);white-space:pre-wrap;background:var(--bg);padding:12px;border-radius:8px;margin-top:8px">${result.redacted_text}</pre>`:''}
-    `;
-  } else el.innerHTML = '<div style="color:var(--red)">Scan failed</div>';
-}
-
-// ===== STATUS =====
-async function loadStatus() {
-  const [status, sla, changelog] = await Promise.all([
-    apiFetch('/v1/enterprise/status'), apiFetch('/v1/enterprise/sla'), apiFetch('/v1/enterprise/changelog')
-  ]);
-  if (status) {
-    document.getElementById('st-overall').textContent = status.status || 'operational';
-    document.getElementById('st-overall').className = 'badge ' + (status.status==='operational'?'badge-green':'badge-yellow');
-    const comps = status.components || {};
-    document.getElementById('st-components').innerHTML = '<div class="panel-body">' +
-      Object.entries(comps).map(([k,v]) =>
-        `<div class="kv-row"><span class="kv-label">${k.replace(/_/g,' ')}</span><span class="kv-value"><span class="badge ${v==='operational'?'badge-green':v==='degraded'?'badge-yellow':'badge-red'}">${v}</span></span></div>`
-      ).join('') + '</div>';
-  }
-  if (sla) {
-    document.getElementById('st-sla').innerHTML = Object.entries(sla.metrics || sla).filter(([k])=>k!=='plan'&&k!=='tier').map(([k,v]) =>
-      `<div class="kv-row"><span class="kv-label">${k.replace(/_/g,' ')}</span><span class="kv-value">${typeof v === 'object' ? JSON.stringify(v) : v}</span></div>`
-    ).join('') || '<div style="color:var(--text3)">No SLA data</div>';
-  }
-  if (changelog) {
-    const entries = changelog.releases || changelog.entries || [];
-    document.getElementById('st-changelog').innerHTML = entries.length ?
-      entries.slice(0,5).map(e => `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><div style="font-weight:600">${e.version||e.title||'Update'}</div><div style="font-size:12px;color:var(--text3);margin:4px 0">${e.date||''}</div><div style="font-size:13px;color:var(--text2)">${e.summary||e.description||''}</div></div>`).join('') :
-      '<div style="color:var(--text3)">No changelog entries</div>';
-  }
-}
-
-// Init
-loadOverview();
 </script>
 </body>
 </html>

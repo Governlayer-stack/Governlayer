@@ -23,6 +23,8 @@ COPY alembic.ini .
 COPY docs/landing/ docs/landing/
 COPY docs/dashboard/ docs/dashboard/
 COPY docs/documentation/ docs/documentation/
+COPY docs/playground/ docs/playground/
+COPY docs/onboarding/ docs/onboarding/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app

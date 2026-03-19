@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer — Get Started</title>
+<meta name="description" content="Set up GovernLayer in under 5 minutes. Create your organization, get an API key, and run your first scan.">
+<meta name="theme-color" content="#08080c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080c;--bg2:#0e0e14;--bg3:#16161e;--bg4:#1e1e28;--bg5:#262633;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.15);
+  --text:#eeeef0;--text2:#8a8aa0;--text3:#50506a;
+  --accent:#6c5ce7;--accent-light:#8b7cf0;--accent-dim:rgba(108,92,231,0.15);
+  --green:#00d68f;--green-dim:rgba(0,214,143,0.12);
+  --yellow:#ffb300;--yellow-dim:rgba(255,179,0,0.12);
+  --red:#ff4757;
+  --gradient:linear-gradient(135deg,#6c5ce7 0%,#00d68f 100%);
+  --radius:16px;--radius-sm:10px;--radius-xs:8px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);
+  line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+code,pre{font-family:'JetBrains Mono',monospace}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input,select,textarea{font-family:inherit;outline:none}
+::selection{background:var(--accent);color:#fff}
+
+/* ====== OVERLAY CONTAINER ====== */
+.onboarding{
+  width:100%;max-width:640px;
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);
+  overflow:hidden;
+  animation:fadeIn .4s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ====== HEADER ====== */
+.ob-header{
+  padding:24px 32px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ob-header-left{display:flex;align-items:center;gap:12px}
+.ob-logo{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,var(--accent),#00d68f);
+  border-radius:8px;position:relative;
+}
+.ob-logo::after{content:'';position:absolute;inset:3px;background:var(--bg2);border-radius:5px}
+.ob-header h1{font-size:1rem;font-weight:700;letter-spacing:-.02em}
+.ob-header .close-btn{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--bg3);color:var(--text3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;transition:all .15s;
+}
+.ob-header .close-btn:hover{color:var(--text);background:var(--bg4)}
+
+/* ====== PROGRESS ====== */
+.ob-progress{padding:16px 32px 0}
+.progress-info{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;
+}
+.progress-info .step-label{font-size:.78rem;font-weight:600;color:var(--accent)}
+.progress-info .skip-btn{
+  font-size:.75rem;color:var(--text3);background:none;
+  padding:2px 8px;border-radius:4px;transition:all .15s;
+}
+.progress-info .skip-btn:hover{color:var(--text2);background:var(--bg3)}
+.progress-bar{
+  width:100%;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;background:var(--gradient);border-radius:2px;
+  transition:width .4s ease;
+}
+
+/* Step indicators */
+.step-dots{
+  display:flex;gap:8px;justify-content:center;margin-top:12px;
+}
+.step-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--bg4);
+  transition:all .3s;cursor:pointer;
+}
+.step-dot.active{background:var(--accent);transform:scale(1.2)}
+.step-dot.completed{background:var(--green)}
+
+/* ====== BODY ====== */
+.ob-body{padding:28px 32px 32px;min-height:320px;position:relative}
+
+/* Step container */
+.step{display:none;animation:stepIn .3s ease}
+.step.active{display:block}
+@keyframes stepIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* Step titles */
+.step h2{font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.step .subtitle{font-size:.9rem;color:var(--text2);margin-bottom:24px;line-height:1.5}
+
+/* Features list (welcome step) */
+.features{list-style:none;display:grid;gap:10px;margin-bottom:24px}
+.features li{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 16px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:var(--radius-xs);
+  font-size:.85rem;color:var(--text2);
+}
+.features li .icon{
+  width:28px;height:28px;min-width:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;
+}
+.feat-purple{background:var(--accent-dim);color:var(--accent)}
+.feat-green{background:var(--green-dim);color:var(--green)}
+.feat-yellow{background:var(--yellow-dim);color:var(--yellow)}
+.feat-blue{background:rgba(10,189,227,.12);color:#0abde3}
+.features li div{flex:1}
+.features li strong{color:var(--text);font-weight:600}
+
+/* Form fields */
+.form-group{margin-bottom:16px}
+.form-group label{
+  display:block;font-size:.78rem;font-weight:600;color:var(--text2);
+  margin-bottom:6px;
+}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-xs);padding:10px 14px;font-size:.88rem;
+  color:var(--text);transition:border-color .2s;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);
+}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3)}
+.form-group .hint{font-size:.72rem;color:var(--text3);margin-top:4px}
+.form-group select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8aa0'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* API Key display */
+.api-key-box{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-xs);padding:16px;margin-bottom:16px;
+}
+.api-key-value{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-xs);padding:10px 14px;
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;
+  color:var(--green);word-break:break-all;
+}
+.api-key-value .copy-btn{
+  min-width:28px;height:28px;border-radius:6px;
+  background:var(--bg3);color:var(--text2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;transition:all .15s;flex-shrink:0;
+}
+.api-key-value .copy-btn:hover{color:var(--text);background:var(--bg4)}
+.api-key-value .copy-btn.copied{color:var(--green)}
+.api-key-warning{
+  margin-top:10px;font-size:.78rem;color:var(--yellow);
+  display:flex;align-items:center;gap:6px;
+}
+
+/* Result box */
+.result-box{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-xs);padding:16px;margin-bottom:16px;
+}
+.result-box .result-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.result-box .result-status{
+  font-size:.75rem;font-weight:700;padding:3px 10px;
+  border-radius:5px;font-family:'JetBrains Mono',monospace;
+}
+.result-ok{background:var(--green-dim);color:var(--green)}
+.result-err{background:rgba(255,71,87,.12);color:var(--red)}
+.result-box pre{
+  font-size:.78rem;line-height:1.6;color:var(--text2);
+  white-space:pre-wrap;word-break:break-word;max-height:200px;overflow:auto;
+}
+
+/* Success step */
+.success-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--green-dim);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;margin:0 auto 20px;
+}
+.success-links{list-style:none;display:grid;gap:8px;margin-top:20px}
+.success-links a{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;background:var(--bg3);
+  border:1px solid var(--border);border-radius:var(--radius-xs);
+  font-size:.88rem;font-weight:500;color:var(--text);
+  transition:all .15s;text-decoration:none;
+}
+.success-links a:hover{border-color:var(--border3);background:var(--bg4)}
+.success-links a .link-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;flex-shrink:0;
+}
+.success-links a .arrow{margin-left:auto;color:var(--text3);font-size:.75rem}
+
+/* Loading spinner */
+.loading-spinner{
+  display:inline-block;width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.2);border-top-color:#fff;
+  border-radius:50%;animation:spin .6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Error message */
+.error-msg{
+  background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.2);
+  border-radius:var(--radius-xs);padding:10px 14px;
+  font-size:.82rem;color:var(--red);margin-bottom:12px;
+  display:none;
+}
+.error-msg.visible{display:block;animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ====== FOOTER / ACTIONS ====== */
+.ob-footer{
+  padding:16px 32px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+.btn-back{
+  padding:10px 20px;border-radius:var(--radius-sm);font-size:.85rem;
+  font-weight:500;color:var(--text2);background:var(--bg3);
+  border:1px solid var(--border2);transition:all .2s;
+}
+.btn-back:hover{color:var(--text);border-color:var(--border3)}
+.btn-back:disabled{opacity:.3;pointer-events:none}
+.btn-next{
+  padding:10px 28px;border-radius:var(--radius-sm);font-size:.85rem;
+  font-weight:600;color:#fff;background:var(--accent);
+  transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-next:hover{background:var(--accent-light);transform:translateY(-1px)}
+.btn-next:active{transform:translateY(0)}
+.btn-next:disabled{opacity:.5;pointer-events:none}
+.btn-next.green{background:var(--green)}
+.btn-next.green:hover{background:#00c47d}
+
+/* ====== MESH BG ====== */
+.mesh-bg{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:-1;overflow:hidden}
+.mesh-bg .orb{position:absolute;border-radius:50%;filter:blur(140px);opacity:.08}
+.mesh-bg .orb-1{width:500px;height:500px;background:#6c5ce7;top:-150px;left:-100px}
+.mesh-bg .orb-2{width:400px;height:400px;background:#00d68f;bottom:-100px;right:-100px}
+
+/* ====== RESPONSIVE ====== */
+@media(max-width:680px){
+  body{padding:0;align-items:flex-start}
+  .onboarding{max-width:100%;border-radius:0;border:none;min-height:100vh}
+  .ob-header,.ob-progress,.ob-body,.ob-footer{padding-left:20px;padding-right:20px}
+  .form-row{grid-template-columns:1fr}
+  .step h2{font-size:1.15rem}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- Mesh background -->
+<div class="mesh-bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+</div>
+
+<!-- ONBOARDING WIZARD -->
+<div class="onboarding">
+
+  <!-- Header -->
+  <div class="ob-header">
+    <div class="ob-header-left">
+      <div class="ob-logo"></div>
+      <h1>GovernLayer</h1>
+    </div>
+    <button class="close-btn" onclick="closeOnboarding()" title="Close">&times;</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="ob-progress">
+    <div class="progress-info">
+      <span class="step-label" id="stepLabel">Step 1 of 5</span>
+      <button class="skip-btn" id="skipBtn" onclick="skipStep()">Skip this step</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:20%"></div>
+    </div>
+    <div class="step-dots" id="stepDots">
+      <div class="step-dot active" data-step="0" onclick="goToStep(0)"></div>
+      <div class="step-dot" data-step="1" onclick="goToStep(1)"></div>
+      <div class="step-dot" data-step="2" onclick="goToStep(2)"></div>
+      <div class="step-dot" data-step="3" onclick="goToStep(3)"></div>
+      <div class="step-dot" data-step="4" onclick="goToStep(4)"></div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="ob-body">
+
+    <!-- STEP 1: Welcome -->
+    <div class="step active" id="step-0">
+      <h2>Welcome to GovernLayer</h2>
+      <p class="subtitle">The governance layer for agentic AI. Set up your environment in under 5 minutes.</p>
+      <ul class="features">
+        <li>
+          <div class="icon feat-purple">&#9881;</div>
+          <div><strong>Compliance Scanning</strong><br>Instant deterministic checks against 27 regulatory frameworks</div>
+        </li>
+        <li>
+          <div class="icon feat-green">&#9888;</div>
+          <div><strong>Drift Detection</strong><br>Embedding-based behavioral drift analysis for your AI agents</div>
+        </li>
+        <li>
+          <div class="icon feat-yellow">&#9878;</div>
+          <div><strong>Risk Scoring</strong><br>6-dimension risk assessment across external access, PII, autonomy, and more</div>
+        </li>
+        <li>
+          <div class="icon feat-blue">&#128279;</div>
+          <div><strong>Immutable Ledger</strong><br>SHA-256 hash-chained audit trail for every governance decision</div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- STEP 2: Create Organization -->
+    <div class="step" id="step-1">
+      <h2>Create Your Organization</h2>
+      <p class="subtitle">This sets up your tenant space for API keys, usage tracking, and team management.</p>
+      <div class="error-msg" id="orgError"></div>
+      <div class="form-group">
+        <label>Organization Name</label>
+        <input type="text" id="orgName" placeholder="Acme Corp" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Plan</label>
+          <select id="orgPlan">
+            <option value="free">Free (20 rpm)</option>
+            <option value="starter">Starter (100 rpm)</option>
+            <option value="pro" selected>Pro (500 rpm)</option>
+            <option value="enterprise">Enterprise (2000 rpm)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Admin Email</label>
+          <input type="email" id="orgEmail" placeholder="admin@acme.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Slug (URL-friendly identifier)</label>
+        <input type="text" id="orgSlug" placeholder="acme-corp">
+        <div class="hint">Auto-generated from org name. Lowercase, hyphens only.</div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Get API Key -->
+    <div class="step" id="step-2">
+      <h2>Your API Key</h2>
+      <p class="subtitle">This key authenticates all your API requests. Copy it now -- it will only be shown once.</p>
+      <div class="error-msg" id="keyError"></div>
+
+      <div id="keyPending" style="text-align:center;padding:40px 0;color:var(--text3)">
+        <div class="loading-spinner" style="width:32px;height:32px;border-width:3px;margin-bottom:12px"></div>
+        <p style="font-size:.85rem">Generating your API key...</p>
+      </div>
+
+      <div id="keyResult" style="display:none">
+        <div class="api-key-box">
+          <div style="font-size:.75rem;font-weight:600;color:var(--text3);margin-bottom:8px">API KEY</div>
+          <div class="api-key-value">
+            <span id="apiKeyDisplay" style="flex:1">gl_xxxxxxxxxxxxxxxxxxxx</span>
+            <button class="copy-btn" onclick="copyApiKey()" title="Copy to clipboard" id="copyKeyBtn">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="9" height="9" rx="1.5"/><path d="M1 9V1.5A.5.5 0 011.5 1H9"/></svg>
+            </button>
+          </div>
+          <div class="api-key-warning">
+            <span>&#9888;</span> Save this key securely. It cannot be retrieved after you leave this page.
+          </div>
+        </div>
+        <div style="font-size:.82rem;color:var(--text2);line-height:1.6">
+          <strong>Usage:</strong> Include in all requests as a header:<br>
+          <code style="color:var(--accent);font-size:.8rem">X-API-Key: gl_your_key_here</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: First Scan -->
+    <div class="step" id="step-3">
+      <h2>Run Your First Scan</h2>
+      <p class="subtitle">Try a quick compliance scan. This runs instantly with no LLM calls.</p>
+      <div class="error-msg" id="scanError"></div>
+      <div class="form-group">
+        <label>System Name</label>
+        <input type="text" id="scanSystem" value="my-first-agent" placeholder="my-first-agent">
+      </div>
+      <div class="form-group">
+        <label>Action to Scan</label>
+        <textarea id="scanAction" rows="3" placeholder="Describe what the AI agent does..."
+          style="resize:vertical">Retrieve customer order history and generate refund recommendations based on purchase patterns</textarea>
+      </div>
+      <div class="form-group">
+        <label>Context</label>
+        <input type="text" id="scanContext" value="Production AI agent with access to payment systems"
+          placeholder="Operating environment description">
+      </div>
+
+      <div id="scanResult" style="display:none">
+        <div class="result-box">
+          <div class="result-header">
+            <strong style="font-size:.85rem">Scan Result</strong>
+            <span class="result-status" id="scanStatus"></span>
+          </div>
+          <pre id="scanOutput"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: Success -->
+    <div class="step" id="step-4">
+      <div class="success-icon">&#10003;</div>
+      <h2 style="text-align:center">You're All Set!</h2>
+      <p class="subtitle" style="text-align:center">
+        Your GovernLayer environment is ready. Start governing your AI agents with confidence.
+      </p>
+      <ul class="success-links">
+        <li>
+          <a href="/docs/dashboard/">
+            <span class="link-icon feat-purple">&#9633;</span>
+            <div><strong>Dashboard</strong><br><span style="font-size:.78rem;color:var(--text2)">Monitor agents, review audits, track drift</span></div>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li>
+          <a href="/docs/documentation/">
+            <span class="link-icon feat-green">&#9776;</span>
+            <div><strong>API Documentation</strong><br><span style="font-size:.78rem;color:var(--text2)">Full reference for all 42 endpoints</span></div>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li>
+          <a href="/docs/playground/">
+            <span class="link-icon feat-yellow">&#9889;</span>
+            <div><strong>API Playground</strong><br><span style="font-size:.78rem;color:var(--text2)">Try endpoints interactively, no auth needed</span></div>
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="ob-footer">
+    <button class="btn-back" id="backBtn" onclick="prevStep()" disabled>Back</button>
+    <button class="btn-next" id="nextBtn" onclick="nextStep()">
+      <span id="nextText">Get Started</span>
+    </button>
+  </div>
+
+</div>
+
+<script>
+/* ================================================================
+   STATE
+   ================================================================ */
+let currentStep = 0;
+const totalSteps = 5;
+let orgData = null;    // { id, slug, name }
+let apiKey = null;     // "gl_xxxxx"
+let completedSteps = new Set();
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  // Allow going back to any step, forward only to completed + 1
+  if (step > currentStep && !completedSteps.has(currentStep) && step !== currentStep + 1) return;
+
+  currentStep = step;
+  render();
+
+  // Trigger step-specific actions
+  if (step === 2 && !apiKey && orgData) {
+    generateApiKey();
+  }
+}
+
+function nextStep() {
+  // Step-specific validation
+  if (currentStep === 1) {
+    createOrganization();
+    return;
+  }
+  if (currentStep === 3) {
+    runFirstScan();
+    return;
+  }
+  if (currentStep === 4) {
+    closeOnboarding();
+    return;
+  }
+
+  completedSteps.add(currentStep);
+  goToStep(currentStep + 1);
+}
+
+function prevStep() {
+  if (currentStep > 0) goToStep(currentStep - 1);
+}
+
+function skipStep() {
+  completedSteps.add(currentStep);
+  goToStep(currentStep + 1);
+}
+
+function render() {
+  // Show active step
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.toggle('active', i === currentStep);
+  });
+
+  // Progress bar
+  document.getElementById('progressFill').style.width =
+    ((currentStep + 1) / totalSteps * 100) + '%';
+
+  // Step label
+  document.getElementById('stepLabel').textContent =
+    `Step ${currentStep + 1} of ${totalSteps}`;
+
+  // Dots
+  document.querySelectorAll('.step-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentStep);
+    dot.classList.toggle('completed', completedSteps.has(i) && i !== currentStep);
+  });
+
+  // Back button
+  document.getElementById('backBtn').disabled = currentStep === 0;
+
+  // Next button text
+  const nextText = document.getElementById('nextText');
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.className = 'btn-next';
+  nextBtn.disabled = false;
+
+  switch (currentStep) {
+    case 0:
+      nextText.textContent = 'Get Started';
+      break;
+    case 1:
+      nextText.textContent = 'Create Organization';
+      break;
+    case 2:
+      nextText.textContent = 'Continue';
+      nextBtn.disabled = !apiKey;
+      break;
+    case 3:
+      nextText.textContent = 'Run Scan';
+      nextBtn.className = 'btn-next green';
+      break;
+    case 4:
+      nextText.textContent = 'Go to Dashboard';
+      nextBtn.className = 'btn-next green';
+      break;
+  }
+
+  // Skip button (hidden on welcome and success)
+  document.getElementById('skipBtn').style.display =
+    (currentStep === 0 || currentStep === 4) ? 'none' : '';
+}
+
+/* ================================================================
+   STEP 2: CREATE ORGANIZATION
+   ================================================================ */
+async function createOrganization() {
+  const name = document.getElementById('orgName').value.trim();
+  const email = document.getElementById('orgEmail').value.trim();
+  const slug = document.getElementById('orgSlug').value.trim();
+  const plan = document.getElementById('orgPlan').value;
+
+  // Validate
+  if (!name) {
+    showStepError('orgError', 'Organization name is required.');
+    return;
+  }
+  if (!email || !email.includes('@')) {
+    showStepError('orgError', 'A valid email address is required.');
+    return;
+  }
+
+  hideStepError('orgError');
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = true;
+  nextBtn.innerHTML = '<span class="loading-spinner"></span>';
+
+  try {
+    const resp = await fetch('/v1/enterprise/orgs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        plan,
+        admin_email: email
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: 'Request failed' }));
+      throw new Error(err.detail || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    orgData = { id: data.id, slug: data.slug, name: data.name };
+
+    completedSteps.add(1);
+    goToStep(2);
+    generateApiKey();
+  } catch (e) {
+    showStepError('orgError', 'Could not create organization: ' + e.message);
+    // Allow skip if API is not reachable
+    setTimeout(() => {
+      const errEl = document.getElementById('orgError');
+      errEl.innerHTML += '<br><button onclick="skipOrgStep()" style="margin-top:8px;padding:4px 12px;border-radius:4px;background:var(--bg4);color:var(--text2);border:1px solid var(--border2);cursor:pointer;font-size:.78rem">Continue without creating (demo mode)</button>';
+    }, 100);
+  } finally {
+    nextBtn.disabled = false;
+    nextBtn.innerHTML = '<span id="nextText">Create Organization</span>';
+    render();
+  }
+}
+
+function skipOrgStep() {
+  orgData = { id: 'demo', slug: 'demo-org', name: 'Demo Organization' };
+  completedSteps.add(1);
+  goToStep(2);
+  // Show demo key
+  showDemoKey();
+}
+
+/* ================================================================
+   STEP 3: GENERATE API KEY
+   ================================================================ */
+async function generateApiKey() {
+  document.getElementById('keyPending').style.display = '';
+  document.getElementById('keyResult').style.display = 'none';
+  hideStepError('keyError');
+
+  if (!orgData || orgData.id === 'demo') {
+    showDemoKey();
+    return;
+  }
+
+  try {
+    const resp = await fetch(`/v1/enterprise/orgs/${orgData.slug}/keys`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Onboarding Key',
+        scopes: ['govern', 'audit', 'risk', 'scan']
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: 'Request failed' }));
+      throw new Error(err.detail || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    apiKey = data.key || data.api_key || 'gl_generated_key';
+    showKey(apiKey);
+  } catch (e) {
+    showStepError('keyError', 'Could not generate key: ' + e.message);
+    showDemoKey();
+  }
+}
+
+function showDemoKey() {
+  apiKey = 'gl_demo_' + Math.random().toString(36).substring(2, 18);
+  showKey(apiKey);
+}
+
+function showKey(key) {
+  document.getElementById('keyPending').style.display = 'none';
+  document.getElementById('keyResult').style.display = '';
+  document.getElementById('apiKeyDisplay').textContent = key;
+  completedSteps.add(2);
+  render();
+}
+
+function copyApiKey() {
+  const key = document.getElementById('apiKeyDisplay').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    const btn = document.getElementById('copyKeyBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '&#10003;';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="9" height="9" rx="1.5"/><path d="M1 9V1.5A.5.5 0 011.5 1H9"/></svg>';
+    }, 2000);
+  });
+}
+
+/* ================================================================
+   STEP 4: FIRST SCAN
+   ================================================================ */
+async function runFirstScan() {
+  const system = document.getElementById('scanSystem').value.trim() || 'my-first-agent';
+  const action = document.getElementById('scanAction').value.trim();
+  const context = document.getElementById('scanContext').value.trim();
+
+  if (!action) {
+    showStepError('scanError', 'Please describe the action to scan.');
+    return;
+  }
+
+  hideStepError('scanError');
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = true;
+  nextBtn.innerHTML = '<span class="loading-spinner"></span> Scanning...';
+
+  try {
+    const resp = await fetch('/v1/scan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey && !apiKey.startsWith('gl_demo') ? { 'X-API-Key': apiKey } : {})
+      },
+      body: JSON.stringify({
+        system_name: system,
+        action,
+        context
+      })
+    });
+
+    const data = await resp.json();
+
+    document.getElementById('scanResult').style.display = '';
+    const status = document.getElementById('scanStatus');
+    status.textContent = resp.ok ? `${resp.status} OK` : `${resp.status} ERR`;
+    status.className = 'result-status ' + (resp.ok ? 'result-ok' : 'result-err');
+    document.getElementById('scanOutput').textContent = JSON.stringify(data, null, 2);
+
+    completedSteps.add(3);
+    // Change button to advance
+    nextBtn.innerHTML = '<span id="nextText">Finish Setup</span>';
+    nextBtn.disabled = false;
+    nextBtn.onclick = function() {
+      completedSteps.add(3);
+      goToStep(4);
+    };
+  } catch (e) {
+    showStepError('scanError', 'Scan failed: ' + e.message + '. The API may not be running locally.');
+    // Show demo result
+    document.getElementById('scanResult').style.display = '';
+    const status = document.getElementById('scanStatus');
+    status.textContent = 'DEMO';
+    status.className = 'result-status result-ok';
+    document.getElementById('scanOutput').textContent = JSON.stringify({
+      system_name: system,
+      risk_flags: ["has_external_access", "handles_pii"],
+      risk_level: "medium",
+      recommendations: [
+        "Implement data access logging",
+        "Add PII encryption at rest",
+        "Require human approval for refund decisions over $500"
+      ],
+      scanned_at: new Date().toISOString()
+    }, null, 2);
+
+    completedSteps.add(3);
+    nextBtn.innerHTML = '<span id="nextText">Finish Setup</span>';
+    nextBtn.disabled = false;
+    nextBtn.onclick = function() {
+      goToStep(4);
+    };
+  }
+}
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+function showStepError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function hideStepError(id) {
+  const el = document.getElementById(id);
+  el.textContent = '';
+  el.classList.remove('visible');
+}
+
+function closeOnboarding() {
+  window.location.href = '/docs/dashboard/';
+}
+
+/* Auto-generate slug from org name */
+document.getElementById('orgName').addEventListener('input', function() {
+  const slug = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  document.getElementById('orgSlug').value = slug;
+});
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+render();
+</script>
+</body>
+</html>

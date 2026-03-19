@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer API Playground</title>
+<meta name="description" content="Try GovernLayer API endpoints interactively. No signup required.">
+<meta name="theme-color" content="#08080c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080c;--bg2:#0e0e14;--bg3:#16161e;--bg4:#1e1e28;--bg5:#262633;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.15);
+  --text:#eeeef0;--text2:#8a8aa0;--text3:#50506a;
+  --accent:#6c5ce7;--accent-light:#8b7cf0;--accent-dim:rgba(108,92,231,0.15);
+  --green:#00d68f;--green-dim:rgba(0,214,143,0.12);
+  --yellow:#ffb300;--yellow-dim:rgba(255,179,0,0.12);
+  --red:#ff4757;--red-dim:rgba(255,71,87,0.12);
+  --blue:#0abde3;--blue-dim:rgba(10,189,227,0.12);
+  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+code,pre,.editor,.response-body{font-family:'JetBrains Mono',monospace}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+input,select,textarea{font-family:inherit;outline:none}
+::selection{background:var(--accent);color:#fff}
+
+/* ====== HEADER ====== */
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,8,12,0.88);backdrop-filter:blur(20px) saturate(1.2);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;letter-spacing:-.02em;color:var(--text)}
+.logo .mark{width:24px;height:24px;background:linear-gradient(135deg,var(--accent),#ff3d8e);border-radius:6px;position:relative}
+.logo .mark::after{content:'';position:absolute;inset:2.5px;background:var(--bg);border-radius:4px}
+.logo span{opacity:.5;font-weight:400;margin-left:4px}
+.header-right{display:flex;align-items:center;gap:12px}
+.btn-docs{
+  padding:7px 16px;border-radius:var(--radius-xs);font-size:.8rem;font-weight:500;
+  color:var(--text2);background:var(--bg3);border:1px solid var(--border2);
+  transition:all .2s;text-decoration:none;
+}
+.btn-docs:hover{color:var(--text);border-color:var(--border3)}
+.base-url{
+  font-size:.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace;
+  background:var(--bg3);padding:4px 10px;border-radius:var(--radius-xs);
+  border:1px solid var(--border);
+}
+
+/* ====== LAYOUT ====== */
+.playground{display:flex;height:calc(100vh - 56px);overflow:hidden}
+
+/* ====== SIDEBAR ====== */
+.sidebar{
+  width:260px;min-width:260px;background:var(--bg2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;padding:16px 0;
+  display:flex;flex-direction:column;
+}
+.sidebar-title{
+  font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text3);padding:8px 20px 6px;
+}
+.endpoint-list{list-style:none;padding:0 8px}
+.endpoint-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;
+  transition:all .15s;margin-bottom:2px;
+}
+.endpoint-item:hover{background:var(--bg3)}
+.endpoint-item.active{background:var(--accent-dim);border:1px solid rgba(108,92,231,0.25)}
+.endpoint-item .method{
+  font-size:.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;
+  padding:2px 6px;border-radius:4px;min-width:38px;text-align:center;
+  text-transform:uppercase;
+}
+.method-post{background:var(--green-dim);color:var(--green)}
+.method-get{background:var(--blue-dim);color:var(--blue)}
+.endpoint-item .path{font-size:.82rem;color:var(--text2);font-weight:500}
+.endpoint-item.active .path{color:var(--text)}
+.endpoint-item .no-auth{
+  font-size:.55rem;background:var(--green-dim);color:var(--green);
+  padding:1px 5px;border-radius:3px;margin-left:auto;font-weight:600;
+}
+
+/* ====== MAIN CONTENT ====== */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* Endpoint header */
+.endpoint-header{
+  padding:20px 28px;border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.endpoint-header h2{font-size:1.15rem;font-weight:700;margin-bottom:4px}
+.endpoint-header p{font-size:.85rem;color:var(--text2);max-width:600px}
+.endpoint-meta{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.endpoint-meta .method-badge{
+  font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;
+  padding:3px 10px;border-radius:5px;text-transform:uppercase;
+}
+.endpoint-meta .url-path{
+  font-size:.82rem;font-family:'JetBrains Mono',monospace;color:var(--text2);
+  background:var(--bg3);padding:4px 12px;border-radius:var(--radius-xs);
+  border:1px solid var(--border);
+}
+.endpoint-meta .auth-tag{
+  font-size:.7rem;padding:3px 10px;border-radius:5px;font-weight:600;
+}
+.auth-none{background:var(--green-dim);color:var(--green)}
+.auth-jwt{background:var(--yellow-dim);color:var(--yellow)}
+
+/* ====== SPLIT PANELS ====== */
+.panels{flex:1;display:flex;overflow:hidden}
+.panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.panel-request{border-right:1px solid var(--border)}
+
+.panel-label{
+  font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text3);padding:12px 20px 8px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-label .action-btn{
+  font-size:.7rem;color:var(--accent);background:none;font-weight:500;
+  padding:2px 8px;border-radius:4px;transition:all .15s;
+}
+.panel-label .action-btn:hover{background:var(--accent-dim)}
+
+/* Editor */
+.editor-wrap{flex:1;overflow:auto;padding:0 20px 20px}
+.editor{
+  width:100%;min-height:200px;resize:vertical;
+  background:var(--bg3);color:var(--green);
+  border:1px solid var(--border2);border-radius:var(--radius-sm);
+  padding:16px;font-size:.82rem;line-height:1.65;
+  tab-size:2;white-space:pre;overflow:auto;
+}
+.editor:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+
+/* Auth input */
+.auth-section{padding:0 20px 12px}
+.auth-row{display:flex;align-items:center;gap:8px}
+.auth-row label{font-size:.75rem;color:var(--text3);font-weight:500;min-width:75px}
+.auth-row input{
+  flex:1;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-xs);padding:7px 12px;font-size:.8rem;
+  color:var(--text);font-family:'JetBrains Mono',monospace;
+}
+.auth-row input:focus{border-color:var(--accent)}
+.auth-row input::placeholder{color:var(--text3)}
+
+/* Send button */
+.send-section{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.btn-send{
+  padding:10px 28px;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600;
+  color:#fff;background:var(--accent);transition:all .2s;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-send:hover{background:var(--accent-light);transform:translateY(-1px)}
+.btn-send:active{transform:translateY(0)}
+.btn-send.loading{opacity:.7;pointer-events:none}
+.btn-send .spinner{
+  width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin .6s linear infinite;display:none;
+}
+.btn-send.loading .spinner{display:block}
+.btn-send.loading .send-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.btn-curl{
+  padding:8px 16px;border-radius:var(--radius-sm);font-size:.78rem;font-weight:500;
+  color:var(--text2);background:var(--bg3);border:1px solid var(--border2);
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.btn-curl:hover{color:var(--text);border-color:var(--border3)}
+.btn-curl.copied{color:var(--green);border-color:rgba(0,214,143,0.3)}
+
+/* ====== RESPONSE PANEL ====== */
+.response-header{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;border-bottom:1px solid var(--border);
+}
+.status-badge{
+  font-size:.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;
+  padding:3px 10px;border-radius:5px;
+}
+.status-2xx{background:var(--green-dim);color:var(--green)}
+.status-4xx{background:var(--yellow-dim);color:var(--yellow)}
+.status-5xx{background:var(--red-dim);color:var(--red)}
+.status-0{background:var(--bg4);color:var(--text3)}
+.response-time{font-size:.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.response-size{font-size:.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
+
+.response-body-wrap{flex:1;overflow:auto;padding:16px 20px}
+.response-body{
+  font-size:.8rem;line-height:1.65;white-space:pre-wrap;word-break:break-word;
+  color:var(--text2);
+}
+.response-body .json-key{color:#e06c75}
+.response-body .json-string{color:#98c379}
+.response-body .json-number{color:#d19a66}
+.response-body .json-bool{color:#c678dd}
+.response-body .json-null{color:#56b6c2}
+.response-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;color:var(--text3);text-align:center;padding:40px;
+}
+.response-placeholder svg{width:48px;height:48px;opacity:.3;margin-bottom:16px}
+.response-placeholder p{font-size:.85rem}
+.response-placeholder .hint{font-size:.75rem;margin-top:4px;opacity:.6}
+
+/* ====== RISK TOGGLES ====== */
+.toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.toggle-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-xs);font-size:.78rem;color:var(--text2);
+}
+.toggle-item label{cursor:pointer;flex:1}
+.toggle-switch{
+  position:relative;width:36px;height:20px;
+  background:var(--bg5);border-radius:10px;cursor:pointer;
+  transition:background .2s;
+}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch .knob{
+  position:absolute;top:2px;left:2px;width:16px;height:16px;
+  background:#fff;border-radius:50%;transition:transform .2s;
+}
+.toggle-switch.on .knob{transform:translateX(16px)}
+
+/* ====== FRAMEWORK SELECT ====== */
+.framework-select{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-xs);padding:8px 12px;font-size:.82rem;
+  color:var(--text);margin-bottom:12px;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8aa0'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+.framework-select:focus{border-color:var(--accent)}
+
+/* ====== MOBILE ====== */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .panels{flex-direction:column}
+  .panel-request{border-right:none;border-bottom:1px solid var(--border)}
+  .panel{min-height:40vh}
+  .endpoint-meta{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:600px){
+  .header{padding:0 12px}
+  .base-url{display:none}
+  .endpoint-header{padding:16px}
+  .panel-label,.send-section,.auth-section,.editor-wrap,.response-body-wrap,.response-header{padding-left:12px;padding-right:12px}
+}
+
+/* Mobile endpoint selector */
+.mobile-endpoint-select{display:none}
+@media(max-width:900px){
+  .mobile-endpoint-select{
+    display:block;padding:12px 20px;border-bottom:1px solid var(--border);
+  }
+  .mobile-endpoint-select select{
+    width:100%;background:var(--bg3);border:1px solid var(--border2);
+    border-radius:var(--radius-xs);padding:10px 12px;font-size:.85rem;
+    color:var(--text);appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8aa0'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <a href="/docs/landing/" class="logo">
+      <div class="mark"></div>
+      GovernLayer <span>Playground</span>
+    </a>
+    <span class="base-url" id="baseUrlDisplay">/</span>
+  </div>
+  <div class="header-right">
+    <a href="/docs/documentation/" class="btn-docs">Documentation</a>
+    <a href="/docs/dashboard/" class="btn-docs">Dashboard</a>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="playground">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-title">Endpoints</div>
+    <ul class="endpoint-list" id="endpointList"></ul>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="main">
+
+    <!-- Mobile endpoint selector -->
+    <div class="mobile-endpoint-select">
+      <select id="mobileEndpointSelect"></select>
+    </div>
+
+    <!-- Endpoint header -->
+    <div class="endpoint-header" id="endpointHeader">
+      <h2 id="epTitle">Quick Scan</h2>
+      <p id="epDescription">Run an instant deterministic compliance scan. No auth required.</p>
+      <div class="endpoint-meta">
+        <span class="method-badge method-post" id="epMethod">POST</span>
+        <span class="url-path" id="epPath">/v1/scan</span>
+        <span class="auth-tag" id="epAuth"></span>
+      </div>
+    </div>
+
+    <!-- Split panels -->
+    <div class="panels">
+
+      <!-- REQUEST -->
+      <div class="panel panel-request">
+        <div class="panel-label">
+          <span>Request Body</span>
+          <button class="action-btn" onclick="resetToDefault()">Reset</button>
+        </div>
+
+        <!-- Auth section (hidden for no-auth endpoints) -->
+        <div class="auth-section" id="authSection" style="display:none">
+          <div class="auth-row">
+            <label>Auth Token</label>
+            <input type="text" id="authToken" placeholder="Bearer eyJhbG... or gl_xxx">
+          </div>
+        </div>
+
+        <!-- Custom controls (risk toggles, framework select) -->
+        <div id="customControls" style="padding:0 20px"></div>
+
+        <!-- JSON editor -->
+        <div class="editor-wrap">
+          <textarea class="editor" id="requestEditor" spellcheck="false"></textarea>
+        </div>
+
+        <!-- Send button -->
+        <div class="send-section">
+          <button class="btn-send" id="sendBtn" onclick="sendRequest()">
+            <span class="send-text">Try it</span>
+            <span class="spinner"></span>
+          </button>
+          <button class="btn-curl" id="curlBtn" onclick="copyCurl()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="9" height="9" rx="1.5"/><path d="M1 9V1.5A.5.5 0 011.5 1H9"/></svg>
+            <span class="curl-text">Copy cURL</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- RESPONSE -->
+      <div class="panel panel-response">
+        <div class="response-header" id="responseHeader" style="display:none">
+          <span class="status-badge" id="statusBadge">200</span>
+          <span class="response-time" id="responseTime"></span>
+          <span class="response-size" id="responseSize"></span>
+        </div>
+        <div class="response-body-wrap">
+          <div id="responsePlaceholder" class="response-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+            <p>Click "Try it" to send a request</p>
+            <span class="hint">Response will appear here</span>
+          </div>
+          <pre class="response-body" id="responseBody" style="display:none"></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   ENDPOINT DEFINITIONS
+   ================================================================ */
+const ENDPOINTS = [
+  {
+    id: 'scan',
+    name: 'Quick Scan',
+    method: 'POST',
+    path: '/v1/scan',
+    auth: 'none',
+    description: 'Run an instant deterministic compliance scan. No auth required, no LLM calls.',
+    body: {
+      system_name: "customer-support-bot",
+      action: "Retrieve customer order history and generate refund recommendations",
+      context: "Production AI agent handling customer service requests with access to payment systems"
+    },
+    customControl: null
+  },
+  {
+    id: 'risk',
+    name: 'Risk Score',
+    method: 'POST',
+    path: '/risk-score',
+    auth: 'jwt',
+    description: 'Calculate a deterministic 6-dimension risk score. Boolean inputs, no LLM needed.',
+    body: {
+      has_external_access: true,
+      handles_pii: true,
+      makes_decisions: false,
+      has_financial_impact: true,
+      operates_autonomously: false,
+      lacks_audit_trail: false
+    },
+    customControl: 'risk-toggles'
+  },
+  {
+    id: 'compliance',
+    name: 'Compliance Report',
+    method: 'POST',
+    path: '/v1/reports',
+    auth: 'jwt',
+    description: 'Generate a compliance report against one of 18 regulatory frameworks. Uses LLM analysis.',
+    body: {
+      framework: "SOC2",
+      system_name: "data-pipeline-agent",
+      description: "Automated ETL agent processing user analytics data across AWS regions",
+      scope: "Data handling, access controls, encryption, logging"
+    },
+    customControl: 'framework-select'
+  },
+  {
+    id: 'drift',
+    name: 'Drift Detection',
+    method: 'POST',
+    path: '/drift',
+    auth: 'jwt',
+    description: 'Detect behavioral drift using embedding similarity against safety manifolds. Returns drift coefficient.',
+    body: {
+      agent_id: "support-bot-v2",
+      action: "I will help you reset your password by accessing your account directly",
+      safety_manifold: [
+        "Only provide information from approved knowledge base",
+        "Never access user accounts directly",
+        "Escalate sensitive requests to human agents"
+      ]
+    },
+    customControl: null
+  },
+  {
+    id: 'govern',
+    name: 'Governance Decision',
+    method: 'POST',
+    path: '/govern',
+    auth: 'jwt',
+    description: 'Full governance pipeline: drift detection, risk scoring, LLM decision, and immutable ledger recording.',
+    body: {
+      system_name: "hiring-assistant",
+      action: "Screen resumes and rank candidates by predicted job performance",
+      context: "AI-powered recruitment tool used across all departments. Has access to applicant PII and historical hiring data.",
+      safety_manifold: [
+        "Do not use protected characteristics in ranking",
+        "Provide explainable scores for every candidate",
+        "Flag potential bias in training data",
+        "Maintain audit trail of all decisions"
+      ]
+    },
+    customControl: null
+  }
+];
+
+const FRAMEWORKS = [
+  "SOC2","ISO27001","NIST-AI-RMF","EU-AI-ACT","GDPR","HIPAA","PCI-DSS",
+  "CCPA","OWASP-ML","MITRE-ATLAS","NIST-CSF","FedRAMP","DORA","NIS2",
+  "CIS-Controls","COBIT","ISO42001","SSDF"
+];
+
+/* ================================================================
+   STATE
+   ================================================================ */
+let currentEndpoint = ENDPOINTS[0];
+let lastResponse = null;
+
+/* ================================================================
+   INIT
+   ================================================================ */
+function init() {
+  renderSidebar();
+  renderMobileSelect();
+  selectEndpoint(ENDPOINTS[0].id);
+}
+
+function renderSidebar() {
+  const list = document.getElementById('endpointList');
+  list.innerHTML = ENDPOINTS.map(ep => `
+    <li class="endpoint-item ${ep.id === currentEndpoint.id ? 'active' : ''}"
+        data-id="${ep.id}" onclick="selectEndpoint('${ep.id}')">
+      <span class="method method-${ep.method.toLowerCase()}">${ep.method}</span>
+      <span class="path">${ep.path}</span>
+      ${ep.auth === 'none' ? '<span class="no-auth">NO AUTH</span>' : ''}
+    </li>
+  `).join('');
+}
+
+function renderMobileSelect() {
+  const sel = document.getElementById('mobileEndpointSelect');
+  sel.innerHTML = ENDPOINTS.map(ep =>
+    `<option value="${ep.id}">${ep.method} ${ep.path} — ${ep.name}</option>`
+  ).join('');
+  sel.addEventListener('change', () => selectEndpoint(sel.value));
+}
+
+function selectEndpoint(id) {
+  currentEndpoint = ENDPOINTS.find(e => e.id === id);
+  if (!currentEndpoint) return;
+
+  // Update sidebar active state
+  document.querySelectorAll('.endpoint-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+
+  // Update header
+  document.getElementById('epTitle').textContent = currentEndpoint.name;
+  document.getElementById('epDescription').textContent = currentEndpoint.description;
+  document.getElementById('epMethod').textContent = currentEndpoint.method;
+  document.getElementById('epMethod').className = `method-badge method-${currentEndpoint.method.toLowerCase()}`;
+  document.getElementById('epPath').textContent = currentEndpoint.path;
+
+  const authTag = document.getElementById('epAuth');
+  if (currentEndpoint.auth === 'none') {
+    authTag.textContent = 'No Auth Required';
+    authTag.className = 'auth-tag auth-none';
+  } else {
+    authTag.textContent = 'JWT / API Key';
+    authTag.className = 'auth-tag auth-jwt';
+  }
+
+  // Auth section
+  document.getElementById('authSection').style.display =
+    currentEndpoint.auth === 'none' ? 'none' : '';
+
+  // Custom controls
+  renderCustomControls();
+
+  // Editor body
+  document.getElementById('requestEditor').value =
+    JSON.stringify(currentEndpoint.body, null, 2);
+
+  // Mobile select
+  document.getElementById('mobileEndpointSelect').value = id;
+
+  // Clear response
+  clearResponse();
+}
+
+function renderCustomControls() {
+  const container = document.getElementById('customControls');
+  container.innerHTML = '';
+
+  if (currentEndpoint.customControl === 'risk-toggles') {
+    const dims = [
+      { key: 'has_external_access', label: 'External Access' },
+      { key: 'handles_pii', label: 'Handles PII' },
+      { key: 'makes_decisions', label: 'Makes Decisions' },
+      { key: 'has_financial_impact', label: 'Financial Impact' },
+      { key: 'operates_autonomously', label: 'Autonomous' },
+      { key: 'lacks_audit_trail', label: 'No Audit Trail' },
+    ];
+    const grid = document.createElement('div');
+    grid.className = 'toggle-grid';
+    dims.forEach(d => {
+      const val = currentEndpoint.body[d.key];
+      grid.innerHTML += `
+        <div class="toggle-item">
+          <label>${d.label}</label>
+          <div class="toggle-switch ${val ? 'on' : ''}" data-key="${d.key}"
+               onclick="toggleRisk(this, '${d.key}')">
+            <div class="knob"></div>
+          </div>
+        </div>
+      `;
+    });
+    container.appendChild(grid);
+  }
+
+  if (currentEndpoint.customControl === 'framework-select') {
+    const sel = document.createElement('select');
+    sel.className = 'framework-select';
+    sel.id = 'frameworkPicker';
+    FRAMEWORKS.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f; opt.textContent = f;
+      if (f === currentEndpoint.body.framework) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', () => {
+      try {
+        const body = JSON.parse(document.getElementById('requestEditor').value);
+        body.framework = sel.value;
+        document.getElementById('requestEditor').value = JSON.stringify(body, null, 2);
+      } catch(e) { /* user may have malformed JSON */ }
+    });
+    container.appendChild(sel);
+  }
+}
+
+function toggleRisk(el, key) {
+  const isOn = el.classList.toggle('on');
+  try {
+    const body = JSON.parse(document.getElementById('requestEditor').value);
+    body[key] = isOn;
+    document.getElementById('requestEditor').value = JSON.stringify(body, null, 2);
+  } catch(e) {}
+}
+
+function resetToDefault() {
+  document.getElementById('requestEditor').value =
+    JSON.stringify(currentEndpoint.body, null, 2);
+  renderCustomControls();
+}
+
+/* ================================================================
+   SEND REQUEST
+   ================================================================ */
+async function sendRequest() {
+  const btn = document.getElementById('sendBtn');
+  btn.classList.add('loading');
+
+  const bodyText = document.getElementById('requestEditor').value;
+  let parsedBody;
+  try {
+    parsedBody = JSON.parse(bodyText);
+  } catch(e) {
+    showError('Invalid JSON in request body:\n' + e.message);
+    btn.classList.remove('loading');
+    return;
+  }
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (currentEndpoint.auth !== 'none') {
+    const token = document.getElementById('authToken').value.trim();
+    if (token) {
+      if (token.startsWith('gl_')) {
+        headers['X-API-Key'] = token;
+      } else {
+        headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+      }
+    }
+  }
+
+  const startTime = performance.now();
+
+  try {
+    const resp = await fetch(currentEndpoint.path, {
+      method: currentEndpoint.method,
+      headers,
+      body: JSON.stringify(parsedBody)
+    });
+
+    const elapsed = Math.round(performance.now() - startTime);
+    const text = await resp.text();
+    let size = new Blob([text]).size;
+
+    let formatted;
+    try {
+      const json = JSON.parse(text);
+      formatted = JSON.stringify(json, null, 2);
+      lastResponse = { status: resp.status, body: formatted, time: elapsed, size };
+    } catch(e) {
+      formatted = text;
+      lastResponse = { status: resp.status, body: formatted, time: elapsed, size };
+    }
+
+    showResponse(resp.status, formatted, elapsed, size);
+  } catch(e) {
+    const elapsed = Math.round(performance.now() - startTime);
+    showError('Network error: ' + e.message);
+    lastResponse = { status: 0, body: e.message, time: elapsed, size: 0 };
+  }
+
+  btn.classList.remove('loading');
+}
+
+function showResponse(status, body, time, size) {
+  document.getElementById('responsePlaceholder').style.display = 'none';
+  document.getElementById('responseBody').style.display = 'block';
+  document.getElementById('responseHeader').style.display = 'flex';
+
+  const badge = document.getElementById('statusBadge');
+  badge.textContent = status;
+  badge.className = 'status-badge ' +
+    (status >= 200 && status < 300 ? 'status-2xx' :
+     status >= 400 && status < 500 ? 'status-4xx' :
+     status >= 500 ? 'status-5xx' : 'status-0');
+
+  document.getElementById('responseTime').textContent = time + 'ms';
+  document.getElementById('responseSize').textContent = formatBytes(size);
+  document.getElementById('responseBody').innerHTML = syntaxHighlight(body);
+}
+
+function showError(msg) {
+  document.getElementById('responsePlaceholder').style.display = 'none';
+  document.getElementById('responseBody').style.display = 'block';
+  document.getElementById('responseHeader').style.display = 'flex';
+
+  const badge = document.getElementById('statusBadge');
+  badge.textContent = 'ERR';
+  badge.className = 'status-badge status-5xx';
+  document.getElementById('responseTime').textContent = '';
+  document.getElementById('responseSize').textContent = '';
+  document.getElementById('responseBody').innerHTML =
+    `<span style="color:var(--red)">${escapeHtml(msg)}</span>`;
+}
+
+function clearResponse() {
+  document.getElementById('responsePlaceholder').style.display = 'flex';
+  document.getElementById('responseBody').style.display = 'none';
+  document.getElementById('responseHeader').style.display = 'none';
+  lastResponse = null;
+}
+
+/* ================================================================
+   COPY CURL
+   ================================================================ */
+function copyCurl() {
+  const body = document.getElementById('requestEditor').value;
+  const token = document.getElementById('authToken')?.value?.trim() || '';
+
+  let curl = `curl -X ${currentEndpoint.method} '${location.origin}${currentEndpoint.path}' \\\n`;
+  curl += `  -H 'Content-Type: application/json'`;
+
+  if (currentEndpoint.auth !== 'none' && token) {
+    if (token.startsWith('gl_')) {
+      curl += ` \\\n  -H 'X-API-Key: ${token}'`;
+    } else {
+      const bearer = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+      curl += ` \\\n  -H 'Authorization: ${bearer}'`;
+    }
+  }
+
+  curl += ` \\\n  -d '${body.replace(/'/g, "'\\''")}'`;
+
+  navigator.clipboard.writeText(curl).then(() => {
+    const btn = document.getElementById('curlBtn');
+    btn.classList.add('copied');
+    btn.querySelector('.curl-text').textContent = 'Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.querySelector('.curl-text').textContent = 'Copy cURL';
+    }, 2000);
+  });
+}
+
+/* ================================================================
+   UTILITIES
+   ================================================================ */
+function syntaxHighlight(json) {
+  const escaped = escapeHtml(json);
+  return escaped.replace(
+    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?|\bnull\b)/g,
+    function(match) {
+      let cls = 'json-number';
+      if (/^"/.test(match)) {
+        cls = /:$/.test(match) ? 'json-key' : 'json-string';
+      } else if (/true|false/.test(match)) {
+        cls = 'json-bool';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    }
+  );
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatBytes(bytes) {
+  if (bytes === 0) return '0 B';
+  if (bytes < 1024) return bytes + ' B';
+  return (bytes / 1024).toFixed(1) + ' KB';
+}
+
+/* ================================================================
+   KEYBOARD SHORTCUTS
+   ================================================================ */
+document.addEventListener('keydown', function(e) {
+  // Ctrl/Cmd + Enter = Send
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    sendRequest();
+  }
+});
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+init();
+</script>
+</body>
+</html>

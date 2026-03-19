@@ -2,6 +2,7 @@
 
 import logging
 import os
+from datetime import datetime, timezone
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -193,8 +194,23 @@ def create_app() -> FastAPI:
 
     from src.middleware.rate_limit import RateLimitMiddleware
     from src.middleware.usage import UsageMeteringMiddleware
+    from src.middleware.logging import StructuredLoggingMiddleware, configure_logging
+    from src.middleware.error_tracking import ErrorTrackingMiddleware, init_sentry
+    from src.middleware.metrics import MetricsMiddleware, metrics
+
+    # Configure structured logging
+    configure_logging(level=settings.log_level, fmt=settings.log_format)
+
+    # Initialize Sentry if configured
+    if settings.sentry_dsn:
+        init_sentry(settings.sentry_dsn)
+
     app.add_middleware(RateLimitMiddleware)
     app.add_middleware(UsageMeteringMiddleware)
+    app.add_middleware(StructuredLoggingMiddleware)
+    app.add_middleware(ErrorTrackingMiddleware)
+    # MetricsMiddleware is raw ASGI — add via app constructor
+    app.add_middleware(MetricsMiddleware)
 
     # Register routers
     app.include_router(auth.router)
@@ -266,6 +282,139 @@ def create_app() -> FastAPI:
             "database": db_status,
         }
 
+    @app.get("/metrics")
+    def metrics_endpoint():
+        """Application metrics for monitoring dashboards."""
+        from src.middleware.metrics import metrics as m
+        data = m.snapshot()
+
+        # Add database pool info
+        try:
+            from src.models.database import engine as db_engine
+            pool = db_engine.pool
+            data["database_pool"] = {
+                "size": pool.size(),
+                "checked_out": pool.checkedout(),
+                "overflow": pool.overflow(),
+            }
+        except Exception:
+            data["database_pool"] = {"status": "unavailable"}
+
+        data["version"] = settings.policy_version
+        data["started_at"] = datetime.fromtimestamp(
+            m.started_at, tz=timezone.utc
+        ).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        # Include error counts by endpoint
+        from src.middleware.error_tracking import get_error_counts
+        data["errors_by_endpoint"] = get_error_counts()
+
+        return data
+
+    @app.get("/status", response_class=HTMLResponse)
+    def status_page():
+        """Human-readable status page with dark theme."""
+        from src.middleware.metrics import metrics as m
+        from src.middleware.error_tracking import get_total_errors
+
+        snap = m.snapshot()
+
+        # Check database
+        db_ok = False
+        try:
+            db = SessionLocal()
+            db.execute(sa_text("SELECT 1"))
+            db.close()
+            db_ok = True
+        except Exception:
+            pass
+
+        # Check Redis
+        redis_ok = False
+        try:
+            import redis
+            r = redis.from_url(settings.redis_url, decode_responses=True)
+            r.ping()
+            redis_ok = True
+        except Exception:
+            pass
+
+        overall = "UP" if db_ok else "DEGRADED"
+        overall_color = "#4ade80" if db_ok else "#facc15"
+
+        uptime_pct = 100.0  # We track within process lifetime only
+        if snap["total_requests"] > 0:
+            uptime_pct = round((1.0 - snap["error_rate"]) * 100, 2)
+
+        def _indicator(ok: bool) -> str:
+            color = "#4ade80" if ok else "#ef4444"
+            label = "Operational" if ok else "Down"
+            return f'<span style="color:{color}; font-weight:600;">{label}</span>'
+
+        html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GovernLayer Status</title>
+<style>
+  * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+  body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0f172a; color: #e2e8f0; min-height: 100vh;
+         display: flex; justify-content: center; padding: 2rem; }}
+  .container {{ max-width: 640px; width: 100%; }}
+  h1 {{ font-size: 1.5rem; margin-bottom: 0.25rem; }}
+  .subtitle {{ color: #94a3b8; margin-bottom: 2rem; font-size: 0.9rem; }}
+  .status-banner {{ background: #1e293b; border-radius: 12px; padding: 1.5rem;
+                    margin-bottom: 1.5rem; text-align: center; }}
+  .status-banner .label {{ font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; }}
+  .status-banner .value {{ font-size: 2rem; font-weight: 700; color: {overall_color}; }}
+  .card {{ background: #1e293b; border-radius: 10px; padding: 1.25rem;
+           margin-bottom: 1rem; }}
+  .card h2 {{ font-size: 0.95rem; color: #94a3b8; margin-bottom: 0.75rem;
+              text-transform: uppercase; letter-spacing: 0.05em; }}
+  .row {{ display: flex; justify-content: space-between; padding: 0.5rem 0;
+          border-bottom: 1px solid #334155; }}
+  .row:last-child {{ border-bottom: none; }}
+  .row .key {{ color: #cbd5e1; }}
+  .row .val {{ font-weight: 600; }}
+  .footer {{ text-align: center; color: #475569; font-size: 0.8rem; margin-top: 2rem; }}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>GovernLayer Status</h1>
+  <p class="subtitle">v{settings.policy_version} &mdash; Real-time system health</p>
+
+  <div class="status-banner">
+    <div class="label">Current Status</div>
+    <div class="value">{overall}</div>
+  </div>
+
+  <div class="card">
+    <h2>Components</h2>
+    <div class="row"><span class="key">API Server</span><span class="val">{_indicator(True)}</span></div>
+    <div class="row"><span class="key">Database</span><span class="val">{_indicator(db_ok)}</span></div>
+    <div class="row"><span class="key">Cache (Redis)</span><span class="val">{_indicator(redis_ok)}</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Performance</h2>
+    <div class="row"><span class="key">Uptime (success rate)</span><span class="val">{uptime_pct}%</span></div>
+    <div class="row"><span class="key">Avg Response Time</span><span class="val">{snap['avg_latency_ms']} ms</span></div>
+    <div class="row"><span class="key">Requests/min</span><span class="val">{snap['requests_per_minute']}</span></div>
+    <div class="row"><span class="key">Total Requests</span><span class="val">{snap['total_requests']:,}</span></div>
+    <div class="row"><span class="key">Active Connections</span><span class="val">{snap['active_connections']}</span></div>
+    <div class="row"><span class="key">Error Rate</span><span class="val">{snap['error_rate'] * 100:.2f}%</span></div>
+    <div class="row"><span class="key">Uptime</span><span class="val">{snap['uptime_seconds']:.0f}s</span></div>
+  </div>
+
+  <p class="footer">GovernLayer &mdash; The Governance Layer for Agentic AI</p>
+</div>
+</body>
+</html>"""
+        return HTMLResponse(html)
+
     # Load documentation page HTML once at startup
     _docs_html = None
     _docs_paths = [
@@ -283,6 +432,40 @@ def create_app() -> FastAPI:
         if _docs_html:
             return HTMLResponse(_docs_html)
         return {"error": "Documentation page not found"}
+
+    # Load playground HTML once at startup
+    _playground_html = None
+    for _ppath in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "playground", "index.html"),
+        os.path.join("/app", "docs", "playground", "index.html"),
+    ]:
+        if os.path.exists(_ppath):
+            with open(_ppath) as f:
+                _playground_html = f.read()
+            break
+
+    @app.get("/playground")
+    def playground_page():
+        if _playground_html:
+            return HTMLResponse(_playground_html)
+        return {"error": "Playground not found"}
+
+    # Load onboarding HTML once at startup
+    _onboarding_html = None
+    for _opath in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "onboarding", "index.html"),
+        os.path.join("/app", "docs", "onboarding", "index.html"),
+    ]:
+        if os.path.exists(_opath):
+            with open(_opath) as f:
+                _onboarding_html = f.read()
+            break
+
+    @app.get("/onboarding")
+    def onboarding_page():
+        if _onboarding_html:
+            return HTMLResponse(_onboarding_html)
+        return {"error": "Onboarding not found"}
 
     # Load landing page HTML once at startup
     _landing_html = None

@@ -63,6 +63,11 @@ class Settings(BaseSettings):
     debug: bool = False
     cors_origins: str = "https://www.governlayer.ai,https://governlayer.ai"
 
+    # Observability
+    sentry_dsn: str = ""
+    log_level: str = "INFO"
+    log_format: str = "json"  # "json" or "text"
+
     # Policy
     policy_version: str = "3.0.0"
 
