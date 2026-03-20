@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer - Market Leadership Analysis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-alt: #162032;
+    --border: #334155;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --accent: #10b981;
+    --accent-dim: rgba(16, 185, 129, 0.15);
+    --accent-glow: rgba(16, 185, 129, 0.3);
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 100px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0.4;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(16,185,129,0.3);
+    padding: 6px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ── Sections ── */
+  section { padding: 80px 0; }
+  .section-label {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(28px, 3.5vw, 40px);
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .section-desc {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 600px;
+    margin-bottom: 48px;
+  }
+
+  /* ── Feature Matrix ── */
+  .matrix-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .matrix {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .matrix thead th {
+    background: var(--bg-card-alt);
+    padding: 16px 14px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .matrix thead th:first-child {
+    text-align: left;
+    min-width: 200px;
+  }
+  .matrix thead th.gl-col {
+    color: var(--accent);
+    background: rgba(16,185,129,0.08);
+  }
+  .matrix tbody td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid rgba(51,65,85,0.5);
+    vertical-align: middle;
+  }
+  .matrix tbody td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .matrix tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .matrix tbody tr:last-child td { border-bottom: none; }
+  .icon-yes { color: var(--accent); font-weight: 700; font-size: 18px; }
+  .icon-no { color: var(--red); font-weight: 700; font-size: 16px; opacity: 0.7; }
+  .icon-partial { color: var(--yellow); font-size: 13px; font-weight: 600; }
+
+  /* ── Positioning Map ── */
+  .map-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .positioning-svg {
+    width: 100%;
+    max-width: 620px;
+    height: auto;
+  }
+
+  /* ── Financial Projections ── */
+  .projections-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 768px) { .projections-grid { grid-template-columns: 1fr; } }
+  .proj-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 28px;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .proj-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+  .proj-year {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .proj-arr {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .proj-customers {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  .proj-bar-track {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .proj-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #34d399);
+    border-radius: 100px;
+    width: 0;
+    transition: width 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .proj-card.visible .proj-bar-fill { width: var(--bar-width); }
+
+  /* ── Unit Economics ── */
+  .econ-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 768px) { .econ-grid { grid-template-columns: 1fr; } }
+  .econ-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+  }
+  .econ-value {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .econ-value.green { color: var(--accent); }
+  .econ-value.blue { color: var(--blue); }
+  .econ-value.purple { color: var(--purple); }
+  .econ-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .econ-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    opacity: 0.7;
+  }
+
+  /* ── Bar Chart ── */
+  .chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 32px 32px;
+  }
+  .chart-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 48px;
+    height: 240px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .chart-bar-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .chart-bar-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .chart-bar {
+    width: 64px;
+    background: linear-gradient(180deg, var(--accent), rgba(16,185,129,0.4));
+    border-radius: 6px 6px 0 0;
+    height: 0;
+    transition: height 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+  }
+  .chart-bar-group.visible .chart-bar { height: var(--bar-h); }
+  .chart-bar-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    text-align: center;
+  }
+  .chart-gridlines {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .chart-gridline {
+    border-top: 1px dashed rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .chart-gridline-label {
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.5;
+    transform: translateX(-100%);
+    padding-right: 8px;
+  }
+
+  /* ── Pricing ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .pricing-grid { grid-template-columns: 1fr; } }
+  .pricing-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .pricing-card:hover {
+    transform: translateY(-4px);
+  }
+  .pricing-card.featured {
+    border-color: var(--accent);
+    position: relative;
+  }
+  .pricing-card.featured::before {
+    content: 'MOST POPULAR';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+  .pricing-tier {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .pricing-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    min-height: 36px;
+  }
+  .pricing-price {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .pricing-price span {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+  .pricing-price.green { color: var(--accent); }
+  .pricing-features {
+    list-style: none;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .pricing-features li {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pricing-features li::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 48px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── Animations ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-badge">Investor Intelligence</div>
+    <h1>Market <span>Leadership</span> Analysis</h1>
+    <p>GovernLayer is the first autonomous AI governance platform. Here is how we compare to incumbent solutions and where the market is heading.</p>
+  </div>
+</header>
+
+<!-- FEATURE MATRIX -->
+<section>
+  <div class="container">
+    <div class="section-label fade-up">Competitive Landscape</div>
+    <h2 class="section-title fade-up">Feature Comparison Matrix</h2>
+    <p class="section-desc fade-up">Head-to-head analysis across the AI governance category. GovernLayer leads in 8 of 10 capability dimensions.</p>
+
+    <div class="matrix-wrapper fade-up">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th class="gl-col">GovernLayer</th>
+            <th>Credo AI</th>
+            <th>IBM OpenPages</th>
+            <th>ServiceNow AI Gov</th>
+            <th>Arthur AI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Autonomous Governance</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Multi-LLM Consensus</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Behavioral Drift Detection</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Hash-Chained Audit Ledger</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Agent Orchestration</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>API-First Architecture</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Self-Hosted Option</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Open Source Core</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+            <td><span class="icon-no" aria-label="No">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Real-Time Monitoring</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Compliance Frameworks (18+)</td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-yes" aria-label="Yes">&#10003;</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+            <td><span class="icon-partial">Partial</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- POSITIONING MAP -->
+<section>
+  <div class="container">
+    <div class="section-label fade-up">Strategic Positioning</div>
+    <h2 class="section-title fade-up">Market Positioning Map</h2>
+    <p class="section-desc fade-up">GovernLayer occupies a unique position: fully autonomous and comprehensive platform capabilities that no competitor currently matches.</p>
+
+    <div class="map-container fade-up">
+      <svg class="positioning-svg" viewBox="0 0 620 500" xmlns="http://www.w3.org/2000/svg">
+        <!-- Quadrant fills -->
+        <rect x="80" y="40" width="250" height="200" rx="4" fill="rgba(255,255,255,0.01)"/>
+        <rect x="330" y="40" width="250" height="200" rx="4" fill="rgba(16,185,129,0.03)"/>
+        <rect x="80" y="240" width="250" height="200" rx="4" fill="rgba(255,255,255,0.005)"/>
+        <rect x="330" y="240" width="250" height="200" rx="4" fill="rgba(255,255,255,0.01)"/>
+
+        <!-- Axes -->
+        <line x1="80" y1="240" x2="580" y2="240" stroke="#334155" stroke-width="1.5"/>
+        <line x1="330" y1="40" x2="330" y2="440" stroke="#334155" stroke-width="1.5"/>
+
+        <!-- Axis arrows -->
+        <polygon points="580,240 572,235 572,245" fill="#334155"/>
+        <polygon points="330,40 325,48 335,48" fill="#334155"/>
+
+        <!-- Axis labels -->
+        <text x="595" y="244" fill="#94a3b8" font-size="11" text-anchor="start" font-weight="600">AUTONOMOUS</text>
+        <text x="65" y="244" fill="#94a3b8" font-size="11" text-anchor="end" font-weight="600">MANUAL</text>
+        <text x="330" y="28" fill="#94a3b8" font-size="11" text-anchor="middle" font-weight="600">PLATFORM</text>
+        <text x="330" y="468" fill="#94a3b8" font-size="11" text-anchor="middle" font-weight="600">POINT SOLUTION</text>
+
+        <!-- Quadrant labels -->
+        <text x="205" y="76" fill="#475569" font-size="11" text-anchor="middle" font-style="italic">Legacy GRC</text>
+        <text x="455" y="76" fill="rgba(16,185,129,0.5)" font-size="11" text-anchor="middle" font-style="italic">Next-Gen Platform</text>
+        <text x="205" y="420" fill="#475569" font-size="11" text-anchor="middle" font-style="italic">Manual Tools</text>
+        <text x="455" y="420" fill="#475569" font-size="11" text-anchor="middle" font-style="italic">AI-Assisted</text>
+
+        <!-- IBM OpenPages -->
+        <circle cx="180" cy="120" r="28" fill="rgba(59,130,246,0.15)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="180" y="124" fill="#93c5fd" font-size="10" text-anchor="middle" font-weight="600">IBM</text>
+        <text x="180" y="160" fill="#64748b" font-size="10" text-anchor="middle">OpenPages</text>
+
+        <!-- ServiceNow -->
+        <circle cx="370" cy="160" r="28" fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="370" y="157" fill="#fcd34d" font-size="9" text-anchor="middle" font-weight="600">Service</text>
+        <text x="370" y="169" fill="#fcd34d" font-size="9" text-anchor="middle" font-weight="600">Now</text>
+
+        <!-- Credo AI -->
+        <circle cx="400" cy="270" r="26" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="400" y="274" fill="#c4b5fd" font-size="10" text-anchor="middle" font-weight="600">Credo AI</text>
+
+        <!-- Arthur AI -->
+        <circle cx="420" cy="350" r="24" fill="rgba(236,72,153,0.15)" stroke="#ec4899" stroke-width="1.5"/>
+        <text x="420" y="354" fill="#f9a8d4" font-size="10" text-anchor="middle" font-weight="600">Arthur</text>
+
+        <!-- GovernLayer -->
+        <circle cx="520" cy="90" r="36" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2.5">
+          <animate attributeName="r" values="36;39;36" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="520" cy="90" r="50" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="1" stroke-dasharray="4 4">
+          <animate attributeName="r" values="50;55;50" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <text x="520" y="86" fill="#10b981" font-size="11" text-anchor="middle" font-weight="700">Govern</text>
+        <text x="520" y="100" fill="#10b981" font-size="11" text-anchor="middle" font-weight="700">Layer</text>
+
+        <!-- Direction arrow -->
+        <line x1="440" y1="180" x2="490" y2="115" stroke="rgba(16,185,129,0.3)" stroke-width="1" stroke-dasharray="6 4"/>
+        <polygon points="490,115 484,124 493,121" fill="rgba(16,185,129,0.4)"/>
+        <text x="480" y="162" fill="rgba(16,185,129,0.6)" font-size="9" text-anchor="middle" transform="rotate(-30, 480, 162)">Market direction</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCIAL PROJECTIONS -->
+<section>
+  <div class="container">
+    <div class="section-label fade-up">Financial Model</div>
+    <h2 class="section-title fade-up">3-Year Revenue Projections</h2>
+    <p class="section-desc fade-up">Conservative bottom-up model based on current pipeline velocity and market expansion rate.</p>
+
+    <div class="projections-grid">
+      <div class="proj-card fade-up" style="--bar-width: 6.25%;">
+        <div class="proj-year">Year 1</div>
+        <div class="proj-arr">$500K</div>
+        <div class="proj-customers">50 customers</div>
+        <div class="proj-bar-track"><div class="proj-bar-fill"></div></div>
+      </div>
+      <div class="proj-card fade-up" style="--bar-width: 31.25%;">
+        <div class="proj-year">Year 2</div>
+        <div class="proj-arr">$2.5M</div>
+        <div class="proj-customers">200 customers</div>
+        <div class="proj-bar-track"><div class="proj-bar-fill"></div></div>
+      </div>
+      <div class="proj-card fade-up" style="--bar-width: 100%;">
+        <div class="proj-year">Year 3</div>
+        <div class="proj-arr">$8M</div>
+        <div class="proj-customers">500 customers</div>
+        <div class="proj-bar-track"><div class="proj-bar-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="chart-container fade-up" id="arr-chart">
+      <div class="chart-title">Annual Recurring Revenue Growth</div>
+      <div class="chart-bars">
+        <div class="chart-gridlines">
+          <div class="chart-gridline"><span class="chart-gridline-label">$8M</span></div>
+          <div class="chart-gridline"><span class="chart-gridline-label">$6M</span></div>
+          <div class="chart-gridline"><span class="chart-gridline-label">$4M</span></div>
+          <div class="chart-gridline"><span class="chart-gridline-label">$2M</span></div>
+          <div class="chart-gridline"><span class="chart-gridline-label">$0</span></div>
+        </div>
+        <div class="chart-bar-group" style="--bar-h: 13%;">
+          <div class="chart-bar-value">$500K</div>
+          <div class="chart-bar"></div>
+          <div class="chart-bar-label">Year 1</div>
+        </div>
+        <div class="chart-bar-group" style="--bar-h: 50%;">
+          <div class="chart-bar-value">$2.5M</div>
+          <div class="chart-bar"></div>
+          <div class="chart-bar-label">Year 2</div>
+        </div>
+        <div class="chart-bar-group" style="--bar-h: 100%;">
+          <div class="chart-bar-value">$8M</div>
+          <div class="chart-bar"></div>
+          <div class="chart-bar-label">Year 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UNIT ECONOMICS -->
+<section>
+  <div class="container">
+    <div class="section-label fade-up">Unit Economics</div>
+    <h2 class="section-title fade-up">Efficient Growth Engine</h2>
+    <p class="section-desc fade-up">Product-led growth combined with open-source adoption creates best-in-class unit economics for the GRC category.</p>
+
+    <div class="econ-grid">
+      <div class="econ-card fade-up">
+        <div class="econ-value blue">$2K</div>
+        <div class="econ-label">CAC</div>
+        <div class="econ-sub">Customer Acquisition Cost</div>
+      </div>
+      <div class="econ-card fade-up">
+        <div class="econ-value purple">$18K</div>
+        <div class="econ-label">LTV</div>
+        <div class="econ-sub">Lifetime Value</div>
+      </div>
+      <div class="econ-card fade-up">
+        <div class="econ-value green">9:1</div>
+        <div class="econ-label">LTV : CAC</div>
+        <div class="econ-sub">Best-in-class ratio (SaaS avg ~3:1)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section>
+  <div class="container">
+    <div class="section-label fade-up">Pricing Strategy</div>
+    <h2 class="section-title fade-up">Transparent, Usage-Based Pricing</h2>
+    <p class="section-desc fade-up">Open-source core with commercial tiers. Land with free, expand into paid as governance needs grow.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card fade-up">
+        <div class="pricing-tier">Free</div>
+        <div class="pricing-desc">For individuals and small projects</div>
+        <div class="pricing-price green">$0<span> /mo</span></div>
+        <ul class="pricing-features">
+          <li>Self-hosted only</li>
+          <li>3 monitored agents</li>
+          <li>Basic drift detection</li>
+          <li>Community support</li>
+          <li>20 API calls / min</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card fade-up">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-desc">For growing teams adopting AI</div>
+        <div class="pricing-price">$299<span> /mo</span></div>
+        <ul class="pricing-features">
+          <li>Cloud or self-hosted</li>
+          <li>25 monitored agents</li>
+          <li>Full drift + risk scoring</li>
+          <li>Compliance audits (10 frameworks)</li>
+          <li>100 API calls / min</li>
+          <li>Email support</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card featured fade-up">
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-desc">For teams with production AI systems</div>
+        <div class="pricing-price">$999<span> /mo</span></div>
+        <ul class="pricing-features">
+          <li>Everything in Starter</li>
+          <li>Unlimited agents</li>
+          <li>Multi-LLM consensus engine</li>
+          <li>18+ compliance frameworks</li>
+          <li>Hash-chained audit ledger</li>
+          <li>500 API calls / min</li>
+          <li>Webhooks + integrations</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+
+      <div class="pricing-card fade-up">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-desc">For regulated industries at scale</div>
+        <div class="pricing-price">Custom</div>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>Dedicated infrastructure</li>
+          <li>SSO / SAML</li>
+          <li>Custom compliance frameworks</li>
+          <li>2,000+ API calls / min</li>
+          <li>SLA guarantees</li>
+          <li>Dedicated CSM</li>
+          <li>On-premise deployment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>GovernLayer -- Autonomous AI Governance Platform</p>
+    <p style="margin-top: 8px;">Confidential. For authorized recipients only. &copy; 2026 GovernLayer. <a href="https://governlayer.ai">governlayer.ai</a></p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.fade-up, .proj-card, .chart-bar-group').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  var sections = document.querySelectorAll('section');
+  sections.forEach(function(section) {
+    var fadeEls = section.querySelectorAll('.fade-up');
+    fadeEls.forEach(function(el, i) {
+      el.style.transitionDelay = (i * 0.1) + 's';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -25,6 +25,10 @@ COPY docs/dashboard/ docs/dashboard/
 COPY docs/documentation/ docs/documentation/
 COPY docs/playground/ docs/playground/
 COPY docs/onboarding/ docs/onboarding/
+COPY docs/pitch/ docs/pitch/
+COPY docs/demo/ docs/demo/
+COPY docs/soc2/ docs/soc2/
+COPY docs/competitive/ docs/competitive/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app

@@ -467,6 +467,44 @@ def create_app() -> FastAPI:
             return HTMLResponse(_onboarding_html)
         return {"error": "Onboarding not found"}
 
+    # Helper to load HTML from docs/<name>/index.html
+    def _load_page(name):
+        for base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
+            p = os.path.join(base, "docs", name, "index.html")
+            if os.path.exists(p):
+                with open(p) as f:
+                    return f.read()
+        return None
+
+    _pitch_html = _load_page("pitch")
+    _demo_html = _load_page("demo")
+    _soc2_html = _load_page("soc2")
+    _competitive_html = _load_page("competitive")
+
+    @app.get("/pitch")
+    def pitch_page():
+        if _pitch_html:
+            return HTMLResponse(_pitch_html)
+        return {"error": "Pitch deck not found"}
+
+    @app.get("/demo")
+    def demo_page():
+        if _demo_html:
+            return HTMLResponse(_demo_html)
+        return {"error": "Demo not found"}
+
+    @app.get("/soc2")
+    def soc2_page():
+        if _soc2_html:
+            return HTMLResponse(_soc2_html)
+        return {"error": "SOC 2 page not found"}
+
+    @app.get("/competitive")
+    def competitive_page():
+        if _competitive_html:
+            return HTMLResponse(_competitive_html)
+        return {"error": "Competitive analysis not found"}
+
     # Load landing page HTML once at startup
     _landing_html = None
     _landing_paths = [
