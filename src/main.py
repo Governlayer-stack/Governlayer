@@ -13,9 +13,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import (
     achonye, agent_registry, analytics, analytics_usage, audit, auth, automation,
-    billing, dashboard, enterprise, enterprise_features, governance, growth,
-    incidents, integrations, knowledge_graph, ledger, mfa, policies, rbac_views,
-    registry, reports, risk, threats, v1,
+    billing, compliance_hub, controls, dashboard, enterprise, enterprise_features,
+    evidence, governance, growth, incidents, integrations, knowledge_graph, ledger,
+    mfa, policies, rbac_views, registry, reports, risk, threats, v1, vendor_risk,
 )
 from src.config import get_settings
 from src.models.database import create_tables, SessionLocal
@@ -238,6 +238,10 @@ def create_app() -> FastAPI:
     app.include_router(rbac_views.router)
     app.include_router(enterprise_features.router)
     app.include_router(growth.router)
+    app.include_router(vendor_risk.router)
+    app.include_router(controls.router)
+    app.include_router(evidence.router)
+    app.include_router(compliance_hub.router)
 
     @app.on_event("startup")
     def startup():
@@ -480,6 +484,8 @@ def create_app() -> FastAPI:
     _demo_html = _load_page("demo")
     _soc2_html = _load_page("soc2")
     _competitive_html = _load_page("competitive")
+    _trust_html = _load_page("trust")
+    _auditor_html = _load_page("auditor")
 
     @app.get("/pitch")
     def pitch_page():
@@ -504,6 +510,18 @@ def create_app() -> FastAPI:
         if _competitive_html:
             return HTMLResponse(_competitive_html)
         return {"error": "Competitive analysis not found"}
+
+    @app.get("/trust")
+    def trust_center():
+        if _trust_html:
+            return HTMLResponse(_trust_html)
+        return {"error": "Trust Center not found"}
+
+    @app.get("/auditor")
+    def auditor_portal():
+        if _auditor_html:
+            return HTMLResponse(_auditor_html)
+        return {"error": "Auditor portal not found"}
 
     # Load landing page HTML once at startup
     _landing_html = None

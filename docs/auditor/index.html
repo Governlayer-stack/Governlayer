@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer Auditor Portal</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#334155;--bg4:#475569;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --green:#10b981;--green2:#059669;--green3:#d1fae5;
+  --red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;
+  --border:#1e293b;--radius:8px;
+}
+html{font-size:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--green);text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+input{font-family:inherit}
+
+/* LOGIN */
+.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;transition:opacity .4s,visibility .4s}
+.login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-card{background:var(--bg2);border:1px solid var(--bg3);border-radius:12px;padding:48px 40px;width:100%;max-width:420px;text-align:center}
+.login-card .logo-mark{width:48px;height:48px;background:var(--green);border-radius:10px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;font-weight:700;font-size:20px;color:var(--bg)}
+.login-card h1{font-size:1.5rem;margin-bottom:4px}
+.login-card .subtitle{color:var(--text2);margin-bottom:32px;font-size:.92rem}
+.login-card .field{margin-bottom:16px;text-align:left}
+.login-card label{display:block;font-size:.8rem;color:var(--text2);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.login-card input{width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--radius);color:var(--text);font-size:.95rem;transition:border .2s}
+.login-card input:focus{outline:none;border-color:var(--green)}
+.login-card .btn-login{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:1rem;font-weight:600;margin-top:8px;transition:background .2s}
+.login-card .btn-login:hover{background:var(--green2)}
+.login-card .footer-note{margin-top:20px;font-size:.78rem;color:var(--text3)}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.sidebar-header{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
+.sidebar-header .brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.sidebar-header .brand .mark{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--bg);flex-shrink:0}
+.sidebar-header .brand span{font-weight:700;font-size:1.05rem}
+.sidebar-header .auditor-info{background:var(--bg);border-radius:var(--radius);padding:12px;font-size:.82rem}
+.sidebar-header .auditor-info .name{font-weight:600;color:var(--text)}
+.sidebar-header .auditor-info .detail{color:var(--text3);font-size:.78rem;margin-top:2px}
+.sidebar-nav{flex:1;padding:12px 10px}
+.sidebar-nav button{width:100%;display:flex;align-items:center;gap:10px;padding:10px 14px;background:transparent;border:none;color:var(--text2);border-radius:var(--radius);font-size:.9rem;text-align:left;transition:all .15s;margin-bottom:2px}
+.sidebar-nav button:hover{background:var(--bg3);color:var(--text)}
+.sidebar-nav button.active{background:rgba(16,185,129,.12);color:var(--green);font-weight:600}
+.sidebar-nav button .icon{width:20px;text-align:center;font-size:1rem;flex-shrink:0}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text3)}
+.sidebar-footer .status-dot{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:5px}
+
+.main{margin-left:260px;flex:1;padding:28px 32px;min-height:100vh}
+.main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.main-header h2{font-size:1.4rem;font-weight:700}
+.btn-export{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:.88rem;font-weight:600;transition:background .2s}
+.btn-export:hover{background:var(--green2)}
+
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.stat-card .stat-label{font-size:.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stat-card .stat-value{font-size:1.8rem;font-weight:700}
+.stat-card .stat-sub{font-size:.78rem;color:var(--text3);margin-top:4px}
+.stat-card.highlight{border-color:var(--green);background:linear-gradient(135deg,rgba(16,185,129,.06),transparent)}
+.stat-card.highlight .stat-value{color:var(--green)}
+
+/* GAUGE */
+.gauge-container{display:flex;align-items:center;gap:16px}
+.gauge{position:relative;width:100px;height:100px}
+.gauge svg{transform:rotate(-90deg)}
+.gauge circle{fill:none;stroke-width:8}
+.gauge .bg{stroke:var(--bg3)}
+.gauge .fill{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.gauge .score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:var(--green)}
+
+/* TABLES */
+.table-controls{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.table-controls input{padding:8px 14px;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--radius);color:var(--text);font-size:.88rem;width:280px}
+.table-controls input:focus{outline:none;border-color:var(--green)}
+.table-controls select{padding:8px 12px;background:var(--bg);border:1px solid var(--bg3);border-radius:var(--radius);color:var(--text);font-size:.88rem;appearance:auto}
+table{width:100%;border-collapse:collapse;background:var(--bg2);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+thead{background:var(--bg)}
+th{padding:12px 16px;text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:.88rem}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s;cursor:pointer}
+tbody tr:hover{background:rgba(16,185,129,.04)}
+tbody tr.selected{background:rgba(16,185,129,.08)}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-green{background:rgba(16,185,129,.15);color:var(--green)}
+.badge-yellow{background:rgba(245,158,11,.15);color:var(--yellow)}
+.badge-blue{background:rgba(59,130,246,.15);color:var(--blue)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
+.badge-purple{background:rgba(139,92,246,.15);color:var(--purple)}
+
+/* EVIDENCE PANEL */
+.evidence-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-top:20px}
+.evidence-panel h3{font-size:1.05rem;margin-bottom:4px}
+.evidence-panel .ep-sub{color:var(--text2);font-size:.85rem;margin-bottom:20px}
+.evidence-list{display:flex;flex-direction:column;gap:10px}
+.evidence-item{background:var(--bg);border:1px solid var(--bg3);border-radius:var(--radius);padding:16px;display:grid;grid-template-columns:1fr auto;gap:8px}
+.evidence-item .ei-title{font-weight:600;font-size:.9rem}
+.evidence-item .ei-meta{display:flex;gap:16px;font-size:.78rem;color:var(--text3);margin-top:4px}
+.evidence-item .ei-status{text-align:right}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:32px;margin-top:8px}
+.timeline::before{content:'';position:absolute;left:11px;top:8px;bottom:8px;width:2px;background:var(--bg3)}
+.tl-item{position:relative;margin-bottom:32px}
+.tl-item:last-child{margin-bottom:0}
+.tl-item .tl-dot{position:absolute;left:-32px;top:4px;width:22px;height:22px;border-radius:50%;border:2px solid var(--green);background:var(--bg);display:flex;align-items:center;justify-content:center}
+.tl-item .tl-dot.completed{background:var(--green);border-color:var(--green)}
+.tl-item .tl-dot.completed::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%}
+.tl-item .tl-dot.current{border-color:var(--yellow);animation:pulse 2s infinite}
+.tl-item .tl-dot.current::after{content:'';width:8px;height:8px;background:var(--yellow);border-radius:50%}
+.tl-item .tl-dot.upcoming{border-color:var(--bg3)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.3)}50%{box-shadow:0 0 0 6px rgba(245,158,11,0)}}
+.tl-item .tl-date{font-size:.78rem;color:var(--text3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.tl-item .tl-title{font-size:1rem;font-weight:600;margin-bottom:4px}
+.tl-item .tl-desc{font-size:.85rem;color:var(--text2);max-width:540px}
+
+/* SECTION CARDS */
+.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.section-card h3{font-size:1rem;font-weight:700;margin-bottom:16px}
+
+/* PROGRESS BAR */
+.progress-bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;display:flex}
+.progress-bar .seg{height:100%;transition:width .6s ease}
+.progress-bar .seg-green{background:var(--green)}
+.progress-bar .seg-yellow{background:var(--yellow)}
+.progress-bar .seg-blue{background:var(--blue)}
+.progress-legend{display:flex;gap:20px;margin-top:10px;font-size:.78rem;color:var(--text2)}
+.progress-legend span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.progress-legend .lg-green::before{background:var(--green)}
+.progress-legend .lg-yellow::before{background:var(--yellow)}
+.progress-legend .lg-blue::before{background:var(--blue)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--green);border-radius:var(--radius);padding:14px 20px;font-size:.88rem;color:var(--text);box-shadow:0 8px 30px rgba(0,0,0,.4);transform:translateY(80px);opacity:0;transition:all .3s ease;z-index:2000}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:20px 16px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="logo-mark">GL</div>
+    <h1>Auditor Portal</h1>
+    <p class="subtitle">Secure access to compliance evidence and controls</p>
+    <div class="field">
+      <label>Auditor Email</label>
+      <input type="email" id="loginEmail" placeholder="auditor@firm.com" value="sarah.chen@kpmg.com">
+    </div>
+    <div class="field">
+      <label>Access Code</label>
+      <input type="password" id="loginCode" placeholder="Provided by GovernLayer" value="GL-AUD-2026-X9K2">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Access Portal</button>
+    <p class="footer-note">Access codes expire after 30 days. Contact your GovernLayer administrator for renewal.</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand"><div class="mark">GL</div><span>GovernLayer</span></div>
+      <div class="auditor-info">
+        <div class="name" id="auditorName">Sarah Chen</div>
+        <div class="detail">KPMG Advisory</div>
+        <div class="detail">SOC 2 Type II Engagement</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="active" onclick="switchTab('dashboard',this)"><span class="icon">&#9632;</span>Dashboard</button>
+      <button onclick="switchTab('controls',this)"><span class="icon">&#9776;</span>Controls Matrix</button>
+      <button onclick="switchTab('evidence',this)"><span class="icon">&#128196;</span>Evidence Viewer</button>
+      <button onclick="switchTab('timeline',this)"><span class="icon">&#9201;</span>Compliance Timeline</button>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="status-dot"></span>All systems operational<br>
+      Session expires in 23h 42m
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="main-header">
+        <h2>Compliance Dashboard</h2>
+        <button class="btn-export" onclick="downloadPackage()">&#11015; Download Audit Package</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card highlight">
+          <div class="stat-label">Compliance Score</div>
+          <div class="gauge-container">
+            <div class="gauge">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle class="bg" cx="50" cy="50" r="42"/>
+                <circle class="fill" cx="50" cy="50" r="42"
+                  stroke-dasharray="263.9"
+                  stroke-dashoffset="21.1"/>
+              </svg>
+              <div class="score">92</div>
+            </div>
+            <div><div style="font-size:.85rem;color:var(--text2)">out of 100</div><div style="font-size:.78rem;color:var(--green);margin-top:2px">+3 from last month</div></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Controls Summary</div>
+          <div class="stat-value">52</div>
+          <div class="stat-sub">total controls</div>
+          <div style="margin-top:12px">
+            <div class="progress-bar">
+              <div class="seg seg-green" style="width:90.4%"></div>
+              <div class="seg seg-yellow" style="width:5.8%"></div>
+              <div class="seg seg-blue" style="width:3.8%"></div>
+            </div>
+            <div class="progress-legend">
+              <span class="lg-green">47 Implemented</span>
+              <span class="lg-yellow">3 In Progress</span>
+              <span class="lg-blue">2 Planned</span>
+            </div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Evidence Items</div>
+          <div class="stat-value">156</div>
+          <div class="stat-sub">collected artifacts</div>
+          <div style="margin-top:8px;font-size:.78rem">
+            <span style="color:var(--green)">142 Valid</span>&ensp;
+            <span style="color:var(--yellow)">9 Pending</span>&ensp;
+            <span style="color:var(--red)">5 Expired</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Last Updated</div>
+          <div class="stat-value" style="font-size:1.2rem" id="lastUpdated"></div>
+          <div class="stat-sub">Automated collection</div>
+          <div style="margin-top:8px;font-size:.78rem;color:var(--text3)">Next sync in 47 minutes</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3>Recent Activity</h3>
+        <table>
+          <thead><tr><th>Time</th><th>Event</th><th>Source</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Today, 09:14</td><td>MFA configuration evidence refreshed</td><td>AWS IAM</td><td><span class="badge badge-green">Valid</span></td></tr>
+            <tr><td>Today, 08:02</td><td>Access review completed for Q1 2026</td><td>GitHub</td><td><span class="badge badge-green">Valid</span></td></tr>
+            <tr><td>Yesterday</td><td>Encryption-at-rest configuration verified</td><td>PostgreSQL</td><td><span class="badge badge-green">Valid</span></td></tr>
+            <tr><td>Yesterday</td><td>Incident response plan updated</td><td>Confluence</td><td><span class="badge badge-yellow">Pending Review</span></td></tr>
+            <tr><td>Mar 28, 2026</td><td>Network segmentation diagram uploaded</td><td>Manual</td><td><span class="badge badge-green">Valid</span></td></tr>
+            <tr><td>Mar 27, 2026</td><td>Vulnerability scan report generated</td><td>Docker Scout</td><td><span class="badge badge-green">Valid</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CONTROLS MATRIX -->
+    <div class="tab-content" id="tab-controls">
+      <div class="main-header">
+        <h2>Controls Matrix</h2>
+        <button class="btn-export" onclick="downloadPackage()">&#11015; Download Audit Package</button>
+      </div>
+      <div class="table-controls">
+        <input type="text" id="controlSearch" placeholder="Search controls..." oninput="filterControls()">
+        <select id="categoryFilter" onchange="filterControls()">
+          <option value="">All Categories</option>
+          <option value="Access Control">Access Control</option>
+          <option value="Data Protection">Data Protection</option>
+          <option value="Network Security">Network Security</option>
+          <option value="Incident Response">Incident Response</option>
+          <option value="Change Management">Change Management</option>
+        </select>
+        <select id="statusFilter" onchange="filterControls()">
+          <option value="">All Statuses</option>
+          <option value="Implemented">Implemented</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Planned">Planned</option>
+        </select>
+      </div>
+      <table>
+        <thead><tr><th>Control ID</th><th>Category</th><th>Description</th><th>Status</th><th>Evidence</th><th>Last Verified</th></tr></thead>
+        <tbody id="controlsBody"></tbody>
+      </table>
+    </div>
+
+    <!-- EVIDENCE VIEWER -->
+    <div class="tab-content" id="tab-evidence">
+      <div class="main-header">
+        <h2>Evidence Viewer</h2>
+        <button class="btn-export" onclick="downloadPackage()">&#11015; Download Audit Package</button>
+      </div>
+      <p style="color:var(--text2);margin-bottom:16px">Select a control from the table below to view associated evidence artifacts.</p>
+      <table>
+        <thead><tr><th>Control ID</th><th>Category</th><th>Description</th><th>Evidence</th></tr></thead>
+        <tbody id="evidenceControlsBody"></tbody>
+      </table>
+      <div class="evidence-panel" id="evidencePanel" style="display:none">
+        <h3 id="epTitle"></h3>
+        <p class="ep-sub" id="epSub"></p>
+        <div class="evidence-list" id="evidenceList"></div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="tab-content" id="tab-timeline">
+      <div class="main-header">
+        <h2>Compliance Timeline</h2>
+        <button class="btn-export" onclick="downloadPackage()">&#11015; Download Audit Package</button>
+      </div>
+      <div class="section-card">
+        <h3>SOC 2 Type II Engagement Timeline</h3>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot completed"></div>
+            <div class="tl-date">January 2026</div>
+            <div class="tl-title">Initial Assessment</div>
+            <div class="tl-desc">Gap analysis completed. 14 controls identified requiring implementation. Risk assessment baseline established with GovernLayer automated scoring.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot completed"></div>
+            <div class="tl-date">February 2026</div>
+            <div class="tl-title">Controls Implementation</div>
+            <div class="tl-desc">47 of 52 controls implemented. Infrastructure hardened: MFA enforced across all systems, encryption enabled at rest and in transit, network segmentation deployed.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot completed"></div>
+            <div class="tl-date">March 2026</div>
+            <div class="tl-title">Evidence Collection</div>
+            <div class="tl-desc">156 evidence artifacts collected across AWS, GitHub, PostgreSQL, and Docker environments. Automated collection pipelines established via GovernLayer daemon.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot current"></div>
+            <div class="tl-date">April 2026</div>
+            <div class="tl-title">Audit Preparation</div>
+            <div class="tl-desc">Final control remediation in progress (3 controls). Evidence review and validation with external auditors. Pre-audit readiness assessment scheduled.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot upcoming"></div>
+            <div class="tl-date">Q3 2026 (Jul -- Sep)</div>
+            <div class="tl-title">Type II Observation Period</div>
+            <div class="tl-desc">90-day observation window. Continuous monitoring via GovernLayer autonomous pipeline. Weekly evidence snapshots. Monthly control effectiveness reviews.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// DATA
+const controls = [
+  {id:"AC-1",cat:"Access Control",desc:"Role-based access control (RBAC) enforcement across all production systems",status:"Implemented",evidence:8,verified:"2026-03-30"},
+  {id:"AC-2",cat:"Access Control",desc:"Multi-factor authentication required for all user accounts",status:"Implemented",evidence:6,verified:"2026-03-31"},
+  {id:"AC-3",cat:"Access Control",desc:"Quarterly access reviews with automated deprovisioning",status:"Implemented",evidence:12,verified:"2026-03-28"},
+  {id:"AC-4",cat:"Access Control",desc:"Privileged access management with session recording",status:"In Progress",evidence:4,verified:"2026-03-25"},
+  {id:"AC-5",cat:"Access Control",desc:"Service account lifecycle management and rotation policy",status:"Implemented",evidence:7,verified:"2026-03-29"},
+  {id:"DP-1",cat:"Data Protection",desc:"AES-256 encryption at rest for all databases and object storage",status:"Implemented",evidence:9,verified:"2026-03-31"},
+  {id:"DP-2",cat:"Data Protection",desc:"TLS 1.3 encryption in transit for all internal and external communications",status:"Implemented",evidence:5,verified:"2026-03-30"},
+  {id:"DP-3",cat:"Data Protection",desc:"Automated backup with cross-region replication and integrity verification",status:"Implemented",evidence:11,verified:"2026-03-27"},
+  {id:"DP-4",cat:"Data Protection",desc:"Data classification policy with automated PII detection",status:"Implemented",evidence:6,verified:"2026-03-26"},
+  {id:"DP-5",cat:"Data Protection",desc:"Data retention and secure deletion procedures",status:"Planned",evidence:2,verified:"2026-03-15"},
+  {id:"NS-1",cat:"Network Security",desc:"Network segmentation with VPC isolation between environments",status:"Implemented",evidence:10,verified:"2026-03-30"},
+  {id:"NS-2",cat:"Network Security",desc:"Web application firewall with OWASP Top 10 ruleset",status:"Implemented",evidence:8,verified:"2026-03-29"},
+  {id:"NS-3",cat:"Network Security",desc:"Intrusion detection system with real-time alerting",status:"Implemented",evidence:7,verified:"2026-03-28"},
+  {id:"NS-4",cat:"Network Security",desc:"DDoS mitigation with automatic traffic scrubbing",status:"Implemented",evidence:5,verified:"2026-03-27"},
+  {id:"NS-5",cat:"Network Security",desc:"DNS security with DNSSEC validation enabled",status:"In Progress",evidence:3,verified:"2026-03-20"},
+  {id:"IR-1",cat:"Incident Response",desc:"Documented incident response plan with defined severity levels",status:"Implemented",evidence:14,verified:"2026-03-31"},
+  {id:"IR-2",cat:"Incident Response",desc:"Automated incident detection and escalation workflows",status:"Implemented",evidence:9,verified:"2026-03-29"},
+  {id:"IR-3",cat:"Incident Response",desc:"Post-incident review process with root cause analysis",status:"In Progress",evidence:5,verified:"2026-03-22"},
+  {id:"CM-1",cat:"Change Management",desc:"Git-based change control with required PR reviews and CI/CD gates",status:"Implemented",evidence:18,verified:"2026-03-31"},
+  {id:"CM-2",cat:"Change Management",desc:"Infrastructure-as-code with drift detection and automated rollback",status:"Planned",evidence:3,verified:"2026-03-18"}
+];
+
+const evidenceDb = {
+  "AC-1":[
+    {title:"RBAC Policy Configuration Export",type:"Configuration",date:"2026-03-30",source:"AWS IAM",status:"Valid"},
+    {title:"Role Assignment Matrix Screenshot",type:"Screenshot",date:"2026-03-30",source:"AWS Console",status:"Valid"},
+    {title:"RBAC Implementation Approval",type:"Policy Document",date:"2026-01-15",source:"Confluence",status:"Valid"},
+    {title:"Role Change Audit Log (Q1 2026)",type:"Log",date:"2026-03-28",source:"CloudTrail",status:"Valid"}
+  ],
+  "AC-2":[
+    {title:"MFA Enforcement Policy Screenshot",type:"Screenshot",date:"2026-03-31",source:"AWS IAM",status:"Valid"},
+    {title:"MFA Adoption Report (100% coverage)",type:"Log",date:"2026-03-31",source:"AWS IAM",status:"Valid"},
+    {title:"Hardware Token Inventory",type:"Policy Document",date:"2026-02-10",source:"IT Asset Management",status:"Valid"}
+  ],
+  "AC-3":[
+    {title:"Q1 2026 Access Review Results",type:"Log",date:"2026-03-28",source:"GitHub",status:"Valid"},
+    {title:"Deprovisioning Automation Script",type:"Configuration",date:"2026-02-20",source:"GitHub Actions",status:"Valid"},
+    {title:"Access Review Policy v2.1",type:"Policy Document",date:"2026-01-05",source:"Confluence",status:"Valid"},
+    {title:"Terminated Employee Access Removal Log",type:"Log",date:"2026-03-15",source:"Okta",status:"Valid"}
+  ],
+  "AC-4":[
+    {title:"PAM Solution Deployment Plan",type:"Policy Document",date:"2026-03-25",source:"Confluence",status:"Pending Review"},
+    {title:"Session Recording Configuration",type:"Configuration",date:"2026-03-20",source:"AWS Systems Manager",status:"Pending Review"}
+  ],
+  "AC-5":[
+    {title:"Service Account Inventory",type:"Configuration",date:"2026-03-29",source:"AWS IAM",status:"Valid"},
+    {title:"Key Rotation Policy Document",type:"Policy Document",date:"2026-02-01",source:"Confluence",status:"Valid"},
+    {title:"Automated Rotation Execution Log",type:"Log",date:"2026-03-29",source:"AWS Secrets Manager",status:"Valid"}
+  ],
+  "DP-1":[
+    {title:"RDS Encryption Status Screenshot",type:"Screenshot",date:"2026-03-31",source:"AWS RDS",status:"Valid"},
+    {title:"S3 Bucket Encryption Audit",type:"Configuration",date:"2026-03-31",source:"AWS S3",status:"Valid"},
+    {title:"KMS Key Management Policy",type:"Policy Document",date:"2026-01-20",source:"Confluence",status:"Valid"},
+    {title:"Encryption Verification Script Output",type:"Log",date:"2026-03-30",source:"GovernLayer",status:"Valid"}
+  ],
+  "DP-2":[
+    {title:"TLS Configuration Report",type:"Configuration",date:"2026-03-30",source:"AWS ALB",status:"Valid"},
+    {title:"SSL Labs Scan Result (A+ Rating)",type:"Screenshot",date:"2026-03-30",source:"Qualys SSL Labs",status:"Valid"}
+  ],
+  "DP-3":[
+    {title:"Backup Schedule Configuration",type:"Configuration",date:"2026-03-27",source:"AWS Backup",status:"Valid"},
+    {title:"Cross-Region Replication Status",type:"Screenshot",date:"2026-03-27",source:"AWS S3",status:"Valid"},
+    {title:"Backup Restoration Test Results",type:"Log",date:"2026-03-15",source:"AWS RDS",status:"Valid"},
+    {title:"Backup Integrity Verification Log",type:"Log",date:"2026-03-27",source:"GovernLayer",status:"Valid"}
+  ],
+  "DP-4":[
+    {title:"Data Classification Policy v1.3",type:"Policy Document",date:"2026-03-26",source:"Confluence",status:"Valid"},
+    {title:"PII Detection Scan Results",type:"Log",date:"2026-03-26",source:"GovernLayer",status:"Valid"}
+  ],
+  "DP-5":[
+    {title:"Data Retention Policy Draft",type:"Policy Document",date:"2026-03-15",source:"Confluence",status:"Pending Review"},
+    {title:"Secure Deletion Procedure Outline",type:"Policy Document",date:"2026-03-10",source:"Confluence",status:"Pending Review"}
+  ],
+  "NS-1":[
+    {title:"VPC Architecture Diagram",type:"Screenshot",date:"2026-03-30",source:"AWS VPC",status:"Valid"},
+    {title:"Security Group Rules Export",type:"Configuration",date:"2026-03-30",source:"AWS EC2",status:"Valid"},
+    {title:"Network Segmentation Test Results",type:"Log",date:"2026-03-28",source:"GovernLayer",status:"Valid"}
+  ],
+  "NS-2":[
+    {title:"WAF Rule Configuration",type:"Configuration",date:"2026-03-29",source:"AWS WAF",status:"Valid"},
+    {title:"OWASP Top 10 Coverage Matrix",type:"Policy Document",date:"2026-02-15",source:"Confluence",status:"Valid"},
+    {title:"WAF Block Event Sample Log",type:"Log",date:"2026-03-29",source:"AWS WAF",status:"Valid"}
+  ],
+  "NS-3":[
+    {title:"GuardDuty Configuration Export",type:"Configuration",date:"2026-03-28",source:"AWS GuardDuty",status:"Valid"},
+    {title:"Alert Routing Configuration",type:"Configuration",date:"2026-03-28",source:"PagerDuty",status:"Valid"},
+    {title:"IDS Detection Event Sample",type:"Log",date:"2026-03-25",source:"AWS GuardDuty",status:"Valid"}
+  ],
+  "NS-4":[
+    {title:"DDoS Protection Configuration",type:"Configuration",date:"2026-03-27",source:"AWS Shield",status:"Valid"},
+    {title:"Traffic Baseline Report",type:"Log",date:"2026-03-27",source:"AWS CloudWatch",status:"Valid"}
+  ],
+  "NS-5":[
+    {title:"DNSSEC Implementation Plan",type:"Policy Document",date:"2026-03-20",source:"Confluence",status:"Pending Review"},
+    {title:"DNS Configuration Audit",type:"Configuration",date:"2026-03-18",source:"AWS Route 53",status:"Pending Review"}
+  ],
+  "IR-1":[
+    {title:"Incident Response Plan v3.0",type:"Policy Document",date:"2026-03-31",source:"Confluence",status:"Valid"},
+    {title:"Severity Classification Matrix",type:"Policy Document",date:"2026-03-31",source:"Confluence",status:"Valid"},
+    {title:"IR Team Contact List",type:"Policy Document",date:"2026-03-31",source:"PagerDuty",status:"Valid"},
+    {title:"IR Tabletop Exercise Results (Mar 2026)",type:"Log",date:"2026-03-20",source:"Confluence",status:"Valid"},
+    {title:"Communication Templates",type:"Policy Document",date:"2026-02-28",source:"Confluence",status:"Valid"}
+  ],
+  "IR-2":[
+    {title:"Automated Detection Rules Export",type:"Configuration",date:"2026-03-29",source:"AWS GuardDuty",status:"Valid"},
+    {title:"Escalation Workflow Configuration",type:"Configuration",date:"2026-03-29",source:"PagerDuty",status:"Valid"},
+    {title:"Alert Response Time Metrics",type:"Log",date:"2026-03-29",source:"PagerDuty",status:"Valid"}
+  ],
+  "IR-3":[
+    {title:"Post-Incident Review Template",type:"Policy Document",date:"2026-03-22",source:"Confluence",status:"Pending Review"},
+    {title:"RCA Process Documentation Draft",type:"Policy Document",date:"2026-03-22",source:"Confluence",status:"Pending Review"},
+    {title:"Sample Post-Mortem Report",type:"Log",date:"2026-03-10",source:"Confluence",status:"Valid"}
+  ],
+  "CM-1":[
+    {title:"Branch Protection Rules Screenshot",type:"Screenshot",date:"2026-03-31",source:"GitHub",status:"Valid"},
+    {title:"Required Reviewers Configuration",type:"Configuration",date:"2026-03-31",source:"GitHub",status:"Valid"},
+    {title:"CI/CD Pipeline Configuration",type:"Configuration",date:"2026-03-31",source:"GitHub Actions",status:"Valid"},
+    {title:"Merge Audit Log (Mar 2026)",type:"Log",date:"2026-03-31",source:"GitHub",status:"Valid"},
+    {title:"Change Management Policy v2.0",type:"Policy Document",date:"2026-01-10",source:"Confluence",status:"Valid"},
+    {title:"Deployment Approval Workflow",type:"Configuration",date:"2026-03-30",source:"GitHub Actions",status:"Valid"}
+  ],
+  "CM-2":[
+    {title:"IaC Implementation Roadmap",type:"Policy Document",date:"2026-03-18",source:"Confluence",status:"Pending Review"},
+    {title:"Terraform State Configuration Draft",type:"Configuration",date:"2026-03-15",source:"GitHub",status:"Pending Review"}
+  ]
+};
+
+// RENDER
+function renderControls(){
+  const body = document.getElementById('controlsBody');
+  const search = document.getElementById('controlSearch').value.toLowerCase();
+  const catF = document.getElementById('categoryFilter').value;
+  const statF = document.getElementById('statusFilter').value;
+  const filtered = controls.filter(c=>{
+    if(search && !(c.id+c.desc+c.cat).toLowerCase().includes(search)) return false;
+    if(catF && c.cat!==catF) return false;
+    if(statF && c.status!==statF) return false;
+    return true;
+  });
+  body.innerHTML = filtered.map(c=>`<tr onclick="showEvidence('${c.id}')">
+    <td><strong>${c.id}</strong></td>
+    <td>${c.cat}</td>
+    <td>${c.desc}</td>
+    <td><span class="badge ${badgeClass(c.status)}">${c.status}</span></td>
+    <td>${c.evidence}</td>
+    <td>${c.verified}</td>
+  </tr>`).join('');
+}
+
+function renderEvidenceControls(){
+  const body = document.getElementById('evidenceControlsBody');
+  body.innerHTML = controls.map(c=>`<tr onclick="showEvidence('${c.id}')" style="cursor:pointer">
+    <td><strong>${c.id}</strong></td>
+    <td>${c.cat}</td>
+    <td>${c.desc}</td>
+    <td>${c.evidence} items</td>
+  </tr>`).join('');
+}
+
+function badgeClass(s){
+  if(s==='Implemented') return 'badge-green';
+  if(s==='In Progress') return 'badge-yellow';
+  return 'badge-blue';
+}
+
+function evBadge(s){
+  if(s==='Valid') return 'badge-green';
+  if(s==='Expired') return 'badge-red';
+  return 'badge-yellow';
+}
+
+function evTypeBadge(t){
+  if(t==='Screenshot') return 'badge-purple';
+  if(t==='Configuration') return 'badge-blue';
+  if(t==='Log') return 'badge-green';
+  return 'badge-yellow';
+}
+
+function showEvidence(id){
+  const ctrl = controls.find(c=>c.id===id);
+  const items = evidenceDb[id]||[];
+  const panel = document.getElementById('evidencePanel');
+  document.getElementById('epTitle').textContent = id+' — '+ctrl.desc;
+  document.getElementById('epSub').textContent = ctrl.cat+' | '+items.length+' evidence items';
+  document.getElementById('evidenceList').innerHTML = items.map(e=>`
+    <div class="evidence-item">
+      <div>
+        <div class="ei-title">${e.title}</div>
+        <div class="ei-meta">
+          <span><span class="badge ${evTypeBadge(e.type)}">${e.type}</span></span>
+          <span>Collected: ${e.date}</span>
+          <span>Source: ${e.source}</span>
+        </div>
+      </div>
+      <div class="ei-status"><span class="badge ${evBadge(e.status)}">${e.status}</span></div>
+    </div>
+  `).join('');
+  panel.style.display='block';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  // If on controls tab, switch to evidence tab
+  if(document.getElementById('tab-evidence').classList.contains('active')){return;}
+  switchTab('evidence',document.querySelectorAll('.sidebar-nav button')[2]);
+  setTimeout(()=>{panel.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+}
+
+function filterControls(){renderControls();}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.sidebar-nav button').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+function doLogin(){
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('app').style.display='flex';
+  const name = document.getElementById('loginEmail').value.split('@')[0].replace('.',' ').replace(/\b\w/g,l=>l.toUpperCase());
+  document.getElementById('auditorName').textContent = name;
+}
+
+function downloadPackage(){
+  showToast('Preparing audit package... Download will begin shortly.');
+  setTimeout(()=>{
+    const blob = new Blob([JSON.stringify({
+      generated: new Date().toISOString(),
+      organization:"GovernLayer Inc.",
+      engagement:"SOC 2 Type II",
+      compliance_score:92,
+      controls_summary:{implemented:47,in_progress:3,planned:2,total:52},
+      evidence_count:156,
+      controls:controls,
+      evidence:evidenceDb
+    },null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'governlayer-audit-package-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('Audit package downloaded successfully.');
+  },1500);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// INIT
+document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+renderControls();
+renderEvidenceControls();
+</script>
+</body>
+</html>

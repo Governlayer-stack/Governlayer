@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer Trust Center — Security, Compliance & Data Practices</title>
+<meta name="description" content="Transparency into GovernLayer's security posture, compliance certifications, data handling practices, and subprocessor list.">
+<meta name="theme-color" content="#0f172a">
+<meta property="og:title" content="GovernLayer Trust Center">
+<meta property="og:description" content="Transparency into our security, compliance, and data practices.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/trust">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;
+  --bg2:#1e293b;
+  --bg3:#334155;
+  --bg4:#0b1120;
+  --surface:#1e293b;
+  --surface2:#283548;
+  --border:rgba(148,163,184,.12);
+  --border2:rgba(148,163,184,.2);
+  --text:#f1f5f9;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --green:#10b981;
+  --green-dim:rgba(16,185,129,.12);
+  --green-glow:rgba(16,185,129,.25);
+  --amber:#f59e0b;
+  --amber-dim:rgba(245,158,11,.12);
+  --blue:#3b82f6;
+  --blue-dim:rgba(59,130,246,.12);
+  --purple:#8b5cf6;
+  --purple-dim:rgba(139,92,246,.12);
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--green);text-decoration:none;transition:color .2s}
+a:hover{color:#34d399}
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+button{cursor:pointer;font-family:inherit}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-ring{0%{transform:scale(.8);opacity:1}100%{transform:scale(2.2);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.fade-up{opacity:0;animation:fadeUp .7s ease forwards}
+.fade-up-1{animation-delay:.1s}
+.fade-up-2{animation-delay:.2s}
+.fade-up-3{animation-delay:.3s}
+.fade-up-4{animation-delay:.4s}
+
+/* ========== NAV ========== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+nav .inner{display:flex;align-items:center;justify-content:space-between;max-width:1120px;margin:0 auto;padding:14px 24px}
+nav .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;color:var(--text)}
+nav .brand svg{flex-shrink:0}
+nav .nav-links{display:flex;gap:28px;align-items:center}
+nav .nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s}
+nav .nav-links a:hover{color:var(--text)}
+.nav-cta{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--green);color:#0f172a;font-weight:600;font-size:.8rem;border-radius:8px;text-transform:uppercase;letter-spacing:.04em;transition:all .2s}
+.nav-cta:hover{background:#34d399;color:#0f172a;transform:translateY(-1px)}
+
+/* ========== HERO ========== */
+.hero{padding:140px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(16,185,129,.08) 0%,transparent 70%);pointer-events:none}
+.hero-shield{width:80px;height:80px;margin:0 auto 28px;animation:float 3s ease-in-out infinite}
+.hero-shield .shield-bg{fill:rgba(16,185,129,.1);stroke:var(--green);stroke-width:1.5}
+.hero-shield .shield-check{stroke:var(--green);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:16px;background:linear-gradient(135deg,#f1f5f9 0%,#10b981 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.15rem;color:var(--text2);max-width:560px;margin:0 auto 36px}
+.hero-status{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;background:var(--green-dim);border:1px solid rgba(16,185,129,.2);border-radius:100px;font-size:.875rem;font-weight:600;color:var(--green)}
+.hero-status .dot{width:8px;height:8px;background:var(--green);border-radius:50%;position:relative}
+.hero-status .dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;background:var(--green);animation:pulse-ring 2s ease infinite}
+.updated{display:block;margin-top:20px;font-size:.8rem;color:var(--text3)}
+
+/* ========== SECTION COMMON ========== */
+section{padding:72px 0}
+.section-label{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--green-dim);border:1px solid rgba(16,185,129,.15);border-radius:100px;font-size:.75rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:18px}
+.section-label svg{width:14px;height:14px}
+.section-title{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.02em;margin-bottom:12px}
+.section-desc{color:var(--text2);font-size:1rem;max-width:600px;margin-bottom:40px}
+.divider{border:none;border-top:1px solid var(--border);margin:0}
+
+/* ========== SECURITY OVERVIEW ========== */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.overview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .25s}
+.overview-card:hover{border-color:var(--green-glow);transform:translateY(-2px)}
+.overview-card .card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.overview-card .card-icon.green{background:var(--green-dim)}
+.overview-card .card-icon.blue{background:var(--blue-dim)}
+.overview-card .card-icon.purple{background:var(--purple-dim)}
+.overview-card .card-icon svg{width:22px;height:22px}
+.overview-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.overview-card p{font-size:.875rem;color:var(--text2);line-height:1.5}
+.overview-card .metric{font-size:1.6rem;font-weight:800;color:var(--green);margin-bottom:2px}
+
+/* ========== COMPLIANCE BADGES ========== */
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.badge-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;transition:all .25s}
+.badge-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.badge-icon{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+.badge-icon.compliant{background:var(--green-dim);border:2px solid rgba(16,185,129,.3)}
+.badge-icon.in-progress{background:var(--amber-dim);border:2px solid rgba(245,158,11,.3)}
+.badge-icon.planned{background:var(--blue-dim);border:2px solid rgba(59,130,246,.3)}
+.badge-icon svg{width:28px;height:28px}
+.badge-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+.badge-status{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.badge-status.compliant{background:var(--green-dim);color:var(--green)}
+.badge-status.in-progress{background:var(--amber-dim);color:var(--amber)}
+.badge-status.planned{background:var(--blue-dim);color:var(--blue)}
+.badge-status .status-dot{width:6px;height:6px;border-radius:50%}
+.badge-status.compliant .status-dot{background:var(--green)}
+.badge-status.in-progress .status-dot{background:var(--amber)}
+.badge-status.planned .status-dot{background:var(--blue)}
+
+/* ========== INFRA CARDS ========== */
+.infra-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.infra-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .25s}
+.infra-card:hover{border-color:var(--border2)}
+.infra-card .ic-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.infra-card .ic-icon{width:40px;height:40px;border-radius:10px;background:var(--green-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.infra-card .ic-icon svg{width:20px;height:20px;color:var(--green)}
+.infra-card h3{font-size:1rem;font-weight:700}
+.infra-card ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.infra-card li{display:flex;align-items:flex-start;gap:8px;font-size:.875rem;color:var(--text2)}
+.infra-card li svg{width:16px;height:16px;color:var(--green);flex-shrink:0;margin-top:3px}
+
+/* ========== DATA HANDLING ========== */
+.data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.data-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px}
+.data-card h3{font-size:1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.data-card h3 svg{width:18px;height:18px;color:var(--green)}
+.data-card p{font-size:.875rem;color:var(--text2);line-height:1.6}
+.data-card .highlight{color:var(--green);font-weight:600}
+
+/* ========== SUBPROCESSORS TABLE ========== */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+thead{background:var(--surface)}
+th{padding:14px 20px;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border)}
+td{padding:14px 20px;border-bottom:1px solid var(--border);color:var(--text2)}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(16,185,129,.03)}
+td:first-child{color:var(--text);font-weight:600}
+.table-badge{display:inline-flex;padding:3px 10px;border-radius:100px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.table-badge.hosting{background:var(--green-dim);color:var(--green)}
+.table-badge.data{background:var(--blue-dim);color:var(--blue)}
+.table-badge.billing{background:var(--purple-dim);color:var(--purple)}
+.table-badge.ai{background:var(--amber-dim);color:var(--amber)}
+
+/* ========== PENTEST ========== */
+.pentest-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px;display:flex;gap:28px;align-items:flex-start}
+.pentest-icon{width:56px;height:56px;border-radius:14px;background:var(--green-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pentest-icon svg{width:28px;height:28px;color:var(--green)}
+.pentest-content h3{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.pentest-content p{font-size:.9rem;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.pentest-tags{display:flex;flex-wrap:wrap;gap:8px}
+.pentest-tag{padding:5px 14px;background:var(--bg);border:1px solid var(--border);border-radius:100px;font-size:.75rem;font-weight:600;color:var(--text2)}
+
+/* ========== DOWNLOADS ========== */
+.download-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.download-card{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;transition:all .25s;text-decoration:none;color:var(--text)}
+.download-card:hover{border-color:var(--green-glow);transform:translateY(-2px);color:var(--text)}
+.download-card .dl-icon{width:44px;height:44px;border-radius:10px;background:var(--green-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.download-card .dl-icon svg{width:20px;height:20px;color:var(--green)}
+.download-card .dl-text h3{font-size:.9rem;font-weight:700;margin-bottom:2px}
+.download-card .dl-text p{font-size:.75rem;color:var(--text3)}
+.download-card .dl-arrow{margin-left:auto;color:var(--text3);transition:all .2s}
+.download-card:hover .dl-arrow{color:var(--green);transform:translateX(3px)}
+
+/* ========== FAQ ACCORDION ========== */
+.faq-list{display:flex;flex-direction:column;gap:4px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;transition:border-color .2s}
+.faq-item.open{border-color:var(--border2)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;font-size:.925rem;font-weight:600;background:none;border:none;color:var(--text);width:100%;text-align:left;transition:background .15s}
+.faq-q:hover{background:rgba(255,255,255,.02)}
+.faq-q .chevron{width:20px;height:20px;color:var(--text3);transition:transform .25s;flex-shrink:0}
+.faq-item.open .chevron{transform:rotate(180deg);color:var(--green)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-a-inner{padding:0 24px 20px;font-size:.875rem;color:var(--text2);line-height:1.7}
+
+/* ========== CONTACT ========== */
+.contact-box{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(59,130,246,.06));border:1px solid rgba(16,185,129,.15);border-radius:var(--radius);padding:48px;text-align:center}
+.contact-box h2{font-size:1.4rem;font-weight:700;margin-bottom:10px}
+.contact-box p{color:var(--text2);font-size:1rem;margin-bottom:24px}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--green);color:#0f172a;font-weight:700;font-size:.9rem;border-radius:10px;border:none;transition:all .2s;text-decoration:none}
+.contact-btn:hover{background:#34d399;transform:translateY(-1px);color:#0f172a}
+
+/* ========== FOOTER ========== */
+footer{padding:40px 0;border-top:1px solid var(--border);text-align:center}
+footer p{font-size:.8rem;color:var(--text3)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){
+  nav .nav-links{display:none}
+  .hero{padding:110px 0 60px}
+  .hero h1{font-size:1.8rem}
+  .pentest-box{flex-direction:column}
+  .badge-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .contact-box{padding:32px 20px}
+  section{padding:52px 0}
+}
+@media(max-width:480px){
+  .overview-grid,.infra-grid,.data-grid,.download-grid{grid-template-columns:1fr}
+  table{font-size:.8rem}
+  th,td{padding:10px 14px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <a href="https://governlayer.ai" class="brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="2" y="2" width="24" height="24" rx="6" stroke="#10b981" stroke-width="2" fill="rgba(16,185,129,.1)"/>
+        <path d="M14 8v8m-4-4h8" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      GovernLayer
+    </a>
+    <div class="nav-links">
+      <a href="#security">Security</a>
+      <a href="#compliance">Compliance</a>
+      <a href="#infrastructure">Infrastructure</a>
+      <a href="#data">Data Handling</a>
+      <a href="#subprocessors">Subprocessors</a>
+      <a href="#faq">FAQ</a>
+      <a href="mailto:security@governlayer.ai" class="nav-cta">Contact Security</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-shield fade-up">
+      <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
+        <path d="M40 6L12 20v20c0 16.57 11.93 32.07 28 36 16.07-3.93 28-19.43 28-36V20L40 6z" class="shield-bg"/>
+        <path d="M28 40l8 8 16-16" class="shield-check"/>
+      </svg>
+    </div>
+    <h1 class="fade-up fade-up-1">GovernLayer Trust Center</h1>
+    <p class="fade-up fade-up-2">Transparency into our security, compliance, and data practices</p>
+    <div class="hero-status fade-up fade-up-3">
+      <span class="dot"></span>
+      All Systems Operational
+    </div>
+    <span class="updated fade-up fade-up-4">Last updated: March 31, 2026</span>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SECURITY OVERVIEW -->
+<section id="security">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 1L2 4v4c0 4.42 2.56 8.56 6 9.6 3.44-1.04 6-5.18 6-9.6V4L8 1z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      Security Overview
+    </div>
+    <h2 class="section-title">Current Security Posture</h2>
+    <p class="section-desc">GovernLayer maintains enterprise-grade security across all layers of the platform, from infrastructure to application to data.</p>
+    <div class="overview-grid">
+      <div class="overview-card">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#10b981" stroke-width="2" fill="none"/><path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="metric">A+</div>
+        <h3>Security Rating</h3>
+        <p>Continuous monitoring with automated vulnerability scanning and remediation.</p>
+      </div>
+      <div class="overview-card">
+        <div class="card-icon green">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/><path d="M12 6v6l4 2" stroke="#10b981" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="metric">99.9%</div>
+        <h3>Uptime SLA</h3>
+        <p>Highly available infrastructure with automated failover and health checks.</p>
+      </div>
+      <div class="overview-card">
+        <div class="card-icon blue">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="metric">7</div>
+        <h3>Compliance Frameworks</h3>
+        <p>Aligned with SOC 2, ISO 27001, NIST AI RMF, EU AI Act, GDPR, HIPAA, and CCPA.</p>
+      </div>
+      <div class="overview-card">
+        <div class="card-icon purple">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#8b5cf6" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="metric">256-bit</div>
+        <h3>Encryption Standard</h3>
+        <p>AES-256 encryption at rest, TLS 1.3 in transit. Zero plaintext storage of secrets.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COMPLIANCE BADGES -->
+<section id="compliance">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/></svg>
+      Compliance
+    </div>
+    <h2 class="section-title">Compliance &amp; Certifications</h2>
+    <p class="section-desc">We pursue and maintain compliance with industry-leading security and privacy frameworks relevant to AI governance.</p>
+    <div class="badge-grid">
+
+      <div class="badge-card">
+        <div class="badge-icon in-progress">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#f59e0b" stroke-width="2"/></svg>
+        </div>
+        <h3>SOC 2 Type II</h3>
+        <span class="badge-status in-progress"><span class="status-dot"></span>In Progress</span>
+      </div>
+
+      <div class="badge-card">
+        <div class="badge-icon planned">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#3b82f6" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>ISO 27001</h3>
+        <span class="badge-status planned"><span class="status-dot"></span>Planned</span>
+      </div>
+
+      <div class="badge-card">
+        <div class="badge-icon compliant">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/></svg>
+        </div>
+        <h3>NIST AI RMF</h3>
+        <span class="badge-status compliant"><span class="status-dot"></span>Compliant</span>
+      </div>
+
+      <div class="badge-card">
+        <div class="badge-icon compliant">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/></svg>
+        </div>
+        <h3>EU AI Act</h3>
+        <span class="badge-status compliant"><span class="status-dot"></span>Compliant</span>
+      </div>
+
+      <div class="badge-card">
+        <div class="badge-icon compliant">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/></svg>
+        </div>
+        <h3>GDPR</h3>
+        <span class="badge-status compliant"><span class="status-dot"></span>Compliant</span>
+      </div>
+
+      <div class="badge-card">
+        <div class="badge-icon compliant">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/></svg>
+        </div>
+        <h3>HIPAA</h3>
+        <span class="badge-status compliant"><span class="status-dot"></span>Compliant</span>
+      </div>
+
+      <div class="badge-card">
+        <div class="badge-icon compliant">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 12l2 2 4-4" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/></svg>
+        </div>
+        <h3>CCPA</h3>
+        <span class="badge-status compliant"><span class="status-dot"></span>Compliant</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INFRASTRUCTURE SECURITY -->
+<section id="infrastructure">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="14" height="4" rx="1" stroke="currentColor" stroke-width="1.5"/><circle cx="4" cy="6" r=".75" fill="currentColor"/><circle cx="4" cy="11" r=".75" fill="currentColor"/></svg>
+      Infrastructure
+    </div>
+    <h2 class="section-title">Infrastructure Security</h2>
+    <p class="section-desc">Multiple layers of defense protect the platform at every level, from network edge to application runtime.</p>
+    <div class="infra-grid">
+
+      <div class="infra-card">
+        <div class="ic-head">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+          </div>
+          <h3>Encryption</h3>
+        </div>
+        <ul>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>AES-256 encryption at rest for all stored data</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>TLS 1.3 enforced for all data in transit</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>SHA-256 hash-chained audit ledger</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Secrets managed via environment injection, never hardcoded</li>
+        </ul>
+      </div>
+
+      <div class="infra-card">
+        <div class="ic-head">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <h3>Access Control</h3>
+        </div>
+        <ul>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Role-based access control (RBAC) with scoped API keys</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>JWT + API key dual authentication</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Multi-factor authentication for admin access</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Principle of least privilege enforced</li>
+        </ul>
+      </div>
+
+      <div class="infra-card">
+        <div class="ic-head">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <h3>Network Security</h3>
+        </div>
+        <ul>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>CORS restricted to approved origins only</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>HSTS enforced (2-year max-age, preload)</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Permissions-Policy (camera/mic/geo disabled)</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Redis-backed rate limiting per API key tier</li>
+        </ul>
+      </div>
+
+      <div class="infra-card">
+        <div class="ic-head">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <h3>Container Security</h3>
+        </div>
+        <ul>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Non-root Docker containers in production</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Multi-stage builds with minimal attack surface</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Health checks with automated restart policies</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Image scanning for known CVEs before deployment</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DATA HANDLING -->
+<section id="data">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="4" rx="6" ry="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 4v8c0 1.38 2.69 2.5 6 2.5s6-1.12 6-2.5V4" stroke="currentColor" stroke-width="1.5"/><path d="M2 8c0 1.38 2.69 2.5 6 2.5s6-1.12 6-2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      Data Handling
+    </div>
+    <h2 class="section-title">Data Handling &amp; Privacy</h2>
+    <p class="section-desc">We treat your data with the highest level of care. Here is exactly how we store, process, and protect it.</p>
+    <div class="data-grid">
+
+      <div class="data-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
+          Data Residency
+        </h3>
+        <p>All customer data is stored in <span class="highlight">Railway-managed infrastructure</span> with PostgreSQL databases. Data processing occurs in secure, isolated environments. Customers may request specific data residency arrangements under enterprise agreements.</p>
+      </div>
+
+      <div class="data-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2"/></svg>
+          Encryption Standards
+        </h3>
+        <p><span class="highlight">AES-256</span> encryption at rest for all database records and backups. <span class="highlight">TLS 1.3</span> for all data in transit. Audit ledger entries are additionally protected by SHA-256 hash chains ensuring tamper-proof integrity.</p>
+      </div>
+
+      <div class="data-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Retention Policies
+        </h3>
+        <p>Audit logs are retained for <span class="highlight">7 years</span> (configurable per customer). Operational data retained for the duration of the service agreement plus 90 days. Upon termination, all customer data is permanently deleted within 30 days upon request.</p>
+      </div>
+
+      <div class="data-card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Data Processing Agreement
+        </h3>
+        <p>A comprehensive DPA is available upon request covering GDPR Article 28 requirements, Standard Contractual Clauses (SCCs), and specific technical and organizational measures. Contact <a href="mailto:security@governlayer.ai">security@governlayer.ai</a> to request a copy.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SUBPROCESSORS -->
+<section id="subprocessors">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M14 11a2 2 0 11-4 0 2 2 0 014 0zM6 5a2 2 0 11-4 0 2 2 0 014 0zM14 5a2 2 0 11-4 0 2 2 0 014 0z" stroke="currentColor" stroke-width="1.5"/><path d="M6 5h4M4 7v2a2 2 0 002 2h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Subprocessors
+    </div>
+    <h2 class="section-title">Third-Party Subprocessors</h2>
+    <p class="section-desc">A complete list of third-party services that process data on behalf of GovernLayer. We notify customers 30 days before adding new subprocessors.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Purpose</th>
+            <th>Data Processed</th>
+            <th>Location</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Railway</td>
+            <td>Application hosting &amp; compute</td>
+            <td>Application data, logs</td>
+            <td>US / EU</td>
+            <td><span class="table-badge hosting">Hosting</span></td>
+          </tr>
+          <tr>
+            <td>PostgreSQL (Railway)</td>
+            <td>Primary database</td>
+            <td>Audit records, user data, risk scores</td>
+            <td>US / EU</td>
+            <td><span class="table-badge data">Database</span></td>
+          </tr>
+          <tr>
+            <td>Redis (Railway)</td>
+            <td>Cache &amp; rate limiting</td>
+            <td>Session tokens, rate counters</td>
+            <td>US / EU</td>
+            <td><span class="table-badge data">Database</span></td>
+          </tr>
+          <tr>
+            <td>Stripe</td>
+            <td>Payment processing &amp; billing</td>
+            <td>Billing info, subscription status</td>
+            <td>US</td>
+            <td><span class="table-badge billing">Billing</span></td>
+          </tr>
+          <tr>
+            <td>OpenRouter</td>
+            <td>Cloud LLM gateway</td>
+            <td>Governance prompts, policy text (no PII)</td>
+            <td>US</td>
+            <td><span class="table-badge ai">AI Inference</span></td>
+          </tr>
+          <tr>
+            <td>Groq</td>
+            <td>Fast LLM inference</td>
+            <td>Governance prompts, compliance text (no PII)</td>
+            <td>US</td>
+            <td><span class="table-badge ai">AI Inference</span></td>
+          </tr>
+          <tr>
+            <td>Ollama (Self-hosted)</td>
+            <td>Local LLM inference</td>
+            <td>Governance prompts (never leaves infrastructure)</td>
+            <td>Customer premises</td>
+            <td><span class="table-badge ai">AI Inference</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PENETRATION TESTING -->
+<section id="pentest">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M10 2a2 2 0 114 0M12 4v8M8 14h8M4 10l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Security Testing
+    </div>
+    <h2 class="section-title">Penetration Testing &amp; Vulnerability Management</h2>
+    <p class="section-desc">Continuous security validation ensures our defenses remain effective against evolving threats.</p>
+    <div class="pentest-box">
+      <div class="pentest-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="pentest-content">
+        <h3>Continuous Security Validation</h3>
+        <p>GovernLayer conducts regular security assessments including automated SAST/DAST scanning on every deployment, dependency vulnerability monitoring via GitHub Dependabot, and periodic third-party penetration testing. Our AI-specific security testing covers MITRE ATLAS and OWASP ML Top 10 threat vectors through our built-in threat analysis agent.</p>
+        <p>Security findings are triaged and remediated according to severity: Critical (24h), High (72h), Medium (2 weeks), Low (next sprint). Penetration test reports are available to enterprise customers under NDA.</p>
+        <div class="pentest-tags">
+          <span class="pentest-tag">SAST / DAST</span>
+          <span class="pentest-tag">Dependency Scanning</span>
+          <span class="pentest-tag">MITRE ATLAS</span>
+          <span class="pentest-tag">OWASP ML Top 10</span>
+          <span class="pentest-tag">Container Scanning</span>
+          <span class="pentest-tag">API Fuzzing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DOCUMENT DOWNLOADS -->
+<section id="documents">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 10V2M4 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12v2h12v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Documents
+    </div>
+    <h2 class="section-title">Security Documents</h2>
+    <p class="section-desc">Request access to our security documentation. Enterprise customers receive full access upon signing an NDA.</p>
+    <div class="download-grid">
+
+      <a href="mailto:security@governlayer.ai?subject=Request%3A%20Security%20Whitepaper" class="download-card">
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div class="dl-text">
+          <h3>Security Whitepaper</h3>
+          <p>Architecture, controls &amp; practices</p>
+        </div>
+        <svg class="dl-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <a href="mailto:security@governlayer.ai?subject=Request%3A%20Data%20Processing%20Agreement" class="download-card">
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M16 13H8M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="dl-text">
+          <h3>Data Processing Agreement</h3>
+          <p>GDPR-compliant DPA with SCCs</p>
+        </div>
+        <svg class="dl-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <a href="mailto:security@governlayer.ai?subject=Request%3A%20Privacy%20Policy" class="download-card">
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="dl-text">
+          <h3>Privacy Policy</h3>
+          <p>How we collect &amp; use data</p>
+        </div>
+        <svg class="dl-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <a href="mailto:security@governlayer.ai?subject=Request%3A%20Terms%20of%20Service" class="download-card">
+        <div class="dl-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><path d="M14 2v6h6M10 9H8M16 13H8M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="dl-text">
+          <h3>Terms of Service</h3>
+          <p>Service terms &amp; conditions</p>
+        </div>
+        <svg class="dl-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M6 6a2 2 0 113 1.94c-.58.36-1 .98-1 1.56V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r=".75" fill="currentColor"/></svg>
+      FAQ
+    </div>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-desc">Common questions about GovernLayer's security and data practices.</p>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Where is my data stored?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">All customer data is stored in Railway-managed PostgreSQL databases. Railway operates on major cloud providers with data centers in the US and EU. Enterprise customers can negotiate specific data residency requirements. Cached data in Redis is ephemeral and automatically purged based on TTL settings.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Do you share data with AI/LLM providers?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">We send only governance-related prompts (policy text, compliance frameworks, risk descriptions) to LLM providers. We never send personally identifiable information (PII), customer credentials, or raw customer data to any AI provider. For maximum data privacy, customers can use Ollama-based local inference where no data leaves their infrastructure. All cloud LLM providers (Groq, OpenRouter) have data processing agreements prohibiting training on our inputs.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How is the audit ledger secured?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">The audit ledger uses a SHA-256 hash chain, similar to blockchain technology. Each record stores the hash of the previous record plus its own computed hash, creating a tamper-evident chain. The genesis hash is derived from a known seed value. Any modification to a historical record would break the chain and be immediately detectable. Records are stored in PostgreSQL with AES-256 encryption at rest.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What authentication methods do you support?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">GovernLayer supports dual authentication: JWT bearer tokens for interactive sessions and scoped API keys (prefixed with <code>gl_</code>) for programmatic access. API keys can be scoped to specific operations (govern, audit, risk, scan) following the principle of least privilege. Admin accounts support multi-factor authentication. Service accounts can be created via the automation API for bot-to-bot communication.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How do you handle rate limiting and abuse prevention?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">All API endpoints are protected by Redis-backed rate limiting, tiered by subscription plan: Free (20 rpm), Starter (100 rpm), Pro (500 rpm), Enterprise (2,000 rpm). Rate limits are applied per API key with sliding window counters. Exceeding the limit returns a 429 response with a Retry-After header. Enterprise customers can request custom rate limits. DDoS protection is provided at the infrastructure level by Railway.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I run GovernLayer entirely on-premises?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. GovernLayer is fully containerized with Docker and can be deployed on-premises or in your own cloud VPC. The Docker Compose configuration includes PostgreSQL, Redis, and optional Ollama for complete local LLM inference. In this configuration, no data leaves your network. Contact our team for enterprise deployment guides and support.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How do you detect and respond to security incidents?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">GovernLayer maintains a security incident response plan with defined severity levels and escalation procedures. Our platform includes built-in threat detection (MITRE ATLAS and OWASP ML Top 10 analysis), behavioral drift monitoring for AI systems, and real-time alerting via webhooks. Customers are notified of security incidents affecting their data within 72 hours per GDPR requirements, or within 24 hours for critical incidents.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What happens to my data if I cancel my subscription?
+          <svg class="chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Upon subscription cancellation, your account enters a 90-day grace period during which data is retained but access is read-only. After the grace period, you can request full data export in JSON format. Upon your written request, all customer data is permanently deleted within 30 days, including database records, cached data, and backups. We provide a deletion confirmation certificate. Audit ledger records may be retained in anonymized form for regulatory compliance.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-box">
+      <h2>Questions about our security?</h2>
+      <p>Our security team is available to answer questions, provide documentation, or schedule a security review call.</p>
+      <a href="mailto:security@governlayer.ai" class="contact-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/><path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        security@governlayer.ai
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 GovernLayer. All rights reserved. The Governance Layer for Agentic AI.</p>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn){
+  const item=btn.parentElement;
+  const answer=item.querySelector('.faq-a');
+  const isOpen=item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(i=>{
+    i.classList.remove('open');
+    i.querySelector('.faq-a').style.maxHeight=null;
+  });
+  // Open clicked if it was closed
+  if(!isOpen){
+    item.classList.add('open');
+    answer.style.maxHeight=answer.scrollHeight+'px';
+  }
+}
+// Intersection observer for fade-up animations
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.animationPlayState='running';
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>{
+  el.style.animationPlayState='running';
+});
+</script>
+
+</body>
+</html>
