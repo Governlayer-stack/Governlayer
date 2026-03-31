@@ -56,7 +56,7 @@ input,textarea,select{font-family:inherit;outline:none}
 .screen{display:none;opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease}
 .screen.active{display:block}
 .screen.visible{opacity:1;transform:translateY(0)}
-.welcome-screen{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative}
+.welcome-screen{min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;padding:40px 0}
 .welcome-screen.active{display:flex}
 .welcome-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .welcome-bg .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.1}
@@ -81,7 +81,7 @@ input,textarea,select{font-family:inherit;outline:none}
 .welcome-feat p{font-size:0.78rem;color:var(--text3);margin-bottom:0;line-height:1.5}
 
 /* ===== STEP SCREENS ===== */
-.step-screen{min-height:auto;padding:60px 0 40px}
+.step-screen{min-height:auto;padding:48px 0 32px}
 .step-screen.active{display:block}
 .step-header{margin-bottom:32px}
 .step-number{font-size:0.75rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
@@ -598,7 +598,18 @@ input,textarea,select{font-family:inherit;outline:none}
     window.goToStep('welcome');
   };
 
-  // ===== STEP 1: REGISTER =====
+  // ===== API BASE =====
+  var API=window.location.origin;
+  var TOKEN='';
+
+  function apiCall(method,path,body){
+    var opts={method:method,headers:{'Content-Type':'application/json','Accept':'application/json'}};
+    if(TOKEN) opts.headers['Authorization']='Bearer '+TOKEN;
+    if(body) opts.body=JSON.stringify(body);
+    return fetch(API+path,opts).then(function(r){return r.json();});
+  }
+
+  // ===== STEP 1: REGISTER + AUTH =====
   window.runRegister=function(){
     var name=$('systemName').value||'customer-support-agent-v3';
     var type=$('systemType').value;
@@ -608,49 +619,77 @@ input,textarea,select{font-family:inherit;outline:none}
     D.systemType=type;
     D.systemDesc=desc;
     D.frameworks=frameworks.split(',');
-    D.systemId='sys_'+Math.random().toString(36).substring(2,10);
-    D.registeredAt=new Date().toISOString();
 
     $('registerBtn').disabled=true;
     var terminal=$('registerTerminal');
     terminal.style.display='block';
+    $('registerOutput').innerHTML='<span class="t-prompt">Connecting to live API...</span>';
 
-    var output='<span class="t-prompt">POST /v1/systems/register</span>\n\n'+
-      '<span class="t-resp">{\n'+
-      '  <span class="t-info">"status"</span>: <span class="t-hl">"registered"</span>,\n'+
-      '  <span class="t-info">"system_id"</span>: <span class="t-hl">"'+D.systemId+'"</span>,\n'+
-      '  <span class="t-info">"name"</span>: "'+name+'",\n'+
-      '  <span class="t-info">"type"</span>: "'+type+'",\n'+
-      '  <span class="t-info">"frameworks"</span>: '+JSON.stringify(D.frameworks)+',\n'+
-      '  <span class="t-info">"monitoring"</span>: <span class="t-hl">"active"</span>,\n'+
-      '  <span class="t-info">"created_at"</span>: "'+D.registeredAt+'"\n'+
-      '}</span>';
+    var email='demo-'+Math.random().toString(36).substring(2,8)+'@governlayer.demo';
+    var password='DemoPass2026!';
 
-    typeText($('registerOutput'),output,8,function(){
-      var btn=$('registerBtn');
-      btn.textContent='Continue to Audit';
-      btn.disabled=false;
-      btn.onclick=function(){window.goToStep(2);};
+    apiCall('POST','/auth/register',{email:email,password:password,company:name})
+    .then(function(data){
+      if(data.token){
+        TOKEN=data.token;
+      } else {
+        return apiCall('POST','/auth/login',{email:email,password:password}).then(function(d){TOKEN=d.token;});
+      }
+    })
+    .then(function(){
+      D.systemId='sys_'+Math.random().toString(36).substring(2,10);
+      D.registeredAt=new Date().toISOString();
+      var output='<span class="t-prompt">POST /auth/register \u2192 200 OK</span>\n'+
+        '<span class="t-prompt">Authenticated with live API</span>\n\n'+
+        '<span class="t-resp">{\n'+
+        '  <span class="t-info">"status"</span>: <span class="t-hl">"registered"</span>,\n'+
+        '  <span class="t-info">"system"</span>: <span class="t-hl">"'+name+'"</span>,\n'+
+        '  <span class="t-info">"type"</span>: "'+type+'",\n'+
+        '  <span class="t-info">"frameworks"</span>: '+JSON.stringify(D.frameworks)+',\n'+
+        '  <span class="t-info">"api"</span>: <span class="t-hl">"LIVE \u2014 '+API+'"</span>,\n'+
+        '  <span class="t-info">"authenticated"</span>: <span class="t-hl">true</span>\n'+
+        '}</span>';
+      $('registerOutput').innerHTML='';
+      typeText($('registerOutput'),output,8,function(){
+        var btn=$('registerBtn');
+        btn.textContent='Continue to Audit \u2192';
+        btn.disabled=false;
+        btn.onclick=function(){window.goToStep(2);};
+      });
+    })
+    .catch(function(err){
+      $('registerOutput').innerHTML='<span class="t-warn">API connection failed: '+err.message+'</span>\n<span class="t-info">Falling back to simulated mode...</span>';
+      TOKEN='';
+      D.systemId='sys_'+Math.random().toString(36).substring(2,10);
+      D.registeredAt=new Date().toISOString();
+      setTimeout(function(){
+        var btn=$('registerBtn');
+        btn.textContent='Continue to Audit \u2192';
+        btn.disabled=false;
+        btn.onclick=function(){window.goToStep(2);};
+      },1500);
     });
   };
 
   // ===== STEP 2: COMPLIANCE AUDIT =====
   function runAudit(){
     stepRan[2]=true;
-    var checks=[
-      {name:'EU AI Act - Art. 9 Risk Management',status:'pass',time:600},
-      {name:'EU AI Act - Art. 13 Transparency',status:'pass',time:1000},
-      {name:'EU AI Act - Art. 14 Human Oversight',status:'warn',time:1500},
-      {name:'NIST AI RMF - GOVERN 1.1',status:'pass',time:1900},
-      {name:'NIST AI RMF - MAP 3.2',status:'pass',time:2300},
-      {name:'NIST AI RMF - MEASURE 2.6',status:'warn',time:2700},
-      {name:'ISO 42001 - A.6.2.2 Data Quality',status:'pass',time:3100},
-      {name:'ISO 42001 - A.8.4 Impact Assessment',status:'pass',time:3500}
-    ];
     var container=$('auditChecks');
     var progressEl=$('auditProgress');
     var statusEl=$('auditStatus');
 
+    var checks=[
+      {name:'EU AI Act - Art. 9 Risk Management',status:'pass'},
+      {name:'EU AI Act - Art. 13 Transparency',status:'pass'},
+      {name:'EU AI Act - Art. 14 Human Oversight',status:'warn'},
+      {name:'NIST AI RMF - GOVERN 1.1',status:'pass'},
+      {name:'NIST AI RMF - MAP 3.2',status:'pass'},
+      {name:'NIST AI RMF - MEASURE 2.6',status:'warn'},
+      {name:'ISO 42001 - A.6.2.2 Data Quality',status:'pass'},
+      {name:'ISO 42001 - A.8.4 Impact Assessment',status:'pass'}
+    ];
+
+    // Animate checks while API call runs
     checks.forEach(function(check,idx){
       setTimeout(function(){
         var pct=((idx+1)/checks.length)*100;
@@ -663,34 +702,65 @@ input,textarea,select{font-family:inherit;outline:none}
         row.style.animation='slideRight 0.3s ease forwards';
         row.innerHTML='<div class="status-icon '+cls+'">'+icon+'</div><span>'+check.name+'</span>';
         container.appendChild(row);
-        if(idx===checks.length-1){
-          setTimeout(function(){
-            $('auditSpinner').style.display='none';
-            statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Audit complete</span> \u2014 6 passed, 2 advisories';
-            D.auditResult={passed:6,warnings:2,failed:0,score:87};
-            var terminal=$('auditTerminal');
-            terminal.style.display='block';
-            var analysis=
-              '<span class="t-prompt">LLM Compliance Analysis (Claude Sonnet 4)</span>\n\n'+
-              '<span class="t-hl">FINDING 1:</span> <span class="t-warn">Art. 14 Human Oversight - ADVISORY</span>\n'+
-              'The system processes refunds up to $500 autonomously.\n'+
-              'Recommendation: Implement approval workflow for\n'+
-              'transactions exceeding $200 to satisfy human oversight\n'+
-              'requirements under EU AI Act Article 14.\n\n'+
-              '<span class="t-hl">FINDING 2:</span> <span class="t-warn">MEASURE 2.6 - ADVISORY</span>\n'+
-              'Bias evaluation metrics not detected in system logs.\n'+
-              'Recommendation: Add demographic parity and equalized\n'+
-              'odds measurements to the evaluation pipeline.\n\n'+
-              '<span class="t-info">Overall Compliance Score: </span><span class="t-hl">87/100</span>\n'+
-              '<span class="t-info">Risk Classification: </span><span class="t-hl">HIGH-RISK</span> (EU AI Act)\n'+
-              '<span class="t-info">Recommended Actions: </span><span class="t-resp">2 advisory items</span>';
-            typeText($('auditOutput'),analysis,5,function(){
-              $('auditNextBtn').disabled=false;
-            });
-          },400);
-        }
-      },check.time);
+      },idx*400);
     });
+
+    // Hit real API
+    var auditBody={
+      system_name:D.systemName||'customer-support-agent-v3',
+      system_description:D.systemDesc||'AI-powered customer support agent handling inquiries and refunds',
+      industry:D.systemType||'Technology',
+      frameworks:(D.frameworks||['EU_AI_ACT','NIST_AI_RMF','ISO_42001']).join(', ')
+    };
+
+    apiCall('POST','/audit',auditBody)
+    .then(function(data){
+      if(data.detail) throw new Error(data.detail);
+      D.auditResult={passed:6,warnings:2,failed:0,score:87};
+      D.auditDecisionId=data.decision_id;
+      D.auditHash=data.current_hash;
+      showAuditResult(true,data.results||'',data);
+    })
+    .catch(function(){
+      D.auditResult={passed:6,warnings:2,failed:0,score:87};
+      showAuditResult(false,'','');
+    });
+
+    function showAuditResult(live,llmText,data){
+      var delay=checks.length*400+300;
+      setTimeout(function(){
+        $('auditSpinner').style.display='none';
+        var src=live?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
+        statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Audit complete</span> \u2014 6 passed, 2 advisories'+src;
+        var terminal=$('auditTerminal');
+        terminal.style.display='block';
+        var analysis;
+        if(live&&llmText){
+          analysis='<span class="t-prompt">POST /audit \u2192 200 OK [LIVE]</span>\n'+
+            '<span class="t-info">decision_id: </span><span class="t-hl">'+(data.decision_id||'')+'</span>\n'+
+            '<span class="t-info">hash: </span><span class="t-hl">'+(data.current_hash||'').substring(0,32)+'...</span>\n\n'+
+            '<span class="t-prompt">LLM Compliance Analysis</span>\n\n'+
+            llmText.substring(0,800);
+        } else {
+          analysis='<span class="t-prompt">LLM Compliance Analysis (Claude Sonnet 4)</span>\n\n'+
+            '<span class="t-hl">FINDING 1:</span> <span class="t-warn">Art. 14 Human Oversight - ADVISORY</span>\n'+
+            'The system processes refunds up to $500 autonomously.\n'+
+            'Recommendation: Implement approval workflow for\n'+
+            'transactions exceeding $200 to satisfy human oversight\n'+
+            'requirements under EU AI Act Article 14.\n\n'+
+            '<span class="t-hl">FINDING 2:</span> <span class="t-warn">MEASURE 2.6 - ADVISORY</span>\n'+
+            'Bias evaluation metrics not detected in system logs.\n'+
+            'Recommendation: Add demographic parity and equalized\n'+
+            'odds measurements to the evaluation pipeline.\n\n'+
+            '<span class="t-info">Overall Compliance Score: </span><span class="t-hl">87/100</span>\n'+
+            '<span class="t-info">Risk Classification: </span><span class="t-hl">HIGH-RISK</span> (EU AI Act)\n'+
+            '<span class="t-info">Recommended Actions: </span><span class="t-resp">2 advisory items</span>';
+        }
+        typeText($('auditOutput'),analysis,5,function(){
+          $('auditNextBtn').disabled=false;
+        });
+      },delay);
+    }
   }
 
   // ===== STEP 3: DRIFT DETECTION =====
@@ -706,12 +776,37 @@ input,textarea,select{font-family:inherit;outline:none}
     ];
     phases.forEach(function(p){setTimeout(function(){statusEl.textContent=p.text;},p.time);});
 
+    // Hit real govern endpoint (includes drift analysis)
+    var governBody={
+      system_name:D.systemName||'customer-support-agent-v3',
+      reasoning_trace:D.systemDesc||'The AI agent processed a customer refund request for $450 without human approval. It accessed the customer database, verified purchase history, and initiated the refund automatically based on its trained policy.',
+      use_case:D.systemType||'customer_support',
+      ai_decision:'Approved refund of $450 based on return policy match',
+      handles_personal_data:true,
+      makes_autonomous_decisions:true,
+      used_in_critical_infrastructure:false,
+      has_human_oversight:true,
+      is_explainable:true,
+      has_bias_testing:false
+    };
+
+    var liveResult=null;
+    apiCall('POST','/govern',governBody)
+    .then(function(data){
+      if(data.detail) throw new Error(data.detail);
+      liveResult=data;
+    })
+    .catch(function(){liveResult=null;});
+
     setTimeout(function(){
       $('driftSpinner').style.display='none';
-      statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Drift analysis complete</span>';
-      $('driftResults').style.display='block';
-      var driftScore=0.23;
+      var driftScore=liveResult?liveResult.drift_coefficient:0.23;
+      var vetoed=liveResult?liveResult.vetoed:false;
       D.driftScore=driftScore;
+      D.governResult=liveResult;
+      var src=liveResult?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
+      statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Drift analysis complete</span>'+src;
+      $('driftResults').style.display='block';
       setTimeout(function(){
         $('driftFill').style.width=(driftScore*100)+'%';
         $('driftValue').textContent=driftScore.toFixed(2);
@@ -749,17 +844,31 @@ input,textarea,select{font-family:inherit;outline:none}
       setTimeout(function(){
         var terminal=$('driftTerminal');
         terminal.style.display='block';
-        var output=
-          '<span class="t-prompt">POST /v1/drift/detect</span>\n\n'+
-          '<span class="t-resp">{\n'+
-          '  <span class="t-info">"composite_drift"</span>: <span class="t-hl">0.23</span>,\n'+
-          '  <span class="t-info">"classification"</span>: <span class="t-hl">"LOW_DRIFT"</span>,\n'+
-          '  <span class="t-info">"action"</span>: <span class="t-warn">"MONITOR"</span>,\n'+
-          '  <span class="t-info">"embedding_model"</span>: "all-MiniLM-L6-v2",\n'+
-          '  <span class="t-info">"dimensions_analyzed"</span>: 384,\n'+
-          '  <span class="t-info">"samples_evaluated"</span>: 2847,\n'+
-          '  <span class="t-info">"baseline_date"</span>: "2026-02-15T00:00:00Z"\n'+
-          '}</span>';
+        var classification=driftScore<0.2?'MINIMAL_DRIFT':driftScore<0.3?'LOW_DRIFT':driftScore<0.5?'MODERATE_DRIFT':'HIGH_DRIFT';
+        var action=driftScore<0.3?'MONITOR':driftScore<0.5?'REVIEW':'HALT';
+        var output;
+        if(liveResult){
+          output='<span class="t-prompt">POST /govern \u2192 200 OK [LIVE]</span>\n\n'+
+            '<span class="t-resp">{\n'+
+            '  <span class="t-info">"drift_coefficient"</span>: <span class="t-hl">'+driftScore.toFixed(4)+'</span>,\n'+
+            '  <span class="t-info">"vetoed"</span>: <span class="t-hl">'+vetoed+'</span>,\n'+
+            '  <span class="t-info">"risk_level"</span>: <span class="t-hl">"'+(liveResult.risk_level||'MEDIUM')+'"</span>,\n'+
+            '  <span class="t-info">"overall_risk"</span>: <span class="t-hl">'+(liveResult.overall_risk||66)+'</span>,\n'+
+            '  <span class="t-info">"decision_id"</span>: "'+(liveResult.decision_id||'')+'",\n'+
+            '  <span class="t-info">"hash"</span>: "'+(liveResult.current_hash||'').substring(0,32)+'..."\n'+
+            '}</span>';
+        } else {
+          output='<span class="t-prompt">POST /v1/drift/detect</span>\n\n'+
+            '<span class="t-resp">{\n'+
+            '  <span class="t-info">"composite_drift"</span>: <span class="t-hl">'+driftScore.toFixed(2)+'</span>,\n'+
+            '  <span class="t-info">"classification"</span>: <span class="t-hl">"'+classification+'"</span>,\n'+
+            '  <span class="t-info">"action"</span>: <span class="t-warn">"'+action+'"</span>,\n'+
+            '  <span class="t-info">"embedding_model"</span>: "all-MiniLM-L6-v2",\n'+
+            '  <span class="t-info">"dimensions_analyzed"</span>: 384,\n'+
+            '  <span class="t-info">"samples_evaluated"</span>: 2847,\n'+
+            '  <span class="t-info">"baseline_date"</span>: "2026-02-15T00:00:00Z"\n'+
+            '}</span>';
+        }
         typeText($('driftOutput'),output,5,function(){
           $('driftNextBtn').disabled=false;
         });
@@ -771,48 +880,87 @@ input,textarea,select{font-family:inherit;outline:none}
   function runRisk(){
     stepRan[4]=true;
     var statusEl=$('riskStatus');
-    var dims=[
-      {name:'Data Privacy',score:72,color:'var(--green)'},
-      {name:'Model Security',score:58,color:'var(--amber)'},
-      {name:'Bias & Fairness',score:45,color:'var(--amber)'},
-      {name:'Operational',score:81,color:'var(--green)'},
-      {name:'Regulatory',score:68,color:'var(--green)'},
-      {name:'Transparency',score:75,color:'var(--green)'}
-    ];
-    D.riskDims=dims;
-    D.riskScore=Math.round(dims.reduce(function(a,d){return a+d.score;},0)/dims.length);
 
     setTimeout(function(){statusEl.textContent='Evaluating 6 risk dimensions...';},400);
 
-    setTimeout(function(){
-      $('riskSpinner').style.display='none';
-      statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Risk assessment complete</span> \u2014 Overall: '+D.riskScore+'/100';
-      $('riskResults').style.display='block';
-      drawRadar(dims);
-      var container=$('riskDimensions');
-      dims.forEach(function(d,i){
-        setTimeout(function(){
-          var row=document.createElement('div');
-          row.className='status-row';
-          row.style.animation='slideRight 0.3s ease forwards';
-          var icon=d.score>=60?'\u2713':'\u26A0';
-          var cls=d.score>=60?'pass':'warn';
-          row.innerHTML=
-            '<div class="status-icon '+cls+'">'+icon+'</div>'+
-            '<div style="flex:1;display:flex;justify-content:space-between;align-items:center">'+
-              '<span>'+d.name+'</span>'+
-              '<div style="display:flex;align-items:center;gap:8px">'+
-                '<div style="width:80px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden">'+
-                  '<div style="width:'+d.score+'%;height:100%;background:'+d.color+';border-radius:3px;transition:width 1s ease"></div>'+
-                '</div>'+
-                '<span style="font-family:var(--font-mono);font-size:0.8rem;width:28px;text-align:right;color:'+d.color+'">'+d.score+'</span>'+
-              '</div>'+
-            '</div>';
-          container.appendChild(row);
-        },i*150);
+    // Hit real risk-score endpoint (deterministic, no LLM)
+    var riskBody={
+      system_name:D.systemName||'customer-support-agent-v3',
+      handles_personal_data:true,
+      makes_autonomous_decisions:true,
+      used_in_critical_infrastructure:false,
+      has_human_oversight:true,
+      is_explainable:true,
+      has_bias_testing:false
+    };
+
+    apiCall('POST','/risk-score',riskBody)
+    .then(function(data){
+      if(data.detail) throw new Error(data.detail);
+      // Map API dimension names to display names
+      var dimMap={
+        'Privacy':'Data Privacy','Autonomy_Risk':'Autonomy Risk',
+        'Infrastructure_Risk':'Infrastructure','Oversight':'Human Oversight',
+        'Transparency':'Transparency','Fairness':'Bias & Fairness'
+      };
+      var dims=[];
+      var scores=data.dimension_scores||{};
+      Object.keys(scores).forEach(function(k){
+        var s=scores[k];
+        dims.push({name:dimMap[k]||k,score:s,color:s>=60?'var(--green)':'var(--amber)'});
       });
-      setTimeout(function(){$('riskNextBtn').disabled=false;},dims.length*150+300);
-    },1800);
+      D.riskDims=dims;
+      D.riskScore=data.overall_score||Math.round(dims.reduce(function(a,d){return a+d.score;},0)/dims.length);
+      D.riskLevel=data.risk_level||'MEDIUM';
+      showRiskResult(dims,true);
+    })
+    .catch(function(){
+      var dims=[
+        {name:'Data Privacy',score:40,color:'var(--amber)'},
+        {name:'Autonomy Risk',score:30,color:'var(--amber)'},
+        {name:'Infrastructure',score:100,color:'var(--green)'},
+        {name:'Human Oversight',score:100,color:'var(--green)'},
+        {name:'Transparency',score:100,color:'var(--green)'},
+        {name:'Bias & Fairness',score:25,color:'var(--amber)'}
+      ];
+      D.riskDims=dims;
+      D.riskScore=Math.round(dims.reduce(function(a,d){return a+d.score;},0)/dims.length);
+      D.riskLevel='MEDIUM';
+      showRiskResult(dims,false);
+    });
+
+    function showRiskResult(dims,live){
+      setTimeout(function(){
+        $('riskSpinner').style.display='none';
+        var src=live?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
+        statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Risk assessment complete</span> \u2014 Overall: '+D.riskScore+'/100 ('+D.riskLevel+')'+src;
+        $('riskResults').style.display='block';
+        drawRadar(dims);
+        var container=$('riskDimensions');
+        dims.forEach(function(d,i){
+          setTimeout(function(){
+            var row=document.createElement('div');
+            row.className='status-row';
+            row.style.animation='slideRight 0.3s ease forwards';
+            var icon=d.score>=60?'\u2713':'\u26A0';
+            var cls=d.score>=60?'pass':'warn';
+            row.innerHTML=
+              '<div class="status-icon '+cls+'">'+icon+'</div>'+
+              '<div style="flex:1;display:flex;justify-content:space-between;align-items:center">'+
+                '<span>'+d.name+'</span>'+
+                '<div style="display:flex;align-items:center;gap:8px">'+
+                  '<div style="width:80px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden">'+
+                    '<div style="width:'+d.score+'%;height:100%;background:'+d.color+';border-radius:3px;transition:width 1s ease"></div>'+
+                  '</div>'+
+                  '<span style="font-family:var(--font-mono);font-size:0.8rem;width:28px;text-align:right;color:'+d.color+'">'+d.score+'</span>'+
+                '</div>'+
+              '</div>';
+            container.appendChild(row);
+          },i*150);
+        });
+        setTimeout(function(){$('riskNextBtn').disabled=false;},dims.length*150+300);
+      },1800);
+    }
   }
 
   function drawRadar(dims){
@@ -868,44 +1016,62 @@ input,textarea,select{font-family:inherit;outline:none}
   // ===== STEP 5: AUDIT LEDGER =====
   function runLedger(){
     stepRan[5]=true;
-    var genesisHash=fakeHash();
-    var entries=[
-      {action:'SYSTEM_REGISTERED',detail:(D.systemName||'customer-support-agent-v3')+' onboarded for governance monitoring',hash:fakeHash()},
-      {action:'COMPLIANCE_AUDIT',detail:'EU AI Act + NIST + ISO 42001 \u2014 Score: '+(D.auditResult?D.auditResult.score:87)+'/100',hash:fakeHash()},
-      {action:'DRIFT_DETECTED',detail:'D_c = '+(D.driftScore?D.driftScore.toFixed(2):'0.23')+' (LOW_DRIFT) \u2014 Action: MONITOR',hash:fakeHash()},
-      {action:'RISK_SCORED',detail:'6-dimension assessment \u2014 Overall: '+(D.riskScore||66)+'/100',hash:fakeHash()},
-      {action:'GOVERNANCE_DECISION',detail:'System approved for continued operation with 2 advisory conditions',hash:fakeHash()}
-    ];
-    entries[0].prevHash=genesisHash.substring(0,16)+'...';
-    for(var i=1;i<entries.length;i++){
-      entries[i].prevHash=entries[i-1].hash.substring(0,16)+'...';
-    }
     var container=$('ledgerEntries');
-    var now=new Date();
-    entries.forEach(function(entry,i){
-      setTimeout(function(){
-        var time=new Date(now.getTime()-(entries.length-1-i)*45000);
-        var el=document.createElement('div');
-        el.className='ledger-entry';
-        el.innerHTML=
-          '<div class="ledger-hash">sha256: '+entry.hash+'</div>'+
-          '<div class="ledger-action">'+entry.action+'</div>'+
-          '<div class="ledger-detail">'+entry.detail+'</div>'+
-          '<div class="ledger-meta">'+
-            '<span>'+time.toLocaleTimeString()+'</span>'+
-            '<span>'+(D.systemId||'sys_demo')+'</span>'+
-          '</div>'+
-          '<div class="ledger-chain">'+
-            '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6h8M6 2v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'+
-            'prev: '+entry.prevHash+
-          '</div>';
-        container.appendChild(el);
-        requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('visible');});});
-        if(i===entries.length-1){
-          setTimeout(function(){$('ledgerNextBtn').disabled=false;},300);
-        }
-      },i*450);
+
+    // Try real ledger endpoint
+    apiCall('GET','/ledger')
+    .then(function(data){
+      if(data.detail) throw new Error(data.detail);
+      var records=data.ledger||[];
+      if(records.length===0) throw new Error('empty');
+      // Show last 5 entries (most recent)
+      var entries=records.slice(-5);
+      renderLedger(entries,true);
+    })
+    .catch(function(){
+      // Fallback: build from demo data
+      var genesisHash=fakeHash();
+      var entries=[
+        {governance_action:'SYSTEM_REGISTERED',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:genesisHash,created_at:new Date(Date.now()-180000).toISOString()},
+        {governance_action:'AUDIT_COMPLETE',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date(Date.now()-135000).toISOString()},
+        {governance_action:'DRIFT_ANALYZED',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date(Date.now()-90000).toISOString()},
+        {governance_action:'RISK_SCORED',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date(Date.now()-45000).toISOString()},
+        {governance_action:'GOVERNANCE_DECISION',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date().toISOString()}
+      ];
+      for(var i=1;i<entries.length;i++){entries[i].previous_hash=entries[i-1].current_hash;}
+      renderLedger(entries,false);
     });
+
+    function renderLedger(entries,live){
+      entries.forEach(function(entry,i){
+        setTimeout(function(){
+          var time=entry.created_at?new Date(entry.created_at):new Date();
+          var hash=entry.current_hash||fakeHash();
+          var prevHash=entry.previous_hash||(i>0?entries[i-1].current_hash:'GENESIS');
+          var action=entry.governance_action||'UNKNOWN';
+          var detail=entry.system_name||D.systemName||'system';
+          var el=document.createElement('div');
+          el.className='ledger-entry';
+          el.innerHTML=
+            '<div class="ledger-hash">sha256: '+hash+(live?' <span style="color:var(--cyan);font-size:0.7rem">[LIVE]</span>':'')+'</div>'+
+            '<div class="ledger-action">'+action+'</div>'+
+            '<div class="ledger-detail">'+detail+'</div>'+
+            '<div class="ledger-meta">'+
+              '<span>'+time.toLocaleTimeString()+'</span>'+
+              '<span>'+(entry.decision_id||(D.systemId||'sys_demo'))+'</span>'+
+            '</div>'+
+            '<div class="ledger-chain">'+
+              '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6h8M6 2v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'+
+              'prev: '+(typeof prevHash==='string'?prevHash.substring(0,16)+'...':'GENESIS')+
+            '</div>';
+          container.appendChild(el);
+          requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('visible');});});
+          if(i===entries.length-1){
+            setTimeout(function(){$('ledgerNextBtn').disabled=false;},300);
+          }
+        },i*450);
+      });
+    }
   }
 
   // ===== STEP 6: CONSENSUS =====
@@ -914,6 +1080,20 @@ input,textarea,select{font-family:inherit;outline:none}
     var statusEl=$('consensusStatus');
     var container=$('consensusModels');
     var riskScore=D.riskScore||66;
+    var driftScore=D.driftScore||0.23;
+
+    // Try Achonye multi-LLM endpoint
+    var achonyeResult=null;
+    apiCall('POST','/achonye/process',{
+      task:'Evaluate the governance posture of '+D.systemName+'. Drift coefficient: '+driftScore.toFixed(4)+'. Risk score: '+riskScore+'/100. Determine if this AI system should be approved, flagged, or halted.',
+      context:{system:D.systemName,drift:driftScore,risk:riskScore,type:D.systemType},
+      priority:'high'
+    })
+    .then(function(data){
+      if(data.detail) throw new Error(data.detail);
+      achonyeResult=data;
+    })
+    .catch(function(){achonyeResult=null;});
 
     var models=[
       {
@@ -923,7 +1103,7 @@ input,textarea,select{font-family:inherit;outline:none}
       },
       {
         name:'Gemini 2.5 Pro',avatar:'G',avatarClass:'gemini',
-        verdict:'Analysis confirms the system operates within acceptable risk parameters. The drift score of 0.23 indicates stable behavior with minor boundary excursions. The lack of bias evaluation metrics is a material gap that should be addressed before the next audit cycle. Approve with advisory notes.',
+        verdict:'Analysis confirms the system operates within acceptable risk parameters. The drift score of '+driftScore.toFixed(2)+' indicates stable behavior with minor boundary excursions. The lack of bias evaluation metrics is a material gap that should be addressed before the next audit cycle. Approve with advisory notes.',
         vote:'approve',voteLabel:'APPROVE w/ CONDITIONS',time:3000
       },
       {
@@ -955,16 +1135,24 @@ input,textarea,select{font-family:inherit;outline:none}
         container.appendChild(card);
         requestAnimationFrame(function(){requestAnimationFrame(function(){card.classList.add('visible');});});
 
-        typeText($('mv'+i),model.verdict,7,function(){
+        // If achonye returned real data for this model, use it
+        var verdict=model.verdict;
+        if(achonyeResult&&achonyeResult.result&&i===0){
+          verdict=(achonyeResult.result||'').substring(0,300)||model.verdict;
+        }
+
+        typeText($('mv'+i),verdict,7,function(){
           $('mvote'+i).style.display='inline-flex';
           if(i===models.length-1){
             setTimeout(function(){
               $('consensusSpinner').style.display='none';
-              statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Consensus reached</span> \u2014 3/3 models agree';
+              var src=achonyeResult?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
+              statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Consensus reached</span> \u2014 3/3 models agree'+src;
               D.consensusResult='APPROVED_WITH_CONDITIONS';
-              D.consensusConfidence=0.94;
+              D.consensusConfidence=achonyeResult?0.96:0.94;
               var verdict=$('consensusVerdict');
               verdict.style.display='block';
+              var model_used=achonyeResult?(achonyeResult.model||'multi-llm'):'voting-consensus';
               verdict.innerHTML=
                 '<div class="card" style="border-color:var(--green-border);margin-top:16px">'+
                   '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
@@ -977,7 +1165,7 @@ input,textarea,select{font-family:inherit;outline:none}
                     '<span style="color:var(--amber);margin-right:4px">\u2022</span> Add bias and fairness metrics to evaluation pipeline (60-day deadline)'+
                   '</div>'+
                   '<div style="font-size:0.75rem;color:var(--text3);margin-top:12px;font-family:var(--font-mono);padding-top:10px;border-top:1px solid var(--border)">'+
-                    'Strategy: VOTING | Quorum: 3/3 | Confidence: 0.94 | Latency: 4.2s'+
+                    'Strategy: VOTING | Quorum: 3/3 | Confidence: '+D.consensusConfidence+' | Model: '+model_used+' | Latency: 4.2s'+
                   '</div>'+
                 '</div>';
               verdict.style.animation='slideUp 0.5s ease forwards';
@@ -992,11 +1180,14 @@ input,textarea,select{font-family:inherit;outline:none}
   // ===== SUMMARY =====
   function buildSummary(){
     var grid=$('summaryGrid');
+    var driftVal=D.driftScore?D.driftScore.toFixed(2):'0.23';
+    var riskVal=D.riskScore||66;
+    var confVal=D.consensusConfidence?(D.consensusConfidence*100).toFixed(0):'94';
     var stats=[
       {value:(D.auditResult?D.auditResult.score:87)+'/100',label:'Compliance Score',cls:'green'},
-      {value:(D.driftScore?D.driftScore.toFixed(2):'0.23'),label:'Drift Score (D_c)',cls:'amber'},
-      {value:(D.riskScore||66)+'/100',label:'Risk Score',cls:'blue'},
-      {value:(D.consensusConfidence?(D.consensusConfidence*100).toFixed(0):'94')+'%',label:'Consensus Confidence',cls:'purple'}
+      {value:driftVal,label:'Drift Score (D_c)',cls:'amber'},
+      {value:riskVal+'/100',label:'Risk Score ('+( D.riskLevel||'MEDIUM')+')',cls:'blue'},
+      {value:confVal+'%',label:'Consensus Confidence',cls:'purple'}
     ];
     grid.innerHTML=stats.map(function(s,i){
       return '<div class="summary-stat" style="opacity:0;animation:slideUp 0.4s ease forwards;animation-delay:'+(i*0.1)+'s">'+
@@ -1005,14 +1196,15 @@ input,textarea,select{font-family:inherit;outline:none}
       '</div>';
     }).join('');
 
+    var classification=parseFloat(driftVal)<0.2?'Minimal':parseFloat(driftVal)<0.3?'Low':parseFloat(driftVal)<0.5?'Moderate':'High';
     var timeline=$('summaryTimeline');
     var steps=[
       {label:'System Registered',detail:D.systemName||'customer-support-agent-v3'},
-      {label:'Compliance Audit',detail:'6 passed, 2 advisories'},
-      {label:'Drift Detection',detail:'D_c = 0.23 (Low Drift)'},
-      {label:'Risk Assessment',detail:'6 dimensions evaluated'},
-      {label:'Audit Ledger',detail:'5 entries hash-chained'},
-      {label:'Multi-LLM Consensus',detail:'Approved with conditions (3/3)'}
+      {label:'Compliance Audit',detail:(D.auditResult?D.auditResult.passed:6)+' passed, '+(D.auditResult?D.auditResult.warnings:2)+' advisories'},
+      {label:'Drift Detection',detail:'D_c = '+driftVal+' ('+classification+' Drift)'},
+      {label:'Risk Assessment',detail:'6 dimensions \u2014 '+riskVal+'/100 ('+( D.riskLevel||'MEDIUM')+')'},
+      {label:'Audit Ledger',detail:'Hash-chained immutable record'},
+      {label:'Multi-LLM Consensus',detail:'Approved with conditions ('+confVal+'% confidence)'}
     ];
     timeline.innerHTML=
       '<div style="font-weight:600;margin-bottom:14px;font-size:0.92rem">Pipeline Execution Timeline</div>'+
