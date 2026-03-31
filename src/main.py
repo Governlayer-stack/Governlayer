@@ -487,6 +487,13 @@ def create_app() -> FastAPI:
     _trust_html = _load_page("trust")
     _auditor_html = _load_page("auditor")
     _beta_html = _load_page("beta")
+    _legal_html = _load_page("legal")
+
+    @app.get("/legal")
+    def legal_page():
+        if _legal_html:
+            return HTMLResponse(_legal_html)
+        return {"error": "Legal agreement page not found"}
 
     @app.get("/beta")
     def beta_page():
