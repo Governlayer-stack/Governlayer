@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer Beta Program — Early Access</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f172a;--bg-card:#1e293b;--bg-code:#0c1222;
+    --green:#10b981;--green-dim:#065f46;--green-glow:rgba(16,185,129,.12);
+    --text:#e2e8f0;--text-dim:#94a3b8;--text-bright:#f8fafc;
+    --border:#334155;--radius:10px;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--green);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ── Layout ── */
+  .container{max-width:900px;margin:0 auto;padding:0 24px}
+  section{padding:72px 0}
+  section+section{border-top:1px solid var(--border)}
+  h2{font-size:1.75rem;color:var(--text-bright);margin-bottom:12px;letter-spacing:-.02em}
+  h3{font-size:1.15rem;color:var(--text-bright);margin-bottom:6px}
+  p.section-sub{color:var(--text-dim);margin-bottom:40px;font-size:1.05rem;max-width:640px}
+
+  /* ── Badge ── */
+  .badge{
+    display:inline-block;padding:4px 14px;border-radius:20px;font-size:.75rem;
+    font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--green-glow);color:var(--green);border:1px solid var(--green-dim);
+  }
+  .badge-sm{font-size:.65rem;padding:2px 10px;vertical-align:middle;margin-left:8px}
+
+  /* ── Hero ── */
+  .hero{
+    text-align:center;padding:100px 24px 80px;
+    background:linear-gradient(180deg,rgba(16,185,129,.06) 0%,transparent 60%);
+  }
+  .hero .badge{margin-bottom:24px}
+  .hero h1{
+    font-size:clamp(2rem,5vw,3.25rem);color:var(--text-bright);
+    letter-spacing:-.03em;line-height:1.2;margin-bottom:20px;
+  }
+  .hero p{font-size:1.15rem;color:var(--text-dim);max-width:560px;margin:0 auto}
+
+  /* ── Cards ── */
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:28px 24px;transition:border-color .2s;
+  }
+  .card:hover{border-color:var(--green)}
+  .card-icon{font-size:1.6rem;margin-bottom:12px;display:block}
+  .card p{color:var(--text-dim);font-size:.9rem;margin-top:6px}
+
+  /* ── Code blocks ── */
+  .code-wrap{position:relative;margin:16px 0 32px}
+  .code-wrap pre{
+    background:var(--bg-code);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px 20px;overflow-x:auto;font-size:.85rem;line-height:1.6;
+    color:#a5f3fc;font-family:'SF Mono',Menlo,Consolas,monospace;
+  }
+  .code-wrap .copy-btn{
+    position:absolute;top:10px;right:10px;background:var(--bg-card);
+    border:1px solid var(--border);border-radius:6px;padding:4px 12px;
+    color:var(--text-dim);font-size:.75rem;cursor:pointer;transition:all .2s;
+  }
+  .code-wrap .copy-btn:hover{color:var(--green);border-color:var(--green)}
+  .code-wrap .copy-btn.copied{color:var(--green);border-color:var(--green)}
+  .step-label{
+    display:inline-block;background:var(--green-dim);color:var(--green);
+    font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:12px;
+    margin-bottom:10px;
+  }
+  .step+.step{margin-top:8px}
+
+  /* ── SDK ── */
+  .sdk-block pre{color:#d1fae5}
+
+  /* ── Table ── */
+  .endpoint-table{width:100%;border-collapse:collapse;margin-top:20px;font-size:.9rem}
+  .endpoint-table th{
+    text-align:left;padding:12px 16px;color:var(--text-dim);font-weight:600;
+    border-bottom:2px solid var(--border);font-size:.8rem;text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .endpoint-table td{padding:12px 16px;border-bottom:1px solid var(--border)}
+  .endpoint-table tr:hover td{background:rgba(16,185,129,.04)}
+  .method{
+    font-family:monospace;font-weight:700;font-size:.8rem;padding:2px 8px;
+    border-radius:4px;display:inline-block;
+  }
+  .method-get{background:rgba(59,130,246,.15);color:#60a5fa}
+  .method-post{background:var(--green-glow);color:var(--green)}
+  .mono{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;color:#a5f3fc}
+
+  /* ── Timeline ── */
+  .timeline{position:relative;padding-left:32px;margin-top:28px}
+  .timeline::before{
+    content:'';position:absolute;left:7px;top:6px;bottom:6px;
+    width:2px;background:var(--border);
+  }
+  .tl-item{position:relative;margin-bottom:32px}
+  .tl-item:last-child{margin-bottom:0}
+  .tl-dot{
+    position:absolute;left:-32px;top:4px;width:16px;height:16px;
+    border-radius:50%;background:var(--bg);border:2px solid var(--green);
+  }
+  .tl-item.active .tl-dot{background:var(--green)}
+  .tl-label{font-size:.8rem;color:var(--green);font-weight:700;margin-bottom:4px}
+  .tl-item p{color:var(--text-dim);font-size:.92rem}
+
+  /* ── FAQ ── */
+  .faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+  .faq-item:last-child{border-bottom:none}
+  .faq-q{
+    font-weight:600;color:var(--text-bright);cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:1rem;
+  }
+  .faq-q::after{content:'+';font-size:1.3rem;color:var(--text-dim);transition:transform .2s}
+  .faq-item.open .faq-q::after{content:'-'}
+  .faq-a{
+    max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;
+    color:var(--text-dim);font-size:.92rem;
+  }
+  .faq-item.open .faq-a{max-height:300px;padding-top:12px}
+
+  /* ── Feedback CTA ── */
+  .feedback-box{
+    background:linear-gradient(135deg,var(--green-dim),var(--bg-card));
+    border:1px solid var(--green);border-radius:var(--radius);
+    padding:40px;text-align:center;
+  }
+  .feedback-box h2{margin-bottom:8px}
+  .feedback-box p{color:var(--text-dim);max-width:480px;margin:0 auto 20px}
+  .feedback-box a.cta{
+    display:inline-block;background:var(--green);color:var(--bg);
+    padding:12px 32px;border-radius:8px;font-weight:700;font-size:.95rem;
+    transition:opacity .2s;
+  }
+  .feedback-box a.cta:hover{opacity:.85;text-decoration:none}
+
+  /* ── Footer ── */
+  footer{text-align:center;padding:40px 24px;color:var(--text-dim);font-size:.82rem}
+  footer span{color:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<header class="hero">
+  <span class="badge">Early Access Program</span>
+  <h1>Welcome to the GovernLayer Beta</h1>
+  <p>You're one of the first teams to govern AI with autonomous intelligence.</p>
+</header>
+
+<!-- ═══════════════════ WHAT YOU GET ═══════════════════ -->
+<section>
+  <div class="container">
+    <h2>What You Get <span class="badge badge-sm">Beta Exclusive</span></h2>
+    <p class="section-sub">Everything you need to ship compliant AI systems, with a direct line to the team building the platform.</p>
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">&#9889;</span>
+        <h3>Pro Plan (Free)</h3>
+        <p>500 requests/min, every compliance framework, priority support queue -- all free for the duration of the beta.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128172;</span>
+        <h3>Direct Founder Access</h3>
+        <p>Private Slack channel and a weekly sync with the founding engineering team. No ticket queues.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128736;</span>
+        <h3>Shape the Product</h3>
+        <p>Your feedback goes straight into the roadmap. Request features, flag gaps, influence priorities.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#127942;</span>
+        <h3>Launch Partner Status</h3>
+        <p>Featured case study and your logo on the GovernLayer site at general availability.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ QUICK START ═══════════════════ -->
+<section>
+  <div class="container">
+    <h2>Quick Start</h2>
+    <p class="section-sub">Five commands to your first autonomous governance check. Every request below uses your real beta environment.</p>
+
+    <div class="step">
+      <span class="step-label">Step 1</span>
+      <h3>Create your account</h3>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>curl -X POST https://web-production-bdd26.up.railway.app/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "your-team",
+    "password": "a-strong-password"
+  }'</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-label">Step 2</span>
+      <h3>Create your organization</h3>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>curl -X POST https://web-production-bdd26.up.railway.app/v1/enterprise/orgs \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Your Company",
+    "slug": "your-company",
+    "plan": "pro"
+  }'</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-label">Step 3</span>
+      <h3>Generate an API key</h3>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>curl -X POST https://web-production-bdd26.up.railway.app/v1/enterprise/orgs/your-company/api-keys \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "beta-key",
+    "scopes": ["govern", "audit", "risk", "scan"]
+  }'</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-label">Step 4</span>
+      <h3>Run your first governance check</h3>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>curl -X POST https://web-production-bdd26.up.railway.app/v1/govern \
+  -H "X-API-Key: gl_YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "system_name": "my-ai-assistant",
+    "behavior_description": "Customer-facing chatbot for insurance claims",
+    "safety_manifold": "Must not provide medical or legal advice"
+  }'</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step-label">Step 5</span>
+      <h3>View your audit ledger</h3>
+      <div class="code-wrap">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>curl https://web-production-bdd26.up.railway.app/ledger \
+  -H "X-API-Key: gl_YOUR_API_KEY"</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ PYTHON SDK ═══════════════════ -->
+<section>
+  <div class="container">
+    <h2>Python SDK <span class="badge badge-sm">Coming Soon</span></h2>
+    <p class="section-sub">Integrate GovernLayer into your Python services in under a minute.</p>
+    <div class="code-wrap sdk-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>pip install governlayer</code></pre>
+    </div>
+    <div class="code-wrap sdk-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>from governlayer import GovernLayer
+
+gl = GovernLayer(api_key="gl_YOUR_API_KEY")
+
+result = gl.govern(
+    system_name="my-ai-assistant",
+    behavior_description="Customer-facing chatbot for insurance claims",
+    safety_manifold="Must not provide medical or legal advice"
+)
+
+print(result.decision)     # "COMPLIANT" | "REVIEW" | "NON_COMPLIANT"
+print(result.risk_score)   # 0.0 - 1.0
+print(result.ledger_hash)  # SHA-256 audit chain hash</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ KEY ENDPOINTS ═══════════════════ -->
+<section>
+  <div class="container">
+    <h2>Key Endpoints</h2>
+    <p class="section-sub">The core API surface. All endpoints accept JSON and return JSON. Authenticate with your API key via the <code style="color:#a5f3fc">X-API-Key</code> header.</p>
+    <div style="overflow-x:auto">
+      <table class="endpoint-table">
+        <thead>
+          <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="mono">/v1/govern</td>
+            <td>Full governance pipeline -- drift, risk, decision, audit, ledger</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="mono">/v1/scan</td>
+            <td>Quick deterministic scan (no LLM, instant results)</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="mono">/v1/drift</td>
+            <td>Behavioral drift detection via embedding analysis</td>
+          </tr>
+          <tr>
+            <td><span class="method method-post">POST</span></td>
+            <td class="mono">/v1/risk</td>
+            <td>6-dimension deterministic risk scoring</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="mono">/v1/controls</td>
+            <td>Control monitoring and status</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="mono">/v1/evidence/connectors</td>
+            <td>Evidence collection connectors</td>
+          </tr>
+          <tr>
+            <td><span class="method method-get">GET</span></td>
+            <td class="mono">/v1/compliance/programs</td>
+            <td>Compliance programs and frameworks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ BETA TIMELINE ═══════════════════ -->
+<section>
+  <div class="container">
+    <h2>Beta Timeline</h2>
+    <p class="section-sub">Eight weeks from onboarding to launch partnership. We move fast and iterate with you.</p>
+    <div class="timeline">
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Week 1-2</div>
+        <h3>Onboarding + Integration</h3>
+        <p>Account setup, API key provisioning, first governance check. We pair with your team to connect your AI systems.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Week 3-4</div>
+        <h3>Full Usage + Feedback</h3>
+        <p>Run GovernLayer across your stack. We collect detailed feedback on every workflow, gap, and friction point.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Week 5-6</div>
+        <h3>Feature Iteration</h3>
+        <p>We ship features and fixes driven directly by your feedback. You see your requests go live in days, not quarters.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">Week 7-8</div>
+        <h3>Case Study + Transition</h3>
+        <p>Co-author your case study. Transition to your paid plan with a beta-exclusive discount locked in.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FEEDBACK ═══════════════════ -->
+<section>
+  <div class="container">
+    <div class="feedback-box">
+      <h2>We Want to Hear Everything</h2>
+      <p>The good, the broken, the "I wish it did this." This beta exists because of you. Use the private Slack channel or reach us directly.</p>
+      <a href="mailto:beta@governlayer.ai" class="cta">beta@governlayer.ai</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FAQ ═══════════════════ -->
+<section>
+  <div class="container">
+    <h2>Frequently Asked Questions</h2>
+    <p class="section-sub">If your question isn't here, ask us in Slack. We typically respond within the hour.</p>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is my data safe?</div>
+      <div class="faq-a">Yes. All data is encrypted in transit (TLS 1.3) and at rest (AES-256). Your governance data is stored in an isolated tenant database. We never use customer data to train models. The audit ledger is hash-chained and tamper-evident -- if a single record is altered, the chain breaks.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What happens after the beta ends?</div>
+      <div class="faq-a">You transition to a paid plan with a beta-exclusive discount locked in for 12 months. Your data, API keys, and configuration carry over seamlessly. No migration required -- your integration stays exactly as-is.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I invite team members?</div>
+      <div class="faq-a">Absolutely. Your organization can have unlimited team members during the beta. Each member gets their own credentials, and you control access via API key scopes (govern, audit, risk, scan).</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What support do I get?</div>
+      <div class="faq-a">Beta partners get a private Slack channel with the founding team, a weekly 30-minute sync, and priority response on all issues. For critical problems, we aim for a 1-hour response time during business hours.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What compliance frameworks are supported?</div>
+      <div class="faq-a">GovernLayer currently supports the EU AI Act, NIST AI RMF, ISO 42001, SOC 2 AI controls, OWASP LLM Top 10, and MITRE ATLAS. We are actively adding support for industry-specific frameworks based on beta partner needs.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I use local LLMs?</div>
+      <div class="faq-a">Yes. GovernLayer supports Ollama for fully local inference -- your data never leaves your infrastructure. We support Llama 3, Mistral, DeepSeek-R1, Qwen, and Phi models locally. The platform intelligently routes between local and cloud models based on task complexity and your privacy requirements.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="container">
+    <p><span>GovernLayer</span> &middot; Autonomous AI Governance &middot; Beta Program 2026</p>
+    <p style="margin-top:6px">Questions? <a href="mailto:beta@governlayer.ai">beta@governlayer.ai</a></p>
+  </div>
+</footer>
+
+<script>
+function copyCode(btn){
+  const code=btn.parentElement.querySelector('code');
+  const text=code.innerText;
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent='Copied';
+    btn.classList.add('copied');
+    setTimeout(function(){
+      btn.textContent='Copy';
+      btn.classList.remove('copied');
+    },2000);
+  });
+}
+
+function toggleFaq(el){
+  const item=el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>

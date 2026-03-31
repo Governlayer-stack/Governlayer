@@ -31,6 +31,7 @@ COPY docs/soc2/ docs/soc2/
 COPY docs/competitive/ docs/competitive/
 COPY docs/trust/ docs/trust/
 COPY docs/auditor/ docs/auditor/
+COPY docs/beta/ docs/beta/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app

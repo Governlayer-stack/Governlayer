@@ -486,6 +486,13 @@ def create_app() -> FastAPI:
     _competitive_html = _load_page("competitive")
     _trust_html = _load_page("trust")
     _auditor_html = _load_page("auditor")
+    _beta_html = _load_page("beta")
+
+    @app.get("/beta")
+    def beta_page():
+        if _beta_html:
+            return HTMLResponse(_beta_html)
+        return {"error": "Beta program page not found"}
 
     @app.get("/pitch")
     def pitch_page():
