@@ -723,8 +723,26 @@
     </div>
   </nav>
 
+  <!-- Access Gate -->
+  <div id="accessGate" style="min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px">
+    <div style="max-width:420px;width:100%">
+      <div style="width:48px;height:48px;background:var(--green-dim);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.4rem">&#128274;</div>
+      <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:8px">Beta Agreement Access</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px">Enter the access code provided by GovernLayer to view and sign the beta testing agreement.</p>
+      <div style="position:relative">
+        <input id="accessCode" type="text" placeholder="Enter access code" autocomplete="off" spellcheck="false"
+          style="width:100%;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1rem;font-family:monospace;letter-spacing:0.1em;text-align:center;text-transform:uppercase">
+        <div id="accessError" style="color:var(--red);font-size:0.8rem;margin-top:8px;display:none">Invalid access code. Please check and try again.</div>
+      </div>
+      <button id="accessBtn" style="margin-top:16px;width:100%;padding:12px;background:var(--green);color:#0f172a;font-size:0.95rem;font-weight:600;border:none;border-radius:8px;cursor:pointer;transition:background 0.2s">
+        Access Agreement
+      </button>
+      <p style="color:var(--text-dim);font-size:0.75rem;margin-top:16px">Don't have a code? Contact <a href="mailto:founders@governlayer.ai" style="color:var(--green);text-decoration:none">founders@governlayer.ai</a></p>
+    </div>
+  </div>
+
   <!-- Main Content -->
-  <main class="container">
+  <main class="container" id="agreementContent" style="display:none">
 
     <!-- Document Header -->
     <header class="doc-header">
@@ -1034,6 +1052,37 @@
   </footer>
 
   <script>
+    // Access gate
+    (function(){
+      var CODE='GL-BETA-2026';
+      var gate=document.getElementById('accessGate');
+      var content=document.getElementById('agreementContent');
+      var btn=document.getElementById('accessBtn');
+      var input=document.getElementById('accessCode');
+      var err=document.getElementById('accessError');
+
+      // Check if already unlocked
+      if(localStorage.getItem('gl_beta_access')==='granted'){
+        gate.style.display='none';
+        content.style.display='';
+      }
+
+      function tryAccess(){
+        if(input.value.trim().toUpperCase()===CODE){
+          localStorage.setItem('gl_beta_access','granted');
+          gate.style.display='none';
+          content.style.display='';
+          err.style.display='none';
+        } else {
+          err.style.display='block';
+          input.style.borderColor='var(--red)';
+          setTimeout(function(){input.style.borderColor='var(--border)';},2000);
+        }
+      }
+      btn.addEventListener('click',tryAccess);
+      input.addEventListener('keydown',function(e){if(e.key==='Enter')tryAccess();});
+    })();
+
     // Set today's date on the GovernLayer side
     (function() {
       const now = new Date();
