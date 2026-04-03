@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOC 2 Readiness Checklist | GovernLayer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#263548;--text:#f1f5f9;--muted:#94a3b8;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--border:#334155}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Nav */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;color:var(--text)}
+.nav-brand svg{flex-shrink:0}
+.nav-back{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.nav-back:hover{color:var(--text);text-decoration:none}
+
+/* Container */
+.container{max-width:860px;margin:0 auto;padding:16px 16px 60px}
+
+/* Header */
+.header{text-align:center;padding:24px 0 16px}
+.header h1{font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.header p{color:var(--muted);font-size:14px;max-width:520px;margin:0 auto}
+.header .badge-row{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:10px;background:rgba(16,185,129,0.12);color:var(--green)}
+.badge.blue{background:rgba(59,130,246,0.12);color:var(--blue)}
+.badge.purple{background:rgba(139,92,246,0.12);color:var(--purple)}
+
+/* Progress bar */
+.progress-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-label{font-size:13px;font-weight:600}
+.progress-count{font-size:13px;color:var(--muted)}
+.progress-count span{color:var(--green);font-weight:700}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:4px;transition:width 0.4s ease}
+.progress-pct{font-size:11px;color:var(--muted);margin-top:4px;text-align:right}
+
+/* Phase card */
+.phase{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color 0.2s}
+.phase.current{border-color:var(--green)}
+.phase-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;transition:background 0.15s}
+.phase-header:hover{background:var(--surface2)}
+.phase-num{width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phase.done .phase-num{background:var(--green)}
+.phase-info{flex:1;min-width:0}
+.phase-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.phase-desc{font-size:12px;color:var(--muted);margin-top:1px}
+.phase-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.phase-time{font-size:11px;color:var(--muted);background:var(--bg);padding:2px 7px;border-radius:6px;white-space:nowrap}
+.phase-progress-mini{font-size:11px;color:var(--muted);white-space:nowrap}
+.phase-progress-mini span{color:var(--green);font-weight:600}
+.complete-badge{font-size:10px;font-weight:700;color:var(--green);background:rgba(16,185,129,0.12);padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px}
+.chevron{color:var(--muted);transition:transform 0.2s;flex-shrink:0;font-size:18px;line-height:1}
+.phase.open .chevron{transform:rotate(180deg)}
+
+/* Phase body */
+.phase-body{display:none;padding:0 14px 12px}
+.phase.open .phase-body{display:block}
+.phase-api-hint{font-size:11px;color:var(--muted);background:var(--bg);padding:6px 10px;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.phase-api-hint code{color:var(--purple);font-family:'SF Mono',Consolas,monospace;font-size:11px}
+.connectors-grid{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.connector-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.tsc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:5px;margin:8px 0}
+.tsc-item{font-size:11px;padding:5px 8px;border-radius:5px;background:var(--bg);border:1px solid var(--border)}
+.tsc-item strong{color:var(--text);font-weight:600}
+.tsc-item span{color:var(--muted)}
+
+/* Checklist item */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid rgba(51,65,85,0.4)}
+.check-item:last-child{border-bottom:none}
+.check-box{position:relative;width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.check-box input{position:absolute;opacity:0;width:18px;height:18px;cursor:pointer;z-index:1}
+.check-box .mark{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.check-box input:checked+.mark{background:var(--green);border-color:var(--green)}
+.check-box input:checked+.mark svg{opacity:1;transform:scale(1)}
+.check-box .mark svg{opacity:0;transform:scale(0.5);transition:all 0.2s}
+.check-content{flex:1;min-width:0}
+.check-title{font-size:13px;font-weight:500;transition:color 0.2s}
+.check-item.checked .check-title{color:var(--muted);text-decoration:line-through}
+.check-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.check-badges{display:flex;gap:5px;margin-top:3px;flex-wrap:wrap}
+.api-badge{font-size:10px;font-family:'SF Mono',Consolas,monospace;color:var(--purple);background:rgba(139,92,246,0.1);padding:1px 6px;border-radius:4px}
+.link-btn{font-size:11px;color:var(--blue);font-weight:500;display:inline-flex;align-items:center;gap:3px}
+.link-btn:hover{text-decoration:none;color:#60a5fa}
+
+/* Gauge */
+.gauge-container{display:flex;align-items:center;gap:12px;margin:10px 0;padding:8px 10px;background:var(--bg);border-radius:6px}
+.gauge-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.gauge-fill{height:100%;border-radius:3px;transition:width 0.4s}
+.gauge-label{font-size:12px;font-weight:600;min-width:32px;text-align:right}
+
+/* Bottom cards */
+.bottom-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.bottom-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+.bottom-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.bottom-card p{font-size:12px;color:var(--muted);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;transition:all 0.15s}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#0d9668}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--surface2)}
+
+/* Celebration overlay */
+.celebration{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.92);z-index:200;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}
+.celebration.show{display:flex}
+.celebration h2{font-size:32px;font-weight:800;margin-bottom:6px}
+.celebration p{color:var(--muted);font-size:15px;margin-bottom:20px;max-width:400px}
+.confetti-container{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:201}
+.confetti{position:absolute;width:8px;height:8px;border-radius:2px;animation:confetti-fall linear forwards}
+@keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Print */
+@media print{
+body{background:#fff;color:#000}
+.nav,.progress-section,.bottom-cards,.celebration,.phase-api-hint,.api-badge,.link-btn,.connectors-grid,.tsc-grid,.gauge-container,.btn{display:none!important}
+.container{max-width:100%;padding:0}
+.header h1{color:#000;font-size:22px}
+.header p{color:#555}
+.phase{border:1px solid #ccc;break-inside:avoid;margin-bottom:8px}
+.phase-body{display:block!important}
+.phase-header{padding:8px 10px}
+.phase-num{background:#000;color:#fff}
+.phase-title{color:#000;font-size:13px}
+.phase-desc{color:#666}
+.check-item{padding:4px 0}
+.check-title{color:#000;font-size:12px}
+.check-item.checked .check-title{color:#666;text-decoration:line-through}
+.check-desc{color:#666;font-size:10px}
+.check-box .mark{border:2px solid #000}
+.check-box input:checked+.mark{background:#000;border-color:#000}
+.check-box .mark svg path{stroke:#fff}
+.phase-meta .phase-time{display:none}
+.chevron{display:none}
+}
+
+@media(max-width:640px){
+.container{padding:12px 10px 50px}
+.header h1{font-size:21px}
+.bottom-cards{grid-template-columns:1fr}
+.phase-header{padding:10px 12px}
+.phase-body{padding:0 12px 10px}
+.tsc-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-back">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+  <div class="nav-brand">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#10b981"/><path d="M9 16.5l4.5 4.5L23 11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    GovernLayer
+  </div>
+  <div style="width:48px"></div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <h1>SOC 2 Readiness Checklist</h1>
+    <p>A guided step-by-step path to SOC 2 Type II compliance. Complete each phase to build audit-ready governance.</p>
+    <div class="badge-row">
+      <span class="badge">42 Action Items</span>
+      <span class="badge blue">8 Phases</span>
+      <span class="badge purple">API-Integrated</span>
+    </div>
+  </div>
+
+  <div class="progress-section" id="progressSection">
+    <div class="progress-top">
+      <span class="progress-label">Overall Progress</span>
+      <span class="progress-count"><span id="doneCount">0</span> / 42 complete</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-pct" id="progressPct">0%</div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="bottom-cards">
+    <div class="bottom-card">
+      <h3>Need help?</h3>
+      <p>Our compliance team can walk you through any phase or answer questions about SOC 2 readiness.</p>
+      <a href="mailto:founders@governlayer.ai" class="btn btn-green">Contact Us</a>
+    </div>
+    <div class="bottom-card">
+      <h3>Download Checklist</h3>
+      <p>Save a printable version of this checklist with your current progress for offline reference.</p>
+      <button class="btn btn-outline" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V1h8v5M4 12H2.5A1.5 1.5 0 011 10.5v-4A1.5 1.5 0 012.5 5h11A1.5 1.5 0 0115 6.5v4a1.5 1.5 0 01-1.5 1.5H12M4 9h8v6H4V9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download as PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="celebration" id="celebration">
+  <div class="confetti-container" id="confettiContainer"></div>
+  <h2 style="color:var(--green)">You're SOC 2 Ready!</h2>
+  <p>Congratulations! All 42 items are complete. Your organization is prepared for a SOC 2 Type II audit.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <a href="/trust" class="btn btn-green" style="text-decoration:none">Open Trust Center</a>
+    <a href="mailto:founders@governlayer.ai?subject=SOC%202%20Audit%20Scheduling" class="btn btn-outline" style="text-decoration:none">Schedule Audit</a>
+    <button class="btn btn-outline" onclick="document.getElementById('celebration').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  {
+    title: "Account Setup",
+    desc: "Your governance foundation",
+    time: "~10 min",
+    items: [
+      { id: "1-1", title: "Create GovernLayer account", desc: "Register for your organization's governance workspace.", link: "/demo", linkText: "Register Now" },
+      { id: "1-2", title: "Set up your organization profile", desc: "Configure company name, industry, and compliance targets." },
+      { id: "1-3", title: "Invite team members", desc: "Add compliance lead, engineering lead, and CISO to your workspace." }
+    ]
+  },
+  {
+    title: "Scope Definition",
+    desc: "Define what's covered in your SOC 2 audit",
+    time: "~30 min",
+    apiHint: 'POST /audit with framework "SOC2"',
+    items: [
+      { id: "2-1", title: "Define systems in scope for SOC 2", desc: "List all applications, databases, and infrastructure under audit." },
+      { id: "2-2", title: "Select Trust Services Criteria", desc: "Security (required) + optional: Availability, Processing Integrity, Confidentiality, Privacy." },
+      { id: "2-3", title: "Classify data types handled", desc: "Identify PII, PHI, financial data, and other sensitive categories." },
+      { id: "2-4", title: "Document system boundaries and data flows", desc: "Map how data moves between systems, users, and third parties." }
+    ],
+    extra: "tsc"
+  },
+  {
+    title: "Connect Evidence Sources",
+    desc: "Integrate your infrastructure for automated evidence collection",
+    time: "~1 hour",
+    items: [
+      { id: "3-1", title: "Connect AWS/cloud infrastructure", desc: "Link your cloud provider for configuration and access evidence.", api: "POST /v1/evidence/connect" },
+      { id: "3-2", title: "Connect GitHub/version control", desc: "Pull code review, branch protection, and deployment evidence." },
+      { id: "3-3", title: "Connect identity provider", desc: "Okta or Google Workspace for access management evidence." },
+      { id: "3-4", title: "Connect monitoring tools", desc: "Datadog, CloudWatch, or logging platforms for operational evidence." },
+      { id: "3-5", title: "Connect communication tools", desc: "Slack integration for incident response audit trails.", api: "GET /v1/evidence/connectors" }
+    ],
+    extra: "connectors"
+  },
+  {
+    title: "Control Assessment",
+    desc: "Scan and evaluate your current SOC 2 control posture",
+    time: "~45 min",
+    items: [
+      { id: "4-1", title: "Run initial control scan", desc: "Automated assessment of your infrastructure against SOC 2 controls.", api: "GET /v1/controls/dashboard" },
+      { id: "4-2", title: "Review 30 pre-mapped SOC 2 controls", desc: "GovernLayer maps controls to TSC criteria automatically." },
+      { id: "4-3", title: "Identify failing controls", desc: "View gaps and non-conformities that need remediation.", api: "GET /v1/controls/gaps" },
+      { id: "4-4", title: "Assign remediation owners for each gap", desc: "Route each finding to the responsible team member." },
+      { id: "4-5", title: "Set remediation deadlines", desc: "Establish target dates aligned with your audit timeline." }
+    ],
+    extra: "controls"
+  },
+  {
+    title: "Policy Generation",
+    desc: "AI-generated policies tailored to your organization",
+    time: "~1 hour",
+    apiHint: "POST /v1/compliance/generate-policies",
+    items: [
+      { id: "5-1", title: "Generate Information Security Policy", desc: "Core security policy covering access, encryption, and incident handling." },
+      { id: "5-2", title: "Generate Access Control Policy", desc: "RBAC, least privilege, MFA requirements, and deprovisioning." },
+      { id: "5-3", title: "Generate Incident Response Plan", desc: "Detection, containment, eradication, recovery, and notification procedures." },
+      { id: "5-4", title: "Generate Change Management Policy", desc: "Code review, approval workflows, deployment gates, and rollback." },
+      { id: "5-5", title: "Generate Data Classification Policy", desc: "Data tiers, labeling standards, handling, and retention rules." },
+      { id: "5-6", title: "Generate Vendor Management Policy", desc: "Third-party risk assessment, onboarding, and ongoing monitoring." },
+      { id: "5-7", title: "Review and customize generated policies", desc: "Adapt AI-generated drafts to your organization's specifics." }
+    ]
+  },
+  {
+    title: "Evidence Collection",
+    desc: "Automated gathering and mapping of compliance evidence",
+    time: "~45 min",
+    items: [
+      { id: "6-1", title: "Run automated evidence collection", desc: "Pull evidence from all connected sources in one sweep.", api: "POST /v1/evidence/collect" },
+      { id: "6-2", title: "Map evidence to SOC 2 controls", desc: "Auto-link collected evidence to the relevant TSC controls.", api: "GET /v1/evidence/map" },
+      { id: "6-3", title: "Review evidence coverage", desc: "See which controls have sufficient evidence and which have gaps.", api: "GET /v1/evidence/coverage" },
+      { id: "6-4", title: "Fill gaps with manual evidence uploads", desc: "Upload screenshots, documents, or attestations for remaining gaps." },
+      { id: "6-5", title: "Schedule recurring evidence collection", desc: "Set up weekly or monthly automated collection runs.", api: "POST /v1/evidence/schedule" }
+    ],
+    extra: "coverage"
+  },
+  {
+    title: "Risk Assessment",
+    desc: "Quantify and treat organizational risks",
+    time: "~30 min",
+    apiHint: "Risk scoring is deterministic — no LLM needed",
+    items: [
+      { id: "7-1", title: "Run 6-dimension risk scoring", desc: "Deterministic scoring: data sensitivity, model autonomy, deployment, regulatory, bias, attack surface.", api: "POST /risk-score" },
+      { id: "7-2", title: "Run AI-specific drift detection", desc: "Detect behavioral changes in AI systems against safety manifolds.", api: "POST /govern" },
+      { id: "7-3", title: "Assess vendor risks", desc: "Score third-party vendors against your risk framework.", api: "POST /v1/vendors/assess" },
+      { id: "7-4", title: "Document risk treatment plans", desc: "Accept, mitigate, transfer, or avoid each identified risk." },
+      { id: "7-5", title: "Run multi-LLM consensus on high-risk items", desc: "Use Achonye orchestration for hallucination-resistant risk analysis.", api: "POST /achonye/process" }
+    ]
+  },
+  {
+    title: "Audit Readiness",
+    desc: "Final verification and auditor preparation",
+    time: "~30 min",
+    items: [
+      { id: "8-1", title: "Generate SOC 2 readiness report", desc: "Comprehensive report with scores, gaps, and recommendations.", api: "GET /v1/compliance/readiness" },
+      { id: "8-2", title: "Verify audit ledger integrity", desc: "Confirm hash-chain integrity of your governance audit trail.", api: "GET /ledger/verify" },
+      { id: "8-3", title: "Export compliance package", desc: "Download evidence bundle, policies, and reports for your auditor.", api: "GET /v1/compliance/export" },
+      { id: "8-4", title: "Schedule pre-audit review", desc: "Book a walkthrough with the GovernLayer compliance team." },
+      { id: "8-5", title: "Share Trust Center with auditor", desc: "Provide your auditor read-only access to your compliance posture.", link: "/trust", linkText: "Open Trust Center" },
+      { id: "8-6", title: "Share Auditor Portal", desc: "Give your auditor a dedicated portal for evidence review.", link: "/auditor", linkText: "Open Auditor Portal" }
+    ],
+    extra: "readiness"
+  }
+];
+
+const STORAGE_KEY = "gl_soc2_checklist";
+let checked = {};
+
+function loadState() {
+  try { checked = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { checked = {}; }
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+}
+
+function getTotalDone() {
+  return Object.values(checked).filter(Boolean).length;
+}
+
+function getPhaseDone(phase) {
+  return phase.items.filter(i => checked[i.id]).length;
+}
+
+function updateProgress() {
+  const done = getTotalDone();
+  const pct = Math.round((done / 42) * 100);
+  document.getElementById("doneCount").textContent = done;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressPct").textContent = pct + "%";
+  // Update phase mini progress
+  PHASES.forEach((phase, i) => {
+    const pd = getPhaseDone(phase);
+    const el = document.getElementById("phase-mini-" + i);
+    if (el) {
+      if (pd === phase.items.length) {
+        el.innerHTML = '<span class="complete-badge">Complete</span>';
+      } else {
+        el.innerHTML = `<span>${pd}</span>/${phase.items.length}`;
+      }
+    }
+    const card = document.getElementById("phase-" + i);
+    if (card) {
+      card.classList.toggle("done", pd === phase.items.length);
+    }
+  });
+  if (done === 42) {
+    showCelebration();
+  }
+}
+
+function togglePhase(idx) {
+  const el = document.getElementById("phase-" + idx);
+  el.classList.toggle("open");
+}
+
+function toggleCheck(id) {
+  checked[id] = !checked[id];
+  saveState();
+  const item = document.getElementById("item-" + id);
+  if (item) item.classList.toggle("checked", !!checked[id]);
+  updateProgress();
+}
+
+function showCelebration() {
+  const cel = document.getElementById("celebration");
+  cel.classList.add("show");
+  const container = document.getElementById("confettiContainer");
+  container.innerHTML = "";
+  const colors = ["#10b981","#3b82f6","#8b5cf6","#f59e0b","#ef4444","#ec4899","#06b6d4"];
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "%";
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.width = (4 + Math.random() * 6) + "px";
+    c.style.height = (4 + Math.random() * 6) + "px";
+    c.style.animationDuration = (2 + Math.random() * 3) + "s";
+    c.style.animationDelay = Math.random() * 2 + "s";
+    container.appendChild(c);
+  }
+}
+
+function renderPhases() {
+  const root = document.getElementById("phases");
+  let firstIncomplete = -1;
+  PHASES.forEach((phase, i) => {
+    if (firstIncomplete === -1 && getPhaseDone(phase) < phase.items.length) firstIncomplete = i;
+  });
+  let html = "";
+  PHASES.forEach((phase, i) => {
+    const pd = getPhaseDone(phase);
+    const isComplete = pd === phase.items.length;
+    const isCurrent = i === firstIncomplete;
+    const isOpen = isCurrent;
+    html += `<div class="phase${isOpen ? " open" : ""}${isCurrent ? " current" : ""}${isComplete ? " done" : ""}" id="phase-${i}">`;
+    html += `<div class="phase-header" onclick="togglePhase(${i})">`;
+    html += `<div class="phase-num">${isComplete ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : (i + 1)}</div>`;
+    html += `<div class="phase-info"><div class="phase-title">${phase.title}</div><div class="phase-desc">${phase.desc}</div></div>`;
+    html += `<div class="phase-meta"><span class="phase-time">${phase.time}</span>`;
+    html += `<span class="phase-progress-mini" id="phase-mini-${i}">${isComplete ? '<span class="complete-badge">Complete</span>' : `<span>${pd}</span>/${phase.items.length}`}</span></div>`;
+    html += `<span class="chevron">&#x25BE;</span>`;
+    html += `</div>`;
+    html += `<div class="phase-body">`;
+    if (phase.apiHint) {
+      html += `<div class="phase-api-hint"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3M8 10.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> <code>${phase.apiHint}</code></div>`;
+    }
+    if (phase.extra === "connectors") {
+      const connectors = ["AWS","GitHub","PostgreSQL","Docker","Kubernetes","Okta","Google Workspace","Slack","Datadog"];
+      html += `<div class="connectors-grid">${connectors.map(c => `<span class="connector-tag">${c}</span>`).join("")}</div>`;
+    }
+    if (phase.extra === "tsc") {
+      html += `<div class="tsc-grid">
+        <div class="tsc-item"><strong>CC</strong> <span>Security (req.)</span></div>
+        <div class="tsc-item"><strong>A</strong> <span>Availability</span></div>
+        <div class="tsc-item"><strong>PI</strong> <span>Processing Integrity</span></div>
+        <div class="tsc-item"><strong>C</strong> <span>Confidentiality</span></div>
+        <div class="tsc-item"><strong>P</strong> <span>Privacy</span></div>
+      </div>`;
+    }
+    if (phase.extra === "controls") {
+      html += `<div class="tsc-grid">
+        <div class="tsc-item"><strong>CC1-CC5</strong> <span>Security (12)</span></div>
+        <div class="tsc-item"><strong>A1</strong> <span>Availability (4)</span></div>
+        <div class="tsc-item"><strong>PI1</strong> <span>Processing (4)</span></div>
+        <div class="tsc-item"><strong>C1</strong> <span>Confidentiality (5)</span></div>
+        <div class="tsc-item"><strong>P1</strong> <span>Privacy (5)</span></div>
+      </div>`;
+    }
+    if (phase.extra === "coverage") {
+      html += `<div class="gauge-container"><span style="font-size:11px;color:var(--muted);min-width:60px">Coverage</span><div class="gauge-bar"><div class="gauge-fill" id="coverageGauge" style="width:0%;background:var(--amber)"></div></div><span class="gauge-label" id="coverageLabel" style="color:var(--amber)">0%</span></div>`;
+    }
+    if (phase.extra === "readiness") {
+      html += `<div class="gauge-container"><span style="font-size:11px;color:var(--muted);min-width:60px">Readiness</span><div class="gauge-bar"><div class="gauge-fill" id="readinessGauge" style="width:0%;background:var(--green)"></div></div><span class="gauge-label" id="readinessLabel" style="color:var(--green)">0</span></div>`;
+    }
+    phase.items.forEach(item => {
+      const isChecked = !!checked[item.id];
+      html += `<div class="check-item${isChecked ? " checked" : ""}" id="item-${item.id}">`;
+      html += `<label class="check-box"><input type="checkbox" ${isChecked ? "checked" : ""} onchange="toggleCheck('${item.id}')"><span class="mark"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></label>`;
+      html += `<div class="check-content"><div class="check-title">${item.title}</div><div class="check-desc">${item.desc}</div>`;
+      if (item.api || item.link) {
+        html += `<div class="check-badges">`;
+        if (item.api) html += `<span class="api-badge">${item.api}</span>`;
+        if (item.link) html += `<a href="${item.link}" class="link-btn">${item.linkText || "Open"} &rarr;</a>`;
+        html += `</div>`;
+      }
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+  });
+  root.innerHTML = html;
+  updateGauges();
+}
+
+function updateGauges() {
+  const done = getTotalDone();
+  const coveragePct = Math.min(100, Math.round((done / 42) * 100 * 1.2));
+  const readinessScore = Math.min(100, Math.round((done / 42) * 100));
+  const cg = document.getElementById("coverageGauge");
+  const cl = document.getElementById("coverageLabel");
+  const rg = document.getElementById("readinessGauge");
+  const rl = document.getElementById("readinessLabel");
+  if (cg) {
+    cg.style.width = coveragePct + "%";
+    cg.style.background = coveragePct > 80 ? "var(--green)" : coveragePct > 50 ? "var(--amber)" : "var(--red)";
+    cl.textContent = coveragePct + "%";
+    cl.style.color = coveragePct > 80 ? "var(--green)" : coveragePct > 50 ? "var(--amber)" : "var(--red)";
+  }
+  if (rg) {
+    rg.style.width = readinessScore + "%";
+    rg.style.background = readinessScore > 80 ? "var(--green)" : readinessScore > 50 ? "var(--amber)" : "var(--red)";
+    rl.textContent = readinessScore;
+    rl.style.color = readinessScore > 80 ? "var(--green)" : readinessScore > 50 ? "var(--amber)" : "var(--red)";
+  }
+}
+
+// Init
+loadState();
+renderPhases();
+updateProgress();
+
+// Re-update gauges whenever progress changes
+const origUpdate = updateProgress;
+updateProgress = function() {
+  origUpdate.call ? origUpdate() : null;
+  updateGauges();
+};
+// Fix: just override cleanly
+updateProgress = function() {
+  const done = getTotalDone();
+  const pct = Math.round((done / 42) * 100);
+  document.getElementById("doneCount").textContent = done;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressPct").textContent = pct + "%";
+  PHASES.forEach((phase, i) => {
+    const pd = getPhaseDone(phase);
+    const el = document.getElementById("phase-mini-" + i);
+    if (el) {
+      if (pd === phase.items.length) {
+        el.innerHTML = '<span class="complete-badge">Complete</span>';
+      } else {
+        el.innerHTML = `<span>${pd}</span>/${phase.items.length}`;
+      }
+    }
+    const card = document.getElementById("phase-" + i);
+    if (card) {
+      card.classList.toggle("done", pd === phase.items.length);
+    }
+  });
+  updateGauges();
+  if (done === 42) showCelebration();
+};
+</script>
+</body>
+</html>
