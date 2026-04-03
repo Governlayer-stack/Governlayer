@@ -713,21 +713,38 @@ input,textarea,select{font-family:inherit;outline:none}
       frameworks:(D.frameworks||['EU_AI_ACT','NIST_AI_RMF','ISO_42001']).join(', ')
     };
 
+    var auditDone=false;
+    var auditLive=false;
+    var auditData=null;
+
     apiCall('POST','/audit',auditBody)
     .then(function(data){
-      if(data.detail) throw new Error(data.detail);
+      if(data.error||data.detail||!data.results) throw new Error('api error');
+      auditLive=true;
+      auditData=data;
       D.auditResult={passed:6,warnings:2,failed:0,score:87};
       D.auditDecisionId=data.decision_id;
       D.auditHash=data.current_hash;
-      showAuditResult(true,data.results||'',data);
     })
     .catch(function(){
+      auditLive=false;
       D.auditResult={passed:6,warnings:2,failed:0,score:87};
-      showAuditResult(false,'','');
+    })
+    .then(function(){
+      auditDone=true;
+      tryShowAudit();
     });
 
+    var animDone=false;
+    setTimeout(function(){animDone=true;tryShowAudit();},checks.length*400+300);
+
+    function tryShowAudit(){
+      if(!auditDone||!animDone) return;
+      showAuditResult(auditLive,auditLive?(auditData.results||''):'',auditData||{});
+    }
+
     function showAuditResult(live,llmText,data){
-      var delay=checks.length*400+300;
+      var delay=0;
       setTimeout(function(){
         $('auditSpinner').style.display='none';
         var src=live?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
@@ -791,14 +808,20 @@ input,textarea,select{font-family:inherit;outline:none}
     };
 
     var liveResult=null;
+    var apiFetched=false;
     apiCall('POST','/govern',governBody)
     .then(function(data){
-      if(data.detail) throw new Error(data.detail);
+      if(data.error||data.detail||!data.drift_coefficient&&data.drift_coefficient!==0) throw new Error('api error');
       liveResult=data;
     })
-    .catch(function(){liveResult=null;});
+    .catch(function(){liveResult=null;})
+    .then(function(){apiFetched=true;tryShowDrift();});
 
-    setTimeout(function(){
+    var animReady=false;
+    setTimeout(function(){animReady=true;tryShowDrift();},2800);
+
+    function tryShowDrift(){
+      if(!apiFetched||!animReady) return;
       $('driftSpinner').style.display='none';
       var driftScore=liveResult?liveResult.drift_coefficient:0.23;
       var vetoed=liveResult?liveResult.vetoed:false;
@@ -873,7 +896,7 @@ input,textarea,select{font-family:inherit;outline:none}
           $('driftNextBtn').disabled=false;
         });
       },1200);
-    },2800);
+    }
   }
 
   // ===== STEP 4: RISK SCORING =====
@@ -896,7 +919,7 @@ input,textarea,select{font-family:inherit;outline:none}
 
     apiCall('POST','/risk-score',riskBody)
     .then(function(data){
-      if(data.detail) throw new Error(data.detail);
+      if(data.error||data.detail||!data.dimension_scores) throw new Error('api error');
       // Map API dimension names to display names
       var dimMap={
         'Privacy':'Data Privacy','Autonomy_Risk':'Autonomy Risk',
@@ -1021,7 +1044,7 @@ input,textarea,select{font-family:inherit;outline:none}
     // Try real ledger endpoint
     apiCall('GET','/ledger')
     .then(function(data){
-      if(data.detail) throw new Error(data.detail);
+      if(data.error||data.detail) throw new Error('api error');
       var records=data.ledger||[];
       if(records.length===0) throw new Error('empty');
       // Show last 5 entries (most recent)
@@ -1090,7 +1113,7 @@ input,textarea,select{font-family:inherit;outline:none}
       priority:'high'
     })
     .then(function(data){
-      if(data.detail) throw new Error(data.detail);
+      if(data.error||data.detail) throw new Error('api error');
       achonyeResult=data;
     })
     .catch(function(){achonyeResult=null;});
