@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — GovernLayer</title>
+<meta name="description" content="Create your GovernLayer account. AI governance, compliance, and security for every agent and model.">
+<meta name="theme-color" content="#0f172a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#273548;--border:#334155;
+  --text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;
+  --green:#10b981;--green-hover:#059669;--green-bg:rgba(16,185,129,.1);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --yellow:#f59e0b;--blue:#3b82f6;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+button{cursor:pointer;font-family:inherit}
+input{font-family:inherit}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;max-width:1280px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--text);text-decoration:none}
+.logo:hover{text-decoration:none}
+.logo svg{width:28px;height:28px}
+.nav-right{font-size:14px;color:var(--muted)}
+.nav-right a{color:var(--green);font-weight:500}
+
+/* MAIN LAYOUT */
+.main{max-width:1280px;margin:0 auto;padding:0 32px 80px;display:grid;grid-template-columns:1fr 400px;gap:64px;align-items:start}
+
+/* LEFT COLUMN */
+.form-section h1{font-size:32px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px}
+.form-section .subtitle{color:var(--muted);font-size:16px;margin-bottom:36px}
+.form-group{margin-bottom:20px;position:relative}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:0.02em}
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"]{
+  width:100%;padding:12px 14px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:15px;outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.form-group input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+.form-group input.error{border-color:var(--red)}
+.form-group input.valid{border-color:var(--green)}
+.field-error{font-size:12px;color:var(--red);margin-top:4px;display:none}
+.field-error.show{display:block}
+.field-icon{position:absolute;right:12px;top:35px;color:var(--muted);cursor:pointer;font-size:14px;user-select:none}
+.field-check{position:absolute;right:12px;top:35px;color:var(--green);font-size:14px;display:none}
+.field-check.show{display:block}
+
+/* PASSWORD */
+.pw-wrapper{position:relative}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:13px;padding:4px 8px}
+.pw-toggle:hover{color:var(--text)}
+.pw-strength{height:3px;border-radius:2px;margin-top:6px;background:var(--surface2);overflow:hidden;transition:opacity .2s;opacity:0}
+.pw-strength.show{opacity:1}
+.pw-strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0}
+.pw-strength-label{font-size:11px;margin-top:3px;color:var(--dim);transition:color .2s}
+
+/* PLAN SELECTOR */
+.plans-label{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:10px;letter-spacing:0.02em}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.plan-card{
+  position:relative;padding:14px 16px;background:var(--surface);border:2px solid var(--border);
+  border-radius:10px;cursor:pointer;transition:border-color .15s,background .15s;
+}
+.plan-card:hover{border-color:var(--dim)}
+.plan-card.selected{border-color:var(--green);background:var(--green-bg)}
+.plan-card input{position:absolute;opacity:0;pointer-events:none}
+.plan-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.plan-price{font-size:13px;color:var(--muted)}
+.plan-detail{font-size:11px;color:var(--dim);margin-top:4px}
+.plan-badge{
+  position:absolute;top:-9px;right:10px;background:var(--green);color:#000;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.03em;
+}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;padding:14px;background:var(--green);color:#000;font-size:15px;font-weight:600;
+  border:none;border-radius:8px;transition:background .15s,transform .1s;position:relative;
+}
+.submit-btn:hover:not(:disabled){background:var(--green-hover)}
+.submit-btn:active:not(:disabled){transform:scale(0.995)}
+.submit-btn:disabled{opacity:.7;cursor:not-allowed}
+.submit-btn .spinner{display:none;width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+.submit-btn.loading .btn-text{visibility:hidden}
+.submit-btn.loading .spinner{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.terms{font-size:12px;color:var(--dim);text-align:center;margin-top:14px;line-height:1.5}
+.terms a{color:var(--muted)}
+
+/* GENERAL ERROR */
+.general-error{
+  display:none;padding:12px 16px;background:var(--red-bg);border:1px solid rgba(239,68,68,.2);
+  border-radius:8px;font-size:13px;color:var(--red);margin-bottom:20px;
+}
+.general-error.show{display:block}
+
+/* SUCCESS STATE */
+.success-state{display:none;text-align:center;padding:48px 0}
+.success-state.show{display:block}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-bg);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.success-icon svg{width:32px;height:32px;color:var(--green)}
+.success-state h2{font-size:22px;margin-bottom:8px}
+.success-state p{color:var(--muted);font-size:14px}
+
+/* RIGHT COLUMN */
+.info-panel{position:sticky;top:40px}
+.info-panel h3{font-size:16px;font-weight:600;margin-bottom:16px;color:var(--text)}
+.feature-list{list-style:none;padding:0;margin-bottom:32px}
+.feature-list li{
+  display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:14px;color:var(--muted);
+  animation:fadeIn .25s ease;
+}
+.feature-list li svg{flex-shrink:0;width:18px;height:18px;color:var(--green);margin-top:1px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.social-proof{border-top:1px solid var(--border);padding-top:24px;margin-top:8px}
+.social-proof h4{font-size:13px;font-weight:500;color:var(--dim);margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase}
+.badges{display:flex;flex-wrap:wrap;gap:10px}
+.badge{
+  padding:8px 14px;background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;font-size:12px;font-weight:500;color:var(--muted);
+  display:flex;align-items:center;gap:6px;
+}
+.badge svg{width:14px;height:14px;color:var(--green)}
+
+/* CONFETTI */
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;top:-10px;animation:confettiFall 2.5s ease-out forwards}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}
+  100%{transform:translateY(100vh) rotate(720deg) scale(0.3);opacity:0}
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr;gap:40px}
+  .info-panel{position:static}
+  .nav{padding:16px 20px}
+  .main{padding:0 20px 60px}
+}
+@media(max-width:500px){
+  .plan-grid{grid-template-columns:1fr}
+  .form-section h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="8" fill="#10b981"/>
+      <path d="M8 16.5L13 21.5L24 10.5" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    GovernLayer
+  </a>
+  <div class="nav-right">
+    Already have an account? <a href="/docs/landing/#login">Log in</a>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- LEFT COLUMN: FORM -->
+  <div class="form-section">
+    <h1>Start securing your AI systems</h1>
+    <p class="subtitle">Create your free account. No credit card required.</p>
+
+    <div class="general-error" id="generalError"></div>
+
+    <form id="signupForm" novalidate>
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" autocomplete="name" placeholder="Jane Smith" required>
+        <div class="field-error" id="fullNameError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Work Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="jane@company.com" required>
+        <span class="field-check" id="emailCheck">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </span>
+        <div class="field-error" id="emailError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="company">Company Name</label>
+        <input type="text" id="company" name="company" autocomplete="organization" placeholder="Acme Corp" required>
+        <div class="field-error" id="companyError"></div>
+      </div>
+
+      <div class="form-group" id="passwordGroup">
+        <label for="password">Password</label>
+        <div class="pw-wrapper">
+          <input type="password" id="password" name="password" autocomplete="new-password" placeholder="Min 8 characters" required minlength="8">
+          <button type="button" class="pw-toggle" id="pwToggle" tabindex="-1">Show</button>
+        </div>
+        <div class="pw-strength" id="pwStrength"><div class="pw-strength-bar" id="pwBar"></div></div>
+        <div class="pw-strength-label" id="pwLabel"></div>
+        <div class="field-error" id="passwordError"></div>
+      </div>
+
+      <div class="plans-label">Select a plan</div>
+      <div class="plan-grid" id="planGrid">
+        <label class="plan-card" data-plan="free">
+          <input type="radio" name="plan" value="free">
+          <div class="plan-name">Free</div>
+          <div class="plan-price">$0/mo</div>
+          <div class="plan-detail">20 req/min &middot; 500 req/mo &middot; Core APIs</div>
+        </label>
+        <label class="plan-card" data-plan="starter">
+          <input type="radio" name="plan" value="starter">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">$49/mo</div>
+          <div class="plan-detail">100 req/min &middot; 10K req/mo &middot; Reports</div>
+        </label>
+        <label class="plan-card" data-plan="pro">
+          <input type="radio" name="plan" value="pro">
+          <span class="plan-badge">Most Popular</span>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$199/mo</div>
+          <div class="plan-detail">500 req/min &middot; 100K req/mo &middot; Consensus</div>
+        </label>
+        <label class="plan-card" data-plan="enterprise">
+          <input type="radio" name="plan" value="enterprise">
+          <div class="plan-name">Enterprise</div>
+          <div class="plan-price">Custom</div>
+          <div class="plan-detail">Unlimited &middot; Contact sales</div>
+        </label>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Create Account</span>
+        <span class="spinner"></span>
+      </button>
+      <div class="terms">By signing up, you agree to our <a href="/legal">Terms of Service</a> and <a href="/trust">Privacy Policy</a></div>
+    </form>
+
+    <div class="success-state" id="successState">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h2>Account created!</h2>
+      <p>Redirecting to your dashboard...</p>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: INFO -->
+  <div class="info-panel">
+    <h3>What's included</h3>
+    <ul class="feature-list" id="featureList"></ul>
+
+    <div class="social-proof">
+      <h4>Trusted by AI-native teams</h4>
+      <div class="badges">
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SOC 2
+        </div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          ISO 27001
+        </div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          EU AI Act
+        </div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+          NIST AI RMF
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // --- PLAN FEATURES ---
+  const planFeatures = {
+    free: [
+      'Drift detection',
+      'Risk scoring',
+      'Audit ledger',
+      'Compliance checklist',
+      '1 organization'
+    ],
+    starter: [
+      'Everything in Free',
+      'Compliance reports',
+      'Usage analytics',
+      'Webhooks',
+      '3 organizations'
+    ],
+    pro: [
+      'Everything in Starter',
+      'Multi-LLM consensus',
+      'Achonye orchestration',
+      'Priority support',
+      '10 organizations'
+    ],
+    enterprise: [
+      'Everything in Pro',
+      'SSO / SAML',
+      'Dedicated support',
+      'On-premise deployment',
+      'Unlimited organizations'
+    ]
+  };
+
+  // --- DOM REFS ---
+  const form = document.getElementById('signupForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const btnText = submitBtn.querySelector('.btn-text');
+  const generalError = document.getElementById('generalError');
+  const successState = document.getElementById('successState');
+  const featureList = document.getElementById('featureList');
+  const planCards = document.querySelectorAll('.plan-card');
+  const pwInput = document.getElementById('password');
+  const pwToggle = document.getElementById('pwToggle');
+  const pwStrength = document.getElementById('pwStrength');
+  const pwBar = document.getElementById('pwBar');
+  const pwLabel = document.getElementById('pwLabel');
+  const emailInput = document.getElementById('email');
+  const emailCheck = document.getElementById('emailCheck');
+  const passwordGroup = document.getElementById('passwordGroup');
+
+  let selectedPlan = 'free';
+
+  // --- URL PARAM ---
+  const urlPlan = new URLSearchParams(window.location.search).get('plan');
+  if (urlPlan && planFeatures[urlPlan]) {
+    selectedPlan = urlPlan;
+  }
+
+  // --- PLAN SELECTION ---
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    planCards.forEach(card => {
+      const isPlan = card.dataset.plan === plan;
+      card.classList.toggle('selected', isPlan);
+      card.querySelector('input').checked = isPlan;
+    });
+    renderFeatures(plan);
+    updateEnterprise();
+  }
+
+  planCards.forEach(card => {
+    card.addEventListener('click', () => selectPlan(card.dataset.plan));
+  });
+
+  function renderFeatures(plan) {
+    const items = planFeatures[plan] || planFeatures.free;
+    featureList.innerHTML = items.map(f =>
+      `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>${f}</li>`
+    ).join('');
+  }
+
+  function updateEnterprise() {
+    const isEnterprise = selectedPlan === 'enterprise';
+    btnText.textContent = isEnterprise ? 'Contact Sales' : 'Create Account';
+    passwordGroup.style.display = isEnterprise ? 'none' : 'block';
+    if (isEnterprise) {
+      pwInput.removeAttribute('required');
+    } else {
+      pwInput.setAttribute('required', '');
+    }
+  }
+
+  // --- INIT ---
+  selectPlan(selectedPlan);
+  document.getElementById('fullName').focus();
+
+  // --- PASSWORD TOGGLE ---
+  pwToggle.addEventListener('click', () => {
+    const isPassword = pwInput.type === 'password';
+    pwInput.type = isPassword ? 'text' : 'password';
+    pwToggle.textContent = isPassword ? 'Hide' : 'Show';
+  });
+
+  // --- PASSWORD STRENGTH ---
+  pwInput.addEventListener('input', () => {
+    const val = pwInput.value;
+    if (!val) {
+      pwStrength.classList.remove('show');
+      pwLabel.textContent = '';
+      return;
+    }
+    pwStrength.classList.add('show');
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (val.length >= 12) score++;
+    if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+    if (/\d/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    let width, color, label;
+    if (score <= 1) { width = '25%'; color = 'var(--red)'; label = 'Weak'; }
+    else if (score <= 3) { width = '60%'; color = 'var(--yellow)'; label = 'Medium'; }
+    else { width = '100%'; color = 'var(--green)'; label = 'Strong'; }
+
+    pwBar.style.width = width;
+    pwBar.style.background = color;
+    pwLabel.textContent = label;
+    pwLabel.style.color = color;
+  });
+
+  // --- EMAIL VALIDATION ---
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  emailInput.addEventListener('input', () => {
+    const valid = emailRe.test(emailInput.value);
+    emailCheck.classList.toggle('show', valid);
+    emailInput.classList.toggle('valid', valid);
+    if (valid) { hideError('email'); emailInput.classList.remove('error'); }
+  });
+
+  // --- ERROR HELPERS ---
+  function showError(field, msg) {
+    const input = document.getElementById(field);
+    const err = document.getElementById(field + 'Error');
+    if (input) input.classList.add('error');
+    if (err) { err.textContent = msg; err.classList.add('show'); }
+  }
+  function hideError(field) {
+    const input = document.getElementById(field);
+    const err = document.getElementById(field + 'Error');
+    if (input) input.classList.remove('error');
+    if (err) err.classList.remove('show');
+  }
+  function clearErrors() {
+    ['fullName','email','company','password'].forEach(hideError);
+    generalError.classList.remove('show');
+  }
+
+  // --- VALIDATE ---
+  function validate() {
+    clearErrors();
+    let ok = true;
+    const name = document.getElementById('fullName').value.trim();
+    const email = emailInput.value.trim();
+    const company = document.getElementById('company').value.trim();
+    const pw = pwInput.value;
+
+    if (!name) { showError('fullName', 'Full name is required.'); ok = false; }
+    if (!email) { showError('email', 'Email is required.'); ok = false; }
+    else if (!emailRe.test(email)) { showError('email', 'Enter a valid email address.'); ok = false; }
+    if (!company) { showError('company', 'Company name is required.'); ok = false; }
+    if (selectedPlan !== 'enterprise') {
+      if (!pw) { showError('password', 'Password is required.'); ok = false; }
+      else if (pw.length < 8) { showError('password', 'Password must be at least 8 characters.'); ok = false; }
+    }
+    return ok;
+  }
+
+  // --- CONFETTI ---
+  function confetti() {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+    const colors = ['#10b981','#3b82f6','#f59e0b','#8b5cf6','#ec4899','#06b6d4'];
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDelay = Math.random() * 0.8 + 's';
+      piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+      piece.style.width = (5 + Math.random() * 6) + 'px';
+      piece.style.height = (5 + Math.random() * 6) + 'px';
+      container.appendChild(piece);
+    }
+    setTimeout(() => container.remove(), 3500);
+  }
+
+  // --- SUBMIT ---
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const company = document.getElementById('company').value.trim();
+
+    // Enterprise: open mailto
+    if (selectedPlan === 'enterprise') {
+      const subject = encodeURIComponent('GovernLayer Enterprise Inquiry — ' + company);
+      const body = encodeURIComponent(
+        'Hi GovernLayer team,\n\n' +
+        'I\'d like to discuss an Enterprise plan for ' + company + '.\n\n' +
+        'Name: ' + document.getElementById('fullName').value.trim() + '\n' +
+        'Email: ' + emailInput.value.trim() + '\n' +
+        'Company: ' + company + '\n\n' +
+        'Looking forward to hearing from you.'
+      );
+      window.location.href = 'mailto:founders@governlayer.ai?subject=' + subject + '&body=' + body;
+      return;
+    }
+
+    // Loading state
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    clearErrors();
+
+    const payload = {
+      email: emailInput.value.trim(),
+      password: pwInput.value,
+      company: company
+    };
+
+    try {
+      const base = window.location.origin;
+      const res = await fetch(base + '/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const msg = data.detail || data.message || 'Something went wrong.';
+        if (msg.toLowerCase().includes('already') || msg.toLowerCase().includes('exists') || msg.toLowerCase().includes('registered')) {
+          showError('email', 'This email is already registered. <a href="/docs/landing/#login">Try logging in</a>.');
+        } else {
+          generalError.textContent = msg;
+          generalError.classList.add('show');
+        }
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        return;
+      }
+
+      // Success
+      if (data.access_token || data.token) {
+        localStorage.setItem('gl_token', data.access_token || data.token);
+      }
+      localStorage.setItem('gl_email', emailInput.value.trim());
+      localStorage.setItem('gl_plan', selectedPlan);
+
+      form.style.display = 'none';
+      successState.classList.add('show');
+      confetti();
+
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 2000);
+
+    } catch (err) {
+      generalError.textContent = 'Unable to connect. Please check your connection and try again.';
+      generalError.classList.add('show');
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+
+  // --- ENTER KEY ---
+  form.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  // --- CLEAR ERRORS ON INPUT ---
+  ['fullName','email','company','password'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => hideError(id));
+  });
+
+})();
+</script>
+</body>
+</html>
