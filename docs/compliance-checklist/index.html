@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Compliance Readiness Checklist | GovernLayer</title>
+<meta name="description" content="Interactive compliance readiness checklist for SOC 2, ISO 27001, NIST AI RMF, EU AI Act, HIPAA, GDPR, NIST CSF 2.0, ISO 42001, PCI DSS v4.0, and CCPA. Track your progress across 10 frameworks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#263548;--text:#f1f5f9;--muted:#94a3b8;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06b6d4;--border:#334155;--indigo:#6366f1;--orange:#f97316;--pink:#ec4899;--teal:#14b8a6}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;color:var(--text)}
+.nav-brand svg{flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:14px}
+.nav-link{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.nav-link:hover{color:var(--text);text-decoration:none}
+
+.container{max-width:900px;margin:0 auto;padding:16px 16px 60px}
+
+.header{text-align:center;padding:20px 0 14px}
+.header h1{font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.header p{color:var(--muted);font-size:13px;max-width:560px;margin:0 auto}
+
+/* Framework selector */
+.fw-selector{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.fw-selector-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+.fw-chips{display:flex;flex-wrap:wrap;gap:6px}
+.fw-chip{font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;user-select:none;display:flex;align-items:center;gap:5px}
+.fw-chip:hover{border-color:var(--muted);color:var(--text)}
+.fw-chip.selected{border-color:var(--green);color:var(--text)}
+.fw-chip .fw-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fw-chip.selected .fw-dot{box-shadow:0 0 6px currentColor}
+.fw-chip-count{font-size:10px;padding:1px 5px;border-radius:4px;background:rgba(16,185,129,0.15);color:var(--green);margin-left:2px}
+.fw-actions{display:flex;gap:8px;margin-top:8px}
+.fw-act-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:5px;padding:3px 9px;cursor:pointer;transition:all 0.15s}
+.fw-act-btn:hover{color:var(--text);border-color:var(--muted)}
+
+/* Stats bar */
+.stats-bar{display:flex;gap:14px;align-items:center;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.stats-bar .stat-val{color:var(--text);font-weight:700}
+.stats-bar .stat-pct{color:var(--green);font-weight:700}
+.stats-sep{color:var(--border)}
+
+/* Progress bar */
+.progress-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-label{font-size:13px;font-weight:600}
+.progress-count{font-size:12px;color:var(--muted)}
+.progress-count span{color:var(--green);font-weight:700}
+.progress-bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:4px;transition:width 0.4s ease}
+.progress-pct{font-size:11px;color:var(--muted);margin-top:3px;text-align:right}
+
+/* Phase card */
+.phase{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;transition:border-color 0.2s}
+.phase.current{border-color:var(--green)}
+.phase-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;transition:background 0.15s}
+.phase-header:hover{background:var(--surface2)}
+.phase-num{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phase-info{flex:1;min-width:0}
+.phase-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.phase-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.phase-meta{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.phase-progress-mini{font-size:11px;color:var(--muted);white-space:nowrap}
+.phase-progress-mini span{color:var(--green);font-weight:600}
+.complete-badge{font-size:10px;font-weight:700;color:var(--green);background:rgba(16,185,129,0.12);padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:0.5px}
+.chevron{color:var(--muted);transition:transform 0.2s;flex-shrink:0;font-size:18px;line-height:1}
+.phase.open .chevron{transform:rotate(180deg)}
+
+.phase-body{display:none;padding:0 14px 10px}
+.phase.open .phase-body{display:block}
+
+/* Checklist item */
+.check-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(51,65,85,0.4)}
+.check-item:last-child{border-bottom:none}
+.check-item.hidden{display:none}
+.check-box{position:relative;width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.check-box input{position:absolute;opacity:0;width:18px;height:18px;cursor:pointer;z-index:1}
+.check-box .mark{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.check-box input:checked+.mark{background:var(--green);border-color:var(--green)}
+.check-box input:checked+.mark svg{opacity:1;transform:scale(1)}
+.check-box .mark svg{opacity:0;transform:scale(0.5);transition:all 0.2s}
+.check-content{flex:1;min-width:0}
+.check-title{font-size:13px;font-weight:500;transition:color 0.2s}
+.check-item.checked .check-title{color:var(--muted);text-decoration:line-through}
+.check-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.check-badges{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.api-badge{font-size:10px;font-family:'SF Mono',Consolas,monospace;color:var(--purple);background:rgba(139,92,246,0.1);padding:1px 6px;border-radius:4px}
+.fw-badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:0.3px}
+
+/* Bottom cards */
+.bottom-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.bottom-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.bottom-card h3{font-size:13px;font-weight:700;margin-bottom:3px}
+.bottom-card p{font-size:11px;color:var(--muted);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;transition:all 0.15s}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#0d9668}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--surface2)}
+.btn-red{background:transparent;border:1px solid var(--red);color:var(--red)}
+.btn-red:hover{background:rgba(239,68,68,0.1)}
+
+/* Celebration overlay */
+.celebration{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.92);z-index:200;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}
+.celebration.show{display:flex}
+.celebration h2{font-size:28px;font-weight:800;margin-bottom:6px}
+.celebration p{color:var(--muted);font-size:14px;margin-bottom:20px;max-width:400px}
+.confetti-container{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:201}
+.confetti{position:absolute;width:8px;height:8px;border-radius:2px;animation:confetti-fall linear forwards}
+@keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* Print */
+@media print{
+body{background:#fff;color:#000}
+.nav,.progress-section,.bottom-cards,.celebration,.api-badge,.fw-selector,.stats-bar,.btn{display:none!important}
+.container{max-width:100%;padding:0}
+.header h1{color:#000;font-size:20px}
+.header p{color:#555}
+.phase{border:1px solid #ccc;break-inside:avoid;margin-bottom:6px}
+.phase-body{display:block!important}
+.phase-header{padding:8px 10px}
+.phase-num{background:#000;color:#fff}
+.phase-title{color:#000;font-size:12px}
+.phase-desc{color:#666}
+.check-item{padding:4px 0}
+.check-item.hidden{display:none!important}
+.check-title{color:#000;font-size:11px}
+.check-item.checked .check-title{color:#666;text-decoration:line-through}
+.check-desc{color:#666;font-size:10px}
+.check-box .mark{border:2px solid #000}
+.check-box input:checked+.mark{background:#000;border-color:#000}
+.check-box .mark svg path{stroke:#fff}
+.chevron{display:none}
+.fw-badge{border:1px solid #999;color:#333}
+}
+
+@media(max-width:640px){
+.container{padding:12px 10px 50px}
+.header h1{font-size:20px}
+.bottom-cards{grid-template-columns:1fr}
+.phase-header{padding:10px 12px}
+.phase-body{padding:0 12px 8px}
+.stats-bar{gap:8px;font-size:11px}
+.fw-chips{gap:4px}
+.fw-chip{font-size:10px;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#10b981"/><path d="M9 16.5l4.5 4.5L23 11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    GovernLayer
+  </a>
+  <div class="nav-links">
+    <a href="/soc2-checklist" class="nav-link">SOC 2 Deep Dive</a>
+    <a href="/" class="nav-link">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Home
+    </a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <h1>Universal Compliance Readiness</h1>
+    <p>One checklist, 10 frameworks. Select your target frameworks and track progress from scoping to certification.</p>
+  </div>
+
+  <div class="fw-selector">
+    <div class="fw-selector-label">Select Frameworks</div>
+    <div class="fw-chips" id="fwChips"></div>
+    <div class="fw-actions">
+      <button class="fw-act-btn" onclick="selectAllFw()">Select All</button>
+      <button class="fw-act-btn" onclick="clearAllFw()">Clear</button>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <span><span class="stat-val" id="statFw">0</span> frameworks</span>
+    <span class="stats-sep">|</span>
+    <span><span class="stat-val" id="statItems">0</span> items</span>
+    <span class="stats-sep">|</span>
+    <span><span class="stat-pct" id="statPct">0%</span> complete</span>
+    <span style="margin-left:auto"><button class="btn btn-red" style="font-size:10px;padding:3px 8px" onclick="resetProgress()">Reset</button></span>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-top">
+      <span class="progress-label">Overall Progress</span>
+      <span class="progress-count"><span id="doneCount">0</span> / <span id="totalCount">0</span></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-pct" id="progressPct">0%</div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="bottom-cards">
+    <div class="bottom-card">
+      <h3>Need help scoping?</h3>
+      <p>Our team can map your systems to framework controls and build a custom compliance roadmap.</p>
+      <a href="/demo" class="btn btn-green">Book a call</a>
+    </div>
+    <div class="bottom-card">
+      <h3>Already have evidence?</h3>
+      <p>Connect your cloud, identity, and monitoring tools to auto-map evidence to controls.</p>
+      <a href="/demo" class="btn btn-outline">Start free trial</a>
+    </div>
+  </div>
+</div>
+
+<div class="celebration" id="celebration">
+  <h2>All Items Complete!</h2>
+  <p>You've checked off every visible item. Your compliance posture is looking strong.</p>
+  <button class="btn btn-green" onclick="closeCelebration()" style="font-size:14px;padding:10px 24px">Continue</button>
+</div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+const FRAMEWORKS = [
+  { id:'SOC2', label:'SOC 2', color:'#3b82f6', count:64 },
+  { id:'ISO27001', label:'ISO 27001', color:'#8b5cf6', count:93 },
+  { id:'NIST_AI_RMF', label:'NIST AI RMF', color:'#14b8a6', count:42 },
+  { id:'EU_AI_ACT', label:'EU AI Act', color:'#10b981', count:38 },
+  { id:'HIPAA', label:'HIPAA', color:'#ef4444', count:54 },
+  { id:'GDPR', label:'GDPR', color:'#06b6d4', count:48 },
+  { id:'NIST_CSF', label:'NIST CSF 2.0', color:'#f59e0b', count:106 },
+  { id:'ISO42001', label:'ISO 42001', color:'#6366f1', count:39 },
+  { id:'PCI_DSS', label:'PCI DSS v4.0', color:'#f97316', count:78 },
+  { id:'CCPA', label:'CCPA', color:'#ec4899', count:28 }
+];
+
+const PHASES = [
+  { num:1, title:'Foundation', desc:'Account setup and stakeholder alignment', items:[
+    { id:'f1', title:'Create GovernLayer account', desc:'Register at /demo and get API access', fw:['ALL'] },
+    { id:'f2', title:'Define organization profile', desc:'Company name, industry, team size', fw:['ALL'] },
+    { id:'f3', title:'Invite compliance stakeholders', desc:'Compliance lead, CISO, engineering lead', fw:['ALL'] },
+    { id:'f4', title:'Select target frameworks', desc:'Choose which standards to pursue', fw:['ALL'] }
+  ]},
+  { num:2, title:'Scope & Classification', desc:'Define boundaries and classify systems', items:[
+    { id:'s1', title:'Document systems in scope', desc:'List all systems subject to compliance', fw:['ALL'] },
+    { id:'s2', title:'Select Trust Services Criteria', desc:'Security (required) + optional: Availability, PI, Confidentiality, Privacy', fw:['SOC2'] },
+    { id:'s3', title:'Classify AI system risk level', desc:'Minimal, Limited, High, Unacceptable per Article 6', fw:['EU_AI_ACT'] },
+    { id:'s4', title:'Register in AI system inventory', desc:'Mandatory registry of all AI systems', fw:['EU_AI_ACT','ISO42001'] },
+    { id:'s5', title:'Identify ePHI data flows', desc:'Map all electronic protected health information', fw:['HIPAA'] },
+    { id:'s6', title:'Map personal data processing activities', desc:'Record of processing activities (ROPA)', fw:['GDPR','CCPA'] },
+    { id:'s7', title:'Define cardholder data environment', desc:'Identify where card data is stored/processed/transmitted', fw:['PCI_DSS'] },
+    { id:'s8', title:'Establish AI risk context', desc:'Define organizational risk tolerance for AI', fw:['NIST_AI_RMF'] },
+    { id:'s9', title:'Document data classification levels', desc:'Public, Internal, Confidential, Restricted', fw:['ALL'] }
+  ]},
+  { num:3, title:'Connect Evidence Sources', desc:'Integrate infrastructure and tooling', items:[
+    { id:'e1', title:'Connect cloud infrastructure (AWS/GCP/Azure)', desc:'Auto-collect infrastructure evidence', fw:['ALL'], api:'POST /v1/evidence/connect' },
+    { id:'e2', title:'Connect version control (GitHub)', desc:'Code review and change management evidence', fw:['ALL'], api:'POST /v1/evidence/connect' },
+    { id:'e3', title:'Connect identity provider (Okta/Google)', desc:'Access control and SSO evidence', fw:['SOC2','ISO27001','HIPAA'], api:'POST /v1/evidence/connect' },
+    { id:'e4', title:'Connect monitoring & logging (Datadog)', desc:'Observability and incident detection evidence', fw:['ALL'], api:'POST /v1/evidence/connect' },
+    { id:'e5', title:'Connect communication tools (Slack)', desc:'Policy acknowledgment and alerting evidence', fw:['SOC2','ISO27001'], api:'POST /v1/evidence/connect' },
+    { id:'e6', title:'Verify connector health', desc:'Ensure all integrations are collecting data', fw:['ALL'], api:'GET /v1/evidence/connectors' }
+  ]},
+  { num:4, title:'Control Assessment', desc:'Scan, identify gaps, assign remediation', items:[
+    { id:'c1', title:'Run initial control scan', desc:'Automated scan of all connected evidence sources', fw:['ALL'], api:'GET /v1/controls/dashboard' },
+    { id:'c2', title:'Review framework-mapped controls', desc:'See how controls map to each selected framework', fw:['ALL'], api:'GET /v1/controls/frameworks/{framework}' },
+    { id:'c3', title:'Identify control gaps', desc:'Find controls that are failing or missing evidence', fw:['ALL'], api:'GET /v1/controls/gaps' },
+    { id:'c4', title:'Assign remediation owners', desc:'Assign team member to each failing control', fw:['ALL'] },
+    { id:'c5', title:'Set remediation deadlines', desc:'Based on audit timeline', fw:['ALL'] },
+    { id:'c6', title:'Map controls to sub-criteria', desc:'CC1-CC9 for SOC 2, A.5-A.8 for ISO 27001', fw:['SOC2','ISO27001'] }
+  ]},
+  { num:5, title:'Policy & Documentation', desc:'Generate and customize compliance policies', items:[
+    { id:'p1', title:'Generate Information Security Policy', desc:'Core security governance document', fw:['SOC2','ISO27001','NIST_CSF'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p2', title:'Generate Access Control Policy', desc:'User provisioning, least privilege, MFA requirements', fw:['ALL'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p3', title:'Generate Incident Response Plan', desc:'Detection, containment, eradication, recovery, lessons learned', fw:['ALL'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p4', title:'Generate Change Management Policy', desc:'Change request, approval, testing, deployment procedures', fw:['SOC2','ISO27001'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p5', title:'Generate Data Classification Policy', desc:'Classification levels, handling rules, labeling requirements', fw:['ALL'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p6', title:'Generate Vendor Management Policy', desc:'Third-party risk assessment, due diligence, monitoring', fw:['SOC2','ISO27001','PCI_DSS'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p7', title:'Generate AI Governance Policy', desc:'Covers model lifecycle, bias testing, human oversight', fw:['EU_AI_ACT','ISO42001','NIST_AI_RMF'], api:'POST /v1/compliance/generate-policies' },
+    { id:'p8', title:'Generate Data Protection Impact Assessment (DPIA) template', desc:'Risk assessment for high-risk data processing', fw:['GDPR'] },
+    { id:'p9', title:'Generate Business Associate Agreement (BAA) template', desc:'Required for all ePHI-handling third parties', fw:['HIPAA'] },
+    { id:'p10', title:'Generate Privacy Notice & Opt-Out procedures', desc:'Consumer-facing privacy disclosures', fw:['CCPA'] },
+    { id:'p11', title:'Generate PCI DSS Self-Assessment Questionnaire (SAQ)', desc:'Appropriate SAQ type based on payment processing model', fw:['PCI_DSS'] },
+    { id:'p12', title:'Review and customize generated policies', desc:'Tailor auto-generated policies to your organization', fw:['ALL'] }
+  ]},
+  { num:6, title:'Evidence Collection & Mapping', desc:'Automated evidence gathering and control mapping', items:[
+    { id:'v1', title:'Run automated evidence collection', desc:'Pull evidence from all connected sources', fw:['ALL'], api:'POST /v1/evidence/collect' },
+    { id:'v2', title:'Map evidence to framework controls', desc:'Auto-link evidence artifacts to specific control requirements', fw:['ALL'], api:'GET /v1/evidence/map' },
+    { id:'v3', title:'Review evidence coverage', desc:'Identify controls still missing evidence', fw:['ALL'], api:'GET /v1/evidence/coverage' },
+    { id:'v4', title:'Upload manual evidence for gaps', desc:'Screenshots, attestations, signed documents', fw:['ALL'] },
+    { id:'v5', title:'Schedule recurring collection', desc:'Set up continuous evidence gathering cadence', fw:['ALL'], api:'POST /v1/evidence/schedule' }
+  ]},
+  { num:7, title:'Risk & AI Assessment', desc:'Quantitative risk analysis and AI-specific evaluations', items:[
+    { id:'r1', title:'Run 6-dimension risk scoring', desc:'Regulatory, operational, reputational, financial, technical, strategic', fw:['ALL'], api:'POST /risk-score' },
+    { id:'r2', title:'Run behavioral drift detection', desc:'Detect AI model output deviation from safety manifolds', fw:['EU_AI_ACT','ISO42001','NIST_AI_RMF'], api:'POST /govern' },
+    { id:'r3', title:'Assess vendor/third-party risks', desc:'Supply chain and subprocessor risk evaluation', fw:['SOC2','ISO27001','PCI_DSS'], api:'POST /v1/vendors/assess' },
+    { id:'r4', title:'Document risk treatment plans', desc:'Accept, mitigate, transfer, avoid for each identified risk', fw:['ALL'] },
+    { id:'r5', title:'Run multi-LLM consensus on AI risks', desc:'Cross-validate AI risk findings with multiple models', fw:['EU_AI_ACT','ISO42001','NIST_AI_RMF'], api:'POST /achonye/process' },
+    { id:'r6', title:'Complete Data Protection Impact Assessment', desc:'Full DPIA for high-risk processing activities', fw:['GDPR'] },
+    { id:'r7', title:'Complete Security Risk Analysis (SRA)', desc:'HIPAA-mandated risk analysis of ePHI safeguards', fw:['HIPAA'] }
+  ]},
+  { num:8, title:'Audit Readiness & Certification', desc:'Final verification, export, and auditor engagement', items:[
+    { id:'a1', title:'Generate readiness report', desc:'Comprehensive compliance posture assessment', fw:['ALL'], api:'GET /v1/compliance/readiness' },
+    { id:'a2', title:'Verify audit ledger integrity', desc:'Confirm hash-chain integrity of all records', fw:['ALL'], api:'GET /ledger/verify' },
+    { id:'a3', title:'Export compliance package', desc:'Download all evidence, policies, and reports', fw:['ALL'], api:'GET /v1/compliance/export' },
+    { id:'a4', title:'Share Trust Center', desc:'Public-facing compliance status page', fw:['ALL'], link:'/trust' },
+    { id:'a5', title:'Share Auditor Portal', desc:'Read-only auditor access to evidence and controls', fw:['ALL'], link:'/auditor' },
+    { id:'a6', title:'Engage SOC 2 auditor (Type I or Type II)', desc:'Select CPA firm and schedule audit window', fw:['SOC2'] },
+    { id:'a7', title:'Engage ISO certification body', desc:'Select accredited registrar for Stage 1 + Stage 2 audit', fw:['ISO27001'] },
+    { id:'a8', title:'Submit to national supervisory authority', desc:'Required for high-risk AI systems in the EU', fw:['EU_AI_ACT'] },
+    { id:'a9', title:'Submit SAQ or engage QSA', desc:'Self-Assessment Questionnaire or Qualified Security Assessor', fw:['PCI_DSS'] },
+    { id:'a10', title:'Schedule pre-audit review with GovernLayer team', desc:'Final readiness check before formal audit begins', fw:['ALL'] }
+  ]}
+];
+
+const FW_COLORS = {};
+FRAMEWORKS.forEach(f => { FW_COLORS[f.id] = f.color; });
+
+let selectedFrameworks = new Set();
+let checkedItems = {};
+
+// Load state
+function loadState() {
+  try {
+    const fws = localStorage.getItem('gl_compliance_frameworks');
+    if (fws) selectedFrameworks = new Set(JSON.parse(fws));
+    const items = localStorage.getItem('gl_compliance_checklist');
+    if (items) checkedItems = JSON.parse(items);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('gl_compliance_frameworks', JSON.stringify([...selectedFrameworks]));
+    localStorage.setItem('gl_compliance_checklist', JSON.stringify(checkedItems));
+  } catch(e) {}
+}
+
+// Framework chips
+function renderChips() {
+  const c = document.getElementById('fwChips');
+  c.innerHTML = FRAMEWORKS.map(f => {
+    const sel = selectedFrameworks.has(f.id);
+    return `<div class="fw-chip${sel?' selected':''}" data-fw="${f.id}" onclick="toggleFw('${f.id}')" style="${sel?`background:${f.color}11;border-color:${f.color};color:${f.color}`:''}">
+      <span class="fw-dot" style="background:${f.color}"></span>${f.label}<span class="fw-chip-count">${f.count}</span></div>`;
+  }).join('');
+}
+
+function toggleFw(id) {
+  if (selectedFrameworks.has(id)) selectedFrameworks.delete(id);
+  else selectedFrameworks.add(id);
+  renderChips();
+  filterAndUpdate();
+  saveState();
+}
+
+function selectAllFw() {
+  FRAMEWORKS.forEach(f => selectedFrameworks.add(f.id));
+  renderChips();
+  filterAndUpdate();
+  saveState();
+}
+
+function clearAllFw() {
+  selectedFrameworks.clear();
+  renderChips();
+  filterAndUpdate();
+  saveState();
+}
+
+// Check if item is visible
+function isVisible(item) {
+  if (item.fw.includes('ALL')) return true;
+  if (selectedFrameworks.size === 0) return true;
+  return item.fw.some(f => selectedFrameworks.has(f));
+}
+
+// Render phases
+function renderPhases() {
+  const container = document.getElementById('phases');
+  container.innerHTML = PHASES.map(phase => {
+    const itemsHtml = phase.items.map(item => {
+      const checked = checkedItems[item.id] ? true : false;
+      const visible = isVisible(item);
+      const isAll = item.fw.includes('ALL');
+      let badges = '';
+      if (!isAll) {
+        badges = item.fw.map(f => {
+          const fw = FRAMEWORKS.find(x => x.id === f);
+          if (!fw) return '';
+          return `<span class="fw-badge" style="background:${fw.color}18;color:${fw.color}">${fw.label}</span>`;
+        }).join('');
+      }
+      let extra = '';
+      if (item.api) extra += `<span class="api-badge">${item.api}</span>`;
+      if (item.link) extra += `<a href="${item.link}" class="api-badge" style="color:var(--blue);background:rgba(59,130,246,0.1)">${item.link}</a>`;
+
+      return `<div class="check-item${checked?' checked':''}${visible?'':' hidden'}" data-id="${item.id}" data-fw='${JSON.stringify(item.fw)}'>
+        <label class="check-box"><input type="checkbox"${checked?' checked':''} onchange="toggleItem('${item.id}',this)"><span class="mark"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></label>
+        <div class="check-content"><div class="check-title">${item.title}</div><div class="check-desc">${item.desc}</div>${(badges||extra)?`<div class="check-badges">${badges}${extra}</div>`:''}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="phase" data-phase="${phase.num}" id="phase${phase.num}">
+      <div class="phase-header" onclick="togglePhase(${phase.num})">
+        <div class="phase-num">${phase.num}</div>
+        <div class="phase-info"><div class="phase-title">Phase ${phase.num}: ${phase.title}</div><div class="phase-desc">${phase.desc}</div></div>
+        <div class="phase-meta"><span class="phase-progress-mini" id="phaseMini${phase.num}"></span><span class="chevron">&#9662;</span></div>
+      </div>
+      <div class="phase-body">${itemsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function togglePhase(num) {
+  const el = document.getElementById('phase' + num);
+  el.classList.toggle('open');
+}
+
+function toggleItem(id, cb) {
+  if (cb.checked) checkedItems[id] = true;
+  else delete checkedItems[id];
+  const item = cb.closest('.check-item');
+  item.classList.toggle('checked', cb.checked);
+  saveState();
+  updateProgress();
+}
+
+function filterAndUpdate() {
+  PHASES.forEach(phase => {
+    phase.items.forEach(item => {
+      const el = document.querySelector(`.check-item[data-id="${item.id}"]`);
+      if (!el) return;
+      const vis = isVisible(item);
+      el.classList.toggle('hidden', !vis);
+    });
+  });
+  updateProgress();
+  autoExpandFirst();
+}
+
+function updateProgress() {
+  let totalVisible = 0, totalDone = 0;
+
+  PHASES.forEach(phase => {
+    let phaseVisible = 0, phaseDone = 0;
+    phase.items.forEach(item => {
+      if (isVisible(item)) {
+        phaseVisible++;
+        if (checkedItems[item.id]) phaseDone++;
+      }
+    });
+    totalVisible += phaseVisible;
+    totalDone += phaseDone;
+
+    const mini = document.getElementById('phaseMini' + phase.num);
+    const phaseEl = document.getElementById('phase' + phase.num);
+    if (phaseVisible === 0) {
+      phaseEl.style.display = 'none';
+      return;
+    }
+    phaseEl.style.display = '';
+    if (phaseDone === phaseVisible) {
+      mini.innerHTML = '<span class="complete-badge">Done</span>';
+      phaseEl.classList.add('done');
+      phaseEl.classList.remove('current');
+    } else {
+      mini.innerHTML = `<span>${phaseDone}</span>/${phaseVisible}`;
+      phaseEl.classList.remove('done');
+    }
+  });
+
+  const pct = totalVisible > 0 ? Math.round((totalDone / totalVisible) * 100) : 0;
+  document.getElementById('doneCount').textContent = totalDone;
+  document.getElementById('totalCount').textContent = totalVisible;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  document.getElementById('statFw').textContent = selectedFrameworks.size;
+  document.getElementById('statItems').textContent = totalVisible;
+  document.getElementById('statPct').textContent = pct + '%';
+
+  if (totalVisible > 0 && totalDone === totalVisible) showCelebration();
+}
+
+function autoExpandFirst() {
+  let expanded = false;
+  PHASES.forEach(phase => {
+    const el = document.getElementById('phase' + phase.num);
+    if (!el || el.style.display === 'none') return;
+    const visItems = phase.items.filter(i => isVisible(i));
+    const allDone = visItems.length > 0 && visItems.every(i => checkedItems[i.id]);
+    if (!allDone && !expanded) {
+      el.classList.add('open', 'current');
+      expanded = true;
+    } else {
+      el.classList.remove('open', 'current');
+    }
+  });
+}
+
+function resetProgress() {
+  if (!confirm('Reset all checklist progress? This cannot be undone.')) return;
+  checkedItems = {};
+  saveState();
+  document.querySelectorAll('.check-item').forEach(el => {
+    el.classList.remove('checked');
+    const cb = el.querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = false;
+  });
+  updateProgress();
+  autoExpandFirst();
+}
+
+function showCelebration() {
+  document.getElementById('celebration').classList.add('show');
+  launchConfetti();
+}
+
+function closeCelebration() {
+  document.getElementById('celebration').classList.remove('show');
+}
+
+function launchConfetti() {
+  const container = document.getElementById('confetti');
+  container.innerHTML = '';
+  const colors = ['#10b981','#3b82f6','#8b5cf6','#f59e0b','#ec4899','#06b6d4','#f97316'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.style.cssText = `left:${Math.random()*100}%;top:-10px;background:${colors[i%colors.length]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*0.5}s;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    container.appendChild(el);
+  }
+  setTimeout(() => { container.innerHTML = ''; }, 4000);
+}
+
+// Init
+loadState();
+renderChips();
+renderPhases();
+filterAndUpdate();
+</script>
+</body>
+</html>

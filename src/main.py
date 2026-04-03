@@ -489,6 +489,13 @@ def create_app() -> FastAPI:
     _beta_html = _load_page("beta")
     _legal_html = _load_page("legal")
     _soc2_checklist_html = _load_page("soc2-checklist")
+    _compliance_checklist_html = _load_page("compliance-checklist")
+
+    @app.get("/compliance-checklist")
+    def compliance_checklist_page():
+        if _compliance_checklist_html:
+            return HTMLResponse(_compliance_checklist_html)
+        return {"error": "Compliance checklist page not found"}
 
     @app.get("/soc2-checklist")
     def soc2_checklist_page():
