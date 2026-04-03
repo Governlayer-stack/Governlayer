@@ -181,7 +181,7 @@ input, select { font-family: inherit; }
   padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;
   background: var(--elevated); color: var(--muted); border: 1px solid transparent;
 }
-.filter-btn.active { color: var(--text); border-color: var(--blue); }
+.filter-btn.active, .ev-map-filter.active { color: var(--text); border-color: var(--blue); }
 
 /* Remediation */
 .remed-item {
@@ -221,6 +221,72 @@ input, select { font-family: inherit; }
 .connector-card .conn-name { font-size: 12px; font-weight: 600; }
 .connector-card .conn-status { font-size: 10px; }
 .conn-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+/* Evidence tab enhanced connector cards */
+.ev-connector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.ev-connector-card {
+  background: var(--elevated); border-radius: 10px; padding: 18px;
+  border: 1px solid var(--border); transition: border-color .2s, box-shadow .2s;
+}
+.ev-connector-card:hover { border-color: var(--dim); }
+.ev-connector-card.connected { border-color: rgba(16,185,129,.3); }
+.ev-card-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.ev-card-icon {
+  width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; flex-shrink: 0;
+}
+.ev-card-icon.aws { background: #ff9900; color: #232f3e; }
+.ev-card-icon.github { background: #24292f; color: #fff; }
+.ev-card-icon.postgres { background: #336791; color: #fff; }
+.ev-card-icon.docker { background: #2496ed; color: #fff; }
+.ev-card-icon.k8s { background: #326ce5; color: #fff; }
+.ev-card-icon.okta { background: #007dc1; color: #fff; }
+.ev-card-icon.google { background: #4285f4; color: #fff; }
+.ev-card-icon.slack { background: #4a154b; color: #fff; }
+.ev-card-icon.datadog { background: #632ca6; color: #fff; }
+.ev-card-info { flex: 1; min-width: 0; }
+.ev-card-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; display: flex; align-items: center; gap: 8px; }
+.ev-card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.ev-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.ev-card-sync { font-size: 10px; color: var(--muted); }
+.ev-card-sync .sync-time { color: var(--dim); }
+.ev-status-indicator { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; }
+.ev-status-indicator .dot { width: 8px; height: 8px; border-radius: 50%; }
+.ev-status-indicator .dot.on { background: var(--green); box-shadow: 0 0 6px rgba(16,185,129,.4); }
+.ev-status-indicator .dot.off { background: var(--dim); }
+.btn-connect {
+  padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: 600;
+  transition: all .15s;
+}
+.btn-connect.connect { background: var(--blue); color: #fff; }
+.btn-connect.connect:hover { background: #2563eb; }
+.btn-connect.disconnect { background: var(--elevated); color: var(--muted); border: 1px solid var(--border); }
+.btn-connect.disconnect:hover { background: var(--border); color: var(--red); }
+
+/* Evidence coverage gauge */
+.ev-coverage-section { display: flex; align-items: center; gap: 24px; padding: 16px 0; }
+.ev-gauge-container { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+.ev-gauge-container svg { transform: rotate(-90deg); }
+.ev-gauge-text {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.ev-gauge-text .pct { font-size: 28px; font-weight: 700; }
+.ev-gauge-text .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.ev-coverage-details { flex: 1; }
+.ev-coverage-stat { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+.ev-coverage-stat .dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.ev-coverage-stat .label { color: var(--muted); width: 140px; }
+.ev-coverage-stat .val { font-weight: 600; }
+
+/* Evidence mapping table detail rows */
+.ev-mapping-detail { font-size: 11px; color: var(--muted); }
+.ev-mapping-tag {
+  display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px;
+  font-weight: 600; margin: 1px 2px;
+}
+.ev-mapping-tag.fw { background: var(--blue-bg); color: var(--blue); }
+.ev-mapping-tag.ctrl { background: var(--purple-bg); color: var(--purple); }
 
 /* Timeline */
 .timeline-track { position: relative; height: 60px; margin: 30px 0 10px; }
@@ -317,6 +383,8 @@ input, select { font-family: inherit; }
   .topbar { padding-left: 52px; }
   .fw-row .fw-name { width: 100px; font-size: 11px; }
   .connector-grid { grid-template-columns: repeat(2, 1fr); }
+  .ev-connector-grid { grid-template-columns: 1fr; }
+  .ev-coverage-section { flex-direction: column; text-align: center; }
 }
 @media (max-width: 480px) {
   .metrics-row { grid-template-columns: 1fr; }
@@ -536,32 +604,94 @@ input, select { font-family: inherit; }
 
     <!-- ==================== EVIDENCE TAB ==================== -->
     <div class="tab-content" id="tab-evidence">
+      <!-- Coverage Gauge -->
       <div class="card">
         <div class="card-header">
-          <h3>Evidence Collection</h3>
-          <button class="btn btn-primary btn-sm">Upload Evidence</button>
+          <h3>Evidence Coverage</h3>
+          <button class="btn btn-primary btn-sm" onclick="alert('Upload evidence files to attach to controls. Connect your API in Settings to enable bulk upload.')">Upload Evidence</button>
         </div>
-        <div class="connector-grid" id="evidenceConnectorGrid" style="margin-bottom:20px;"></div>
+        <div class="ev-coverage-section" id="evCoverageSection"></div>
       </div>
+
+      <!-- Connector Cards -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Evidence Connectors</h3>
+          <span class="subtitle" id="evConnectedCount">0/9 connected</span>
+        </div>
+        <div class="ev-connector-grid" id="evidenceConnectorGrid"></div>
+      </div>
+
+      <!-- Evidence-to-Control Mapping -->
       <div class="card">
         <div class="card-header">
           <h3>Evidence-to-Control Mapping</h3>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-secondary btn-sm ev-map-filter active" onclick="filterEvMapping('all', this)">All</button>
+            <button class="btn btn-secondary btn-sm ev-map-filter" onclick="filterEvMapping('covered', this)">Covered</button>
+            <button class="btn btn-secondary btn-sm ev-map-filter" onclick="filterEvMapping('missing', this)">Missing</button>
+          </div>
         </div>
-        <div id="evidenceMapping"></div>
+        <div style="overflow-x:auto;">
+          <table class="full-table" id="evMappingTable">
+            <thead><tr><th>Evidence Item</th><th>Source</th><th>Mapped Controls</th><th>Frameworks</th><th>Status</th></tr></thead>
+            <tbody id="evMappingBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Category Coverage Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Coverage by Category</h3>
+        </div>
+        <div id="evCategoryBreakdown"></div>
       </div>
     </div>
 
     <!-- ==================== POLICIES TAB ==================== -->
     <div class="tab-content" id="tab-policies">
+      <!-- Policy metrics -->
+      <div class="metrics-row" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="metric-card">
+          <div class="label">Published</div>
+          <div class="value" style="color:var(--green);" id="policyPublishedCount">0</div>
+          <div class="sub">Ready for audit</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">In Progress</div>
+          <div class="value" style="color:var(--amber);" id="policyDraftCount">0</div>
+          <div class="sub">Draft policies</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Not Started</div>
+          <div class="value" style="color:var(--red);" id="policyNotStartedCount">0</div>
+          <div class="sub">Needs attention</div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-header">
-          <h3>Policy Library</h3>
-          <button class="btn btn-primary btn-sm" onclick="generatePolicy()">Generate Policy</button>
+          <div>
+            <h3>Policy Library</h3>
+            <span class="subtitle">Framework-specific compliance documents</span>
+          </div>
+          <button class="btn btn-primary btn-sm" id="generateAllPoliciesBtn" onclick="generateAllPolicies()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m0-10.14l2.83 2.83m4.48 4.48l2.83 2.83"/></svg>
+            Generate All Policies
+          </button>
         </div>
-        <table class="full-table">
-          <thead><tr><th>Policy</th><th>Frameworks</th><th>Status</th><th>Last Updated</th><th></th></tr></thead>
-          <tbody id="policyBody"></tbody>
-        </table>
+
+        <!-- Filter by status -->
+        <div class="filter-row" id="policyStatusFilters">
+          <button class="filter-btn active" onclick="filterPolicies('all', this)">All</button>
+          <button class="filter-btn" onclick="filterPolicies('Published', this)">Published</button>
+          <button class="filter-btn" onclick="filterPolicies('Draft', this)">Draft</button>
+          <button class="filter-btn" onclick="filterPolicies('Not Started', this)">Not Started</button>
+        </div>
+
+        <!-- Policy cards list -->
+        <div id="policyList"></div>
       </div>
     </div>
 
@@ -704,29 +834,43 @@ const DEMO_REMEDIATIONS = [
 ];
 
 const CONNECTORS = [
-  { id: 'aws', name: 'AWS', icon: '\u2601\ufe0f', connected: true, lastSync: '2 hrs ago' },
-  { id: 'github', name: 'GitHub', icon: '\ud83d\udc19', connected: true, lastSync: '30 min ago' },
-  { id: 'okta', name: 'Okta', icon: '\ud83d\udd10', connected: false, lastSync: null },
-  { id: 'datadog', name: 'Datadog', icon: '\ud83d\udcca', connected: true, lastSync: '1 hr ago' },
-  { id: 'slack', name: 'Slack', icon: '\ud83d\udcac', connected: false, lastSync: null },
-  { id: 'google', name: 'Google Workspace', icon: '\ud83c\udf10', connected: false, lastSync: null },
-  { id: 'postgres', name: 'PostgreSQL', icon: '\ud83d\uddc4\ufe0f', connected: false, lastSync: null },
-  { id: 'docker', name: 'Docker', icon: '\ud83d\udc33', connected: false, lastSync: null },
-  { id: 'k8s', name: 'Kubernetes', icon: '\u2638\ufe0f', connected: false, lastSync: null },
+  { id: 'aws', name: 'AWS', letter: 'A', icon: '\u2601\ufe0f', connected: true, lastSync: '2 hrs ago', desc: 'CloudTrail logs, IAM policies, S3 configs, KMS encryption status' },
+  { id: 'github', name: 'GitHub', letter: 'G', icon: '\ud83d\udc19', connected: true, lastSync: '30 min ago', desc: 'Branch protection, PR reviews, CI/CD pipelines, dependency alerts' },
+  { id: 'postgres', name: 'PostgreSQL', letter: 'P', icon: '\ud83d\uddc4\ufe0f', connected: false, lastSync: null, desc: 'Access controls, encryption config, audit logs, backup schedules' },
+  { id: 'docker', name: 'Docker', letter: 'D', icon: '\ud83d\udc33', connected: false, lastSync: null, desc: 'Image scanning, container configs, registry access, runtime policies' },
+  { id: 'k8s', name: 'Kubernetes', letter: 'K', icon: '\u2638\ufe0f', connected: false, lastSync: null, desc: 'RBAC policies, network policies, pod security, secrets management' },
+  { id: 'okta', name: 'Okta', letter: 'O', icon: '\ud83d\udd10', connected: false, lastSync: null, desc: 'SSO configuration, MFA enrollment, user provisioning, access reviews' },
+  { id: 'google', name: 'Google Workspace', letter: 'W', icon: '\ud83c\udf10', connected: false, lastSync: null, desc: 'Drive sharing policies, admin audit logs, 2FA status, device management' },
+  { id: 'slack', name: 'Slack', letter: 'S', icon: '\ud83d\udcac', connected: false, lastSync: null, desc: 'DLP policies, retention settings, external sharing, audit logs' },
+  { id: 'datadog', name: 'Datadog', letter: 'D', icon: '\ud83d\udcca', connected: true, lastSync: '1 hr ago', desc: 'Monitoring dashboards, alert configs, SLO tracking, log pipelines' },
 ];
 
 const POLICIES = [
-  { name: 'Information Security Policy', frameworks: ['SOC2','ISO27001'], status: 'Published', updated: '2026-03-28' },
-  { name: 'Acceptable Use Policy', frameworks: ['SOC2'], status: 'Published', updated: '2026-03-25' },
-  { name: 'Data Retention Policy', frameworks: ['SOC2','GDPR'], status: 'Draft', updated: '2026-03-30' },
-  { name: 'Incident Response Plan', frameworks: ['SOC2'], status: 'Draft', updated: '2026-04-01' },
-  { name: 'Access Control Policy', frameworks: ['SOC2','ISO27001'], status: 'Published', updated: '2026-03-20' },
-  { name: 'Vendor Management Policy', frameworks: ['SOC2'], status: 'Needs Review', updated: '2026-02-15' },
-  { name: 'Business Continuity Plan', frameworks: ['SOC2'], status: 'Published', updated: '2026-03-10' },
-  { name: 'AI Ethics & Governance Policy', frameworks: ['NIST_AI_RMF','EU_AI_ACT'], status: 'Draft', updated: '2026-04-02' },
-  { name: 'Privacy Policy', frameworks: ['GDPR','CCPA'], status: 'Published', updated: '2026-03-22' },
-  { name: 'Change Management Policy', frameworks: ['SOC2'], status: 'Needs Review', updated: '2026-02-20' },
+  { name: 'Information Security Policy', frameworks: ['SOC2','ISO27001','NIST_CSF'], status: 'Published', updated: '2026-03-28', desc: 'Establishes the organization-wide approach to information security, defining roles, responsibilities, and acceptable use of information assets.' },
+  { name: 'Access Control Policy', frameworks: ['SOC2','ISO27001','HIPAA','NIST_CSF'], status: 'Published', updated: '2026-03-20', desc: 'Defines requirements for granting, reviewing, and revoking access to systems and data based on least privilege and need-to-know principles.' },
+  { name: 'Incident Response Plan', frameworks: ['SOC2','ISO27001','NIST_CSF','PCI_DSS'], status: 'Draft', updated: '2026-04-01', desc: 'Outlines procedures for detecting, responding to, and recovering from security incidents including breach notification timelines.' },
+  { name: 'Change Management Policy', frameworks: ['SOC2','ISO27001'], status: 'Published', updated: '2026-03-15', desc: 'Governs how changes to production systems, infrastructure, and code are requested, approved, tested, and deployed.' },
+  { name: 'Data Classification Policy', frameworks: ['SOC2','ISO27001','GDPR','CCPA'], status: 'Published', updated: '2026-03-22', desc: 'Defines data sensitivity levels (Public, Internal, Confidential, Restricted) and handling requirements for each classification tier.' },
+  { name: 'Vendor Management Policy', frameworks: ['SOC2','ISO27001','PCI_DSS'], status: 'Draft', updated: '2026-03-30', desc: 'Establishes due diligence, risk assessment, and ongoing monitoring requirements for third-party service providers and subprocessors.' },
+  { name: 'AI Governance Policy', frameworks: ['EU_AI_ACT','ISO42001','NIST_AI_RMF'], status: 'Draft', updated: '2026-04-02', desc: 'Defines guardrails for AI system development, deployment, and monitoring including bias testing, explainability, and human oversight requirements.' },
+  { name: 'Data Protection Impact Assessment', frameworks: ['GDPR'], status: 'Not Started', updated: null, desc: 'Systematic assessment of data processing operations to identify and minimize privacy risks for high-risk processing activities under GDPR Article 35.' },
+  { name: 'Business Associate Agreement', frameworks: ['HIPAA'], status: 'Not Started', updated: null, desc: 'Contractual agreement ensuring business associates safeguard protected health information (PHI) in compliance with HIPAA requirements.' },
+  { name: 'Privacy Notice & Opt-Out', frameworks: ['CCPA','GDPR'], status: 'Published', updated: '2026-03-22', desc: 'Consumer-facing notice disclosing data collection practices, purpose of processing, retention periods, and opt-out mechanisms for data sales.' },
 ];
+
+const FRAMEWORK_COLORS = {
+  SOC2: { bg: 'rgba(59,130,246,.15)', color: '#3b82f6' },
+  ISO27001: { bg: 'rgba(139,92,246,.15)', color: '#8b5cf6' },
+  NIST_CSF: { bg: 'rgba(14,165,233,.15)', color: '#0ea5e9' },
+  HIPAA: { bg: 'rgba(236,72,153,.15)', color: '#ec4899' },
+  PCI_DSS: { bg: 'rgba(245,158,11,.15)', color: '#f59e0b' },
+  GDPR: { bg: 'rgba(16,185,129,.15)', color: '#10b981' },
+  CCPA: { bg: 'rgba(34,197,94,.15)', color: '#22c55e' },
+  EU_AI_ACT: { bg: 'rgba(244,63,94,.15)', color: '#f43f5e' },
+  ISO42001: { bg: 'rgba(168,85,247,.15)', color: '#a855f7' },
+  NIST_AI_RMF: { bg: 'rgba(6,182,212,.15)', color: '#06b6d4' },
+  FedRAMP: { bg: 'rgba(100,116,139,.15)', color: '#94a3b8' },
+};
 
 const RISK_DIMS = [
   { label: 'Data Privacy', value: 0.35 },
@@ -822,7 +966,9 @@ function initOverview() {
   const failing = controls.filter(c => c.status === 'failing').length;
   const total = controls.length;
   const readiness = Math.round((passing / total) * 100);
-  const evidencePct = 45;
+  const collectedEvidence = EVIDENCE_MAPPINGS.filter(m => m.collected).length;
+  const totalEvidence = EVIDENCE_MAPPINGS.length;
+  const evidencePct = Math.round(collectedEvidence / totalEvidence * 100);
 
   // Gauge
   renderGauge(readiness);
@@ -836,7 +982,7 @@ function initOverview() {
   // Evidence
   document.getElementById('evidenceValue').textContent = evidencePct + '%';
   document.getElementById('evidenceBar').style.width = evidencePct + '%';
-  document.getElementById('evidenceSub').textContent = '14/31 evidence items collected';
+  document.getElementById('evidenceSub').textContent = collectedEvidence + '/' + totalEvidence + ' evidence items collected';
 
   // Remediation count
   const openRemed = DEMO_REMEDIATIONS.filter(r => !(state.remed && state.remed[r.id]));
@@ -965,18 +1111,23 @@ function toggleRemed(id, el) {
 }
 
 // ========== CONNECTORS ==========
-function initConnectors() { renderConnectors('connectorGrid'); }
+function initConnectors() {
+  renderConnectors('connectorGrid');
+  updateOverviewConnectorCount();
+}
 
 function renderConnectors(targetId) {
   const grid = document.getElementById(targetId);
-  grid.innerHTML = CONNECTORS.map(c => {
+  if (!grid) return;
+  const connectors = getEffectiveConnectors();
+  grid.innerHTML = connectors.map(c => {
     const statusColor = c.connected ? 'var(--green)' : 'var(--dim)';
     const statusText = c.connected ? 'Connected' : 'Not Connected';
     return `<div class="connector-card">
       <div class="conn-icon">${c.icon}</div>
       <div class="conn-name">${c.name}</div>
       <div class="conn-status"><span class="conn-dot" style="background:${statusColor}"></span>${statusText}</div>
-      ${c.connected ? '<div style="font-size:10px;color:var(--muted)">Synced ' + c.lastSync + '</div>' : '<button class="btn btn-secondary btn-sm" style="margin-top:4px;font-size:10px;">Connect</button>'}
+      ${c.connected ? '<div style="font-size:10px;color:var(--muted)">Synced ' + c.lastSync + '</div>' : '<button class="btn btn-secondary btn-sm" style="margin-top:4px;font-size:10px;" onclick="switchTab(\'evidence\', document.querySelector(\'[data-tab=evidence]\'))">Connect</button>'}
     </div>`;
   }).join('');
 }
@@ -1108,21 +1259,243 @@ function toggleFullCtrl(i) {
 function filterControlsFull(filter) { renderFullControls(filter); }
 
 // ========== EVIDENCE TAB ==========
+const EVIDENCE_MAPPINGS = [
+  { evidence: 'MFA Configuration', source: 'okta', controls: ['CC6.1'], frameworks: ['SOC2'], collected: false },
+  { evidence: 'Access Policy Screenshots', source: 'aws', controls: ['CC6.1','A.9.4'], frameworks: ['SOC2','ISO27001'], collected: true },
+  { evidence: 'Quarterly Access Review Records', source: 'okta', controls: ['CC6.2'], frameworks: ['SOC2'], collected: false },
+  { evidence: 'Data Retention Policy', source: null, controls: ['CC6.5','Art5'], frameworks: ['SOC2','GDPR'], collected: false },
+  { evidence: 'Network Diagrams', source: 'aws', controls: ['CC6.6','PCI-1.1'], frameworks: ['SOC2','PCI_DSS'], collected: true },
+  { evidence: 'Firewall Configs', source: 'aws', controls: ['CC6.6','PCI-1.1'], frameworks: ['SOC2','PCI_DSS'], collected: true },
+  { evidence: 'Encryption Configuration', source: 'aws', controls: ['CC6.7'], frameworks: ['SOC2','GDPR'], collected: false },
+  { evidence: 'Vulnerability Scanner Reports', source: 'datadog', controls: ['CC7.1'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Logging Configuration', source: 'datadog', controls: ['CC7.2','CC4.1'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Incident Response Runbook', source: null, controls: ['CC7.3'], frameworks: ['SOC2'], collected: false },
+  { evidence: 'Change Approval Workflow', source: 'github', controls: ['CC8.1','CC8.2'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Vendor Risk Assessment Forms', source: null, controls: ['CC9.2','CC9.1'], frameworks: ['SOC2'], collected: false },
+  { evidence: 'Training Completion Records', source: 'google', controls: ['CC1.1'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Signed Code of Conduct', source: null, controls: ['CC1.2'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Security Meeting Minutes', source: 'slack', controls: ['CC2.1'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Risk Assessment Report', source: null, controls: ['CC3.1','CC3.2'], frameworks: ['SOC2','ISO27001'], collected: true },
+  { evidence: 'IAM Policy Screenshots', source: 'aws', controls: ['CC5.1','CC5.2'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Secret Manager Config', source: 'aws', controls: ['CC6.3'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Access Badge Logs', source: null, controls: ['CC6.4'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Backup Config & Restore Logs', source: 'postgres', controls: ['CC7.4'], frameworks: ['SOC2'], collected: false },
+  { evidence: 'BCP Document', source: null, controls: ['CC7.5'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'CI/CD Pipeline Config', source: 'github', controls: ['CC8.2'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Branch Protection Rules', source: 'github', controls: ['CC8.1'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Monitoring Dashboard Screenshots', source: 'datadog', controls: ['CC4.1'], frameworks: ['SOC2'], collected: true },
+  { evidence: 'Security Controls Documentation', source: null, controls: ['Art32'], frameworks: ['GDPR'], collected: true },
+  { evidence: 'Data Mapping & Minimization Policy', source: null, controls: ['Art5'], frameworks: ['GDPR'], collected: false },
+  { evidence: 'Bias Test Results', source: null, controls: ['MEASURE'], frameworks: ['NIST_AI_RMF'], collected: false },
+  { evidence: 'HITL Workflow Documentation', source: null, controls: ['Art14'], frameworks: ['EU_AI_ACT'], collected: true },
+  { evidence: 'Firewall Rule Documentation', source: 'aws', controls: ['PCI-1.1'], frameworks: ['PCI_DSS'], collected: true },
+  { evidence: 'RBAC Policy Config', source: 'k8s', controls: ['CC5.1','CC5.2','CC6.1'], frameworks: ['SOC2'], collected: false },
+  { evidence: 'Container Image Scan Reports', source: 'docker', controls: ['CC7.1'], frameworks: ['SOC2'], collected: false },
+];
+
+function getConnectorState() {
+  const s = JSON.parse(localStorage.getItem('gl_workspace_state') || '{}');
+  return s.connectors || {};
+}
+
+function setConnectorState(id, connected) {
+  const s = JSON.parse(localStorage.getItem('gl_workspace_state') || '{}');
+  if (!s.connectors) s.connectors = {};
+  s.connectors[id] = { connected: connected, lastSync: connected ? 'Just now' : null };
+  localStorage.setItem('gl_workspace_state', JSON.stringify(s));
+  state = s;
+}
+
+function getEffectiveConnectors() {
+  const saved = getConnectorState();
+  return CONNECTORS.map(c => {
+    if (saved[c.id]) {
+      return { ...c, connected: saved[c.id].connected, lastSync: saved[c.id].lastSync || c.lastSync };
+    }
+    return c;
+  });
+}
+
+function toggleConnector(id) {
+  const connectors = getEffectiveConnectors();
+  const c = connectors.find(x => x.id === id);
+  const newState = !c.connected;
+  setConnectorState(id, newState);
+  initEvidenceTab();
+  renderConnectors('connectorGrid');
+  updateOverviewConnectorCount();
+}
+
+function updateOverviewConnectorCount() {
+  const connectors = getEffectiveConnectors();
+  const connected = connectors.filter(c => c.connected).length;
+  const el = document.getElementById('connectedCount');
+  if (el) el.textContent = connected + '/' + connectors.length + ' connected';
+}
+
 function initEvidenceTab() {
-  renderConnectors('evidenceConnectorGrid');
-  const el = document.getElementById('evidenceMapping');
+  const connectors = getEffectiveConnectors();
+  const connected = connectors.filter(c => c.connected).length;
+
+  const countEl = document.getElementById('evConnectedCount');
+  if (countEl) countEl.textContent = connected + '/' + connectors.length + ' connected';
+
+  renderEvidenceCoverage();
+  renderEvidenceConnectors(connectors);
+  renderEvidenceMapping('all');
+  renderCategoryBreakdown();
+}
+
+function renderEvidenceCoverage() {
+  const el = document.getElementById('evCoverageSection');
+  if (!el) return;
+  const total = DEMO_CONTROLS.length;
+  const controlsWithEvidence = new Set();
+  EVIDENCE_MAPPINGS.forEach(m => {
+    if (m.collected) m.controls.forEach(c => controlsWithEvidence.add(c));
+  });
+  const covered = controlsWithEvidence.size;
+  const pct = Math.round(covered / total * 100);
+  const color = pct >= 70 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--red)';
+
+  const collectedCount = EVIDENCE_MAPPINGS.filter(m => m.collected).length;
+  const missingCount = EVIDENCE_MAPPINGS.length - collectedCount;
+
+  const connectors = getEffectiveConnectors();
+  const connectedSources = connectors.filter(c => c.connected).length;
+
+  const r = 52;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (pct / 100) * circ;
+
+  el.innerHTML = `
+    <div class="ev-gauge-container">
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--elevated)" stroke-width="10"/>
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+          stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+      </svg>
+      <div class="ev-gauge-text">
+        <div class="pct" style="color:${color}">${pct}%</div>
+        <div class="lbl">Covered</div>
+      </div>
+    </div>
+    <div class="ev-coverage-details">
+      <div class="ev-coverage-stat">
+        <div class="dot" style="background:var(--green)"></div>
+        <div class="label">Controls with evidence</div>
+        <div class="val">${covered} / ${total}</div>
+      </div>
+      <div class="ev-coverage-stat">
+        <div class="dot" style="background:var(--blue)"></div>
+        <div class="label">Evidence items collected</div>
+        <div class="val">${collectedCount} / ${EVIDENCE_MAPPINGS.length}</div>
+      </div>
+      <div class="ev-coverage-stat">
+        <div class="dot" style="background:var(--red)"></div>
+        <div class="label">Missing evidence</div>
+        <div class="val">${missingCount} items</div>
+      </div>
+      <div class="ev-coverage-stat">
+        <div class="dot" style="background:var(--purple)"></div>
+        <div class="label">Connected sources</div>
+        <div class="val">${connectedSources} / ${connectors.length}</div>
+      </div>
+    </div>`;
+}
+
+function renderEvidenceConnectors(connectors) {
+  const grid = document.getElementById('evidenceConnectorGrid');
+  if (!grid) return;
+  grid.innerHTML = connectors.map(c => {
+    const isConn = c.connected;
+    const statusLabel = isConn ? 'Connected' : 'Not connected';
+    const dotClass = isConn ? 'on' : 'off';
+    const btnClass = isConn ? 'disconnect' : 'connect';
+    const btnLabel = isConn ? 'Disconnect' : 'Connect';
+    const syncLine = isConn && c.lastSync
+      ? '<div class="ev-card-sync">Last synced: <span class="sync-time">' + c.lastSync + '</span></div>'
+      : '<div class="ev-card-sync">No sync history</div>';
+
+    return `<div class="ev-connector-card ${isConn ? 'connected' : ''}">
+      <div class="ev-card-top">
+        <div class="ev-card-icon ${c.id}">${c.letter}</div>
+        <div class="ev-card-info">
+          <div class="ev-card-name">
+            ${c.name}
+            <span class="ev-status-indicator"><span class="dot ${dotClass}"></span>${statusLabel}</span>
+          </div>
+          <div class="ev-card-desc">${c.desc}</div>
+        </div>
+      </div>
+      <div class="ev-card-footer">
+        ${syncLine}
+        <button class="btn-connect ${btnClass}" onclick="toggleConnector('${c.id}')">${btnLabel}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderEvidenceMapping(filter) {
+  const tbody = document.getElementById('evMappingBody');
+  if (!tbody) return;
+  let items = [...EVIDENCE_MAPPINGS];
+  if (filter === 'covered') items = items.filter(m => m.collected);
+  if (filter === 'missing') items = items.filter(m => !m.collected);
+
+  const connectors = getEffectiveConnectors();
+  const connMap = {};
+  connectors.forEach(c => { connMap[c.id] = c; });
+
+  tbody.innerHTML = items.map(m => {
+    const sourceConn = m.source ? connMap[m.source] : null;
+    const sourceName = sourceConn ? sourceConn.name : 'Manual upload';
+    const sourceConnected = sourceConn ? sourceConn.connected : false;
+    const statusColor = m.collected ? 'var(--green)' : 'var(--red)';
+    const statusText = m.collected ? 'Collected' : 'Missing';
+    const controlTags = m.controls.map(c => '<span class="ev-mapping-tag ctrl">' + c + '</span>').join('');
+    const fwTags = m.frameworks.map(f => '<span class="ev-mapping-tag fw">' + f + '</span>').join('');
+
+    return `<tr>
+      <td style="font-weight:500">${m.evidence}</td>
+      <td>
+        ${sourceConn ? '<span class="conn-dot" style="background:' + (sourceConnected ? 'var(--green)' : 'var(--dim)') + '"></span>' : ''}
+        ${sourceName}
+      </td>
+      <td>${controlTags}</td>
+      <td>${fwTags}</td>
+      <td><span style="color:${statusColor};font-weight:600;font-size:11px;"><span class="conn-dot" style="background:${statusColor}"></span>${statusText}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterEvMapping(filter, btnEl) {
+  document.querySelectorAll('.ev-map-filter').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  renderEvidenceMapping(filter);
+}
+
+function renderCategoryBreakdown() {
+  const el = document.getElementById('evCategoryBreakdown');
+  if (!el) return;
   const categories = [...new Set(DEMO_CONTROLS.map(c => c.category))];
+
+  const controlsWithEvidence = {};
+  EVIDENCE_MAPPINGS.forEach(m => {
+    if (m.collected) m.controls.forEach(c => { controlsWithEvidence[c] = true; });
+  });
+
   el.innerHTML = `<table class="full-table">
-    <thead><tr><th>Category</th><th>Controls</th><th>Evidence Items</th><th>Coverage</th></tr></thead>
+    <thead><tr><th>Category</th><th>Total Controls</th><th>With Evidence</th><th>Coverage</th></tr></thead>
     <tbody>${categories.map(cat => {
       const ctrls = DEMO_CONTROLS.filter(c => c.category === cat);
-      const collected = ctrls.filter(c => c.status === 'passing').length;
-      const pct = Math.round(collected / ctrls.length * 100);
+      const covered = ctrls.filter(c => controlsWithEvidence[c.id]).length;
+      const pct = Math.round(covered / ctrls.length * 100);
       const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
       return `<tr>
-        <td>${cat}</td>
+        <td style="font-weight:500">${cat}</td>
         <td>${ctrls.length}</td>
-        <td>${collected}/${ctrls.length}</td>
+        <td>${covered}/${ctrls.length}</td>
         <td><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div> <span style="font-size:11px;color:${color};margin-left:6px;">${pct}%</span></td>
       </tr>`;
     }).join('')}</tbody>
@@ -1130,21 +1503,162 @@ function initEvidenceTab() {
 }
 
 // ========== POLICIES TAB ==========
+let policyStatusFilter = 'all';
+
+function getFrameworkBadge(f) {
+  const fc = FRAMEWORK_COLORS[f] || { bg: 'var(--elevated)', color: 'var(--muted)' };
+  return `<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:${fc.bg};color:${fc.color};margin:1px 2px;">${f}</span>`;
+}
+
+function getPolicyStatusBadge(status) {
+  if (status === 'Published') return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:var(--green-bg);color:var(--green);"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);"></span>Published</span>`;
+  if (status === 'Draft') return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:var(--amber-bg);color:var(--amber);"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);"></span>Draft</span>`;
+  return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:var(--red-bg);color:var(--red);"><span style="width:6px;height:6px;border-radius:50%;background:var(--red);"></span>Not Started</span>`;
+}
+
 function initPoliciesTab() {
-  const tbody = document.getElementById('policyBody');
-  tbody.innerHTML = POLICIES.map(p => {
-    const statusColor = p.status === 'Published' ? 'var(--green)' : p.status === 'Draft' ? 'var(--amber)' : 'var(--red)';
-    return `<tr>
-      <td style="font-weight:600">${p.name}</td>
-      <td>${p.frameworks.map(f => '<span class="badge-pill">' + f + '</span>').join(' ')}</td>
-      <td><span style="color:${statusColor};font-weight:600;">${p.status}</span></td>
-      <td>${p.updated}</td>
-      <td><button class="btn btn-ghost btn-sm">View</button></td>
-    </tr>`;
+  renderPolicies();
+  updatePolicyMetrics();
+}
+
+function updatePolicyMetrics() {
+  const published = POLICIES.filter(p => p.status === 'Published').length;
+  const drafts = POLICIES.filter(p => p.status === 'Draft').length;
+  const notStarted = POLICIES.filter(p => p.status === 'Not Started').length;
+  document.getElementById('policyPublishedCount').textContent = published;
+  document.getElementById('policyDraftCount').textContent = drafts;
+  document.getElementById('policyNotStartedCount').textContent = notStarted;
+}
+
+function renderPolicies() {
+  const container = document.getElementById('policyList');
+  const filtered = policyStatusFilter === 'all' ? POLICIES : POLICIES.filter(p => p.status === policyStatusFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No policies match the selected filter.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map((p, idx) => {
+    const origIdx = POLICIES.indexOf(p);
+    const updatedText = p.updated ? p.updated : 'N/A';
+    const isGenerable = p.status !== 'Published';
+    return `<div style="background:var(--elevated);border-radius:8px;padding:14px 16px;margin-bottom:10px;border:1px solid var(--border);">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+            <span style="font-weight:600;font-size:13px;">${p.name}</span>
+            ${getPolicyStatusBadge(p.status)}
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.5;">${p.desc}</div>
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+            ${p.frameworks.map(f => getFrameworkBadge(f)).join('')}
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Last updated: ${updatedText}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;align-items:flex-start;">
+          ${isGenerable ? `<button class="btn btn-primary btn-sm" id="genBtn${origIdx}" onclick="generateSinglePolicy(${origIdx})">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m0-10.14l2.83 2.83m4.48 4.48l2.83 2.83"/></svg>
+            Generate</button>` : `<button class="btn btn-ghost btn-sm" onclick="viewPolicy(${origIdx})">View</button>`}
+        </div>
+      </div>
+    </div>`;
   }).join('');
 }
 
-function generatePolicy() { alert('Policy generation will call the GovernLayer API to draft a new policy using AI. Connect your API token in Settings to enable this feature.'); }
+function filterPolicies(status, el) {
+  policyStatusFilter = status;
+  document.querySelectorAll('#policyStatusFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderPolicies();
+}
+
+function viewPolicy(idx) {
+  const p = POLICIES[idx];
+  alert('Policy: ' + p.name + '\nStatus: ' + p.status + '\nFrameworks: ' + p.frameworks.join(', ') + '\n\n' + p.desc);
+}
+
+async function generateSinglePolicy(idx) {
+  const btn = document.getElementById('genBtn' + idx);
+  const origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Generating...';
+
+  const token = getToken();
+  const baseUrl = localStorage.getItem('gl_api_url');
+  const p = POLICIES[idx];
+
+  if (token && baseUrl) {
+    try {
+      const res = await fetch(baseUrl + '/v1/compliance/generate-policies', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ frameworks: p.frameworks, policy_name: p.name })
+      });
+      if (res.ok) {
+        POLICIES[idx].status = 'Published';
+        POLICIES[idx].updated = new Date().toISOString().split('T')[0];
+        renderPolicies();
+        updatePolicyMetrics();
+        return;
+      }
+    } catch (e) { /* fallback to demo */ }
+  }
+
+  // Fallback: simulate generation with 2s loading animation
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  POLICIES[idx].status = p.status === 'Not Started' ? 'Draft' : 'Published';
+  POLICIES[idx].updated = new Date().toISOString().split('T')[0];
+  renderPolicies();
+  updatePolicyMetrics();
+}
+
+async function generateAllPolicies() {
+  const btn = document.getElementById('generateAllPoliciesBtn');
+  const origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Generating All...';
+
+  const token = getToken();
+  const baseUrl = localStorage.getItem('gl_api_url');
+  const selectedFrameworks = getFrameworks();
+
+  if (token && baseUrl) {
+    try {
+      const res = await fetch(baseUrl + '/v1/compliance/generate-policies', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ frameworks: selectedFrameworks })
+      });
+      if (res.ok) {
+        POLICIES.forEach((p, i) => {
+          if (p.status !== 'Published') {
+            POLICIES[i].status = 'Published';
+            POLICIES[i].updated = new Date().toISOString().split('T')[0];
+          }
+        });
+        renderPolicies();
+        updatePolicyMetrics();
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+        return;
+      }
+    } catch (e) { /* fallback to demo */ }
+  }
+
+  // Fallback: simulate generation with 2s loading animation
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  POLICIES.forEach((p, i) => {
+    if (p.status !== 'Published') {
+      POLICIES[i].status = p.status === 'Not Started' ? 'Draft' : 'Published';
+      POLICIES[i].updated = new Date().toISOString().split('T')[0];
+    }
+  });
+  renderPolicies();
+  updatePolicyMetrics();
+  btn.disabled = false;
+  btn.innerHTML = origHTML;
+}
 
 // ========== RISK TAB ==========
 function initRiskTab() {
@@ -1294,7 +1808,10 @@ function logout() {
     localStorage.removeItem('gl_token');
     localStorage.removeItem('gl_email');
     localStorage.removeItem('gl_plan');
-    window.location.href = '../signup/index.html';
+    localStorage.removeItem('gl_workspace_state');
+    localStorage.removeItem('gl_frameworks');
+    localStorage.removeItem('gl_api_url');
+    window.location.href = '/';
   }
 }
 
