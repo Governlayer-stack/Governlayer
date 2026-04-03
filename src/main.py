@@ -491,6 +491,13 @@ def create_app() -> FastAPI:
     _soc2_checklist_html = _load_page("soc2-checklist")
     _compliance_checklist_html = _load_page("compliance-checklist")
     _signup_html = _load_page("signup")
+    _workspace_html = _load_page("workspace")
+
+    @app.get("/workspace")
+    def workspace_page():
+        if _workspace_html:
+            return HTMLResponse(_workspace_html)
+        return {"error": "Workspace page not found"}
 
     @app.get("/signup")
     def signup_page():

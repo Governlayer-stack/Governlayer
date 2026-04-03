@@ -36,6 +36,7 @@ COPY docs/legal/ docs/legal/
 COPY docs/soc2-checklist/ docs/soc2-checklist/
 COPY docs/compliance-checklist/ docs/compliance-checklist/
 COPY docs/signup/ docs/signup/
+COPY docs/workspace/ docs/workspace/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app

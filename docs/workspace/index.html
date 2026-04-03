@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer | Compliance Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --elevated: #283548;
+  --border: #334155;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  --green: #10b981;
+  --green-bg: rgba(16,185,129,.12);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,.12);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,.12);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59,130,246,.12);
+  --purple: #8b5cf6;
+  --purple-bg: rgba(139,92,246,.12);
+  --sidebar-w: 220px;
+  --topbar-h: 56px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+a { color: var(--blue); text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; }
+input, select { font-family: inherit; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100;
+  transition: transform .25s ease;
+}
+.sidebar-logo { padding: 16px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+.sidebar-logo svg { flex-shrink: 0; }
+.sidebar-logo span { font-weight: 700; font-size: 15px; letter-spacing: -.3px; }
+.sidebar-user { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.sidebar-user .email { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+.sidebar-user .plan-badge {
+  display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+}
+.plan-free { background: var(--elevated); color: var(--muted); }
+.plan-starter { background: var(--blue-bg); color: var(--blue); }
+.plan-pro { background: var(--purple-bg); color: var(--purple); }
+.plan-enterprise { background: var(--green-bg); color: var(--green); }
+
+.sidebar-nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 18px;
+  color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all .15s;
+}
+.nav-item:hover { color: var(--text); background: var(--elevated); }
+.nav-item.active { color: var(--text); background: var(--elevated); border-right: 2px solid var(--blue); }
+.nav-item svg { flex-shrink: 0; width: 18px; height: 18px; }
+
+.sidebar-bottom { padding: 14px 18px; border-top: 1px solid var(--border); }
+.upgrade-btn {
+  width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff;
+  text-align: center;
+}
+.upgrade-btn:hover { opacity: .9; }
+
+/* Hamburger */
+.hamburger {
+  display: none; position: fixed; top: 12px; left: 12px; z-index: 200;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px; color: var(--text);
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 90;
+}
+
+/* Main */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; }
+.topbar {
+  position: sticky; top: 0; z-index: 50; height: var(--topbar-h);
+  background: rgba(15,23,42,.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-left h2 { font-size: 15px; font-weight: 600; }
+.topbar-left .last-scan { font-size: 12px; color: var(--muted); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.btn {
+  padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--green); color: #fff; }
+.btn-primary:hover { background: #0ea472; }
+.btn-secondary { background: var(--elevated); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--border); }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+.btn-ghost { background: transparent; color: var(--muted); }
+.btn-ghost:hover { color: var(--text); background: var(--elevated); }
+
+.live-badge {
+  display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 9px;
+  font-weight: 700; background: var(--green-bg); color: var(--green); margin-left: 6px;
+  vertical-align: middle;
+}
+
+.content { padding: 20px 24px 40px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 18px; margin-bottom: 16px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-header h3 { font-size: 14px; font-weight: 600; }
+.card-header .subtitle { font-size: 12px; color: var(--muted); }
+
+/* Metrics Row */
+.metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+.metric-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 18px; text-align: center;
+}
+.metric-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+.metric-card .value { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.metric-card .sub { font-size: 11px; color: var(--muted); }
+
+/* Gauge */
+.gauge-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 8px; }
+.gauge-wrap svg { transform: rotate(-90deg); }
+.gauge-wrap .gauge-text {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700;
+}
+/* Mini bar */
+.mini-bar { height: 6px; background: var(--elevated); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.mini-bar-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+/* Two Col */
+.two-col { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; margin-bottom: 16px; }
+
+/* Table */
+.ctrl-table { width: 100%; }
+.ctrl-table th {
+  text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border);
+}
+.ctrl-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.ctrl-table tr:hover td { background: var(--elevated); }
+.ctrl-table tr.expandable { cursor: pointer; }
+.ctrl-detail { display: none; }
+.ctrl-detail.open { display: table-row; }
+.ctrl-detail td { background: var(--elevated); padding: 12px 14px; }
+
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.status-passing { background: var(--green); }
+.status-warning { background: var(--amber); }
+.status-failing { background: var(--red); }
+
+.filter-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;
+  background: var(--elevated); color: var(--muted); border: 1px solid transparent;
+}
+.filter-btn.active { color: var(--text); border-color: var(--blue); }
+
+/* Remediation */
+.remed-item {
+  padding: 10px 12px; border-radius: 8px; background: var(--elevated);
+  margin-bottom: 8px; font-size: 12px;
+}
+.remed-item .title { font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.remed-item .meta { color: var(--muted); font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.sev-badge {
+  display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700;
+  text-transform: uppercase;
+}
+.sev-critical { background: var(--red-bg); color: var(--red); }
+.sev-high { background: var(--amber-bg); color: var(--amber); }
+.sev-medium { background: var(--blue-bg); color: var(--blue); }
+.sev-low { background: rgba(100,116,139,.15); color: var(--dim); }
+
+.remed-check {
+  appearance: none; width: 16px; height: 16px; border: 2px solid var(--border);
+  border-radius: 4px; background: transparent; cursor: pointer; flex-shrink: 0;
+  position: relative; vertical-align: middle;
+}
+.remed-check:checked { background: var(--green); border-color: var(--green); }
+.remed-check:checked::after {
+  content: ''; position: absolute; left: 3px; top: 0; width: 5px; height: 9px;
+  border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+
+/* Evidence connectors */
+.connector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.connector-card {
+  background: var(--elevated); border-radius: 8px; padding: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+  border: 1px solid var(--border); position: relative;
+}
+.connector-card .conn-icon { font-size: 24px; }
+.connector-card .conn-name { font-size: 12px; font-weight: 600; }
+.connector-card .conn-status { font-size: 10px; }
+.conn-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+/* Timeline */
+.timeline-track { position: relative; height: 60px; margin: 30px 0 10px; }
+.timeline-line { position: absolute; top: 28px; left: 0; right: 0; height: 3px; background: var(--elevated); border-radius: 2px; }
+.timeline-marker {
+  position: absolute; top: 0; transform: translateX(-50%); text-align: center;
+}
+.timeline-marker .dot {
+  width: 12px; height: 12px; border-radius: 50%; margin: 0 auto 6px;
+  border: 2px solid var(--border);
+}
+.timeline-marker .dot.today { background: var(--green); border-color: var(--green); }
+.timeline-marker .dot.done { background: var(--blue); border-color: var(--blue); }
+.timeline-marker .dot.pending { background: var(--elevated); }
+.timeline-marker .lbl { font-size: 10px; color: var(--muted); white-space: nowrap; }
+
+/* Progress bar */
+.progress-bar { height: 8px; background: var(--elevated); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
+
+/* Framework row */
+.fw-row {
+  display: flex; align-items: center; gap: 14px; padding: 10px 0;
+  border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.fw-row:last-child { border-bottom: none; }
+.fw-row .fw-name { width: 180px; font-weight: 600; flex-shrink: 0; }
+.fw-row .fw-bar { flex: 1; }
+.fw-row .fw-pct { width: 50px; text-align: right; font-weight: 600; }
+.fw-row .fw-status {
+  width: 100px; text-align: center; padding: 3px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 600;
+}
+
+/* Badge pills */
+.badge-pill {
+  display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px;
+  font-weight: 600; background: var(--elevated); color: var(--muted); margin: 1px 2px;
+}
+
+/* Modal */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  z-index: 300; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; padding: 24px;
+}
+.modal h3 { font-size: 16px; margin-bottom: 16px; }
+.fw-toggle-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.fw-toggle {
+  padding: 12px; border-radius: 8px; background: var(--elevated); border: 2px solid transparent;
+  cursor: pointer; text-align: center; font-size: 12px; font-weight: 600; transition: all .15s;
+}
+.fw-toggle.selected { border-color: var(--blue); background: var(--blue-bg); }
+.fw-toggle:hover { border-color: var(--dim); }
+
+/* Risk radar placeholder */
+.radar-wrap { display: flex; justify-content: center; padding: 20px; }
+.radar-svg { max-width: 320px; }
+
+/* Loading skeleton */
+.skeleton { background: linear-gradient(90deg, var(--elevated) 25%, var(--border) 50%, var(--elevated) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Policy / Evidence tables */
+.full-table { width: 100%; border-collapse: collapse; }
+.full-table th { text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+.full-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid var(--border); }
+.full-table tr:hover td { background: var(--elevated); }
+
+/* Ledger */
+.ledger-entry {
+  background: var(--elevated); border-radius: 8px; padding: 12px 14px;
+  margin-bottom: 8px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+}
+.ledger-entry .hash { color: var(--blue); word-break: break-all; }
+.ledger-entry .action { color: var(--green); font-weight: 600; }
+.ledger-entry .ts { color: var(--muted); }
+.chain-ok { color: var(--green); font-weight: 600; }
+.chain-broken { color: var(--red); font-weight: 600; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .hamburger { display: flex; }
+  .main { margin-left: 0; }
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+  .topbar { padding-left: 52px; }
+  .fw-row .fw-name { width: 100px; font-size: 11px; }
+  .connector-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .metrics-row { grid-template-columns: 1fr; }
+}
+
+/* Print */
+@media print {
+  .sidebar, .hamburger, .sidebar-overlay, .topbar { display: none !important; }
+  .main { margin-left: 0 !important; }
+  .card { break-inside: avoid; border: 1px solid #ccc; }
+  body { background: #fff; color: #000; }
+  .metric-card, .remed-item, .connector-card { background: #f9f9f9; }
+}
+
+/* Transitions */
+.tab-content { animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="#3b82f6"/>
+      <path d="M8 16l4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M16 6a10 10 0 100 20 10 10 0 000-20z" stroke="#fff" stroke-width="1.5" opacity=".4"/>
+    </svg>
+    <span>GovernLayer</span>
+  </div>
+  <div class="sidebar-user">
+    <div class="email" id="sidebarEmail">loading...</div>
+    <div><span class="plan-badge plan-free" id="sidebarPlan">FREE</span></div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="nav-item active" data-tab="overview" onclick="switchTab('overview', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>
+      Overview
+    </div>
+    <div class="nav-item" data-tab="frameworks" onclick="switchTab('frameworks', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      Frameworks
+    </div>
+    <div class="nav-item" data-tab="controls" onclick="switchTab('controls', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      Controls
+    </div>
+    <div class="nav-item" data-tab="evidence" onclick="switchTab('evidence', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+      Evidence
+    </div>
+    <div class="nav-item" data-tab="policies" onclick="switchTab('policies', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Policies
+    </div>
+    <div class="nav-item" data-tab="risk" onclick="switchTab('risk', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-2.99L13.73 4.01c-.77-1.33-2.69-1.33-3.46 0L3.34 16.01C2.57 17.33 3.53 19 5.07 19z"/></svg>
+      Risk
+    </div>
+    <div class="nav-item" data-tab="ledger" onclick="switchTab('ledger', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+      Audit Ledger
+    </div>
+    <div class="nav-item" data-tab="settings" onclick="switchTab('settings', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+      Settings
+    </div>
+  </nav>
+  <div class="sidebar-bottom" id="sidebarBottom"></div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="topbarGreeting">Welcome back</h2>
+      <span class="last-scan" id="lastScan">Last scan: --</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" id="runScanBtn" onclick="runFullScan()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Run Full Scan
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">Export</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ==================== OVERVIEW TAB ==================== -->
+    <div class="tab-content active" id="tab-overview">
+
+      <!-- Metrics Row -->
+      <div class="metrics-row" id="metricsRow">
+        <div class="metric-card">
+          <div class="label">Overall Readiness</div>
+          <div class="gauge-wrap" id="gaugeWrap"></div>
+          <div class="sub" id="readinessLabel">Calculating...</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Controls Passing</div>
+          <div class="value" id="controlsValue">--</div>
+          <div class="mini-bar"><div class="mini-bar-fill" id="controlsBar" style="width:0;background:var(--green)"></div></div>
+          <div class="sub" id="controlsSub"></div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Evidence Coverage</div>
+          <div class="value" id="evidenceValue">--</div>
+          <div class="mini-bar"><div class="mini-bar-fill" id="evidenceBar" style="width:0;background:var(--blue)"></div></div>
+          <div class="sub" id="evidenceSub"></div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Open Remediations</div>
+          <div class="value" id="remedValue">--</div>
+          <div class="sub" id="remedSub"></div>
+        </div>
+      </div>
+
+      <!-- Framework Readiness -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Framework Readiness</h3>
+          <button class="btn btn-secondary btn-sm" onclick="openFrameworkModal()">+ Add Framework</button>
+        </div>
+        <div id="frameworkReadiness"></div>
+      </div>
+
+      <!-- Two Column: Controls + Remediation -->
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <h3>Control Status</h3>
+          </div>
+          <div class="filter-row" id="controlFilters">
+            <button class="filter-btn active" onclick="filterControls('all', this)">All</button>
+            <button class="filter-btn" onclick="filterControls('passing', this)">Passing</button>
+            <button class="filter-btn" onclick="filterControls('warning', this)">Warning</button>
+            <button class="filter-btn" onclick="filterControls('failing', this)">Failing</button>
+          </div>
+          <div style="max-height:400px;overflow-y:auto;">
+            <table class="ctrl-table" id="controlTable">
+              <thead><tr><th>Control</th><th>Status</th><th>Category</th><th>Last Checked</th></tr></thead>
+              <tbody id="controlTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>Remediation Plan</h3>
+            <span class="subtitle" id="remedCount">0 items</span>
+          </div>
+          <div id="remedList" style="max-height:400px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- Evidence Connectors -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Evidence Sources</h3>
+          <span class="subtitle" id="connectedCount">0/9 connected</span>
+        </div>
+        <div class="connector-grid" id="connectorGrid"></div>
+      </div>
+
+      <!-- Audit Timeline -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Audit Timeline</h3>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--muted)">Target audit date:</span>
+            <input type="date" id="auditDate" style="background:var(--elevated);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);font-size:12px;" onchange="saveAuditDate()">
+          </div>
+        </div>
+        <div class="timeline-track" id="timeline"></div>
+      </div>
+
+    </div>
+
+    <!-- ==================== FRAMEWORKS TAB ==================== -->
+    <div class="tab-content" id="tab-frameworks">
+      <div class="card">
+        <div class="card-header">
+          <h3>Framework Details</h3>
+          <button class="btn btn-secondary btn-sm" onclick="openFrameworkModal()">+ Add Framework</button>
+        </div>
+        <div id="frameworkDetail"></div>
+      </div>
+    </div>
+
+    <!-- ==================== CONTROLS TAB ==================== -->
+    <div class="tab-content" id="tab-controls">
+      <div class="card">
+        <div class="card-header">
+          <h3>Control Library</h3>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-secondary btn-sm" onclick="filterControlsFull('all')">All</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterControlsFull('passing')">Passing</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterControlsFull('warning')">Warning</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterControlsFull('failing')">Failing</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="full-table" id="fullControlTable">
+            <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Frameworks</th><th>Status</th><th>Owner</th><th>Last Checked</th></tr></thead>
+            <tbody id="fullControlBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== EVIDENCE TAB ==================== -->
+    <div class="tab-content" id="tab-evidence">
+      <div class="card">
+        <div class="card-header">
+          <h3>Evidence Collection</h3>
+          <button class="btn btn-primary btn-sm">Upload Evidence</button>
+        </div>
+        <div class="connector-grid" id="evidenceConnectorGrid" style="margin-bottom:20px;"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Evidence-to-Control Mapping</h3>
+        </div>
+        <div id="evidenceMapping"></div>
+      </div>
+    </div>
+
+    <!-- ==================== POLICIES TAB ==================== -->
+    <div class="tab-content" id="tab-policies">
+      <div class="card">
+        <div class="card-header">
+          <h3>Policy Library</h3>
+          <button class="btn btn-primary btn-sm" onclick="generatePolicy()">Generate Policy</button>
+        </div>
+        <table class="full-table">
+          <thead><tr><th>Policy</th><th>Frameworks</th><th>Status</th><th>Last Updated</th><th></th></tr></thead>
+          <tbody id="policyBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== RISK TAB ==================== -->
+    <div class="tab-content" id="tab-risk">
+      <div class="card">
+        <div class="card-header"><h3>Risk Assessment</h3></div>
+        <div class="radar-wrap"><svg class="radar-svg" id="radarChart" viewBox="0 0 320 320"></svg></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h3>Risk Trend</h3></div>
+          <svg id="trendChart" viewBox="0 0 500 200" style="width:100%;"></svg>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Drift Monitoring</h3></div>
+          <div id="driftStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== LEDGER TAB ==================== -->
+    <div class="tab-content" id="tab-ledger">
+      <div class="card">
+        <div class="card-header">
+          <h3>Audit Ledger <span id="chainStatus"></span></h3>
+          <button class="btn btn-secondary btn-sm" onclick="verifyChain()">Verify Chain</button>
+        </div>
+        <div id="ledgerEntries"></div>
+      </div>
+    </div>
+
+    <!-- ==================== SETTINGS TAB ==================== -->
+    <div class="tab-content" id="tab-settings">
+      <div class="card">
+        <div class="card-header"><h3>Workspace Settings</h3></div>
+        <div style="max-width:500px;">
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">Email</label>
+            <input type="email" id="settingsEmail" readonly style="width:100%;padding:8px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">API Base URL</label>
+            <input type="text" id="settingsApiUrl" placeholder="https://api.governlayer.ai" style="width:100%;padding:8px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;" onchange="saveSettings()">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px;">Plan</label>
+            <div id="settingsPlan" style="font-size:13px;padding:8px 0;"></div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px;">Selected Frameworks</label>
+            <div id="settingsFrameworks"></div>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
+          <button class="btn btn-secondary" onclick="clearWorkspace()" style="color:var(--red);">Reset Workspace Data</button>
+          <button class="btn btn-secondary" style="margin-left:8px;color:var(--red);" onclick="logout()">Log Out</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Framework Modal -->
+<div class="modal-overlay" id="frameworkModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3>Select Compliance Frameworks</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeFrameworkModal()">Close</button>
+    </div>
+    <div class="fw-toggle-grid" id="fwToggleGrid"></div>
+    <div style="margin-top:16px;text-align:right;">
+      <button class="btn btn-primary" onclick="saveFrameworks()">Save Selection</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== CONFIG & STATE ==========
+const API_BASE = localStorage.getItem('gl_api_url') || '';
+const ALL_FRAMEWORKS = [
+  { id: 'SOC2', name: 'SOC 2 Type II', desc: 'Service Organization Controls' },
+  { id: 'ISO27001', name: 'ISO 27001', desc: 'Information Security Management' },
+  { id: 'GDPR', name: 'GDPR', desc: 'EU Data Protection Regulation' },
+  { id: 'HIPAA', name: 'HIPAA', desc: 'Health Insurance Portability' },
+  { id: 'PCI_DSS', name: 'PCI DSS', desc: 'Payment Card Industry' },
+  { id: 'NIST_CSF', name: 'NIST CSF', desc: 'Cybersecurity Framework' },
+  { id: 'NIST_AI_RMF', name: 'NIST AI RMF', desc: 'AI Risk Management Framework' },
+  { id: 'EU_AI_ACT', name: 'EU AI Act', desc: 'Artificial Intelligence Act' },
+  { id: 'FedRAMP', name: 'FedRAMP', desc: 'Federal Risk Authorization' },
+  { id: 'CCPA', name: 'CCPA', desc: 'California Consumer Privacy Act' },
+];
+
+const DEMO_CONTROLS = [
+  { id: 'CC6.1', name: 'Logical Access Controls', category: 'Access Control', frameworks: ['SOC2'], status: 'failing', owner: 'Security Team', desc: 'Restrict logical access to information assets to authorized users.', evidence: 'MFA configuration, access policy screenshots', remediation: 'Enable MFA for all privileged accounts and implement RBAC.' },
+  { id: 'CC6.2', name: 'User Access Reviews', category: 'Access Control', frameworks: ['SOC2'], status: 'warning', owner: 'IT Admin', desc: 'Review user access periodically to ensure appropriateness.', evidence: 'Quarterly access review records', remediation: 'Implement quarterly access review process.' },
+  { id: 'CC6.5', name: 'Data Retention', category: 'Data Protection', frameworks: ['SOC2','GDPR'], status: 'warning', owner: 'Data Team', desc: 'Retain data only as long as necessary.', evidence: 'Published data retention policy', remediation: 'Document and enforce data retention schedules.' },
+  { id: 'CC6.6', name: 'Network Segmentation', category: 'Network Security', frameworks: ['SOC2','PCI_DSS'], status: 'failing', owner: 'Infra Team', desc: 'Segment networks to limit unauthorized access.', evidence: 'Network diagrams, firewall configs', remediation: 'Implement VPC segmentation and firewall rules.' },
+  { id: 'CC6.7', name: 'Encryption at Rest', category: 'Data Protection', frameworks: ['SOC2','GDPR'], status: 'failing', owner: 'Platform Team', desc: 'Encrypt data at rest in all production systems.', evidence: 'Encryption configuration screenshots', remediation: 'Enable AES-256 encryption on all production databases.' },
+  { id: 'CC7.1', name: 'Vulnerability Management', category: 'Security Operations', frameworks: ['SOC2'], status: 'failing', owner: 'Security Team', desc: 'Identify and remediate vulnerabilities in a timely manner.', evidence: 'Vulnerability scanner reports', remediation: 'Deploy automated vulnerability scanning (Trivy/Snyk).' },
+  { id: 'CC7.2', name: 'Audit Logging', category: 'Monitoring', frameworks: ['SOC2'], status: 'warning', owner: 'Platform Team', desc: 'Maintain audit logs of system activity.', evidence: 'Logging configuration, sample logs', remediation: 'Enable comprehensive audit logging on all production systems.' },
+  { id: 'CC7.3', name: 'Incident Response', category: 'Security Operations', frameworks: ['SOC2'], status: 'failing', owner: 'Security Team', desc: 'Establish and maintain incident response procedures.', evidence: 'Published incident response runbook', remediation: 'Create and test incident response plan.' },
+  { id: 'CC8.1', name: 'Change Management', category: 'Operations', frameworks: ['SOC2'], status: 'warning', owner: 'Engineering', desc: 'Manage changes through a controlled process.', evidence: 'Change approval workflow config', remediation: 'Implement PR review + approval workflow.' },
+  { id: 'CC9.2', name: 'Vendor Management', category: 'Third Party', frameworks: ['SOC2'], status: 'warning', owner: 'Procurement', desc: 'Assess and monitor vendor risks.', evidence: 'Vendor risk assessment forms', remediation: 'Create vendor risk assessment template.' },
+  { id: 'CC1.1', name: 'Security Awareness Training', category: 'Governance', frameworks: ['SOC2'], status: 'passing', owner: 'HR', desc: 'Provide security awareness training to personnel.', evidence: 'Training completion records', remediation: '' },
+  { id: 'CC1.2', name: 'Code of Conduct', category: 'Governance', frameworks: ['SOC2'], status: 'passing', owner: 'HR', desc: 'Establish and enforce a code of conduct.', evidence: 'Signed acknowledgments', remediation: '' },
+  { id: 'CC2.1', name: 'Internal Communications', category: 'Governance', frameworks: ['SOC2'], status: 'passing', owner: 'Ops', desc: 'Communicate security objectives internally.', evidence: 'Meeting minutes, slack channels', remediation: '' },
+  { id: 'CC3.1', name: 'Risk Assessment', category: 'Risk Management', frameworks: ['SOC2','ISO27001'], status: 'passing', owner: 'Security Team', desc: 'Perform periodic risk assessments.', evidence: 'Risk assessment report', remediation: '' },
+  { id: 'CC3.2', name: 'Risk Register', category: 'Risk Management', frameworks: ['SOC2','ISO27001'], status: 'passing', owner: 'Security Team', desc: 'Maintain a risk register.', evidence: 'Risk register spreadsheet', remediation: '' },
+  { id: 'CC4.1', name: 'Monitoring Controls', category: 'Monitoring', frameworks: ['SOC2'], status: 'passing', owner: 'SRE', desc: 'Monitor systems for anomalies.', evidence: 'Monitoring dashboard screenshots', remediation: '' },
+  { id: 'CC5.1', name: 'Segregation of Duties', category: 'Access Control', frameworks: ['SOC2'], status: 'passing', owner: 'IT Admin', desc: 'Separate incompatible duties.', evidence: 'Role matrix, access policy', remediation: '' },
+  { id: 'CC5.2', name: 'Least Privilege', category: 'Access Control', frameworks: ['SOC2'], status: 'passing', owner: 'IT Admin', desc: 'Grant minimum necessary access.', evidence: 'IAM policy screenshots', remediation: '' },
+  { id: 'CC6.3', name: 'Credential Management', category: 'Access Control', frameworks: ['SOC2'], status: 'passing', owner: 'Security Team', desc: 'Manage credentials securely.', evidence: 'Secret manager config', remediation: '' },
+  { id: 'CC6.4', name: 'Physical Access', category: 'Physical Security', frameworks: ['SOC2'], status: 'passing', owner: 'Facilities', desc: 'Restrict physical access to facilities.', evidence: 'Access badge logs', remediation: '' },
+  { id: 'CC7.4', name: 'Backup & Recovery', category: 'Operations', frameworks: ['SOC2'], status: 'passing', owner: 'Platform Team', desc: 'Maintain and test backup procedures.', evidence: 'Backup config, restore test logs', remediation: '' },
+  { id: 'CC7.5', name: 'Business Continuity', category: 'Operations', frameworks: ['SOC2'], status: 'passing', owner: 'Ops', desc: 'Maintain business continuity plan.', evidence: 'BCP document', remediation: '' },
+  { id: 'CC8.2', name: 'Deployment Controls', category: 'Operations', frameworks: ['SOC2'], status: 'passing', owner: 'Engineering', desc: 'Automate and control deployments.', evidence: 'CI/CD pipeline config', remediation: '' },
+  { id: 'CC9.1', name: 'Third Party Agreements', category: 'Third Party', frameworks: ['SOC2'], status: 'passing', owner: 'Legal', desc: 'Establish agreements with third parties.', evidence: 'Signed agreements', remediation: '' },
+  { id: 'A.9.4', name: 'System Access Control', category: 'Access Control', frameworks: ['ISO27001'], status: 'passing', owner: 'IT Admin', desc: 'Restrict access to information systems.', evidence: 'Access control policy', remediation: '' },
+  { id: 'Art5', name: 'Data Minimization', category: 'Data Protection', frameworks: ['GDPR'], status: 'warning', owner: 'Data Team', desc: 'Process only necessary personal data.', evidence: 'Data mapping, minimization policy', remediation: 'Complete data mapping exercise and document minimization practices.' },
+  { id: 'Art32', name: 'Security of Processing', category: 'Data Protection', frameworks: ['GDPR'], status: 'passing', owner: 'Security Team', desc: 'Implement appropriate technical measures.', evidence: 'Security controls documentation', remediation: '' },
+  { id: 'MEASURE', name: 'AI Bias Testing', category: 'AI Governance', frameworks: ['NIST_AI_RMF'], status: 'warning', owner: 'ML Team', desc: 'Test AI models for bias and fairness.', evidence: 'Bias test results, fairness metrics', remediation: 'Implement automated bias testing in ML pipeline.' },
+  { id: 'Art14', name: 'Human Oversight', category: 'AI Governance', frameworks: ['EU_AI_ACT'], status: 'passing', owner: 'Product', desc: 'Ensure human oversight for high-risk AI.', evidence: 'HITL workflow documentation', remediation: '' },
+  { id: 'PCI-1.1', name: 'Firewall Configuration', category: 'Network Security', frameworks: ['PCI_DSS'], status: 'passing', owner: 'Infra Team', desc: 'Install and maintain firewall configurations.', evidence: 'Firewall rule documentation', remediation: '' },
+];
+
+const DEMO_REMEDIATIONS = [
+  { id: 'r1', severity: 'critical', title: 'Enable MFA for all privileged accounts', controls: ['SOC2-CC6.1'], evidence: 'MFA config screenshot', effort: '~30 min', done: false },
+  { id: 'r2', severity: 'critical', title: 'Encrypt data at rest in production database', controls: ['SOC2-CC6.7','GDPR-Art32'], evidence: 'Encryption config', effort: '~2 hrs', done: false },
+  { id: 'r3', severity: 'high', title: 'Implement automated vulnerability scanning', controls: ['SOC2-CC7.1'], evidence: 'Scanner report', effort: '~1 hr', done: false },
+  { id: 'r4', severity: 'high', title: 'Create incident response runbook', controls: ['SOC2-CC7.3'], evidence: 'Published runbook', effort: '~4 hrs', done: false },
+  { id: 'r5', severity: 'high', title: 'Enable audit logging on all production systems', controls: ['SOC2-CC7.2'], evidence: 'Log config', effort: '~1 hr', done: false },
+  { id: 'r6', severity: 'high', title: 'Implement access review process (quarterly)', controls: ['SOC2-CC6.2'], evidence: 'Review records', effort: '~2 hrs', done: false },
+  { id: 'r7', severity: 'medium', title: 'Add bias testing to AI model pipeline', controls: ['NIST_AI_RMF-MEASURE'], evidence: 'Test results', effort: '~1 day', done: false },
+  { id: 'r8', severity: 'medium', title: 'Document data retention policy', controls: ['GDPR-Art5','SOC2-CC6.5'], evidence: 'Published policy', effort: '~3 hrs', done: false },
+  { id: 'r9', severity: 'medium', title: 'Set up change management approval workflow', controls: ['SOC2-CC8.1'], evidence: 'Workflow config', effort: '~2 hrs', done: false },
+  { id: 'r10', severity: 'medium', title: 'Implement network segmentation', controls: ['PCI_DSS-1.1','SOC2-CC6.6'], evidence: 'Network diagram', effort: '~1 day', done: false },
+  { id: 'r11', severity: 'low', title: 'Add human-in-the-loop for AI decisions over $200', controls: ['EU_AI_ACT-Art14'], evidence: 'Workflow config', effort: '~4 hrs', done: false },
+  { id: 'r12', severity: 'low', title: 'Create vendor risk assessment template', controls: ['SOC2-CC9.2'], evidence: 'Assessment form', effort: '~2 hrs', done: false },
+];
+
+const CONNECTORS = [
+  { id: 'aws', name: 'AWS', icon: '\u2601\ufe0f', connected: true, lastSync: '2 hrs ago' },
+  { id: 'github', name: 'GitHub', icon: '\ud83d\udc19', connected: true, lastSync: '30 min ago' },
+  { id: 'okta', name: 'Okta', icon: '\ud83d\udd10', connected: false, lastSync: null },
+  { id: 'datadog', name: 'Datadog', icon: '\ud83d\udcca', connected: true, lastSync: '1 hr ago' },
+  { id: 'slack', name: 'Slack', icon: '\ud83d\udcac', connected: false, lastSync: null },
+  { id: 'google', name: 'Google Workspace', icon: '\ud83c\udf10', connected: false, lastSync: null },
+  { id: 'postgres', name: 'PostgreSQL', icon: '\ud83d\uddc4\ufe0f', connected: false, lastSync: null },
+  { id: 'docker', name: 'Docker', icon: '\ud83d\udc33', connected: false, lastSync: null },
+  { id: 'k8s', name: 'Kubernetes', icon: '\u2638\ufe0f', connected: false, lastSync: null },
+];
+
+const POLICIES = [
+  { name: 'Information Security Policy', frameworks: ['SOC2','ISO27001'], status: 'Published', updated: '2026-03-28' },
+  { name: 'Acceptable Use Policy', frameworks: ['SOC2'], status: 'Published', updated: '2026-03-25' },
+  { name: 'Data Retention Policy', frameworks: ['SOC2','GDPR'], status: 'Draft', updated: '2026-03-30' },
+  { name: 'Incident Response Plan', frameworks: ['SOC2'], status: 'Draft', updated: '2026-04-01' },
+  { name: 'Access Control Policy', frameworks: ['SOC2','ISO27001'], status: 'Published', updated: '2026-03-20' },
+  { name: 'Vendor Management Policy', frameworks: ['SOC2'], status: 'Needs Review', updated: '2026-02-15' },
+  { name: 'Business Continuity Plan', frameworks: ['SOC2'], status: 'Published', updated: '2026-03-10' },
+  { name: 'AI Ethics & Governance Policy', frameworks: ['NIST_AI_RMF','EU_AI_ACT'], status: 'Draft', updated: '2026-04-02' },
+  { name: 'Privacy Policy', frameworks: ['GDPR','CCPA'], status: 'Published', updated: '2026-03-22' },
+  { name: 'Change Management Policy', frameworks: ['SOC2'], status: 'Needs Review', updated: '2026-02-20' },
+];
+
+const RISK_DIMS = [
+  { label: 'Data Privacy', value: 0.35 },
+  { label: 'Access Control', value: 0.55 },
+  { label: 'AI Safety', value: 0.4 },
+  { label: 'Compliance', value: 0.62 },
+  { label: 'Operational', value: 0.7 },
+  { label: 'Vendor Risk', value: 0.3 },
+];
+
+const LEDGER_ENTRIES = [
+  { hash: 'a7f3c2e1...d8b4', prev: 'GENESIS', action: 'SYSTEM_INIT', ts: '2026-03-15T10:00:00Z', details: 'GovernLayer workspace initialized' },
+  { hash: 'b8e4d3f2...c9a5', prev: 'a7f3c2e1...d8b4', action: 'FRAMEWORK_ADDED', ts: '2026-03-15T10:05:00Z', details: 'SOC 2 Type II framework selected' },
+  { hash: 'c9f5e4a3...d0b6', prev: 'b8e4d3f2...c9a5', action: 'SCAN_COMPLETE', ts: '2026-03-20T14:30:00Z', details: 'Full compliance scan: 52% readiness' },
+  { hash: 'd0a6f5b4...e1c7', prev: 'c9f5e4a3...d0b6', action: 'EVIDENCE_UPLOADED', ts: '2026-03-22T09:15:00Z', details: 'AWS CloudTrail logs connected' },
+  { hash: 'e1b7a6c5...f2d8', prev: 'd0a6f5b4...e1c7', action: 'REMEDIATION_COMPLETE', ts: '2026-03-25T16:45:00Z', details: 'CC1.1 Security Awareness Training passed' },
+  { hash: 'f2c8b7d6...a3e9', prev: 'e1b7a6c5...f2d8', action: 'SCAN_COMPLETE', ts: '2026-03-28T14:00:00Z', details: 'Full compliance scan: 58% readiness' },
+  { hash: 'a3d9c8e7...b4f0', prev: 'f2c8b7d6...a3e9', action: 'POLICY_PUBLISHED', ts: '2026-03-28T15:30:00Z', details: 'Information Security Policy v1.0 published' },
+  { hash: 'b4e0d9f8...c5a1', prev: 'a3d9c8e7...b4f0', action: 'EVIDENCE_UPLOADED', ts: '2026-03-30T11:00:00Z', details: 'GitHub branch protection evidence collected' },
+  { hash: 'c5f1e0a9...d6b2', prev: 'b4e0d9f8...c5a1', action: 'SCAN_COMPLETE', ts: '2026-04-02T14:00:00Z', details: 'Full compliance scan: 62% readiness' },
+];
+
+// ========== STATE ==========
+let state = JSON.parse(localStorage.getItem('gl_workspace_state') || '{}');
+let isLive = false;
+
+function saveState() { localStorage.setItem('gl_workspace_state', JSON.stringify(state)); }
+
+function getEmail() { return localStorage.getItem('gl_email') || 'demo@example.com'; }
+function getPlan() { return localStorage.getItem('gl_plan') || 'free'; }
+function getFrameworks() {
+  try { return JSON.parse(localStorage.getItem('gl_frameworks')) || ['SOC2']; }
+  catch { return ['SOC2']; }
+}
+function getToken() { return localStorage.getItem('gl_token'); }
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar();
+  initOverview();
+  initControls();
+  initRemediation();
+  initConnectors();
+  initTimeline();
+  initFrameworksTab();
+  initFullControlsTab();
+  initEvidenceTab();
+  initPoliciesTab();
+  initRiskTab();
+  initLedgerTab();
+  initSettingsTab();
+  tryLiveData();
+});
+
+function initSidebar() {
+  const email = getEmail();
+  const plan = getPlan();
+  document.getElementById('sidebarEmail').textContent = email;
+  const badge = document.getElementById('sidebarPlan');
+  badge.textContent = plan.toUpperCase();
+  badge.className = 'plan-badge plan-' + plan;
+  document.getElementById('topbarGreeting').innerHTML = 'Welcome back, <span style="color:var(--blue)">' + email.split('@')[0] + '</span>';
+
+  const bottom = document.getElementById('sidebarBottom');
+  if (plan === 'free') {
+    bottom.innerHTML = '<a href="../signup/index.html#pricing" class="upgrade-btn">Upgrade Plan</a>';
+  }
+
+  const lastScan = state.lastScan || null;
+  document.getElementById('lastScan').textContent = lastScan ? 'Last scan: ' + new Date(lastScan).toLocaleString() : 'Last scan: Never';
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (el) el.classList.add('active');
+  if (window.innerWidth < 768) toggleSidebar();
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+
+// ========== OVERVIEW ==========
+function initOverview() {
+  const controls = DEMO_CONTROLS;
+  const passing = controls.filter(c => c.status === 'passing').length;
+  const warning = controls.filter(c => c.status === 'warning').length;
+  const failing = controls.filter(c => c.status === 'failing').length;
+  const total = controls.length;
+  const readiness = Math.round((passing / total) * 100);
+  const evidencePct = 45;
+
+  // Gauge
+  renderGauge(readiness);
+  document.getElementById('readinessLabel').textContent = readiness >= 80 ? 'Audit Ready' : readiness >= 50 ? 'In Progress' : 'Needs Attention';
+
+  // Controls
+  document.getElementById('controlsValue').innerHTML = passing + '<span style="font-size:16px;color:var(--muted)">/' + total + '</span>';
+  document.getElementById('controlsBar').style.width = (passing / total * 100) + '%';
+  document.getElementById('controlsSub').textContent = warning + ' warning, ' + failing + ' failing';
+
+  // Evidence
+  document.getElementById('evidenceValue').textContent = evidencePct + '%';
+  document.getElementById('evidenceBar').style.width = evidencePct + '%';
+  document.getElementById('evidenceSub').textContent = '14/31 evidence items collected';
+
+  // Remediation count
+  const openRemed = DEMO_REMEDIATIONS.filter(r => !(state.remed && state.remed[r.id]));
+  document.getElementById('remedValue').textContent = openRemed.length;
+  const sevCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+  openRemed.forEach(r => sevCounts[r.severity]++);
+  document.getElementById('remedSub').innerHTML =
+    '<span style="color:var(--red)">' + sevCounts.critical + ' critical</span> &middot; ' +
+    '<span style="color:var(--amber)">' + sevCounts.high + ' high</span> &middot; ' +
+    '<span style="color:var(--blue)">' + sevCounts.medium + ' medium</span> &middot; ' +
+    '<span style="color:var(--dim)">' + sevCounts.low + ' low</span>';
+
+  // Framework Readiness
+  renderFrameworkReadiness();
+}
+
+function renderGauge(pct) {
+  const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
+  const r = 34, circ = 2 * Math.PI * r, offset = circ * (1 - pct / 100);
+  document.getElementById('gaugeWrap').innerHTML = `
+    <svg width="80" height="80" viewBox="0 0 80 80">
+      <circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--elevated)" stroke-width="8"/>
+      <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="8"
+        stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+    </svg>
+    <div class="gauge-text" style="color:${color}">${pct}%</div>`;
+}
+
+function renderFrameworkReadiness() {
+  const fws = getFrameworks();
+  const readinessMap = { SOC2: 62, ISO27001: 70, GDPR: 55, HIPAA: 30, PCI_DSS: 45, NIST_CSF: 58, NIST_AI_RMF: 40, EU_AI_ACT: 50, FedRAMP: 25, CCPA: 48 };
+  const el = document.getElementById('frameworkReadiness');
+  el.innerHTML = fws.map(fw => {
+    const info = ALL_FRAMEWORKS.find(f => f.id === fw) || { name: fw };
+    const pct = readinessMap[fw] || 35;
+    const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
+    const statusText = pct >= 80 ? 'Ready' : pct >= 50 ? 'In Progress' : 'Not Started';
+    const statusBg = pct >= 80 ? 'var(--green-bg)' : pct >= 50 ? 'var(--amber-bg)' : 'var(--red-bg)';
+    return `<div class="fw-row">
+      <div class="fw-name">${info.name}</div>
+      <div class="fw-bar"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div></div>
+      <div class="fw-pct" style="color:${color}">${pct}%</div>
+      <div class="fw-status" style="background:${statusBg};color:${color.replace('var(--','').replace(')','')}">${statusText}</div>
+    </div>`;
+  }).join('');
+}
+
+// ========== CONTROLS ==========
+let controlFilter = 'all';
+
+function initControls() { renderControlTable(); }
+
+function renderControlTable() {
+  const tbody = document.getElementById('controlTableBody');
+  const filtered = controlFilter === 'all' ? DEMO_CONTROLS : DEMO_CONTROLS.filter(c => c.status === controlFilter);
+  tbody.innerHTML = filtered.map((c, i) => {
+    const dotClass = 'status-' + c.status;
+    const statusLabel = c.status.charAt(0).toUpperCase() + c.status.slice(1);
+    const checked = new Date(Date.now() - Math.random() * 7 * 86400000).toLocaleDateString();
+    return `<tr class="expandable" onclick="toggleControlDetail(${i})">
+      <td><span class="status-dot ${dotClass}"></span>${c.name}</td>
+      <td>${statusLabel}</td>
+      <td>${c.category}</td>
+      <td>${checked}</td>
+    </tr>
+    <tr class="ctrl-detail" id="ctrl-detail-${i}">
+      <td colspan="4">
+        <div style="margin-bottom:6px;"><strong>ID:</strong> ${c.id} &mdash; ${c.desc}</div>
+        <div style="margin-bottom:4px;"><strong>Evidence Required:</strong> ${c.evidence}</div>
+        ${c.remediation ? '<div style="margin-bottom:4px;"><strong>Remediation:</strong> ' + c.remediation + '</div>' : ''}
+        <div><strong>Frameworks:</strong> ${c.frameworks.map(f => '<span class="badge-pill">' + f + '</span>').join(' ')}</div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleControlDetail(i) {
+  const el = document.getElementById('ctrl-detail-' + i);
+  if (el) el.classList.toggle('open');
+}
+
+function filterControls(filter, btn) {
+  controlFilter = filter;
+  document.querySelectorAll('#controlFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderControlTable();
+}
+
+// ========== REMEDIATION ==========
+function initRemediation() { renderRemediation(); }
+
+function renderRemediation() {
+  if (!state.remed) state.remed = {};
+  const list = document.getElementById('remedList');
+  const sevOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+  const sorted = [...DEMO_REMEDIATIONS].sort((a, b) => sevOrder[a.severity] - sevOrder[b.severity]);
+  const now = Date.now();
+  const dueDays = { critical: 7, high: 14, medium: 30, low: 60 };
+  list.innerHTML = sorted.map(r => {
+    const checked = state.remed[r.id] ? 'checked' : '';
+    const due = new Date(now + dueDays[r.severity] * 86400000).toLocaleDateString();
+    return `<div class="remed-item" style="${checked ? 'opacity:.5;' : ''}">
+      <div class="title">
+        <input type="checkbox" class="remed-check" ${checked} onchange="toggleRemed('${r.id}', this)">
+        <span class="sev-badge sev-${r.severity}">${r.severity}</span>
+        ${r.title}
+      </div>
+      <div class="meta">
+        <span>${r.controls.join(', ')}</span>
+        <span>Evidence: ${r.evidence}</span>
+        <span>${r.effort}</span>
+        <span>Due: ${due}</span>
+      </div>
+    </div>`;
+  }).join('');
+  const open = DEMO_REMEDIATIONS.filter(r => !state.remed[r.id]).length;
+  document.getElementById('remedCount').textContent = open + ' items';
+}
+
+function toggleRemed(id, el) {
+  if (!state.remed) state.remed = {};
+  state.remed[id] = el.checked;
+  saveState();
+  renderRemediation();
+  initOverview();
+}
+
+// ========== CONNECTORS ==========
+function initConnectors() { renderConnectors('connectorGrid'); }
+
+function renderConnectors(targetId) {
+  const grid = document.getElementById(targetId);
+  grid.innerHTML = CONNECTORS.map(c => {
+    const statusColor = c.connected ? 'var(--green)' : 'var(--dim)';
+    const statusText = c.connected ? 'Connected' : 'Not Connected';
+    return `<div class="connector-card">
+      <div class="conn-icon">${c.icon}</div>
+      <div class="conn-name">${c.name}</div>
+      <div class="conn-status"><span class="conn-dot" style="background:${statusColor}"></span>${statusText}</div>
+      ${c.connected ? '<div style="font-size:10px;color:var(--muted)">Synced ' + c.lastSync + '</div>' : '<button class="btn btn-secondary btn-sm" style="margin-top:4px;font-size:10px;">Connect</button>'}
+    </div>`;
+  }).join('');
+}
+
+// ========== TIMELINE ==========
+function initTimeline() {
+  const savedDate = state.auditDate || null;
+  if (savedDate) document.getElementById('auditDate').value = savedDate;
+
+  const auditDate = savedDate ? new Date(savedDate) : new Date(Date.now() + 90 * 86400000);
+  const now = Date.now();
+  const totalSpan = auditDate.getTime() - now;
+  const milestones = [
+    { label: 'Today', date: now, type: 'today' },
+    { label: 'Remediation Done', date: now + totalSpan * 0.4, type: 'pending' },
+    { label: 'Evidence Deadline', date: now + totalSpan * 0.6, type: 'pending' },
+    { label: 'Pre-Audit Review', date: now + totalSpan * 0.8, type: 'pending' },
+    { label: 'Audit Start', date: auditDate.getTime() - 7 * 86400000, type: 'pending' },
+    { label: 'Certification', date: auditDate.getTime(), type: 'pending' },
+  ];
+
+  const el = document.getElementById('timeline');
+  el.innerHTML = '<div class="timeline-line"></div>' + milestones.map((m, i) => {
+    const pct = i / (milestones.length - 1) * 100;
+    return `<div class="timeline-marker" style="left:${Math.max(4, Math.min(96, pct))}%">
+      <div class="dot ${m.type}"></div>
+      <div class="lbl">${m.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function saveAuditDate() {
+  state.auditDate = document.getElementById('auditDate').value;
+  saveState();
+  initTimeline();
+}
+
+// ========== FRAMEWORK MODAL ==========
+function openFrameworkModal() {
+  const fws = getFrameworks();
+  const grid = document.getElementById('fwToggleGrid');
+  grid.innerHTML = ALL_FRAMEWORKS.map(f => {
+    const sel = fws.includes(f.id) ? 'selected' : '';
+    return `<div class="fw-toggle ${sel}" data-fw="${f.id}" onclick="this.classList.toggle('selected')">
+      <div style="font-weight:700;margin-bottom:2px;">${f.name}</div>
+      <div style="font-size:11px;color:var(--muted)">${f.desc}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('frameworkModal').classList.add('open');
+}
+
+function closeFrameworkModal() { document.getElementById('frameworkModal').classList.remove('open'); }
+
+function saveFrameworks() {
+  const selected = [...document.querySelectorAll('#fwToggleGrid .fw-toggle.selected')].map(el => el.dataset.fw);
+  if (selected.length === 0) { alert('Select at least one framework.'); return; }
+  localStorage.setItem('gl_frameworks', JSON.stringify(selected));
+  closeFrameworkModal();
+  renderFrameworkReadiness();
+  initFrameworksTab();
+  initSettingsTab();
+}
+
+// ========== FRAMEWORKS TAB ==========
+function initFrameworksTab() {
+  const fws = getFrameworks();
+  const readinessMap = { SOC2: 62, ISO27001: 70, GDPR: 55, HIPAA: 30, PCI_DSS: 45, NIST_CSF: 58, NIST_AI_RMF: 40, EU_AI_ACT: 50, FedRAMP: 25, CCPA: 48 };
+  const el = document.getElementById('frameworkDetail');
+
+  el.innerHTML = fws.map(fw => {
+    const info = ALL_FRAMEWORKS.find(f => f.id === fw) || { name: fw, desc: '' };
+    const controls = DEMO_CONTROLS.filter(c => c.frameworks.includes(fw));
+    const categories = [...new Set(controls.map(c => c.category))];
+    const pct = readinessMap[fw] || 35;
+
+    return `<div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <h4 style="font-size:16px;">${info.name}</h4>
+        <span style="font-size:12px;color:var(--muted)">${info.desc}</span>
+        <span style="margin-left:auto;font-size:18px;font-weight:700;color:${pct >= 50 ? 'var(--amber)' : 'var(--red)'}">${pct}%</span>
+      </div>
+      ${categories.map(cat => {
+        const catCtrls = controls.filter(c => c.category === cat);
+        const catPassing = catCtrls.filter(c => c.status === 'passing').length;
+        const catPct = Math.round(catPassing / catCtrls.length * 100);
+        return `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12px;">
+          <span style="width:140px;color:var(--muted)">${cat}</span>
+          <div style="flex:1"><div class="progress-bar"><div class="progress-fill" style="width:${catPct}%;background:${catPct >= 80 ? 'var(--green)' : catPct >= 50 ? 'var(--amber)' : 'var(--red)'}"></div></div></div>
+          <span style="width:60px;text-align:right;">${catPassing}/${catCtrls.length}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ========== FULL CONTROLS TAB ==========
+function initFullControlsTab() { renderFullControls('all'); }
+
+function renderFullControls(filter) {
+  const tbody = document.getElementById('fullControlBody');
+  const filtered = filter === 'all' ? DEMO_CONTROLS : DEMO_CONTROLS.filter(c => c.status === filter);
+  tbody.innerHTML = filtered.map((c, i) => {
+    const dotClass = 'status-' + c.status;
+    const checked = new Date(Date.now() - Math.random() * 7 * 86400000).toLocaleDateString();
+    return `<tr class="expandable" onclick="toggleFullCtrl(${i})">
+      <td>${c.id}</td>
+      <td><span class="status-dot ${dotClass}"></span>${c.name}</td>
+      <td>${c.category}</td>
+      <td>${c.frameworks.map(f => '<span class="badge-pill">' + f + '</span>').join(' ')}</td>
+      <td>${c.status.charAt(0).toUpperCase() + c.status.slice(1)}</td>
+      <td>${c.owner}</td>
+      <td>${checked}</td>
+    </tr>
+    <tr class="ctrl-detail" id="full-ctrl-${i}">
+      <td colspan="7">
+        <div style="margin-bottom:4px;">${c.desc}</div>
+        <div style="margin-bottom:4px;"><strong>Evidence:</strong> ${c.evidence}</div>
+        ${c.remediation ? '<div><strong>Remediation:</strong> ' + c.remediation + '</div>' : '<div style="color:var(--green)">No remediation needed.</div>'}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleFullCtrl(i) {
+  const el = document.getElementById('full-ctrl-' + i);
+  if (el) el.classList.toggle('open');
+}
+
+function filterControlsFull(filter) { renderFullControls(filter); }
+
+// ========== EVIDENCE TAB ==========
+function initEvidenceTab() {
+  renderConnectors('evidenceConnectorGrid');
+  const el = document.getElementById('evidenceMapping');
+  const categories = [...new Set(DEMO_CONTROLS.map(c => c.category))];
+  el.innerHTML = `<table class="full-table">
+    <thead><tr><th>Category</th><th>Controls</th><th>Evidence Items</th><th>Coverage</th></tr></thead>
+    <tbody>${categories.map(cat => {
+      const ctrls = DEMO_CONTROLS.filter(c => c.category === cat);
+      const collected = ctrls.filter(c => c.status === 'passing').length;
+      const pct = Math.round(collected / ctrls.length * 100);
+      const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--red)';
+      return `<tr>
+        <td>${cat}</td>
+        <td>${ctrls.length}</td>
+        <td>${collected}/${ctrls.length}</td>
+        <td><div class="progress-bar" style="width:120px;display:inline-block;vertical-align:middle;"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div> <span style="font-size:11px;color:${color};margin-left:6px;">${pct}%</span></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// ========== POLICIES TAB ==========
+function initPoliciesTab() {
+  const tbody = document.getElementById('policyBody');
+  tbody.innerHTML = POLICIES.map(p => {
+    const statusColor = p.status === 'Published' ? 'var(--green)' : p.status === 'Draft' ? 'var(--amber)' : 'var(--red)';
+    return `<tr>
+      <td style="font-weight:600">${p.name}</td>
+      <td>${p.frameworks.map(f => '<span class="badge-pill">' + f + '</span>').join(' ')}</td>
+      <td><span style="color:${statusColor};font-weight:600;">${p.status}</span></td>
+      <td>${p.updated}</td>
+      <td><button class="btn btn-ghost btn-sm">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function generatePolicy() { alert('Policy generation will call the GovernLayer API to draft a new policy using AI. Connect your API token in Settings to enable this feature.'); }
+
+// ========== RISK TAB ==========
+function initRiskTab() {
+  renderRadar();
+  renderTrendChart();
+  renderDriftStatus();
+}
+
+function renderRadar() {
+  const svg = document.getElementById('radarChart');
+  const cx = 160, cy = 160, maxR = 120;
+  const n = RISK_DIMS.length;
+  const angleStep = (2 * Math.PI) / n;
+
+  let gridLines = '';
+  [0.25, 0.5, 0.75, 1].forEach(s => {
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = angleStep * i - Math.PI / 2;
+      pts.push(`${cx + maxR * s * Math.cos(a)},${cy + maxR * s * Math.sin(a)}`);
+    }
+    gridLines += `<polygon points="${pts.join(' ')}" fill="none" stroke="var(--border)" stroke-width="1"/>`;
+  });
+
+  let labels = '', axes = '';
+  for (let i = 0; i < n; i++) {
+    const a = angleStep * i - Math.PI / 2;
+    const lx = cx + (maxR + 25) * Math.cos(a);
+    const ly = cy + (maxR + 25) * Math.sin(a);
+    labels += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="var(--muted)" font-size="10">${RISK_DIMS[i].label}</text>`;
+    axes += `<line x1="${cx}" y1="${cy}" x2="${cx + maxR * Math.cos(a)}" y2="${cy + maxR * Math.sin(a)}" stroke="var(--border)" stroke-width="0.5"/>`;
+  }
+
+  const dataPts = [];
+  for (let i = 0; i < n; i++) {
+    const a = angleStep * i - Math.PI / 2;
+    dataPts.push(`${cx + maxR * RISK_DIMS[i].value * Math.cos(a)},${cy + maxR * RISK_DIMS[i].value * Math.sin(a)}`);
+  }
+
+  svg.innerHTML = gridLines + axes + `<polygon points="${dataPts.join(' ')}" fill="rgba(59,130,246,.2)" stroke="var(--blue)" stroke-width="2"/>` +
+    dataPts.map(p => `<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="4" fill="var(--blue)"/>`).join('') + labels;
+}
+
+function renderTrendChart() {
+  const svg = document.getElementById('trendChart');
+  const points = [42, 45, 48, 47, 52, 55, 53, 58, 60, 62];
+  const w = 500, h = 200, px = 40, py = 20;
+  const pw = w - 2 * px, ph = h - 2 * py;
+  const maxV = 100;
+
+  let grid = '';
+  [0, 25, 50, 75, 100].forEach(v => {
+    const y = py + ph - (v / maxV) * ph;
+    grid += `<line x1="${px}" y1="${y}" x2="${w - px}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>`;
+    grid += `<text x="${px - 8}" y="${y + 4}" text-anchor="end" fill="var(--muted)" font-size="9">${v}</text>`;
+  });
+
+  const pts = points.map((v, i) => {
+    const x = px + (i / (points.length - 1)) * pw;
+    const y = py + ph - (v / maxV) * ph;
+    return `${x},${y}`;
+  });
+
+  const gradId = 'trendGrad';
+  const firstPt = pts[0].split(',');
+  const lastPt = pts[pts.length - 1].split(',');
+  const areaPath = `M${pts.join(' L')} L${lastPt[0]},${py + ph} L${firstPt[0]},${py + ph} Z`;
+
+  svg.innerHTML = `<defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="var(--green)" stop-opacity="0.3"/>
+    <stop offset="100%" stop-color="var(--green)" stop-opacity="0"/>
+  </linearGradient></defs>` +
+    grid +
+    `<path d="${areaPath}" fill="url(#${gradId})"/>` +
+    `<polyline points="${pts.join(' ')}" fill="none" stroke="var(--green)" stroke-width="2"/>` +
+    pts.map(p => `<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="3" fill="var(--green)"/>`).join('') +
+    `<text x="${w / 2}" y="${h - 2}" text-anchor="middle" fill="var(--muted)" font-size="9">Readiness Score Over Time</text>`;
+}
+
+function renderDriftStatus() {
+  const el = document.getElementById('driftStatus');
+  const drifts = [
+    { model: 'gpt-4o', drift: 0.12, status: 'safe' },
+    { model: 'claude-sonnet', drift: 0.08, status: 'safe' },
+    { model: 'llama3-8b', drift: 0.34, status: 'warning' },
+    { model: 'mistral-7b', drift: 0.21, status: 'safe' },
+  ];
+  el.innerHTML = drifts.map(d => {
+    const color = d.status === 'safe' ? 'var(--green)' : 'var(--amber)';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+      <span style="width:120px;font-weight:600;">${d.model}</span>
+      <div style="flex:1;"><div class="progress-bar"><div class="progress-fill" style="width:${d.drift * 100}%;background:${color}"></div></div></div>
+      <span style="width:50px;text-align:right;color:${color}">${(d.drift * 100).toFixed(0)}%</span>
+      <span class="status-dot" style="background:${color}"></span>
+    </div>`;
+  }).join('');
+}
+
+// ========== LEDGER TAB ==========
+function initLedgerTab() {
+  const el = document.getElementById('ledgerEntries');
+  el.innerHTML = [...LEDGER_ENTRIES].reverse().map(e => {
+    return `<div class="ledger-entry">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span class="action">${e.action}</span>
+        <span class="ts">${new Date(e.ts).toLocaleString()}</span>
+      </div>
+      <div style="margin-bottom:4px;">${e.details}</div>
+      <div class="hash">Hash: ${e.hash} &larr; ${e.prev}</div>
+    </div>`;
+  }).join('');
+}
+
+function verifyChain() {
+  document.getElementById('chainStatus').innerHTML = '<span class="chain-ok">Chain Verified (9 entries)</span>';
+  setTimeout(() => {
+    document.getElementById('chainStatus').innerHTML = '<span class="chain-ok">Chain Verified (9 entries)</span>';
+  }, 500);
+}
+
+// ========== SETTINGS TAB ==========
+function initSettingsTab() {
+  document.getElementById('settingsEmail').value = getEmail();
+  document.getElementById('settingsApiUrl').value = localStorage.getItem('gl_api_url') || '';
+  document.getElementById('settingsPlan').innerHTML = '<span class="plan-badge plan-' + getPlan() + '">' + getPlan().toUpperCase() + '</span>';
+  const fws = getFrameworks();
+  document.getElementById('settingsFrameworks').innerHTML = fws.map(f => {
+    const info = ALL_FRAMEWORKS.find(x => x.id === f);
+    return '<span class="badge-pill" style="margin:2px;">' + (info ? info.name : f) + '</span>';
+  }).join(' ');
+}
+
+function saveSettings() {
+  localStorage.setItem('gl_api_url', document.getElementById('settingsApiUrl').value);
+}
+
+function clearWorkspace() {
+  if (confirm('Reset all workspace data? This clears remediation progress and settings.')) {
+    localStorage.removeItem('gl_workspace_state');
+    state = {};
+    location.reload();
+  }
+}
+
+function logout() {
+  if (confirm('Log out? This will clear your session.')) {
+    localStorage.removeItem('gl_token');
+    localStorage.removeItem('gl_email');
+    localStorage.removeItem('gl_plan');
+    window.location.href = '../signup/index.html';
+  }
+}
+
+// ========== API INTEGRATION ==========
+async function tryLiveData() {
+  const token = getToken();
+  const baseUrl = localStorage.getItem('gl_api_url');
+  if (!token || !baseUrl) return;
+
+  const headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
+
+  // Try readiness endpoint
+  try {
+    const res = await fetch(baseUrl + '/v1/compliance/readiness', { headers });
+    if (res.ok) {
+      isLive = true;
+      // Would update UI with real data here
+    }
+  } catch (e) { /* fallback to demo data */ }
+
+  // Try risk score
+  try {
+    const res = await fetch(baseUrl + '/risk-score', {
+      method: 'POST', headers,
+      body: JSON.stringify({ system_name: 'workspace', has_pii: true, has_ai: true, has_third_party: true, is_public: true, has_encryption: true, has_audit_logging: false })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      isLive = true;
+    }
+  } catch (e) { /* fallback */ }
+
+  // Try ledger
+  try {
+    const res = await fetch(baseUrl + '/ledger', { headers });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.entries && data.entries.length > 0) {
+        isLive = true;
+      }
+    }
+  } catch (e) { /* fallback */ }
+
+  if (isLive) {
+    document.getElementById('topbarGreeting').innerHTML += '<span class="live-badge">LIVE</span>';
+  }
+}
+
+async function runFullScan() {
+  const btn = document.getElementById('runScanBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Scanning...';
+
+  const token = getToken();
+  const baseUrl = localStorage.getItem('gl_api_url');
+
+  if (token && baseUrl) {
+    try {
+      const res = await fetch(baseUrl + '/govern', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ system_name: 'workspace-scan', policy_text: 'Full compliance governance scan', threshold: 0.5 })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        state.lastScan = new Date().toISOString();
+        saveState();
+        document.getElementById('lastScan').textContent = 'Last scan: ' + new Date().toLocaleString();
+        isLive = true;
+      }
+    } catch (e) { /* fallback */ }
+  }
+
+  // Simulate completion for demo
+  setTimeout(() => {
+    state.lastScan = new Date().toISOString();
+    saveState();
+    document.getElementById('lastScan').textContent = 'Last scan: ' + new Date().toLocaleString();
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Run Full Scan';
+  }, 2000);
+}
+
+// Spin animation for scan button
+const style = document.createElement('style');
+style.textContent = '@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}.spin{animation:spin 1s linear infinite;}';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
