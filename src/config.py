@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = False
-    cors_origins: str = "https://www.governlayer.ai,https://governlayer.ai"
+    cors_origins: str = "https://www.governlayer.ai,https://governlayer.ai,http://localhost:3000"
 
     # Observability
     sentry_dsn: str = ""

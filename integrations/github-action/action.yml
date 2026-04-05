@@ -1,0 +1,98 @@
+name: "GovernLayer AI Governance Check"
+description: "Run AI governance compliance checks (drift detection, risk scoring, policy enforcement) on every PR and deploy via GovernLayer."
+author: "GovernLayer (founders@governlayer.ai)"
+
+branding:
+  icon: "shield"
+  color: "blue"
+
+inputs:
+  api_url:
+    description: "GovernLayer API base URL"
+    required: false
+    default: "https://web-production-bdd26.up.railway.app"
+  api_key:
+    description: "GovernLayer API key (gl_xxx). Store as a GitHub secret."
+    required: true
+  system_name:
+    description: "Name of the AI system being governed"
+    required: true
+  reasoning_trace:
+    description: "Reasoning trace or description of the AI behavior to analyze for drift"
+    required: false
+    default: "Automated CI/CD governance scan triggered by pull request"
+  use_case:
+    description: "Use case category for drift manifold selection"
+    required: false
+    default: "general"
+  handles_personal_data:
+    description: "Does the system handle personal/PII data?"
+    required: false
+    default: "false"
+  makes_autonomous_decisions:
+    description: "Does the system make autonomous decisions without human approval?"
+    required: false
+    default: "false"
+  used_in_critical_infrastructure:
+    description: "Is the system deployed in critical infrastructure?"
+    required: false
+    default: "false"
+  has_human_oversight:
+    description: "Does the system have human oversight mechanisms?"
+    required: false
+    default: "true"
+  is_explainable:
+    description: "Are the system's decisions explainable/interpretable?"
+    required: false
+    default: "true"
+  has_bias_testing:
+    description: "Has the system undergone bias testing?"
+    required: false
+    default: "false"
+  fail_on_high_risk:
+    description: "Fail the check if risk score exceeds the threshold"
+    required: false
+    default: "true"
+  risk_threshold:
+    description: "Risk score threshold (0-100). Scores BELOW this value trigger failure (lower = riskier)."
+    required: false
+    default: "50"
+  post_comment:
+    description: "Post governance results as a PR comment"
+    required: false
+    default: "true"
+
+outputs:
+  action:
+    description: "Governance decision: APPROVE, ESCALATE_HUMAN, or BLOCK"
+  risk_score:
+    description: "Overall risk score (0-100, higher is safer)"
+  risk_level:
+    description: "Risk level: LOW, MEDIUM, or HIGH"
+  drift_coefficient:
+    description: "Behavioral drift coefficient (0.0-1.0)"
+  vetoed:
+    description: "Whether the system was vetoed due to drift"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Run GovernLayer Governance Check"
+      shell: bash
+      env:
+        INPUT_API_URL: ${{ inputs.api_url }}
+        INPUT_API_KEY: ${{ inputs.api_key }}
+        INPUT_SYSTEM_NAME: ${{ inputs.system_name }}
+        INPUT_REASONING_TRACE: ${{ inputs.reasoning_trace }}
+        INPUT_USE_CASE: ${{ inputs.use_case }}
+        INPUT_HANDLES_PERSONAL_DATA: ${{ inputs.handles_personal_data }}
+        INPUT_MAKES_AUTONOMOUS_DECISIONS: ${{ inputs.makes_autonomous_decisions }}
+        INPUT_USED_IN_CRITICAL_INFRASTRUCTURE: ${{ inputs.used_in_critical_infrastructure }}
+        INPUT_HAS_HUMAN_OVERSIGHT: ${{ inputs.has_human_oversight }}
+        INPUT_IS_EXPLAINABLE: ${{ inputs.is_explainable }}
+        INPUT_HAS_BIAS_TESTING: ${{ inputs.has_bias_testing }}
+        INPUT_FAIL_ON_HIGH_RISK: ${{ inputs.fail_on_high_risk }}
+        INPUT_RISK_THRESHOLD: ${{ inputs.risk_threshold }}
+        INPUT_POST_COMMENT: ${{ inputs.post_comment }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: ${{ github.action_path }}/entrypoint.sh

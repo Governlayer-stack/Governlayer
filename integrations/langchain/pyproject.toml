@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "governlayer-langchain"
+version = "0.1.0"
+description = "Governance middleware for LangChain/LangGraph — drift detection, risk scoring, and audit logging for every LLM call."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "GovernLayer", email = "founders@governlayer.ai"},
+]
+keywords = ["langchain", "langgraph", "governance", "ai-safety", "compliance", "audit"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Security",
+]
+
+dependencies = [
+    "httpx>=0.25.0",
+    "langchain-core>=0.2.0",
+]
+
+[project.optional-dependencies]
+langchain = [
+    "langchain>=0.2.0",
+]
+langgraph = [
+    "langgraph>=0.1.0",
+]
+groq = [
+    "langchain-groq>=0.1.0",
+]
+openai = [
+    "langchain-openai>=0.1.0",
+]
+all = [
+    "langchain>=0.2.0",
+    "langgraph>=0.1.0",
+    "langchain-groq>=0.1.0",
+    "langchain-openai>=0.1.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.23.0",
+    "respx>=0.21.0",
+    "ruff>=0.4.0",
+]
+
+[project.urls]
+Homepage = "https://governlayer.ai"
+Repository = "https://github.com/Governlayer-stack/Governlayer"
+Documentation = "https://docs.governlayer.ai/integrations/langchain"
+
+[tool.setuptools.packages.find]
+include = ["governlayer*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
