@@ -16,7 +16,7 @@ from .types import GovernanceResult, RiskProfile, ScanResult
 logger = logging.getLogger("governlayer.client")
 
 _DEFAULT_TIMEOUT = 30.0
-_DEFAULT_API_URL = "https://web-production-bdd26.up.railway.app"
+_DEFAULT_API_URL = "https://www.governlayer.ai"
 
 
 class GovernLayerClient:

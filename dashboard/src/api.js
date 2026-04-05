@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'https://web-production-bdd26.up.railway.app';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://www.governlayer.ai';
 
 class ApiClient {
   constructor() {

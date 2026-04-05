@@ -61,7 +61,7 @@ def _get_input_text(args: tuple, kwargs: dict) -> str:
 
 def govern(
     system_name: str = "governed-function",
-    api_url: str = "https://web-production-bdd26.up.railway.app",
+    api_url: str = "https://www.governlayer.ai",
     api_key: str = "",
     use_case: str = "general",
     auto_block: bool = True,
@@ -184,7 +184,7 @@ def govern(
 
 def audit_trail(
     system_name: str = "audit-logger",
-    api_url: str = "https://web-production-bdd26.up.railway.app",
+    api_url: str = "https://www.governlayer.ai",
     api_key: str = "",
     use_case: str = "general",
     risk_profile: RiskProfile | None = None,
@@ -258,7 +258,7 @@ def audit_trail(
 def risk_gate(
     threshold: int = 70,
     system_name: str = "risk-gated",
-    api_url: str = "https://web-production-bdd26.up.railway.app",
+    api_url: str = "https://www.governlayer.ai",
     api_key: str = "",
     use_case: str = "general",
     risk_profile: RiskProfile | None = None,

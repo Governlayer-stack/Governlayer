@@ -10,7 +10,7 @@ inputs:
   api_url:
     description: "GovernLayer API base URL"
     required: false
-    default: "https://web-production-bdd26.up.railway.app"
+    default: "https://www.governlayer.ai"
   api_key:
     description: "GovernLayer API key (gl_xxx). Store as a GitHub secret."
     required: true

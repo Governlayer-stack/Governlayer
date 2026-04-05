@@ -3,1252 +3,430 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GovernLayer — Interactive Platform Demo</title>
-<meta name="description" content="Experience GovernLayer's AI governance platform. Walk through compliance auditing, drift detection, risk scoring, and multi-LLM consensus in an interactive demo.">
-<meta name="theme-color" content="#0f172a">
+<title>Request a Demo | GovernLayer — Autonomous AI Governance Platform</title>
+<meta name="description" content="Book a personalized demo of GovernLayer. See autonomous AI governance in action — compliance auditing, drift detection, risk scoring, and tamper-proof audit trails.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Request a Demo | GovernLayer">
+<meta property="og:description" content="See how GovernLayer governs AI in real time. Book a 30-minute personalized demo.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/demo">
+<link rel="canonical" href="https://governlayer.ai/demo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f172a;--bg2:#1e293b;--bg3:#334155;--bg4:#475569;
-  --surface:#1e293b;--surface2:#273548;--surface3:#2d3f54;
-  --border:rgba(148,163,184,0.12);--border2:rgba(148,163,184,0.2);
-  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
-  --green:#10b981;--green2:#34d399;--green-dim:rgba(16,185,129,0.1);--green-border:rgba(16,185,129,0.25);
-  --red:#ef4444;--red-dim:rgba(239,68,68,0.1);
-  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.1);
-  --blue:#3b82f6;--blue-dim:rgba(59,130,246,0.1);
-  --purple:#8b5cf6;--purple-dim:rgba(139,92,246,0.1);
-  --cyan:#06b6d4;--cyan-dim:rgba(6,182,212,0.1);
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
-  --font-sans:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  --font-mono:'SF Mono','Cascadia Code','Fira Code','JetBrains Mono',monospace;
-  --shadow:0 4px 24px rgba(0,0,0,0.3);
-  --transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#f0f1f5;
+  --border:rgba(0,0,0,.06);--border2:rgba(0,0,0,.1);
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --blue:#2563eb;--blue-bg:#eff6ff;--blue-dark:#1d4ed8;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;
+  --radius:14px;--radius-sm:10px;--radius-xs:8px;
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
-.container{max-width:800px;margin:0 auto;padding:0 24px}
-button{cursor:pointer;font-family:inherit;border:none;outline:none}
-input,textarea,select{font-family:inherit;outline:none}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--bg4)}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:1120px;margin:0 auto;padding:0 24px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-/* ===== PROGRESS BAR ===== */
-.progress-bar{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(16,185,129,0.12);z-index:100}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));transition:width 0.6s cubic-bezier(0.4,0,0.2,1);width:0%;border-radius:0 2px 2px 0}
+/* ---- Nav ---- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1120px;margin:0 auto;padding:0 24px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em}
+.logo-mark{width:26px;height:26px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:26px;list-style:none}
+.nav-links a{font-size:.86rem;color:var(--text2);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.86rem;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg2);border-color:var(--border2)}
+.btn-fill{background:var(--blue);color:#fff}
+.btn-fill:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.25)}
+.btn-lg{padding:13px 28px;font-size:.94rem}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px}
 
-/* ===== HEADER ===== */
-.demo-header{position:fixed;top:3px;left:0;right:0;z-index:90;background:rgba(15,23,42,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 0;opacity:0;transform:translateY(-100%);transition:var(--transition)}
-.demo-header.visible{opacity:1;transform:translateY(0)}
-.demo-header .container{display:flex;align-items:center;justify-content:space-between}
-.demo-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:0.95rem;letter-spacing:-0.02em}
-.demo-logo .mark{width:24px;height:24px;background:linear-gradient(135deg,var(--green),var(--cyan));border-radius:6px;position:relative}
-.demo-logo .mark::after{content:'';position:absolute;inset:3px;background:var(--bg);border-radius:3px}
-.step-indicators{display:flex;gap:6px;align-items:center}
-.step-dot{width:8px;height:8px;border-radius:50%;background:var(--bg3);transition:var(--transition)}
-.step-dot.active{background:var(--green);box-shadow:0 0 8px rgba(16,185,129,0.5)}
-.step-dot.completed{background:var(--green2)}
-.step-label{font-size:0.8rem;color:var(--text3);margin-left:8px;white-space:nowrap}
+/* ---- Hero ---- */
+.hero{padding:130px 0 56px;text-align:center}
+.hero h1{font-size:clamp(2rem,4.5vw,3rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:16px}
+.hero h1 .accent{color:var(--blue)}
+.hero-sub{font-size:1.05rem;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.7}
 
-/* ===== WELCOME SCREEN ===== */
-.screen{display:none;opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease}
-.screen.active{display:block}
-.screen.visible{opacity:1;transform:translateY(0)}
-.welcome-screen{min-height:auto;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;padding:24px 0}
-.welcome-screen.active{display:flex}
-.welcome-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.welcome-bg .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.1}
-.welcome-bg .orb-1{width:500px;height:500px;background:var(--green);top:-150px;left:-100px;animation:float 8s ease-in-out infinite}
-.welcome-bg .orb-2{width:400px;height:400px;background:var(--blue);bottom:-100px;right:-100px;animation:float 10s ease-in-out infinite reverse}
-.welcome-bg .orb-3{width:300px;height:300px;background:var(--purple);top:40%;left:60%;animation:float 12s ease-in-out infinite}
-.welcome-content{position:relative;z-index:1;max-width:640px;padding:0 24px}
-.welcome-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:var(--green-dim);border:1px solid var(--green-border);border-radius:20px;font-size:0.75rem;font-weight:500;color:var(--green2);margin-bottom:14px;letter-spacing:0.02em}
-.welcome-badge .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-.welcome-content h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:12px;background:linear-gradient(135deg,var(--text) 0%,var(--text2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.welcome-content h1 span{background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.welcome-content p{font-size:0.95rem;color:var(--text2);margin-bottom:20px;line-height:1.6}
-.btn-start{padding:12px 28px;background:var(--green);color:var(--bg);font-size:0.95rem;font-weight:600;border-radius:var(--radius);transition:var(--transition);box-shadow:0 0 30px rgba(16,185,129,0.25)}
-.btn-start:hover{background:var(--green2);transform:translateY(-2px);box-shadow:0 0 40px rgba(16,185,129,0.35)}
-.welcome-features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
-.welcome-feat{padding:12px;background:rgba(30,41,59,0.6);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:left}
-.welcome-feat .feat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;margin-bottom:10px}
-.welcome-feat .feat-icon.i1{background:var(--green-dim);color:var(--green)}
-.welcome-feat .feat-icon.i2{background:var(--blue-dim);color:var(--blue)}
-.welcome-feat .feat-icon.i3{background:var(--purple-dim);color:var(--purple)}
-.welcome-feat h3{font-size:0.85rem;font-weight:600;margin-bottom:4px}
-.welcome-feat p{font-size:0.78rem;color:var(--text3);margin-bottom:0;line-height:1.5}
+/* ---- Two-column layout ---- */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;align-items:start}
 
-/* ===== STEP SCREENS ===== */
-.step-screen{min-height:auto;padding:24px 0 16px}
-.step-screen.active{display:block}
-.step-header{margin-bottom:16px}
-.step-number{font-size:0.75rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
-.step-title{font-size:1.3rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
-.step-desc{font-size:0.95rem;color:var(--text2)}
+/* ---- Form ---- */
+.form-card{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);padding:36px;box-shadow:0 4px 24px rgba(0,0,0,.04)}
+.form-card h2{font-size:1.2rem;font-weight:700;margin-bottom:4px}
+.form-card .form-sub{font-size:.86rem;color:var(--text2);margin-bottom:24px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:5px}
+.form-group label .req{color:var(--red);margin-left:2px}
+.form-group input,
+.form-group select,
+.form-group textarea{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius-xs);font-family:inherit;font-size:.88rem;color:var(--text);background:var(--bg);transition:border-color .2s,box-shadow .2s;outline:none}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-group select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.submit-btn{width:100%;padding:13px 28px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius-xs);font-family:inherit;font-size:.94rem;font-weight:700;cursor:pointer;transition:all .2s}
+.submit-btn:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.25)}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ===== CARDS ===== */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+/* Success state */
+.success-state{display:none;text-align:center;padding:48px 24px}
+.success-state .check-circle{width:64px;height:64px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.success-state .check-circle svg{width:32px;height:32px}
+.success-state h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.success-state p{font-size:.9rem;color:var(--text2);line-height:1.6}
 
-/* ===== FORM ELEMENTS ===== */
-.form-group{margin-bottom:10px}
-.form-label{display:block;font-size:0.82rem;font-weight:500;color:var(--text2);margin-bottom:6px}
-.form-input{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-xs);color:var(--text);font-size:0.9rem;transition:var(--transition)}
-.form-input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
-.form-select{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-xs);color:var(--text);font-size:0.9rem;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;transition:var(--transition)}
-.form-select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
-.form-textarea{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-xs);color:var(--text);font-size:0.9rem;resize:vertical;min-height:80px;transition:var(--transition);font-family:var(--font-sans)}
-.form-textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-dim)}
+/* ---- Right column ---- */
+.info-col h2{font-size:1.2rem;font-weight:700;margin-bottom:20px}
+.check-list{list-style:none;margin-bottom:32px}
+.check-list li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;font-size:.9rem;color:var(--text);line-height:1.55}
+.check-list li+li{border-top:1px solid var(--border)}
+.check-icon{width:22px;height:22px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.check-icon svg{width:12px;height:12px}
+.time-note{display:flex;align-items:center;gap:10px;padding:16px 20px;background:var(--blue-bg);border-radius:var(--radius-xs);border-left:3px solid var(--blue)}
+.time-note svg{flex-shrink:0}
+.time-note span{font-size:.88rem;font-weight:600;color:var(--blue-dark)}
 
-/* ===== BUTTONS ===== */
-.btn{padding:10px 20px;border-radius:var(--radius-xs);font-size:0.88rem;font-weight:600;transition:var(--transition);display:inline-flex;align-items:center;gap:8px}
-.btn-primary{background:var(--green);color:var(--bg)}
-.btn-primary:hover{background:var(--green2);transform:translateY(-1px)}
-.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.btn-secondary{background:transparent;color:var(--text2);border:1px solid var(--border2)}
-.btn-secondary:hover{border-color:var(--text3);color:var(--text)}
-.btn-row{display:flex;gap:12px;margin-top:16px;justify-content:flex-end}
+/* ---- Bottom cards ---- */
+.audience-section{padding:72px 0;border-top:1px solid var(--border);background:var(--bg2)}
+.audience-section h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:800;letter-spacing:-.02em;text-align:center;margin-bottom:36px}
+.audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.audience-card{padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);transition:all .3s;position:relative;overflow:hidden}
+.audience-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 10px 36px rgba(0,0,0,.05)}
+.audience-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .3s}
+.audience-card:hover::before{opacity:1}
+.audience-card:nth-child(1)::before{background:var(--blue)}
+.audience-card:nth-child(2)::before{background:var(--purple)}
+.audience-card:nth-child(3)::before{background:var(--green)}
+.audience-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.audience-card p{font-size:.86rem;color:var(--text2);line-height:1.6}
+.audience-tag{display:inline-flex;padding:3px 10px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.audience-card:nth-child(1) .audience-tag{background:var(--blue-bg);color:var(--blue)}
+.audience-card:nth-child(2) .audience-tag{background:var(--purple-bg);color:var(--purple)}
+.audience-card:nth-child(3) .audience-tag{background:var(--green-bg);color:var(--green)}
 
-/* ===== TERMINAL ===== */
-.terminal{background:#0c1222;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:10px}
-.terminal-header{display:flex;align-items:center;gap:6px;padding:10px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid var(--border)}
-.terminal-dot{width:10px;height:10px;border-radius:50%}
-.terminal-dot.red{background:#ff5f57}
-.terminal-dot.yellow{background:#febc2e}
-.terminal-dot.tgreen{background:#28c840}
-.terminal-title{margin-left:8px;font-size:0.75rem;color:var(--text3);font-family:var(--font-mono)}
-.terminal-body{padding:16px;font-family:var(--font-mono);font-size:0.82rem;line-height:1.7;color:var(--green2);min-height:80px;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto}
-.t-prompt{color:var(--text3)}
-.t-resp{color:var(--text2)}
-.t-hl{color:var(--green)}
-.t-warn{color:var(--amber)}
-.t-err{color:var(--red)}
-.t-info{color:var(--blue)}
-.t-purple{color:var(--purple)}
+/* ---- Footer ---- */
+.footer{padding:48px 0 24px;border-top:1px solid var(--border)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px}
+.footer-brand p{font-size:.8rem;color:var(--text3);line-height:1.6;max-width:240px;margin-top:8px}
+.footer-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:.68rem;font-weight:600;color:var(--text3);margin-top:12px}
+.fcol h4{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:12px}
+.fcol a{display:block;font-size:.82rem;color:var(--text2);padding:2px 0;transition:color .2s}
+.fcol a:hover{color:var(--text)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border);font-size:.74rem;color:var(--text3)}
+.footer-links{display:flex;gap:18px}
+.footer-links a{color:var(--text3)}
+.footer-links a:hover{color:var(--text2)}
 
-/* ===== STATUS INDICATORS ===== */
-.status-row{display:flex;align-items:flex-start;gap:10px;font-size:0.85rem;margin-bottom:10px}
-.status-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;flex-shrink:0;margin-top:1px}
-.status-icon.pass{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
-.status-icon.fail{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
-.status-icon.warn{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
-
-/* ===== DRIFT VISUALIZATION ===== */
-.drift-meter{position:relative;height:32px;background:var(--bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin:16px 0}
-.drift-fill{height:100%;border-radius:16px;transition:width 1.8s cubic-bezier(0.4,0,0.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:12px;min-width:0}
-.drift-fill.low{background:linear-gradient(90deg,rgba(16,185,129,0.6),var(--green))}
-.drift-fill.medium{background:linear-gradient(90deg,rgba(245,158,11,0.6),var(--amber))}
-.drift-fill.high{background:linear-gradient(90deg,rgba(239,68,68,0.6),var(--red))}
-.drift-value{font-size:0.78rem;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
-.drift-scale{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text3);padding:0 4px}
-
-/* ===== RADAR CHART ===== */
-.radar-wrap{display:flex;justify-content:center;padding:20px 0}
-.radar-svg{max-width:320px;width:100%}
-
-/* ===== LEDGER ===== */
-.ledger-entry{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;opacity:0;transform:translateX(-20px);transition:opacity 0.4s ease,transform 0.4s ease}
-.ledger-entry.visible{opacity:1;transform:translateX(0)}
-.ledger-hash{font-family:var(--font-mono);font-size:0.7rem;color:var(--text3);word-break:break-all;opacity:0.7}
-.ledger-action{font-weight:600;font-size:0.88rem;margin:4px 0}
-.ledger-detail{font-size:0.82rem;color:var(--text2);margin-bottom:6px}
-.ledger-meta{display:flex;gap:16px;font-size:0.75rem;color:var(--text3)}
-.ledger-chain{display:flex;align-items:center;gap:4px;font-size:0.68rem;color:var(--green);margin-top:6px;font-family:var(--font-mono);opacity:0.8}
-
-/* ===== CONSENSUS ===== */
-.model-card{display:flex;align-items:flex-start;gap:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;opacity:0;transform:translateY(12px);transition:opacity 0.4s ease,transform 0.4s ease}
-.model-card.visible{opacity:1;transform:translateY(0)}
-.model-avatar{width:38px;height:38px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;flex-shrink:0}
-.model-avatar.claude{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(139,92,246,0.3)}
-.model-avatar.gemini{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.3)}
-.model-avatar.gpt{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
-.model-info{flex:1;min-width:0}
-.model-name{font-weight:600;font-size:0.85rem;margin-bottom:4px}
-.model-verdict{font-size:0.82rem;color:var(--text2);line-height:1.65}
-.model-vote{margin-top:8px;display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:0.72rem;font-weight:600;letter-spacing:0.02em}
-.model-vote.approve{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
-.model-vote.flag{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
-
-/* ===== SUMMARY ===== */
-.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
-.summary-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center}
-.summary-stat .stat-value{font-size:1.7rem;font-weight:800;letter-spacing:-0.03em}
-.summary-stat .stat-value.green{color:var(--green)}
-.summary-stat .stat-value.amber{color:var(--amber)}
-.summary-stat .stat-value.blue{color:var(--blue)}
-.summary-stat .stat-value.purple{color:var(--purple)}
-.summary-stat .stat-label{font-size:0.75rem;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:0.05em}
-.cta-section{text-align:center;padding:40px 0}
-.cta-section h2{font-size:1.5rem;font-weight:700;margin-bottom:8px}
-.cta-section p{color:var(--text2);margin-bottom:24px}
-.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-cta{padding:12px 28px;border-radius:var(--radius-xs);font-size:0.92rem;font-weight:600;transition:var(--transition);text-decoration:none;display:inline-flex;align-items:center}
-.btn-cta.primary{background:var(--green);color:var(--bg)}
-.btn-cta.primary:hover{background:var(--green2);transform:translateY(-2px)}
-.btn-cta.outline{background:transparent;color:var(--text);border:1px solid var(--border2)}
-.btn-cta.outline:hover{border-color:var(--green);color:var(--green)}
-
-/* ===== LOADING / SPINNER ===== */
-.loading-bar{height:3px;background:var(--green-dim);border-radius:2px;overflow:hidden;margin:12px 0}
-.loading-bar .fill{height:100%;background:var(--green);border-radius:2px;width:0%;transition:width 0.3s ease}
-.spinner{width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;flex-shrink:0}
-
-/* ===== ANIMATIONS ===== */
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes blink{50%{opacity:0}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideRight{from{opacity:0;transform:translateX(-15px)}to{opacity:1;transform:translateX(0)}}
-@keyframes radarDraw{from{stroke-dashoffset:800}to{stroke-dashoffset:0}}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:640px){
-  .welcome-features{grid-template-columns:1fr}
-  .summary-grid{grid-template-columns:1fr}
-  .welcome-content h1{font-size:1.8rem}
-  .step-title{font-size:1.3rem}
-  .btn-row{flex-direction:column}
-  .btn-row .btn{width:100%;justify-content:center}
-  .cta-btns{flex-direction:column;align-items:stretch}
-  .cta-btns .btn-cta{text-align:center;justify-content:center}
-  .ledger-meta{flex-direction:column;gap:4px}
-  .step-label{display:none}
+/* ---- Responsive ---- */
+@media(max-width:1024px){
+  .demo-grid{grid-template-columns:1fr;gap:36px}
+  .audience-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .hero{padding:110px 0 40px}
+  .nav-links{display:none}
+  .mobile-toggle{display:block}
+  .form-card{padding:24px}
+  .footer-grid{grid-template-columns:1fr;gap:24px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
 }
 </style>
 </head>
 <body>
 
-<!-- Progress Bar -->
-<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
-<!-- Header -->
-<div class="demo-header" id="demoHeader">
-  <div class="container">
-    <div class="demo-logo">
-      <div class="mark"></div>
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
       GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#platform">Product</a></li>
+      <li><a href="/#frameworks">Frameworks</a></li>
+      <li><a href="/#differentiators">Why Us</a></li>
+      <li><a href="/documentation">Docs</a></li>
+      <li><a href="/#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/demo" class="btn btn-ghost">Get a Demo</a>
+      <a href="/signup?plan=free" class="btn btn-fill">Start Free</a>
     </div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="step-indicators" id="stepIndicators"></div>
-      <span class="step-label" id="stepLabel"></span>
-    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
   </div>
-</div>
+</nav>
 
-<!-- ==================== WELCOME ==================== -->
-<div class="screen welcome-screen active" id="screen-welcome">
-  <div class="welcome-bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
-  <div class="welcome-content">
-    <div class="welcome-badge"><span class="dot"></span> Interactive Demo</div>
-    <h1>Experience <span>AI Governance</span> in Action</h1>
-    <p>Walk through GovernLayer's end-to-end governance pipeline. Register an AI system, run compliance audits, detect behavioral drift, score risk, and see multi-LLM consensus -- all in under 3 minutes.</p>
-    <button class="btn-start" onclick="startDemo()">Start Demo</button>
-    <div class="welcome-features">
-      <div class="welcome-feat">
-        <div class="feat-icon i1">6</div>
-        <h3>Six Steps</h3>
-        <p>Full governance pipeline from registration to audit ledger</p>
-      </div>
-      <div class="welcome-feat">
-        <div class="feat-icon i2">&gt;</div>
-        <h3>Live Simulation</h3>
-        <p>Realistic API responses with animated outputs</p>
-      </div>
-      <div class="welcome-feat">
-        <div class="feat-icon i3">#</div>
-        <h3>Real Architecture</h3>
-        <p>Mirrors actual GovernLayer production endpoints</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== STEP 1: REGISTER ==================== -->
-<div class="screen step-screen" id="screen-1">
+<!-- Hero -->
+<section class="hero">
   <div class="container">
-    <div class="step-header">
-      <div class="step-number">Step 1 of 6</div>
-      <div class="step-title">Register an AI System</div>
-      <div class="step-desc">Onboard an AI agent or model for continuous governance monitoring.</div>
-    </div>
-    <div class="card">
-      <div class="form-group">
-        <label class="form-label">System Name</label>
-        <input class="form-input" id="systemName" type="text" value="customer-support-agent-v3" placeholder="e.g. customer-support-agent-v3">
-      </div>
-      <div class="form-group">
-        <label class="form-label">System Type</label>
-        <select class="form-select" id="systemType">
-          <option value="autonomous-agent">Autonomous Agent</option>
-          <option value="llm-pipeline">LLM Pipeline</option>
-          <option value="decision-model">Decision Model</option>
-          <option value="classifier">Classifier</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea class="form-textarea" id="systemDesc" placeholder="Describe the AI system's purpose and behavior...">Handles tier-1 customer inquiries via natural language. Authorized for refund processing up to $500. Operates under EU AI Act compliance requirements.</textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Compliance Frameworks</label>
-        <select class="form-select" id="systemFrameworks">
-          <option value="eu-ai-act,nist,iso-42001">EU AI Act + NIST AI RMF + ISO 42001</option>
-          <option value="nist,soc2">NIST AI RMF + SOC 2</option>
-          <option value="eu-ai-act">EU AI Act only</option>
-        </select>
-      </div>
-    </div>
-    <div class="terminal" id="registerTerminal" style="display:none">
-      <div class="terminal-header">
-        <span class="terminal-dot red"></span>
-        <span class="terminal-dot yellow"></span>
-        <span class="terminal-dot tgreen"></span>
-        <span class="terminal-title">API Response</span>
-      </div>
-      <div class="terminal-body" id="registerOutput"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep('welcome')">Back</button>
-      <button class="btn btn-primary" id="registerBtn" onclick="runRegister()">Register System</button>
-    </div>
+    <h1 class="reveal">See GovernLayer <span class="accent">in Action</span></h1>
+    <p class="hero-sub reveal">Book a personalized demo and see how autonomous AI governance works for your organization.</p>
   </div>
-</div>
+</section>
 
-<!-- ==================== STEP 2: COMPLIANCE AUDIT ==================== -->
-<div class="screen step-screen" id="screen-2">
+<!-- Two-column demo section -->
+<section style="padding:0 0 72px">
   <div class="container">
-    <div class="step-header">
-      <div class="step-number">Step 2 of 6</div>
-      <div class="step-title">Run Compliance Audit</div>
-      <div class="step-desc">LLM-powered analysis against regulatory frameworks.</div>
-    </div>
-    <div class="card" id="auditCard">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div class="spinner" id="auditSpinner"></div>
-        <span style="font-size:0.88rem;color:var(--text2)" id="auditStatus">Initializing audit engine...</span>
-      </div>
-      <div id="auditChecks"></div>
-      <div class="loading-bar"><div class="fill" id="auditProgress"></div></div>
-    </div>
-    <div class="terminal" id="auditTerminal" style="display:none">
-      <div class="terminal-header">
-        <span class="terminal-dot red"></span>
-        <span class="terminal-dot yellow"></span>
-        <span class="terminal-dot tgreen"></span>
-        <span class="terminal-title">LLM Compliance Analysis</span>
-      </div>
-      <div class="terminal-body" id="auditOutput"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
-      <button class="btn btn-primary" id="auditNextBtn" disabled onclick="goToStep(3)">Continue</button>
-    </div>
-  </div>
-</div>
+    <div class="demo-grid">
 
-<!-- ==================== STEP 3: DRIFT DETECTION ==================== -->
-<div class="screen step-screen" id="screen-3">
-  <div class="container">
-    <div class="step-header">
-      <div class="step-number">Step 3 of 6</div>
-      <div class="step-title">Behavioral Drift Detection</div>
-      <div class="step-desc">Embedding-based analysis detects when AI behavior deviates from its safety manifold.</div>
-    </div>
-    <div class="card" id="driftCard">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div class="spinner" id="driftSpinner"></div>
-        <span style="font-size:0.88rem;color:var(--text2)" id="driftStatus">Computing behavioral embeddings...</span>
-      </div>
-      <div id="driftResults" style="display:none">
-        <div style="font-size:0.82rem;color:var(--text3);margin-bottom:4px">Composite Drift Score (D<sub>c</sub>)</div>
-        <div class="drift-meter">
-          <div class="drift-fill low" id="driftFill" style="width:0%">
-            <span class="drift-value" id="driftValue">0.00</span>
+      <!-- LEFT: Form -->
+      <div class="form-card reveal" id="formCard">
+        <div id="formContent">
+          <h2>Request a Demo</h2>
+          <p class="form-sub">Fill out the form and our team will reach out to schedule your session.</p>
+          <form id="demoForm" novalidate>
+            <div class="form-group">
+              <label>Full name<span class="req">*</span></label>
+              <input type="text" id="fullName" placeholder="Jane Smith" required>
+            </div>
+            <div class="form-group">
+              <label>Work email<span class="req">*</span></label>
+              <input type="email" id="workEmail" placeholder="jane@company.com" required>
+            </div>
+            <div class="form-group">
+              <label>Company name<span class="req">*</span></label>
+              <input type="text" id="companyName" placeholder="Acme Corp" required>
+            </div>
+            <div class="form-group">
+              <label>Job title</label>
+              <input type="text" id="jobTitle" placeholder="Head of AI / CISO / CTO">
+            </div>
+            <div class="form-group">
+              <label>Company size</label>
+              <select id="companySize">
+                <option value="" disabled selected>Select team size</option>
+                <option value="1-10">1-10 employees</option>
+                <option value="11-50">11-50 employees</option>
+                <option value="51-200">51-200 employees</option>
+                <option value="201-1000">201-1,000 employees</option>
+                <option value="1000+">1,000+ employees</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>What are you looking to solve?</label>
+              <textarea id="useCase" placeholder="Tell us about your AI governance challenges, compliance requirements, or what prompted you to explore GovernLayer."></textarea>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Request Demo</button>
+          </form>
+        </div>
+        <div class="success-state" id="successState">
+          <div class="check-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
+          <h3>Demo request received</h3>
+          <p>We'll be in touch within 24 hours to schedule your personalized walkthrough.</p>
+          <p style="margin-top:16px;font-size:.82rem;color:var(--text3)">Check your inbox for a confirmation from founders@governlayer.ai</p>
         </div>
-        <div class="drift-scale">
-          <span>0.0 Safe</span>
-          <span>0.5 Monitor</span>
-          <span>1.0 Critical</span>
+      </div>
+
+      <!-- RIGHT: What you'll see -->
+      <div class="info-col reveal">
+        <h2>What you'll see in your demo</h2>
+        <ul class="check-list">
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span>29-framework compliance assessment on your AI systems</span>
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span>Real-time behavioral drift detection demo</span>
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span>SHA-256 hash-chained audit trail walkthrough</span>
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span>Multi-LLM consensus engine in action</span>
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span>Risk scoring across 6 dimensions</span>
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span>GitHub Actions CI/CD integration</span>
+          </li>
+        </ul>
+        <div class="time-note">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Typically 30 minutes. No commitment required.</span>
         </div>
-        <div id="driftDetails" style="margin-top:20px"></div>
       </div>
-    </div>
-    <div class="terminal" id="driftTerminal" style="display:none">
-      <div class="terminal-header">
-        <span class="terminal-dot red"></span>
-        <span class="terminal-dot yellow"></span>
-        <span class="terminal-dot tgreen"></span>
-        <span class="terminal-title">Drift Analysis</span>
-      </div>
-      <div class="terminal-body" id="driftOutput"></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
-      <button class="btn btn-primary" id="driftNextBtn" disabled onclick="goToStep(4)">Continue</button>
+
     </div>
   </div>
-</div>
+</section>
 
-<!-- ==================== STEP 4: RISK SCORING ==================== -->
-<div class="screen step-screen" id="screen-4">
+<!-- Bottom cards: Audience segments -->
+<section class="audience-section">
   <div class="container">
-    <div class="step-header">
-      <div class="step-number">Step 4 of 6</div>
-      <div class="step-title">Risk Scoring</div>
-      <div class="step-desc">Deterministic 6-dimension risk assessment across security, compliance, and operational axes.</div>
-    </div>
-    <div class="card" id="riskCard">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div class="spinner" id="riskSpinner"></div>
-        <span style="font-size:0.88rem;color:var(--text2)" id="riskStatus">Calculating risk dimensions...</span>
+    <h2 class="reveal">Built for teams shipping AI responsibly</h2>
+    <div class="audience-grid">
+      <div class="audience-card reveal">
+        <div class="audience-tag">For Startups</div>
+        <h3>Ship fast. Stay compliant from day one.</h3>
+        <p>Shipping AI fast? GovernLayer gives you audit-ready governance without slowing down your velocity. Integrate in three API calls and get compliance documentation generated automatically.</p>
       </div>
-      <div id="riskResults" style="display:none">
-        <div class="radar-wrap">
-          <svg class="radar-svg" viewBox="0 0 300 300" id="radarChart"></svg>
+      <div class="audience-card reveal">
+        <div class="audience-tag">For Enterprise</div>
+        <h3>Multi-model governance at scale.</h3>
+        <p>Audit trails, regulatory reporting, and policy enforcement across every AI agent in your organization. Shadow AI discovery, vendor risk assessment, and cryptographic proof for auditors.</p>
+      </div>
+      <div class="audience-card reveal">
+        <div class="audience-tag">For Regulated Industries</div>
+        <h3>Frameworks built for your requirements.</h3>
+        <p>Healthcare, finance, government -- GovernLayer ships with pre-built policy packs for HIPAA, SOC 2, EU AI Act, NIST, and 25 additional frameworks. Air-gapped deployment available.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-mark" style="width:22px;height:22px;border-radius:6px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <p>The governance layer for agentic AI. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SOC 2 Compliant Infrastructure
         </div>
-        <div id="riskDimensions" style="margin-top:8px"></div>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="/#platform">Platform</a>
+        <a href="/demo">Demo</a>
+        <a href="/signup">Pricing</a>
+        <a href="/changelog">Changelog</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="/documentation">Documentation</a>
+        <a href="/redoc">API Reference</a>
+        <a href="/trust">Trust Center</a>
+        <a href="/status">System Status</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="/about">About</a>
+        <a href="/blog">Blog</a>
+        <a href="mailto:founders@governlayer.ai">Contact</a>
+        <a href="/careers">Careers</a>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
-      <button class="btn btn-primary" id="riskNextBtn" disabled onclick="goToStep(5)">Continue</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== STEP 5: AUDIT LEDGER ==================== -->
-<div class="screen step-screen" id="screen-5">
-  <div class="container">
-    <div class="step-header">
-      <div class="step-number">Step 5 of 6</div>
-      <div class="step-title">Immutable Audit Ledger</div>
-      <div class="step-desc">Every governance action is hash-chained into a tamper-evident ledger using SHA-256.</div>
-    </div>
-    <div id="ledgerEntries"></div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep(4)">Back</button>
-      <button class="btn btn-primary" id="ledgerNextBtn" disabled onclick="goToStep(6)">Continue</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== STEP 6: CONSENSUS ==================== -->
-<div class="screen step-screen" id="screen-6">
-  <div class="container">
-    <div class="step-header">
-      <div class="step-number">Step 6 of 6</div>
-      <div class="step-title">Multi-LLM Consensus</div>
-      <div class="step-desc">Three independent models evaluate governance decisions. Consensus eliminates single-model hallucination risk.</div>
-    </div>
-    <div class="card" style="padding:16px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="spinner" id="consensusSpinner"></div>
-        <span style="font-size:0.85rem;color:var(--text2)" id="consensusStatus">Dispatching to model board...</span>
-      </div>
-    </div>
-    <div id="consensusModels"></div>
-    <div id="consensusVerdict" style="display:none"></div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="goToStep(5)">Back</button>
-      <button class="btn btn-primary" id="consensusNextBtn" disabled onclick="goToStep('summary')">View Summary</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==================== SUMMARY ==================== -->
-<div class="screen step-screen" id="screen-summary">
-  <div class="container">
-    <div class="step-header" style="text-align:center">
-      <div class="step-number">Demo Complete</div>
-      <div class="step-title">Governance Pipeline Results</div>
-      <div class="step-desc">Full end-to-end analysis for your registered AI system.</div>
-    </div>
-    <div class="summary-grid" id="summaryGrid"></div>
-    <div class="card" id="summaryTimeline" style="margin-bottom:32px"></div>
-    <div class="cta-section">
-      <h2>Ready to govern your AI systems?</h2>
-      <p>GovernLayer provides the same pipeline you just experienced, running autonomously across your entire AI fleet.</p>
-      <div class="cta-btns">
-        <a href="https://governlayer.ai" class="btn-cta primary">Get Started Free</a>
-        <a href="https://governlayer.ai/docs" class="btn-cta outline">View API Docs</a>
-        <button class="btn-cta outline" onclick="resetDemo()">Run Demo Again</button>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/trust">Security</a>
       </div>
     </div>
   </div>
-</div>
+</footer>
 
 <script>
-(function(){
-  // ===== STATE =====
-  var TOTAL_STEPS = 6;
-  var currentStep = 'welcome';
-  var D = {};
-  var stepRan = {};
-
-  // ===== HELPERS =====
-  function $(id){ return document.getElementById(id); }
-  function fakeHash(){
-    var c='0123456789abcdef',h='';
-    for(var i=0;i<64;i++) h+=c[Math.floor(Math.random()*16)];
-    return h;
-  }
-
-  // ===== TYPING =====
-  function typeText(el, text, speed, cb){
-    var i=0; el.innerHTML='';
-    function t(){
-      if(i<text.length){
-        if(text[i]==='<'){
-          var end=text.indexOf('>',i);
-          if(end!==-1){el.innerHTML+=text.substring(i,end+1);i=end+1;}
-          else{el.innerHTML+=text[i];i++;}
-        }else{el.innerHTML+=text[i];i++;}
-        el.scrollTop=el.scrollHeight;
-        setTimeout(t,speed);
-      }else if(cb) cb();
+// Reveal on scroll
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(el) {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
     }
-    t();
-  }
-
-  // ===== NAVIGATION =====
-  function updateProgress(step){
-    var pct=step==='welcome'?0:step==='summary'?100:(step/TOTAL_STEPS)*100;
-    $('progressFill').style.width=pct+'%';
-  }
-
-  function updateIndicators(step){
-    var header=$('demoHeader');
-    if(step==='welcome'){header.classList.remove('visible');return;}
-    header.classList.add('visible');
-    var labels=['Register','Audit','Drift','Risk','Ledger','Consensus'];
-    var html='';
-    for(var i=1;i<=TOTAL_STEPS;i++){
-      var numStep=typeof step==='number'?step:TOTAL_STEPS+1;
-      var cls=i<numStep?'completed':i===numStep?'active':'';
-      html+='<div class="step-dot '+cls+'"></div>';
-    }
-    $('stepIndicators').innerHTML=html;
-    $('stepLabel').textContent=step==='summary'?'Complete':labels[(typeof step==='number'?step:TOTAL_STEPS)-1];
-  }
-
-  window.goToStep=function(step){
-    var all=document.querySelectorAll('.screen');
-    for(var j=0;j<all.length;j++){all[j].classList.remove('active','visible');}
-    currentStep=step;
-    updateProgress(step);
-    updateIndicators(step);
-    var id=step==='welcome'?'screen-welcome':step==='summary'?'screen-summary':'screen-'+step;
-    var screen=$(id);
-    screen.classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-    requestAnimationFrame(function(){requestAnimationFrame(function(){screen.classList.add('visible');});});
-    if(step===2&&!stepRan[2]) runAudit();
-    if(step===3&&!stepRan[3]) runDrift();
-    if(step===4&&!stepRan[4]) runRisk();
-    if(step===5&&!stepRan[5]) runLedger();
-    if(step===6&&!stepRan[6]) runConsensus();
-    if(step==='summary') buildSummary();
-  };
-
-  window.startDemo=function(){ window.goToStep(1); };
-
-  window.resetDemo=function(){
-    D={};stepRan={};
-    $('registerTerminal').style.display='none';
-    $('registerOutput').innerHTML='';
-    $('registerBtn').disabled=false;
-    $('registerBtn').textContent='Register System';
-    $('registerBtn').onclick=window.runRegister;
-    $('auditChecks').innerHTML='';
-    $('auditOutput').innerHTML='';
-    $('auditTerminal').style.display='none';
-    $('auditNextBtn').disabled=true;
-    $('auditProgress').style.width='0%';
-    $('auditSpinner').style.display='';
-    $('auditStatus').textContent='Initializing audit engine...';
-    $('driftResults').style.display='none';
-    $('driftFill').style.width='0%';
-    $('driftTerminal').style.display='none';
-    $('driftOutput').innerHTML='';
-    $('driftSpinner').style.display='';
-    $('driftStatus').textContent='Computing behavioral embeddings...';
-    $('driftNextBtn').disabled=true;
-    $('driftDetails').innerHTML='';
-    $('riskResults').style.display='none';
-    $('riskSpinner').style.display='';
-    $('riskStatus').textContent='Calculating risk dimensions...';
-    $('riskNextBtn').disabled=true;
-    $('riskDimensions').innerHTML='';
-    $('ledgerEntries').innerHTML='';
-    $('ledgerNextBtn').disabled=true;
-    $('consensusModels').innerHTML='';
-    $('consensusVerdict').style.display='none';
-    $('consensusVerdict').innerHTML='';
-    $('consensusSpinner').style.display='';
-    $('consensusStatus').textContent='Dispatching to model board...';
-    $('consensusNextBtn').disabled=true;
-    window.goToStep('welcome');
-  };
-
-  // ===== API BASE =====
-  var API=window.location.origin;
-  var TOKEN='';
-
-  function apiCall(method,path,body){
-    var opts={method:method,headers:{'Content-Type':'application/json','Accept':'application/json'}};
-    if(TOKEN) opts.headers['Authorization']='Bearer '+TOKEN;
-    if(body) opts.body=JSON.stringify(body);
-    return fetch(API+path,opts).then(function(r){return r.json();});
-  }
-
-  // ===== STEP 1: REGISTER + AUTH =====
-  window.runRegister=function(){
-    var name=$('systemName').value||'customer-support-agent-v3';
-    var type=$('systemType').value;
-    var desc=$('systemDesc').value;
-    var frameworks=$('systemFrameworks').value;
-    D.systemName=name;
-    D.systemType=type;
-    D.systemDesc=desc;
-    D.frameworks=frameworks.split(',');
-
-    $('registerBtn').disabled=true;
-    var terminal=$('registerTerminal');
-    terminal.style.display='block';
-    $('registerOutput').innerHTML='<span class="t-prompt">Connecting to live API...</span>';
-
-    var email='demo-'+Math.random().toString(36).substring(2,8)+'@governlayer.demo';
-    var password='DemoPass2026!';
-
-    apiCall('POST','/auth/register',{email:email,password:password,company:name})
-    .then(function(data){
-      if(data.token){
-        TOKEN=data.token;
-      } else {
-        return apiCall('POST','/auth/login',{email:email,password:password}).then(function(d){TOKEN=d.token;});
-      }
-    })
-    .then(function(){
-      D.systemId='sys_'+Math.random().toString(36).substring(2,10);
-      D.registeredAt=new Date().toISOString();
-      var output='<span class="t-prompt">POST /auth/register \u2192 200 OK</span>\n'+
-        '<span class="t-prompt">Authenticated with live API</span>\n\n'+
-        '<span class="t-resp">{\n'+
-        '  <span class="t-info">"status"</span>: <span class="t-hl">"registered"</span>,\n'+
-        '  <span class="t-info">"system"</span>: <span class="t-hl">"'+name+'"</span>,\n'+
-        '  <span class="t-info">"type"</span>: "'+type+'",\n'+
-        '  <span class="t-info">"frameworks"</span>: '+JSON.stringify(D.frameworks)+',\n'+
-        '  <span class="t-info">"api"</span>: <span class="t-hl">"LIVE \u2014 '+API+'"</span>,\n'+
-        '  <span class="t-info">"authenticated"</span>: <span class="t-hl">true</span>\n'+
-        '}</span>';
-      $('registerOutput').innerHTML='';
-      typeText($('registerOutput'),output,8,function(){
-        var btn=$('registerBtn');
-        btn.textContent='Continue to Audit \u2192';
-        btn.disabled=false;
-        btn.onclick=function(){window.goToStep(2);};
-      });
-    })
-    .catch(function(err){
-      $('registerOutput').innerHTML='<span class="t-warn">API connection failed: '+err.message+'</span>\n<span class="t-info">Falling back to simulated mode...</span>';
-      TOKEN='';
-      D.systemId='sys_'+Math.random().toString(36).substring(2,10);
-      D.registeredAt=new Date().toISOString();
-      setTimeout(function(){
-        var btn=$('registerBtn');
-        btn.textContent='Continue to Audit \u2192';
-        btn.disabled=false;
-        btn.onclick=function(){window.goToStep(2);};
-      },1500);
-    });
-  };
-
-  // ===== STEP 2: COMPLIANCE AUDIT =====
-  function runAudit(){
-    stepRan[2]=true;
-    var container=$('auditChecks');
-    var progressEl=$('auditProgress');
-    var statusEl=$('auditStatus');
-
-    var checks=[
-      {name:'EU AI Act - Art. 9 Risk Management',status:'pass'},
-      {name:'EU AI Act - Art. 13 Transparency',status:'pass'},
-      {name:'EU AI Act - Art. 14 Human Oversight',status:'warn'},
-      {name:'NIST AI RMF - GOVERN 1.1',status:'pass'},
-      {name:'NIST AI RMF - MAP 3.2',status:'pass'},
-      {name:'NIST AI RMF - MEASURE 2.6',status:'warn'},
-      {name:'ISO 42001 - A.6.2.2 Data Quality',status:'pass'},
-      {name:'ISO 42001 - A.8.4 Impact Assessment',status:'pass'}
-    ];
-
-    // Animate checks while API call runs
-    checks.forEach(function(check,idx){
-      setTimeout(function(){
-        var pct=((idx+1)/checks.length)*100;
-        progressEl.style.width=pct+'%';
-        statusEl.textContent='Evaluating: '+check.name;
-        var icon=check.status==='pass'?'\u2713':'\u26A0';
-        var cls=check.status==='pass'?'pass':'warn';
-        var row=document.createElement('div');
-        row.className='status-row';
-        row.style.animation='slideRight 0.3s ease forwards';
-        row.innerHTML='<div class="status-icon '+cls+'">'+icon+'</div><span>'+check.name+'</span>';
-        container.appendChild(row);
-      },idx*400);
-    });
-
-    // Hit real API
-    var auditBody={
-      system_name:D.systemName||'customer-support-agent-v3',
-      system_description:D.systemDesc||'AI-powered customer support agent handling inquiries and refunds',
-      industry:D.systemType||'Technology',
-      frameworks:(D.frameworks||['EU_AI_ACT','NIST_AI_RMF','ISO_42001']).join(', ')
-    };
-
-    var auditDone=false;
-    var auditLive=false;
-    var auditData=null;
-
-    apiCall('POST','/audit',auditBody)
-    .then(function(data){
-      if(data.error||data.detail||!data.results) throw new Error('api error');
-      auditLive=true;
-      auditData=data;
-      D.auditResult={passed:6,warnings:2,failed:0,score:87};
-      D.auditDecisionId=data.decision_id;
-      D.auditHash=data.current_hash;
-    })
-    .catch(function(){
-      auditLive=false;
-      D.auditResult={passed:6,warnings:2,failed:0,score:87};
-    })
-    .then(function(){
-      auditDone=true;
-      tryShowAudit();
-    });
-
-    var animDone=false;
-    setTimeout(function(){animDone=true;tryShowAudit();},checks.length*400+300);
-
-    function tryShowAudit(){
-      if(!auditDone||!animDone) return;
-      showAuditResult(auditLive,auditLive?(auditData.results||''):'',auditData||{});
-    }
-
-    function showAuditResult(live,llmText,data){
-      var delay=0;
-      setTimeout(function(){
-        $('auditSpinner').style.display='none';
-        var src=live?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
-        statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Audit complete</span> \u2014 6 passed, 2 advisories'+src;
-        var terminal=$('auditTerminal');
-        terminal.style.display='block';
-        var analysis;
-        if(live&&llmText){
-          analysis='<span class="t-prompt">POST /audit \u2192 200 OK [LIVE]</span>\n'+
-            '<span class="t-info">decision_id: </span><span class="t-hl">'+(data.decision_id||'')+'</span>\n'+
-            '<span class="t-info">hash: </span><span class="t-hl">'+(data.current_hash||'').substring(0,32)+'...</span>\n\n'+
-            '<span class="t-prompt">LLM Compliance Analysis</span>\n\n'+
-            llmText.substring(0,800);
-        } else {
-          analysis='<span class="t-prompt">LLM Compliance Analysis (Claude Sonnet 4)</span>\n\n'+
-            '<span class="t-hl">FINDING 1:</span> <span class="t-warn">Art. 14 Human Oversight - ADVISORY</span>\n'+
-            'The system processes refunds up to $500 autonomously.\n'+
-            'Recommendation: Implement approval workflow for\n'+
-            'transactions exceeding $200 to satisfy human oversight\n'+
-            'requirements under EU AI Act Article 14.\n\n'+
-            '<span class="t-hl">FINDING 2:</span> <span class="t-warn">MEASURE 2.6 - ADVISORY</span>\n'+
-            'Bias evaluation metrics not detected in system logs.\n'+
-            'Recommendation: Add demographic parity and equalized\n'+
-            'odds measurements to the evaluation pipeline.\n\n'+
-            '<span class="t-info">Overall Compliance Score: </span><span class="t-hl">87/100</span>\n'+
-            '<span class="t-info">Risk Classification: </span><span class="t-hl">HIGH-RISK</span> (EU AI Act)\n'+
-            '<span class="t-info">Recommended Actions: </span><span class="t-resp">2 advisory items</span>';
-        }
-        typeText($('auditOutput'),analysis,5,function(){
-          $('auditNextBtn').disabled=false;
-        });
-      },delay);
-    }
-  }
-
-  // ===== STEP 3: DRIFT DETECTION =====
-  function runDrift(){
-    stepRan[3]=true;
-    var statusEl=$('driftStatus');
-    var phases=[
-      {text:'Computing behavioral embeddings...',time:0},
-      {text:'Loading safety manifold baseline...',time:500},
-      {text:'Calculating cosine distance across 384 dimensions...',time:1000},
-      {text:'Analyzing semantic deviation patterns...',time:1600},
-      {text:'Generating drift report...',time:2200}
-    ];
-    phases.forEach(function(p){setTimeout(function(){statusEl.textContent=p.text;},p.time);});
-
-    // Hit real govern endpoint (includes drift analysis)
-    var governBody={
-      system_name:D.systemName||'customer-support-agent-v3',
-      reasoning_trace:D.systemDesc||'The AI agent processed a customer refund request for $450 without human approval. It accessed the customer database, verified purchase history, and initiated the refund automatically based on its trained policy.',
-      use_case:D.systemType||'customer_support',
-      ai_decision:'Approved refund of $450 based on return policy match',
-      handles_personal_data:true,
-      makes_autonomous_decisions:true,
-      used_in_critical_infrastructure:false,
-      has_human_oversight:true,
-      is_explainable:true,
-      has_bias_testing:false
-    };
-
-    var liveResult=null;
-    var apiFetched=false;
-    apiCall('POST','/govern',governBody)
-    .then(function(data){
-      if(data.error||data.detail||!data.drift_coefficient&&data.drift_coefficient!==0) throw new Error('api error');
-      liveResult=data;
-    })
-    .catch(function(){liveResult=null;})
-    .then(function(){apiFetched=true;tryShowDrift();});
-
-    var animReady=false;
-    setTimeout(function(){animReady=true;tryShowDrift();},2800);
-
-    function tryShowDrift(){
-      if(!apiFetched||!animReady) return;
-      $('driftSpinner').style.display='none';
-      var driftScore=liveResult?liveResult.drift_coefficient:0.23;
-      var vetoed=liveResult?liveResult.vetoed:false;
-      D.driftScore=driftScore;
-      D.governResult=liveResult;
-      var src=liveResult?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
-      statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Drift analysis complete</span>'+src;
-      $('driftResults').style.display='block';
-      setTimeout(function(){
-        $('driftFill').style.width=(driftScore*100)+'%';
-        $('driftValue').textContent=driftScore.toFixed(2);
-      },100);
-
-      var dimensions=[
-        {name:'Semantic Coherence',score:0.12,status:'pass',desc:'Response patterns align with training baseline'},
-        {name:'Boundary Adherence',score:0.31,status:'warn',desc:'Minor deviation in refund authorization scope'},
-        {name:'Tone Consistency',score:0.08,status:'pass',desc:'Communication style within expected range'},
-        {name:'Safety Alignment',score:0.15,status:'pass',desc:'No safety policy violations detected'},
-        {name:'Task Fidelity',score:0.41,status:'warn',desc:'Occasional off-topic responses to complex queries'}
-      ];
-      var details=$('driftDetails');
-      dimensions.forEach(function(d,i){
-        setTimeout(function(){
-          var row=document.createElement('div');
-          row.className='status-row';
-          row.style.animation='slideRight 0.3s ease forwards';
-          var icon=d.status==='pass'?'\u2713':'\u26A0';
-          var cls=d.status==='pass'?'pass':'warn';
-          var scoreColor=d.status==='pass'?'var(--green)':'var(--amber)';
-          row.innerHTML=
-            '<div class="status-icon '+cls+'">'+icon+'</div>'+
-            '<div style="flex:1">'+
-              '<div style="display:flex;justify-content:space-between;align-items:center">'+
-                '<span style="font-weight:500">'+d.name+'</span>'+
-                '<span style="font-family:var(--font-mono);font-size:0.8rem;color:'+scoreColor+'">'+d.score.toFixed(2)+'</span>'+
-              '</div>'+
-              '<div style="font-size:0.78rem;color:var(--text3);margin-top:2px">'+d.desc+'</div>'+
-            '</div>';
-          details.appendChild(row);
-        },i*200);
-      });
-
-      setTimeout(function(){
-        var terminal=$('driftTerminal');
-        terminal.style.display='block';
-        var classification=driftScore<0.2?'MINIMAL_DRIFT':driftScore<0.3?'LOW_DRIFT':driftScore<0.5?'MODERATE_DRIFT':'HIGH_DRIFT';
-        var action=driftScore<0.3?'MONITOR':driftScore<0.5?'REVIEW':'HALT';
-        var output;
-        if(liveResult){
-          output='<span class="t-prompt">POST /govern \u2192 200 OK [LIVE]</span>\n\n'+
-            '<span class="t-resp">{\n'+
-            '  <span class="t-info">"drift_coefficient"</span>: <span class="t-hl">'+driftScore.toFixed(4)+'</span>,\n'+
-            '  <span class="t-info">"vetoed"</span>: <span class="t-hl">'+vetoed+'</span>,\n'+
-            '  <span class="t-info">"risk_level"</span>: <span class="t-hl">"'+(liveResult.risk_level||'MEDIUM')+'"</span>,\n'+
-            '  <span class="t-info">"overall_risk"</span>: <span class="t-hl">'+(liveResult.overall_risk||66)+'</span>,\n'+
-            '  <span class="t-info">"decision_id"</span>: "'+(liveResult.decision_id||'')+'",\n'+
-            '  <span class="t-info">"hash"</span>: "'+(liveResult.current_hash||'').substring(0,32)+'..."\n'+
-            '}</span>';
-        } else {
-          output='<span class="t-prompt">POST /v1/drift/detect</span>\n\n'+
-            '<span class="t-resp">{\n'+
-            '  <span class="t-info">"composite_drift"</span>: <span class="t-hl">'+driftScore.toFixed(2)+'</span>,\n'+
-            '  <span class="t-info">"classification"</span>: <span class="t-hl">"'+classification+'"</span>,\n'+
-            '  <span class="t-info">"action"</span>: <span class="t-warn">"'+action+'"</span>,\n'+
-            '  <span class="t-info">"embedding_model"</span>: "all-MiniLM-L6-v2",\n'+
-            '  <span class="t-info">"dimensions_analyzed"</span>: 384,\n'+
-            '  <span class="t-info">"samples_evaluated"</span>: 2847,\n'+
-            '  <span class="t-info">"baseline_date"</span>: "2026-02-15T00:00:00Z"\n'+
-            '}</span>';
-        }
-        typeText($('driftOutput'),output,5,function(){
-          $('driftNextBtn').disabled=false;
-        });
-      },1200);
-    }
-  }
-
-  // ===== STEP 4: RISK SCORING =====
-  function runRisk(){
-    stepRan[4]=true;
-    var statusEl=$('riskStatus');
-
-    setTimeout(function(){statusEl.textContent='Evaluating 6 risk dimensions...';},400);
-
-    // Hit real risk-score endpoint (deterministic, no LLM)
-    var riskBody={
-      system_name:D.systemName||'customer-support-agent-v3',
-      handles_personal_data:true,
-      makes_autonomous_decisions:true,
-      used_in_critical_infrastructure:false,
-      has_human_oversight:true,
-      is_explainable:true,
-      has_bias_testing:false
-    };
-
-    apiCall('POST','/risk-score',riskBody)
-    .then(function(data){
-      if(data.error||data.detail||!data.dimension_scores) throw new Error('api error');
-      // Map API dimension names to display names
-      var dimMap={
-        'Privacy':'Data Privacy','Autonomy_Risk':'Autonomy Risk',
-        'Infrastructure_Risk':'Infrastructure','Oversight':'Human Oversight',
-        'Transparency':'Transparency','Fairness':'Bias & Fairness'
-      };
-      var dims=[];
-      var scores=data.dimension_scores||{};
-      Object.keys(scores).forEach(function(k){
-        var s=scores[k];
-        dims.push({name:dimMap[k]||k,score:s,color:s>=60?'var(--green)':'var(--amber)'});
-      });
-      D.riskDims=dims;
-      D.riskScore=data.overall_score||Math.round(dims.reduce(function(a,d){return a+d.score;},0)/dims.length);
-      D.riskLevel=data.risk_level||'MEDIUM';
-      showRiskResult(dims,true);
-    })
-    .catch(function(){
-      var dims=[
-        {name:'Data Privacy',score:40,color:'var(--amber)'},
-        {name:'Autonomy Risk',score:30,color:'var(--amber)'},
-        {name:'Infrastructure',score:100,color:'var(--green)'},
-        {name:'Human Oversight',score:100,color:'var(--green)'},
-        {name:'Transparency',score:100,color:'var(--green)'},
-        {name:'Bias & Fairness',score:25,color:'var(--amber)'}
-      ];
-      D.riskDims=dims;
-      D.riskScore=Math.round(dims.reduce(function(a,d){return a+d.score;},0)/dims.length);
-      D.riskLevel='MEDIUM';
-      showRiskResult(dims,false);
-    });
-
-    function showRiskResult(dims,live){
-      setTimeout(function(){
-        $('riskSpinner').style.display='none';
-        var src=live?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
-        statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Risk assessment complete</span> \u2014 Overall: '+D.riskScore+'/100 ('+D.riskLevel+')'+src;
-        $('riskResults').style.display='block';
-        drawRadar(dims);
-        var container=$('riskDimensions');
-        dims.forEach(function(d,i){
-          setTimeout(function(){
-            var row=document.createElement('div');
-            row.className='status-row';
-            row.style.animation='slideRight 0.3s ease forwards';
-            var icon=d.score>=60?'\u2713':'\u26A0';
-            var cls=d.score>=60?'pass':'warn';
-            row.innerHTML=
-              '<div class="status-icon '+cls+'">'+icon+'</div>'+
-              '<div style="flex:1;display:flex;justify-content:space-between;align-items:center">'+
-                '<span>'+d.name+'</span>'+
-                '<div style="display:flex;align-items:center;gap:8px">'+
-                  '<div style="width:80px;height:6px;background:var(--bg);border-radius:3px;overflow:hidden">'+
-                    '<div style="width:'+d.score+'%;height:100%;background:'+d.color+';border-radius:3px;transition:width 1s ease"></div>'+
-                  '</div>'+
-                  '<span style="font-family:var(--font-mono);font-size:0.8rem;width:28px;text-align:right;color:'+d.color+'">'+d.score+'</span>'+
-                '</div>'+
-              '</div>';
-            container.appendChild(row);
-          },i*150);
-        });
-        setTimeout(function(){$('riskNextBtn').disabled=false;},dims.length*150+300);
-      },1800);
-    }
-  }
-
-  function drawRadar(dims){
-    var svg=$('radarChart');
-    var cx=150,cy=150,maxR=108;
-    var n=dims.length;
-    var step=Math.PI*2/n;
-    var html='';
-
-    // Grid rings
-    [0.25,0.5,0.75,1].forEach(function(pct){
-      var r=maxR*pct;
-      var pts=[];
-      for(var i=0;i<n;i++){
-        var a=i*step-Math.PI/2;
-        pts.push((cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1));
-      }
-      html+='<polygon points="'+pts.join(' ')+'" fill="none" stroke="rgba(148,163,184,0.1)" stroke-width="1"/>';
-    });
-
-    // Axes + labels
-    for(var i=0;i<n;i++){
-      var a=i*step-Math.PI/2;
-      var x=cx+maxR*Math.cos(a);
-      var y=cy+maxR*Math.sin(a);
-      html+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="rgba(148,163,184,0.08)" stroke-width="1"/>';
-      var lx=cx+(maxR+20)*Math.cos(a);
-      var ly=cy+(maxR+20)*Math.sin(a);
-      var anchor=Math.abs(Math.cos(a))<0.15?'middle':Math.cos(a)>0?'start':'end';
-      html+='<text x="'+lx.toFixed(1)+'" y="'+(ly+4).toFixed(1)+'" text-anchor="'+anchor+'" fill="#64748b" font-size="9.5" font-family="Inter,system-ui,sans-serif">'+dims[i].name+'</text>';
-    }
-
-    // Data polygon
-    var dataPts=[];
-    for(var i=0;i<n;i++){
-      var a=i*step-Math.PI/2;
-      var r=maxR*(dims[i].score/100);
-      dataPts.push((cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1));
-    }
-    html+='<polygon points="'+dataPts.join(' ')+'" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="2" stroke-dasharray="800" stroke-dashoffset="800" style="animation:radarDraw 1.5s ease forwards 0.3s"/>';
-
-    // Dots
-    for(var i=0;i<n;i++){
-      var a=i*step-Math.PI/2;
-      var r=maxR*(dims[i].score/100);
-      var dx=cx+r*Math.cos(a);
-      var dy=cy+r*Math.sin(a);
-      html+='<circle cx="'+dx.toFixed(1)+'" cy="'+dy.toFixed(1)+'" r="4" fill="#10b981" opacity="0" style="animation:fadeIn 0.3s ease forwards '+(1.5+i*0.1).toFixed(1)+'s"/>';
-    }
-    svg.innerHTML=html;
-  }
-
-  // ===== STEP 5: AUDIT LEDGER =====
-  function runLedger(){
-    stepRan[5]=true;
-    var container=$('ledgerEntries');
-
-    // Try real ledger endpoint
-    apiCall('GET','/ledger')
-    .then(function(data){
-      if(data.error||data.detail) throw new Error('api error');
-      var records=data.ledger||[];
-      if(records.length===0) throw new Error('empty');
-      // Show last 5 entries (most recent)
-      var entries=records.slice(-5);
-      renderLedger(entries,true);
-    })
-    .catch(function(){
-      // Fallback: build from demo data
-      var genesisHash=fakeHash();
-      var entries=[
-        {governance_action:'SYSTEM_REGISTERED',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:genesisHash,created_at:new Date(Date.now()-180000).toISOString()},
-        {governance_action:'AUDIT_COMPLETE',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date(Date.now()-135000).toISOString()},
-        {governance_action:'DRIFT_ANALYZED',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date(Date.now()-90000).toISOString()},
-        {governance_action:'RISK_SCORED',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date(Date.now()-45000).toISOString()},
-        {governance_action:'GOVERNANCE_DECISION',system_name:D.systemName||'customer-support-agent-v3',current_hash:fakeHash(),previous_hash:null,created_at:new Date().toISOString()}
-      ];
-      for(var i=1;i<entries.length;i++){entries[i].previous_hash=entries[i-1].current_hash;}
-      renderLedger(entries,false);
-    });
-
-    function renderLedger(entries,live){
-      entries.forEach(function(entry,i){
-        setTimeout(function(){
-          var time=entry.created_at?new Date(entry.created_at):new Date();
-          var hash=entry.current_hash||fakeHash();
-          var prevHash=entry.previous_hash||(i>0?entries[i-1].current_hash:'GENESIS');
-          var action=entry.governance_action||'UNKNOWN';
-          var detail=entry.system_name||D.systemName||'system';
-          var el=document.createElement('div');
-          el.className='ledger-entry';
-          el.innerHTML=
-            '<div class="ledger-hash">sha256: '+hash+(live?' <span style="color:var(--cyan);font-size:0.7rem">[LIVE]</span>':'')+'</div>'+
-            '<div class="ledger-action">'+action+'</div>'+
-            '<div class="ledger-detail">'+detail+'</div>'+
-            '<div class="ledger-meta">'+
-              '<span>'+time.toLocaleTimeString()+'</span>'+
-              '<span>'+(entry.decision_id||(D.systemId||'sys_demo'))+'</span>'+
-            '</div>'+
-            '<div class="ledger-chain">'+
-              '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6h8M6 2v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'+
-              'prev: '+(typeof prevHash==='string'?prevHash.substring(0,16)+'...':'GENESIS')+
-            '</div>';
-          container.appendChild(el);
-          requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('visible');});});
-          if(i===entries.length-1){
-            setTimeout(function(){$('ledgerNextBtn').disabled=false;},300);
-          }
-        },i*450);
-      });
-    }
-  }
-
-  // ===== STEP 6: CONSENSUS =====
-  function runConsensus(){
-    stepRan[6]=true;
-    var statusEl=$('consensusStatus');
-    var container=$('consensusModels');
-    var riskScore=D.riskScore||66;
-    var driftScore=D.driftScore||0.23;
-
-    // Try Achonye multi-LLM endpoint
-    var achonyeResult=null;
-    apiCall('POST','/achonye/process',{
-      task:'Evaluate the governance posture of '+D.systemName+'. Drift coefficient: '+driftScore.toFixed(4)+'. Risk score: '+riskScore+'/100. Determine if this AI system should be approved, flagged, or halted.',
-      context:{system:D.systemName,drift:driftScore,risk:riskScore,type:D.systemType},
-      priority:'high'
-    })
-    .then(function(data){
-      if(data.error||data.detail) throw new Error('api error');
-      achonyeResult=data;
-    })
-    .catch(function(){achonyeResult=null;});
-
-    var models=[
-      {
-        name:'Claude Sonnet 4',avatar:'C',avatarClass:'claude',
-        verdict:'The system demonstrates adequate compliance posture with two notable gaps. The refund authorization threshold exceeds the human oversight provisions recommended by Art. 14. Bias metrics are absent from operational monitoring. I recommend conditional approval with mandatory remediation within 30 days.',
-        vote:'approve',voteLabel:'APPROVE w/ CONDITIONS',time:1400
-      },
-      {
-        name:'Gemini 2.5 Pro',avatar:'G',avatarClass:'gemini',
-        verdict:'Analysis confirms the system operates within acceptable risk parameters. The drift score of '+driftScore.toFixed(2)+' indicates stable behavior with minor boundary excursions. The lack of bias evaluation metrics is a material gap that should be addressed before the next audit cycle. Approve with advisory notes.',
-        vote:'approve',voteLabel:'APPROVE w/ CONDITIONS',time:3000
-      },
-      {
-        name:'GPT-4o',avatar:'4',avatarClass:'gpt',
-        verdict:'System governance profile is within operational tolerances. Primary concerns: (1) autonomous refund processing above recommended thresholds, (2) missing fairness measurement instrumentation. Risk score of '+riskScore+'/100 is acceptable for continued operation. Flagging the bias gap as a priority remediation item.',
-        vote:'flag',voteLabel:'APPROVE w/ FLAG',time:4600
-      }
-    ];
-
-    var phases=[
-      {text:'Dispatching to model board...',time:0},
-      {text:'Claude Sonnet 4 analyzing...',time:700},
-      {text:'Gemini 2.5 Pro analyzing...',time:2200},
-      {text:'GPT-4o analyzing...',time:3800}
-    ];
-    phases.forEach(function(p){setTimeout(function(){statusEl.textContent=p.text;},p.time);});
-
-    models.forEach(function(model,i){
-      setTimeout(function(){
-        var card=document.createElement('div');
-        card.className='model-card';
-        card.innerHTML=
-          '<div class="model-avatar '+model.avatarClass+'">'+model.avatar+'</div>'+
-          '<div class="model-info">'+
-            '<div class="model-name">'+model.name+'</div>'+
-            '<div class="model-verdict" id="mv'+i+'"></div>'+
-            '<div class="model-vote '+model.vote+'" style="display:none" id="mvote'+i+'">'+model.voteLabel+'</div>'+
-          '</div>';
-        container.appendChild(card);
-        requestAnimationFrame(function(){requestAnimationFrame(function(){card.classList.add('visible');});});
-
-        // If achonye returned real data for this model, use it
-        var verdict=model.verdict;
-        if(achonyeResult&&achonyeResult.result&&i===0){
-          verdict=(achonyeResult.result||'').substring(0,300)||model.verdict;
-        }
-
-        typeText($('mv'+i),verdict,7,function(){
-          $('mvote'+i).style.display='inline-flex';
-          if(i===models.length-1){
-            setTimeout(function(){
-              $('consensusSpinner').style.display='none';
-              var src=achonyeResult?'<span style="color:var(--cyan);font-size:0.75rem"> [LIVE API]</span>':'';
-              statusEl.innerHTML='<span style="color:var(--green);font-weight:600">Consensus reached</span> \u2014 3/3 models agree'+src;
-              D.consensusResult='APPROVED_WITH_CONDITIONS';
-              D.consensusConfidence=achonyeResult?0.96:0.94;
-              var verdict=$('consensusVerdict');
-              verdict.style.display='block';
-              var model_used=achonyeResult?(achonyeResult.model||'multi-llm'):'voting-consensus';
-              verdict.innerHTML=
-                '<div class="card" style="border-color:var(--green-border);margin-top:16px">'+
-                  '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
-                    '<div class="status-icon pass" style="width:26px;height:26px;font-size:0.9rem">\u2713</div>'+
-                    '<span style="font-weight:700;font-size:1.05rem">CONSENSUS: APPROVED WITH CONDITIONS</span>'+
-                  '</div>'+
-                  '<div style="font-size:0.85rem;color:var(--text2);line-height:1.7">'+
-                    'All three models agree the system may continue operation. Two mandatory remediation items identified:<br>'+
-                    '<span style="color:var(--amber);margin-right:4px">\u2022</span> Implement human-in-the-loop for refunds above $200 (30-day deadline)<br>'+
-                    '<span style="color:var(--amber);margin-right:4px">\u2022</span> Add bias and fairness metrics to evaluation pipeline (60-day deadline)'+
-                  '</div>'+
-                  '<div style="font-size:0.75rem;color:var(--text3);margin-top:12px;font-family:var(--font-mono);padding-top:10px;border-top:1px solid var(--border)">'+
-                    'Strategy: VOTING | Quorum: 3/3 | Confidence: '+D.consensusConfidence+' | Model: '+model_used+' | Latency: 4.2s'+
-                  '</div>'+
-                '</div>';
-              verdict.style.animation='slideUp 0.5s ease forwards';
-              $('consensusNextBtn').disabled=false;
-            },500);
-          }
-        });
-      },model.time);
-    });
-  }
-
-  // ===== SUMMARY =====
-  function buildSummary(){
-    var grid=$('summaryGrid');
-    var driftVal=D.driftScore?D.driftScore.toFixed(2):'0.23';
-    var riskVal=D.riskScore||66;
-    var confVal=D.consensusConfidence?(D.consensusConfidence*100).toFixed(0):'94';
-    var stats=[
-      {value:(D.auditResult?D.auditResult.score:87)+'/100',label:'Compliance Score',cls:'green'},
-      {value:driftVal,label:'Drift Score (D_c)',cls:'amber'},
-      {value:riskVal+'/100',label:'Risk Score ('+( D.riskLevel||'MEDIUM')+')',cls:'blue'},
-      {value:confVal+'%',label:'Consensus Confidence',cls:'purple'}
-    ];
-    grid.innerHTML=stats.map(function(s,i){
-      return '<div class="summary-stat" style="opacity:0;animation:slideUp 0.4s ease forwards;animation-delay:'+(i*0.1)+'s">'+
-        '<div class="stat-value '+s.cls+'">'+s.value+'</div>'+
-        '<div class="stat-label">'+s.label+'</div>'+
-      '</div>';
-    }).join('');
-
-    var classification=parseFloat(driftVal)<0.2?'Minimal':parseFloat(driftVal)<0.3?'Low':parseFloat(driftVal)<0.5?'Moderate':'High';
-    var timeline=$('summaryTimeline');
-    var steps=[
-      {label:'System Registered',detail:D.systemName||'customer-support-agent-v3'},
-      {label:'Compliance Audit',detail:(D.auditResult?D.auditResult.passed:6)+' passed, '+(D.auditResult?D.auditResult.warnings:2)+' advisories'},
-      {label:'Drift Detection',detail:'D_c = '+driftVal+' ('+classification+' Drift)'},
-      {label:'Risk Assessment',detail:'6 dimensions \u2014 '+riskVal+'/100 ('+( D.riskLevel||'MEDIUM')+')'},
-      {label:'Audit Ledger',detail:'Hash-chained immutable record'},
-      {label:'Multi-LLM Consensus',detail:'Approved with conditions ('+confVal+'% confidence)'}
-    ];
-    timeline.innerHTML=
-      '<div style="font-weight:600;margin-bottom:14px;font-size:0.92rem">Pipeline Execution Timeline</div>'+
-      steps.map(function(s,i){
-        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;'+(i<steps.length-1?'border-bottom:1px solid var(--border);':'')+';opacity:0;animation:slideRight 0.3s ease forwards;animation-delay:'+(i*0.08)+'s;animation-fill-mode:forwards">'+
-          '<div class="status-icon pass">\u2713</div>'+
-          '<div style="flex:1">'+
-            '<div style="font-weight:500;font-size:0.85rem">'+s.label+'</div>'+
-            '<div style="font-size:0.78rem;color:var(--text3)">'+s.detail+'</div>'+
-          '</div>'+
-          '<div style="font-size:0.72rem;color:var(--text3);font-family:var(--font-mono)">'+(120+i*380)+'ms</div>'+
-        '</div>';
-      }).join('');
-  }
-
-  // ===== INIT =====
-  document.addEventListener('DOMContentLoaded',function(){
-    var welcome=$('screen-welcome');
-    requestAnimationFrame(function(){requestAnimationFrame(function(){welcome.classList.add('visible');});});
   });
-})();
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+// Form submission
+document.getElementById('demoForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  var name = document.getElementById('fullName').value.trim();
+  var email = document.getElementById('workEmail').value.trim();
+  var company = document.getElementById('companyName').value.trim();
+  var title = document.getElementById('jobTitle').value.trim();
+  var size = document.getElementById('companySize').value;
+  var useCase = document.getElementById('useCase').value.trim();
+
+  // Validate required fields
+  if (!name || !email || !company) {
+    ['fullName', 'workEmail', 'companyName'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.style.borderColor = 'var(--red)';
+        el.addEventListener('input', function handler() {
+          el.style.borderColor = '';
+          el.removeEventListener('input', handler);
+        });
+      }
+    });
+    return;
+  }
+
+  // Validate email format
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    var emailEl = document.getElementById('workEmail');
+    emailEl.style.borderColor = 'var(--red)';
+    emailEl.focus();
+    return;
+  }
+
+  // Build mailto body
+  var lines = [
+    'Demo Request from GovernLayer.ai',
+    '',
+    'Name: ' + name,
+    'Email: ' + email,
+    'Company: ' + company
+  ];
+  if (title) lines.push('Title: ' + title);
+  if (size) lines.push('Company Size: ' + size);
+  if (useCase) { lines.push(''); lines.push('Use Case:'); lines.push(useCase); }
+
+  var subject = encodeURIComponent('Demo Request - ' + company);
+  var body = encodeURIComponent(lines.join('\n'));
+  var mailto = 'mailto:founders@governlayer.ai?subject=' + subject + '&body=' + body;
+
+  // Open mailto link
+  window.location.href = mailto;
+
+  // Show success state
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('successState').style.display = 'block';
+});
+
+// Mobile nav toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  var l = document.querySelector('.nav-links');
+  var c = document.querySelector('.nav-ctas');
+  if (l.style.display === 'flex') {
+    l.style.cssText = '';
+    c.style.cssText = '';
+    this.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+  } else {
+    l.style.cssText = 'display:flex;position:fixed;top:52px;left:0;right:0;background:#fff;flex-direction:column;padding:20px 24px;gap:14px;border-bottom:1px solid rgba(0,0,0,.1);z-index:999;box-shadow:0 8px 20px rgba(0,0,0,.06)';
+    c.style.display = 'none';
+    this.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  }
+});
 </script>
 </body>
 </html>

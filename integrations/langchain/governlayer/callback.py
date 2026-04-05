@@ -73,7 +73,7 @@ class GovernLayerCallback(AsyncCallbackHandler):
 
     def __init__(
         self,
-        api_url: str = "https://web-production-bdd26.up.railway.app",
+        api_url: str = "https://www.governlayer.ai",
         api_key: str = "",
         system_name: str = "langchain-app",
         use_case: str = "general",

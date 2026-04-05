@@ -105,7 +105,7 @@ All components accept these common parameters:
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `api_url` | `str` | `https://web-production-bdd26.up.railway.app` | GovernLayer API URL |
+| `api_url` | `str` | `https://www.governlayer.ai` | GovernLayer API URL |
 | `api_key` | `str` | `""` | API key (`gl_xxx`) or JWT bearer token |
 | `system_name` | `str` | `"langchain-app"` | AI system name in GovernLayer |
 | `use_case` | `str` | `"general"` | Use-case label for governance context |

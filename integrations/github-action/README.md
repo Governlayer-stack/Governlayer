@@ -93,7 +93,7 @@ jobs:
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `api_url` | No | `https://web-production-bdd26.up.railway.app` | GovernLayer API base URL |
+| `api_url` | No | `https://www.governlayer.ai` | GovernLayer API base URL |
 | `api_key` | **Yes** | -- | GovernLayer API key (`gl_xxx`). Use a GitHub secret. |
 | `system_name` | **Yes** | -- | Name of the AI system being governed |
 | `reasoning_trace` | No | `Automated CI/CD governance scan...` | Reasoning trace to analyze for behavioral drift |
