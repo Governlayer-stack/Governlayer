@@ -533,6 +533,8 @@ def create_app() -> FastAPI:
     _compliance_checklist_html = _load_page("compliance-checklist")
     _signup_html = _load_page("signup")
     _workspace_html = _load_page("workspace")
+    _terms_html = _load_page("terms")
+    _privacy_html = _load_page("privacy")
 
     @app.get("/workspace")
     def workspace_page():
@@ -605,6 +607,18 @@ def create_app() -> FastAPI:
         if _auditor_html:
             return HTMLResponse(_auditor_html)
         return {"error": "Auditor portal not found"}
+
+    @app.get("/terms")
+    def terms_page():
+        if _terms_html:
+            return HTMLResponse(_terms_html)
+        return {"error": "Terms of Service not found"}
+
+    @app.get("/privacy")
+    def privacy_page():
+        if _privacy_html:
+            return HTMLResponse(_privacy_html)
+        return {"error": "Privacy Policy not found"}
 
     # Load landing page HTML once at startup
     _landing_html = None
