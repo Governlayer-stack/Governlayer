@@ -270,6 +270,8 @@ def create_app() -> FastAPI:
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_secret VARCHAR(32)",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_enabled BOOLEAN DEFAULT FALSE NOT NULL",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_backup_codes TEXT",
+                "ALTER TABLE risk_scores ADD COLUMN IF NOT EXISTS org_id VARCHAR",
+                "ALTER TABLE audit_records ADD COLUMN IF NOT EXISTS org_id VARCHAR",
             ]:
                 try:
                     db.execute(sa_text(stmt))
