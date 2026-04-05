@@ -1,4 +1,4 @@
-.PHONY: help dev test lint docker-up docker-down db-init db-migrate mcp setup install ollama-pull n8n-start n8n-stop n8n-status n8n-logs n8n-ui daemon-start daemon-stop daemon-run daemon-health
+.PHONY: help dev test lint format lock docker-up docker-down db-init db-migrate mcp setup install ollama-pull n8n-start n8n-stop n8n-status n8n-logs n8n-ui daemon-start daemon-stop daemon-run daemon-health
 
 PYTHON := /opt/homebrew/bin/python3.11
 VENV := venv
@@ -42,6 +42,9 @@ lint: ## Run linting
 
 format: ## Auto-format code
 	$(PY) -m ruff format src/ tests/
+
+lock: ## Generate pinned dependency lockfile
+	$(PY) -m piptools compile requirements/base.txt -o requirements/base.lock
 
 # === Database ===
 

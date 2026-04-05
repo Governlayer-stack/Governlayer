@@ -3,12 +3,13 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from src.models.database import SessionLocal
 from src.models.policy import GovernancePolicy
 from src.governance.policy_engine import evaluate_policy, DEFAULT_POLICY
+from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/policies", tags=["Policies"])
 
@@ -27,7 +28,7 @@ class PolicyEvaluate(BaseModel):
 
 
 @router.post("")
-def create_policy(data: PolicyCreate):
+def create_policy(data: PolicyCreate, current_user: str = Depends(verify_token)):
     """Create a new governance policy."""
     db = SessionLocal()
     try:
@@ -53,7 +54,7 @@ def create_policy(data: PolicyCreate):
 
 
 @router.get("")
-def list_policies(active_only: bool = True):
+def list_policies(active_only: bool = True, current_user: str = Depends(verify_token)):
     """List all governance policies."""
     db = SessionLocal()
     try:
@@ -81,7 +82,7 @@ def list_policies(active_only: bool = True):
 
 
 @router.get("/{policy_id}")
-def get_policy(policy_id: int):
+def get_policy(policy_id: int, current_user: str = Depends(verify_token)):
     """Get a specific policy with all rules."""
     db = SessionLocal()
     try:
@@ -104,7 +105,7 @@ def get_policy(policy_id: int):
 
 
 @router.post("/evaluate")
-def evaluate(data: PolicyEvaluate):
+def evaluate(data: PolicyEvaluate, current_user: str = Depends(verify_token)):
     """Evaluate context against a policy (or default policy)."""
     if data.policy_id:
         db = SessionLocal()
@@ -126,7 +127,7 @@ def evaluate(data: PolicyEvaluate):
 
 
 @router.delete("/{policy_id}")
-def deactivate_policy(policy_id: int):
+def deactivate_policy(policy_id: int, current_user: str = Depends(verify_token)):
     """Deactivate a policy (soft delete)."""
     db = SessionLocal()
     try:

@@ -193,12 +193,37 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         if os.environ.get("TESTING"):
             return await call_next(request)
 
-        # Skip rate limiting for health/docs/auth endpoints
+        # Skip rate limiting for health/docs endpoints
         path = request.url.path
         skip = path in ("/", "/docs", "/openapi.json", "/redoc", "/health", "/automate/health")
-        skip = skip or path.startswith("/auth") or path.startswith("/v1/enterprise")
+        skip = skip or path.startswith("/v1/enterprise")
         if skip:
             return await call_next(request)
+
+        # Stricter rate limits for auth endpoints (brute-force protection)
+        if path.startswith("/auth"):
+            client_ip = f"ip:{request.client.host}" if request.client else "ip:unknown"
+            if path.startswith("/auth/register"):
+                auth_limit = 5
+                auth_key = f"auth:register:{client_ip}"
+            else:
+                auth_limit = 10
+                auth_key = f"auth:login:{client_ip}"
+            allowed, remaining = _check_rate(auth_key, auth_limit, window=60)
+            if not allowed:
+                return JSONResponse(
+                    status_code=429,
+                    content={
+                        "error": "rate_limit_exceeded",
+                        "message": "Too many authentication attempts. Try again later.",
+                        "retry_after_seconds": 60,
+                    },
+                    headers={"Retry-After": "60"},
+                )
+            response = await call_next(request)
+            response.headers["X-RateLimit-Limit"] = str(auth_limit)
+            response.headers["X-RateLimit-Remaining"] = str(remaining)
+            return response
 
         client_key = _get_client_key(request)
         limit = _resolve_plan_limit(request)

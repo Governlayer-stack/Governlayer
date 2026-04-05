@@ -2,9 +2,10 @@
 
 from typing import Dict, List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
+from src.security.auth import verify_token
 from src.analytics.fairness import full_fairness_report
 from src.analytics.explainability import generate_explanation
 from src.analytics.data_drift import feature_drift_report
@@ -39,7 +40,7 @@ class SecurityScanRequest(BaseModel):
 
 
 @router.post("/fairness")
-def test_fairness(data: FairnessRequest):
+def test_fairness(data: FairnessRequest, current_user: str = Depends(verify_token)):
     """Run bias & fairness analysis on model predictions."""
     group_names = {int(k): v for k, v in data.group_names.items()} if data.group_names else None
     return full_fairness_report(
@@ -51,7 +52,7 @@ def test_fairness(data: FairnessRequest):
 
 
 @router.post("/explain")
-def explain_prediction(data: ExplainRequest):
+def explain_prediction(data: ExplainRequest, current_user: str = Depends(verify_token)):
     """Generate explainable AI report for a prediction."""
     return generate_explanation(
         feature_names=data.feature_names,
@@ -63,7 +64,7 @@ def explain_prediction(data: ExplainRequest):
 
 
 @router.post("/data-drift")
-def detect_data_drift(data: DriftRequest):
+def detect_data_drift(data: DriftRequest, current_user: str = Depends(verify_token)):
     """Detect distribution drift between reference and current data."""
     return feature_drift_report(
         reference_data=data.reference_data,
@@ -72,7 +73,7 @@ def detect_data_drift(data: DriftRequest):
 
 
 @router.post("/security-scan")
-def security_scan(data: SecurityScanRequest):
+def security_scan(data: SecurityScanRequest, current_user: str = Depends(verify_token)):
     """Scan text for prompt injection attempts and PII."""
     result = full_security_scan(data.text)
     if data.redact:

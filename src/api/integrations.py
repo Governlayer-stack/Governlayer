@@ -2,10 +2,11 @@
 
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from src.integrations.connectors import SlackConnector, JiraConnector, ServiceNowConnector
+from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/integrations", tags=["Integrations"])
 
@@ -45,7 +46,7 @@ class WebhookTest(BaseModel):
 
 
 @router.post("/slack/send")
-def send_slack_alert(data: SlackConfig):
+def send_slack_alert(data: SlackConfig, current_user: str = Depends(verify_token)):
     """Send a governance alert to Slack."""
     connector = SlackConnector(webhook_url=data.webhook_url)
     result = connector.send_alert(
@@ -58,7 +59,7 @@ def send_slack_alert(data: SlackConfig):
 
 
 @router.post("/jira/create")
-def create_jira_ticket(data: JiraConfig):
+def create_jira_ticket(data: JiraConfig, current_user: str = Depends(verify_token)):
     """Create a Jira ticket for a governance finding."""
     connector = JiraConnector(
         base_url=data.base_url,
@@ -84,7 +85,7 @@ def create_jira_ticket(data: JiraConfig):
 
 
 @router.post("/servicenow/create")
-def create_servicenow_record(data: ServiceNowConfig):
+def create_servicenow_record(data: ServiceNowConfig, current_user: str = Depends(verify_token)):
     """Create a ServiceNow incident or change request."""
     connector = ServiceNowConnector(
         instance_url=data.instance_url,
@@ -106,7 +107,7 @@ def create_servicenow_record(data: ServiceNowConfig):
 
 
 @router.get("/available")
-def list_available_integrations():
+def list_available_integrations(current_user: str = Depends(verify_token)):
     """List all available GRC integrations."""
     return {
         "integrations": [

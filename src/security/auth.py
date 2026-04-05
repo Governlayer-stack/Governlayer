@@ -1,14 +1,47 @@
-from datetime import datetime, timedelta
+import threading
+import uuid
+from datetime import datetime, timedelta, timezone
 
 import bcrypt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
+import jwt
+from jwt.exceptions import PyJWTError
 
 from src.config import get_settings
 
 settings = get_settings()
 security = HTTPBearer()
+
+# In-memory token blacklist: {jti: expiry_timestamp}
+_token_blacklist: dict[str, float] = {}
+_blacklist_lock = threading.Lock()
+
+
+def _cleanup_blacklist() -> None:
+    """Remove expired entries from the blacklist."""
+    now = datetime.now(timezone.utc).timestamp()
+    with _blacklist_lock:
+        expired = [jti for jti, exp in _token_blacklist.items() if exp < now]
+        for jti in expired:
+            del _token_blacklist[jti]
+
+
+def revoke_token(jti: str, exp: float | None = None) -> None:
+    """Add a token's jti to the blacklist. exp is the token's expiry as a unix timestamp."""
+    if exp is None:
+        exp = (datetime.now(timezone.utc) + timedelta(hours=settings.jwt_expiry_hours)).timestamp()
+    with _blacklist_lock:
+        _token_blacklist[jti] = exp
+    # Opportunistic cleanup
+    if len(_token_blacklist) > 1000:
+        _cleanup_blacklist()
+
+
+def is_token_revoked(jti: str) -> bool:
+    """Check if a token has been revoked."""
+    with _blacklist_lock:
+        return jti in _token_blacklist
 
 
 def hash_password(password: str) -> str:
@@ -20,8 +53,14 @@ def verify_password(password: str, hashed: str) -> bool:
 
 
 def create_token(email: str) -> str:
-    expire = datetime.utcnow() + timedelta(hours=settings.jwt_expiry_hours)
-    return jwt.encode({"sub": email, "exp": expire}, settings.secret_key, algorithm=settings.jwt_algorithm)
+    jti = str(uuid.uuid4())
+    iat = datetime.now(timezone.utc)
+    expire = iat + timedelta(hours=settings.jwt_expiry_hours)
+    return jwt.encode(
+        {"sub": email, "exp": expire, "iat": iat, "jti": jti},
+        settings.secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
 
 
 def verify_token_raw(token: str) -> str:
@@ -31,8 +70,19 @@ def verify_token_raw(token: str) -> str:
         email = payload.get("sub")
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid token")
+        jti = payload.get("jti")
+        if jti and is_token_revoked(jti):
+            raise HTTPException(status_code=401, detail="Token has been revoked")
         return email
-    except JWTError:
+    except PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def decode_token_payload(token: str) -> dict:
+    """Decode a JWT and return the full payload. Raises HTTPException on failure."""
+    try:
+        return jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
+    except PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 

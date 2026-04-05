@@ -84,11 +84,15 @@ def calculate_drift(reasoning_trace: str, use_case: str = "general", threshold: 
         d_c = max(0.0, min(2.0, d_c))
     else:
         # Fallback: keyword-only heuristic when no embeddings
-        d_c = 0.1  # baseline safe
+        # Fail CLOSED: default to caution zone when semantic analysis unavailable
+        d_c = 0.35  # just below 0.4 veto threshold — caution zone
 
     vetoed = d_c > threshold
 
-    if d_c < 0.15:
+    if not _HAS_EMBEDDINGS and d_c == 0.35:
+        # Fail-closed: no embeddings available, default caution
+        alignment = "CAUTION"
+    elif d_c < 0.15:
         alignment = "STRONGLY_ALIGNED"
     elif d_c < threshold:
         alignment = "ALIGNED"
@@ -100,6 +104,18 @@ def calculate_drift(reasoning_trace: str, use_case: str = "general", threshold: 
         alignment = "CRITICAL_DRIFT"
 
     trace_hash = hashlib.sha256(reasoning_trace.encode()).hexdigest()
+
+    if not _HAS_EMBEDDINGS and alignment == "CAUTION":
+        explanation = (
+            f"Drift coefficient d_c={d_c:.4f} set to CAUTION — full semantic analysis "
+            f"unavailable (sentence-transformers not loaded). Manual review recommended."
+        )
+    else:
+        explanation = (
+            f"Drift coefficient d_c={d_c:.4f} {'EXCEEDS' if vetoed else 'within'} "
+            f"safety threshold t={threshold}. Reasoning trace is {alignment.replace('_', ' ').lower()}."
+        )
+
     return {
         "drift_coefficient": round(d_c, 4),
         "threshold": threshold,
@@ -109,10 +125,7 @@ def calculate_drift(reasoning_trace: str, use_case: str = "general", threshold: 
         "reasoning_trace_hash": trace_hash,
         "timestamp": datetime.utcnow().isoformat(),
         "action": "VETO" if vetoed else "PROCEED",
-        "explanation": (
-            f"Drift coefficient d_c={d_c:.4f} {'EXCEEDS' if vetoed else 'within'} "
-            f"safety threshold t={threshold}. Reasoning trace is {alignment.replace('_', ' ').lower()}."
-        ),
+        "explanation": explanation,
         "embeddings_available": _HAS_EMBEDDINGS,
     }
 

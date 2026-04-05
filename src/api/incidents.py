@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from src.models.database import get_db, log_mutation
 from src.models.registry import Incident, IncidentSeverity, IncidentStatus
 from src.security.api_key_auth import AuthContext, require_scope, verify_api_key_or_jwt
+from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/incidents", tags=["Incidents"])
 
@@ -76,7 +77,8 @@ def create_incident(data: IncidentCreate,
 
 @router.get("")
 def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
-                   page: int = 1, limit: int = 50, db: Session = Depends(get_db)):
+                   page: int = 1, limit: int = 50, current_user: str = Depends(verify_token),
+                   db: Session = Depends(get_db)):
     """List all incidents with optional filters and pagination."""
     query = db.query(Incident)
     if status:
@@ -108,7 +110,8 @@ def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
 
 
 @router.get("/{incident_id}")
-def get_incident(incident_id: int, db: Session = Depends(get_db)):
+def get_incident(incident_id: int, current_user: str = Depends(verify_token),
+                 db: Session = Depends(get_db)):
     """Get detailed incident information."""
     incident = db.query(Incident).filter(Incident.id == incident_id).first()
     if not incident:

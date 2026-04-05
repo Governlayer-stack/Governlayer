@@ -10,7 +10,7 @@ psycopg2-binary>=2.9.11
 alembic>=1.14.0
 
 # Auth
-python-jose>=3.5.0
+PyJWT[crypto]>=2.8.0
 bcrypt>=4.0.1
 python-multipart>=0.0.22
 pyotp>=2.9.0

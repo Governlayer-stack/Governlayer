@@ -1,7 +1,7 @@
 """Tests for core API endpoints — root, health, frameworks, auth, dashboard."""
 
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from src.models.database import SessionLocal, User
 
@@ -45,8 +45,8 @@ def test_frameworks_list(client):
     r = client.get("/frameworks")
     assert r.status_code == 200
     data = r.json()
-    assert data["total"] == 27
-    assert len(data["frameworks"]) == 27
+    assert data["total"] == 29
+    assert len(data["frameworks"]) == 29
     assert "NIST_AI_RMF" in data["frameworks"]
     assert "EU_AI_ACT" in data["frameworks"]
     assert "ISO_42001" in data["frameworks"]
@@ -117,7 +117,13 @@ def test_login_invalid_credentials(client):
 
 
 def test_dashboard_json(client):
-    r = client.get("/v1/dashboard")
+    # Dashboard now requires authentication
+    import uuid
+    email = f"dash-{uuid.uuid4().hex[:8]}@governlayer.test"
+    reg = client.post("/auth/register", json={"email": email, "password": "TestPass1", "company": "DashCorp"})
+    token = reg.json()["token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    r = client.get("/v1/dashboard", headers=headers)
     assert r.status_code == 200
     data = r.json()
     assert "dashboard" in data
@@ -267,7 +273,7 @@ def test_reset_password_expired_token(client):
     db = SessionLocal()
     user = db.query(User).filter(User.email == email).first()
     token = user.reset_token
-    user.reset_token_expires_at = datetime.utcnow() - timedelta(hours=1)
+    user.reset_token_expires_at = datetime.now(timezone.utc) - timedelta(hours=1)
     db.commit()
     db.close()
 

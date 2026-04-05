@@ -1,5 +1,6 @@
 """Centralized configuration — all secrets and settings from environment."""
 
+import os
 import warnings
 from functools import lru_cache
 
@@ -57,6 +58,9 @@ class Settings(BaseSettings):
     drift_model: str = "all-MiniLM-L6-v2"
     drift_threshold: float = 0.3
 
+    # Admin
+    admin_key: str = ""
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8000
@@ -78,8 +82,15 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     s = Settings()
     if s.secret_key == _DEFAULT_SECRET:
-        warnings.warn(
-            "SECRET_KEY is using the insecure default. Set SECRET_KEY in your .env file.",
-            stacklevel=2,
-        )
+        if os.getenv("TESTING") == "true" or os.getenv("CI") == "true":
+            warnings.warn(
+                "SECRET_KEY is using the insecure default. Set SECRET_KEY in your .env file.",
+                stacklevel=2,
+            )
+        else:
+            raise RuntimeError(
+                "SECRET_KEY is set to the insecure default 'CHANGE-ME-IN-PRODUCTION'. "
+                "Set a secure SECRET_KEY in your .env file or environment variables before starting. "
+                "For testing, set TESTING=true or CI=true to bypass this check."
+            )
     return s

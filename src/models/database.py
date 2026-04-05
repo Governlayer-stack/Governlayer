@@ -1,6 +1,6 @@
 import hashlib
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -9,12 +9,19 @@ from src.config import get_settings
 
 settings = get_settings()
 
+# Enforce SSL for remote database connections (not localhost)
+_connect_args = {}
+_db_url = settings.database_url
+if _db_url.startswith("postgresql://") and "localhost" not in _db_url and "127.0.0.1" not in _db_url:
+    _connect_args = {"sslmode": "require"}
+
 engine = create_engine(
     settings.database_url,
     pool_size=10,
     max_overflow=20,
     pool_pre_ping=True,
     pool_recycle=300,
+    connect_args=_connect_args,
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -27,7 +34,7 @@ class User(Base):
     password_hash = Column(String(255), nullable=False)
     company = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     reset_token = Column(String(64), nullable=True)
     reset_token_expires_at = Column(DateTime, nullable=True)
     mfa_secret = Column(String(32), nullable=True)
@@ -46,11 +53,12 @@ class AuditRecord(Base):
     results = Column(Text)
     risk_score = Column(Float, nullable=True)
     risk_level = Column(String(20), nullable=True)
+    org_id = Column(String, nullable=True, index=True)
     governance_action = Column(String(50), default="PENDING", nullable=False)
     policy_version = Column(String(20), default="1.0.0", nullable=False)
     previous_hash = Column(String(64), nullable=False)
     current_hash = Column(String(64), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
 
 class RiskScoreRecord(Base):
@@ -65,8 +73,9 @@ class RiskScoreRecord(Base):
     oversight_score = Column(Float, nullable=False)
     transparency_score = Column(Float, nullable=False)
     fairness_score = Column(Float, nullable=False)
+    org_id = Column(String, nullable=True, index=True)
     scored_by = Column(String(255), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
 
 class MutationLog(Base):
@@ -78,7 +87,7 @@ class MutationLog(Base):
     resource_type = Column(String(100), nullable=False)  # model, incident, agent, etc.
     resource_id = Column(String(100), nullable=True)
     details = Column(Text, nullable=True)  # JSON summary of what changed
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
 
 
 def log_mutation(db, actor: str, action: str, resource_type: str,

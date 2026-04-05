@@ -49,7 +49,7 @@ def test_list_incidents(client, auth_headers):
             "severity": "medium",
         }, headers=auth_headers)
 
-    r = client.get("/v1/incidents")
+    r = client.get("/v1/incidents", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert "total" in data
@@ -66,7 +66,7 @@ def test_list_incidents_pagination(client, auth_headers):
             "title": _unique_title(),
         }, headers=auth_headers)
 
-    r = client.get("/v1/incidents?page=1&limit=2")
+    r = client.get("/v1/incidents?page=1&limit=2", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["page"] == 1
@@ -80,7 +80,7 @@ def test_list_incidents_filter_severity(client, auth_headers):
         "severity": "critical",
     }, headers=auth_headers)
 
-    r = client.get("/v1/incidents?severity=critical")
+    r = client.get("/v1/incidents?severity=critical", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["total"] >= 1
@@ -99,7 +99,7 @@ def test_get_incident_by_id(client, auth_headers):
     }, headers=auth_headers)
     incident_id = create_resp.json()["id"]
 
-    r = client.get(f"/v1/incidents/{incident_id}")
+    r = client.get(f"/v1/incidents/{incident_id}", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["id"] == incident_id
@@ -113,8 +113,8 @@ def test_get_incident_by_id(client, auth_headers):
     assert len(data["timeline"]) >= 1
 
 
-def test_get_incident_not_found(client):
-    r = client.get("/v1/incidents/999999")
+def test_get_incident_not_found(client, auth_headers):
+    r = client.get("/v1/incidents/999999", headers=auth_headers)
     assert r.status_code == 404
 
 
@@ -176,7 +176,7 @@ def test_update_incident_resolve(client, auth_headers):
     assert r.json()["status"] == "resolved"
 
     # Verify resolved_at is set
-    detail = client.get(f"/v1/incidents/{incident_id}").json()
+    detail = client.get(f"/v1/incidents/{incident_id}", headers=auth_headers).json()
     assert detail["resolved_at"] is not None
     assert detail["resolution"] == "Retrained model with balanced dataset"
     assert detail["root_cause"] == "Training data bias"

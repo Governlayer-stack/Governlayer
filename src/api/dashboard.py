@@ -2,9 +2,10 @@
 
 from datetime import datetime
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 
+from src.security.auth import verify_token
 from src.models.database import SessionLocal
 from src.models.registry import RegisteredModel, Incident, IncidentStatus, IncidentSeverity, ModelLifecycle
 from src.models.policy import GovernancePolicy
@@ -13,7 +14,7 @@ router = APIRouter(tags=["Dashboard"])
 
 
 @router.get("/v1/dashboard")
-def org_dashboard_healthcheck():
+def org_dashboard_healthcheck(current_user: str = Depends(verify_token)):
     """One-click organization healthcheck — everything at a glance.
 
     Returns models, incidents, compliance, policies, and system status

@@ -58,6 +58,50 @@ class UsageRecord(Base):
     __table_args__ = (Index("ix_usage_org_date", "org_id", "created_at"),)
 
 
+class OrgMembership(Base):
+    __tablename__ = "org_memberships"
+    id = Column(Integer, primary_key=True, index=True)
+    user_email = Column(String(255), nullable=False, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=False)
+    role = Column(String(20), nullable=False, default="member")  # owner, admin, member, viewer
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    organization = relationship("Organization")
+
+    __table_args__ = (
+        Index("ix_org_membership_user_org", "user_email", "org_id", unique=True),
+    )
+
+
+# Role hierarchy for access checks (higher number = more privilege)
+_ROLE_RANK = {"viewer": 0, "member": 1, "admin": 2, "owner": 3}
+
+
+def verify_org_access(user_email: str, org_slug: str, required_role: str, db) -> Organization:
+    """Check that user_email is a member of the org with at least required_role.
+
+    Returns the Organization on success, raises HTTPException on failure.
+    """
+    from fastapi import HTTPException
+
+    org = db.query(Organization).filter(Organization.slug == org_slug).first()
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+
+    membership = (
+        db.query(OrgMembership)
+        .filter(OrgMembership.user_email == user_email, OrgMembership.org_id == org.id)
+        .first()
+    )
+    if not membership:
+        raise HTTPException(status_code=403, detail="You are not a member of this organization")
+
+    if _ROLE_RANK.get(membership.role, -1) < _ROLE_RANK.get(required_role, 99):
+        raise HTTPException(status_code=403, detail=f"Requires at least '{required_role}' role in this organization")
+
+    return org
+
+
 class Webhook(Base):
     __tablename__ = "webhooks"
     id = Column(Integer, primary_key=True, index=True)

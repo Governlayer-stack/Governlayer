@@ -7,8 +7,34 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-test:
+  lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94d1d81 # v4.0.2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/base.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/base.txt
+
+      - name: Lint with ruff
+        run: ruff check src/ tests/ --output-format=github
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
 
     services:
       postgres:
@@ -31,28 +57,73 @@ jobs:
       TESTING: "1"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: "3.11"
 
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94d1d81 # v4.0.2
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/base.txt') }}
           restore-keys: ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Lint with ruff
-        run: ruff check src/ tests/ --output-format=github
-        continue-on-error: true
+          pip install -r requirements/base.txt
 
       - name: Run tests
         run: python -m pytest tests/ -v --tb=short
+
+  security:
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94d1d81 # v4.0.2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-security-${{ hashFiles('requirements/base.txt') }}
+          restore-keys: ${{ runner.os }}-pip-security-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/base.txt
+          pip install pip-audit bandit cyclonedx-bom
+
+      - name: Audit dependencies for known vulnerabilities
+        run: pip-audit -r requirements/base.txt
+
+      - name: SAST scan with Bandit
+        run: bandit -r src/ -ll -ii
+
+      - name: Validate lockfile is up to date
+        run: |
+          if [ -f requirements/base.lock ]; then
+            echo "Lockfile found. Run 'make lock' locally to regenerate if dependencies changed."
+          else
+            echo "WARNING: No lockfile found. Run 'make lock' to generate requirements/base.lock"
+          fi
+
+      - name: Generate SBOM
+        run: cyclonedx-py requirements -i requirements/base.txt -o sbom.json --format json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+        with:
+          name: sbom
+          path: sbom.json
+          retention-days: 90

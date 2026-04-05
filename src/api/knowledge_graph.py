@@ -2,9 +2,10 @@
 
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
+from src.security.auth import verify_token
 from src.governance.knowledge_graph import (
     query_knowledge_graph,
     get_compliance_gap_analysis,
@@ -25,7 +26,7 @@ class AdvisoryRequest(BaseModel):
 
 @router.get("/graph")
 def get_graph(regulation: Optional[str] = None, control: Optional[str] = None,
-              risk_category: Optional[str] = None):
+              risk_category: Optional[str] = None, current_user: str = Depends(verify_token)):
     """Query the governance knowledge graph.
 
     Shows relationships between regulations, controls, and risk categories.
@@ -39,7 +40,7 @@ def get_graph(regulation: Optional[str] = None, control: Optional[str] = None,
 
 
 @router.get("/regulations")
-def list_all_regulations():
+def list_all_regulations(current_user: str = Depends(verify_token)):
     """List all supported regulations with details."""
     return {
         "total": len(KNOWLEDGE_GRAPH["regulations"]),
@@ -51,7 +52,7 @@ def list_all_regulations():
 
 
 @router.get("/controls")
-def list_all_controls():
+def list_all_controls(current_user: str = Depends(verify_token)):
     """List all governance controls and their GovernLayer API mappings."""
     return {
         "total": len(KNOWLEDGE_GRAPH["controls"]),
@@ -63,7 +64,7 @@ def list_all_controls():
 
 
 @router.get("/risks")
-def list_risk_categories():
+def list_risk_categories(current_user: str = Depends(verify_token)):
     """List all risk categories with severity and related controls."""
     return {
         "total": len(KNOWLEDGE_GRAPH["risk_categories"]),
@@ -75,7 +76,7 @@ def list_risk_categories():
 
 
 @router.post("/gap-analysis")
-def compliance_gap_analysis(data: GapAnalysisRequest):
+def compliance_gap_analysis(data: GapAnalysisRequest, current_user: str = Depends(verify_token)):
     """Analyze compliance gaps across all regulations based on active controls.
 
     Pass the list of controls you have active (e.g., ["risk_assessment", "bias_testing"])
@@ -85,7 +86,7 @@ def compliance_gap_analysis(data: GapAnalysisRequest):
 
 
 @router.post("/advisory")
-def get_recommendations(data: AdvisoryRequest):
+def get_recommendations(data: AdvisoryRequest, current_user: str = Depends(verify_token)):
     """Get prioritized governance advisory recommendations.
 
     Pass context about your environment (risk_score, fairness_tested, has_model_card, etc.)

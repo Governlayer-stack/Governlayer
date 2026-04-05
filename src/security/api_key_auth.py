@@ -17,6 +17,9 @@ from src.models.tenant import ApiKey, hash_api_key
 settings = get_settings()
 security = HTTPBearer()
 
+# Default scopes for JWT-authenticated users (no "admin" scope)
+JWT_DEFAULT_SCOPES = ["govern", "audit", "risk", "scan", "read"]
+
 
 class AuthContext:
     """Unified auth result — works for both JWT users and API key tenants."""
@@ -29,8 +32,6 @@ class AuthContext:
         self.api_key_id = api_key_id
 
     def has_scope(self, scope: str) -> bool:
-        if not self.scopes:
-            return True  # JWT users have full access
         return scope in self.scopes
 
 
@@ -64,7 +65,7 @@ def verify_api_key_or_jwt(
     # JWT path (existing behavior)
     from src.security.auth import verify_token_raw
     email = verify_token_raw(token)
-    return AuthContext(identity=email, auth_type="jwt")
+    return AuthContext(identity=email, auth_type="jwt", scopes=list(JWT_DEFAULT_SCOPES))
 
 
 def require_scope(scope: str):

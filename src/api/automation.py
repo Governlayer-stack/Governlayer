@@ -8,16 +8,16 @@ Endpoints:
 """
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from src.config import get_settings
 from src.drift.detection import analyze_reasoning
 from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
-from src.security.auth import create_token, hash_password, verify_token
+from src.security.auth import create_token, hash_password, verify_password, verify_token
 
 router = APIRouter(prefix="/automate", tags=["automation"])
 settings = get_settings()
@@ -69,12 +69,15 @@ def _compute_risk_scores(req) -> dict:
 
 
 @router.post("/register-bot")
-def register_bot(req: BotRegisterRequest, db: Session = Depends(get_db)):
-    """Register a service account for n8n/automation use. Returns a JWT."""
+def register_bot(req: BotRegisterRequest, admin_email: str = Depends(verify_token),
+                 db: Session = Depends(get_db)):
+    """Register a service account for n8n/automation use. Requires admin auth. Returns a JWT."""
     from src.models.database import User
     email = f"{req.bot_name}@governlayer.local"
     existing = db.query(User).filter(User.email == email).first()
     if existing:
+        if not verify_password(req.password, existing.password_hash):
+            raise HTTPException(status_code=401, detail="Invalid bot credentials")
         token = create_token(email)
         return {"message": "Bot already registered", "token": token, "email": email}
     user = User(email=email, password_hash=hash_password(req.password), company="GovernLayer Automation")
@@ -90,7 +93,7 @@ def full_pipeline(req: FullPipelineRequest, email: str = Depends(verify_token), 
 
     Steps: drift detection -> risk scoring -> governance decision -> compliance audit -> ledger entry
     """
-    started_at = datetime.utcnow()
+    started_at = datetime.now(timezone.utc)
     pipeline_id = str(uuid.uuid4())
     stages = {}
 
@@ -178,7 +181,7 @@ def full_pipeline(req: FullPipelineRequest, email: str = Depends(verify_token), 
         "drift_coefficient": drift_result["drift_coefficient"],
         "risk_score": overall_risk,
         "policy_version": settings.policy_version,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
     current_hash = compute_hash({**record_data, "previous_hash": previous_hash})
 
@@ -195,7 +198,7 @@ def full_pipeline(req: FullPipelineRequest, email: str = Depends(verify_token), 
     db.commit()
     stages["ledger"] = {"decision_id": decision_id, "hash": current_hash}
 
-    elapsed = (datetime.utcnow() - started_at).total_seconds()
+    elapsed = (datetime.now(timezone.utc) - started_at).total_seconds()
 
     return {
         "pipeline_id": pipeline_id,
@@ -211,7 +214,7 @@ def full_pipeline(req: FullPipelineRequest, email: str = Depends(verify_token), 
         "ledger_hash": current_hash,
         "policy_version": settings.policy_version,
         "elapsed_seconds": round(elapsed, 2),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -241,18 +244,18 @@ def quick_scan(req: QuickScanRequest, email: str = Depends(verify_token)):
         "drift_coefficient": drift_result["drift_coefficient"],
         "vetoed": drift_result["vetoed"],
         "dimension_scores": scores,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
 @router.get("/health")
-def system_health():
-    """Full system health check — all services. No auth required."""
+def system_health(email: str = Depends(verify_token)):
+    """Full system health check — all services. Requires authentication."""
     import socket
-    health = {"timestamp": datetime.utcnow().isoformat(), "services": {}}
+    health = {"timestamp": datetime.now(timezone.utc).isoformat(), "services": {}}
 
     # GovernLayer API
-    health["services"]["api"] = {"status": "up", "port": settings.port}
+    health["services"]["api"] = {"status": "up"}
 
     # PostgreSQL
     try:
@@ -261,16 +264,16 @@ def system_health():
         db.execute("SELECT 1")
         db.close()
         health["services"]["database"] = {"status": "up"}
-    except Exception as e:
-        health["services"]["database"] = {"status": "down", "error": str(e)}
+    except Exception:
+        health["services"]["database"] = {"status": "down", "error": "service_unavailable"}
 
     # Redis
     try:
         s = socket.create_connection(("localhost", 6379), timeout=2)
         s.close()
-        health["services"]["redis"] = {"status": "up", "port": 6379}
+        health["services"]["redis"] = {"status": "up"}
     except Exception:
-        health["services"]["redis"] = {"status": "down"}
+        health["services"]["redis"] = {"status": "down", "error": "service_unavailable"}
 
     # Ollama
     try:
@@ -280,15 +283,15 @@ def system_health():
         data = json.loads(resp.read())
         health["services"]["ollama"] = {"status": "up", "models": len(data.get("models", []))}
     except Exception:
-        health["services"]["ollama"] = {"status": "down"}
+        health["services"]["ollama"] = {"status": "down", "error": "service_unavailable"}
 
     # n8n
     try:
         s = socket.create_connection(("localhost", 5678), timeout=2)
         s.close()
-        health["services"]["n8n"] = {"status": "up", "port": 5678}
+        health["services"]["n8n"] = {"status": "up"}
     except Exception:
-        health["services"]["n8n"] = {"status": "down"}
+        health["services"]["n8n"] = {"status": "down", "error": "service_unavailable"}
 
     all_up = all(svc["status"] == "up" for svc in health["services"].values())
     health["overall"] = "healthy" if all_up else "degraded"

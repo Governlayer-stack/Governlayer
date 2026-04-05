@@ -4,9 +4,9 @@ import logging
 import os
 from datetime import datetime, timezone
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text as sa_text
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -149,6 +149,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: https:; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "connect-src 'self'"
+        )
         return response
 
 FRAMEWORKS = [
@@ -157,6 +165,7 @@ FRAMEWORKS = [
     "IEEE_ETHICS", "OECD_AI", "NIST_CSF", "UNESCO_AI", "SINGAPORE_AI",
     "UK_AI", "CANADA_AIDA", "CHINA_AI", "COBIT", "ITIL",
     "ZERO_TRUST", "CIS_CONTROLS", "FAIR_RISK", "CSA_AI", "US_EO_AI",
+    "DSA", "DMA",
 ]
 
 
@@ -250,8 +259,9 @@ def create_app() -> FastAPI:
         _seed_demo_data()
 
     def _ensure_schema_columns():
-        """Add columns that create_tables() won't add to existing tables."""
+        """Legacy schema patches — these should be converted to proper Alembic migrations."""
         from src.models.database import SessionLocal
+        logger.info("Running legacy schema patches (should be migrated to Alembic)")
         db = SessionLocal()
         try:
             for stmt in [
@@ -261,10 +271,15 @@ def create_app() -> FastAPI:
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_enabled BOOLEAN DEFAULT FALSE NOT NULL",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS mfa_backup_codes TEXT",
             ]:
-                db.execute(sa_text(stmt))
+                try:
+                    db.execute(sa_text(stmt))
+                except Exception:
+                    # Column already exists or table not yet created — safe to ignore
+                    db.rollback()
+                    continue
             db.commit()
-        except Exception as e:
-            logging.getLogger(__name__).warning(f"Schema migration skip: {e}")
+        except Exception:
+            # Schema patches are best-effort; failures are non-fatal
             db.rollback()
         finally:
             db.close()
@@ -286,9 +301,31 @@ def create_app() -> FastAPI:
             "database": db_status,
         }
 
+    def _check_admin_key(request: Request):
+        """Verify X-Admin-Key header for protected internal endpoints.
+
+        If admin_key is not configured, allow access only when debug mode is on.
+        """
+        if settings.admin_key:
+            provided = request.headers.get("x-admin-key", "")
+            if provided != settings.admin_key:
+                return JSONResponse(
+                    status_code=403,
+                    content={"error": "forbidden", "message": "Invalid or missing X-Admin-Key header"},
+                )
+        elif not settings.debug:
+            return JSONResponse(
+                status_code=403,
+                content={"error": "forbidden", "message": "Admin key not configured. Set ADMIN_KEY in environment."},
+            )
+        return None
+
     @app.get("/metrics")
-    def metrics_endpoint():
+    def metrics_endpoint(request: Request):
         """Application metrics for monitoring dashboards."""
+        denied = _check_admin_key(request)
+        if denied:
+            return denied
         from src.middleware.metrics import metrics as m
         data = m.snapshot()
 
@@ -316,8 +353,12 @@ def create_app() -> FastAPI:
         return data
 
     @app.get("/status", response_class=HTMLResponse)
-    def status_page():
+    def status_page(request: Request):
         """Human-readable status page with dark theme."""
+        denied = _check_admin_key(request)
+        if denied:
+            return denied
+
         from src.middleware.metrics import metrics as m
         from src.middleware.error_tracking import get_total_errors
 

@@ -3,7 +3,12 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /build
 COPY requirements/ requirements/
-RUN pip install --no-cache-dir --prefix=/install -r requirements/prod.txt
+# Prefer lockfile for reproducible builds; fall back to prod.txt
+RUN if [ -f requirements/base.lock ]; then \
+      pip install --no-cache-dir --prefix=/install -r requirements/base.lock; \
+    else \
+      pip install --no-cache-dir --prefix=/install -r requirements/prod.txt; \
+    fi
 
 # === Stage 2: Production ===
 FROM python:3.11-slim AS production

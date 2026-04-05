@@ -42,6 +42,8 @@ FRAMEWORKS = {
     "FAIR_RISK": "FAIR Risk Framework - information risk analysis",
     "CSA_AI": "Cloud Security Alliance AI guidance",
     "US_EO_AI": "US Executive Order on AI safety",
+    "DSA": "Digital Services Act (EU 2022/2065) - platform accountability and content moderation",
+    "DMA": "Digital Markets Act (EU 2022/1925) - gatekeeper obligations and fair competition",
 }
 
 

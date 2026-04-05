@@ -12,8 +12,13 @@ def test_compliant_loan_evaluation():
         ),
         use_case="loan_approval",
     )
-    assert result["action"] == "PROCEED"
-    assert result["semantic_risk_flags"] == 0
+    if _HAS_EMBEDDINGS:
+        assert result["action"] == "PROCEED"
+        assert result["semantic_risk_flags"] == 0
+    else:
+        # Without embeddings, system fails closed to CAUTION mode
+        assert result["alignment"] == "CAUTION"
+        assert result["drift_coefficient"] == 0.35
 
 
 def test_discriminatory_lending_vetoed():

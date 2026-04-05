@@ -1,3 +1,5 @@
+import asyncio
+import logging
 import uuid
 from datetime import datetime
 
@@ -6,9 +8,12 @@ from sqlalchemy.orm import Session
 
 from src.api.deps import get_llm
 from src.config import get_settings
+from src.llm.consensus import ConsensusStrategy, chain_of_verification
 from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
 from src.models.schemas import AuditRequest
 from src.security.auth import verify_token
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["audit"])
 settings = get_settings()
@@ -23,6 +28,26 @@ def audit_system(request: AuditRequest, email: str = Depends(verify_token), db: 
         f"Frameworks: {request.frameworks}. For each framework provide compliance status, gaps and recommendations."
     )
     response = llm.invoke(prompt)
+    initial_result = response.content
+
+    # Run Chain-of-Verification consensus pass for hallucination resistance
+    verified = False
+    confidence = None
+    audit_result = initial_result
+    try:
+        cove_result = asyncio.run(chain_of_verification(prompt))
+        audit_result = cove_result.final_answer
+        verified = True
+        confidence = round(cove_result.confidence, 3)
+        logger.info(
+            "Audit consensus verification passed: confidence=%.3f strategy=%s",
+            cove_result.confidence, cove_result.strategy,
+        )
+    except Exception as exc:
+        logger.warning("Consensus verification failed, using single-model result: %s", exc)
+        verified = False
+        confidence = None
+        audit_result = initial_result
 
     decision_id = str(uuid.uuid4())
     previous_hash = get_last_hash(db)
@@ -35,20 +60,26 @@ def audit_system(request: AuditRequest, email: str = Depends(verify_token), db: 
 
     audit = AuditRecord(
         decision_id=decision_id, system_name=request.system_name, industry=request.industry,
-        audited_by=email, frameworks_audited=request.frameworks, results=response.content,
+        audited_by=email, frameworks_audited=request.frameworks, results=audit_result,
         governance_action="AUDIT_COMPLETE", policy_version=settings.policy_version,
         previous_hash=previous_hash, current_hash=current_hash,
     )
     db.add(audit)
     db.commit()
 
-    return {
+    result = {
         "decision_id": decision_id, "system": request.system_name, "industry": request.industry,
         "audit_date": datetime.utcnow().isoformat(), "audited_by": email,
         "governance_action": "AUDIT_COMPLETE", "current_hash": current_hash,
         "previous_hash": previous_hash, "policy_version": settings.policy_version,
-        "results": response.content,
+        "results": audit_result,
+        "verified": verified,
     }
+    if confidence is not None:
+        result["confidence"] = confidence
+    if not verified:
+        result["warning"] = "Consensus verification unavailable — single-model result returned unverified"
+    return result
 
 
 @router.get("/audit-history")

@@ -87,8 +87,9 @@ async def consensus_vote(
             dissenting_views=["All models returned errors"],
         )
 
-    # Use the first valid model as the synthesizer to judge agreement
-    synthesizer = models[0]
+    # Use the last model as synthesizer so the judge didn't generate the
+    # first response (avoids anchoring bias from the first responder)
+    synthesizer = models[-1]
     judge_prompt = (
         "You are a consensus judge. Below are responses from multiple AI models "
         "to the same question. Determine:\n"

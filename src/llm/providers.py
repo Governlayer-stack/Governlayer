@@ -293,15 +293,80 @@ _PROVIDER_BUILDERS = {
 }
 
 
+def log_llm_interaction(
+    model_name: str,
+    prompt_summary: str,
+    response_length: int,
+    latency_ms: float,
+    tokens_used: int | None = None,
+) -> None:
+    """Log a structured record of an LLM interaction.
+
+    Logs at INFO level with structured data for data provenance.
+    Only logs a truncated prompt summary (first 100 chars) to protect privacy.
+    """
+    summary = prompt_summary[:100] + ("..." if len(prompt_summary) > 100 else "")
+    logger.info(
+        "LLM interaction: model=%s prompt_summary=%r response_length=%d latency_ms=%.1f tokens_used=%s",
+        model_name,
+        summary,
+        response_length,
+        latency_ms,
+        tokens_used if tokens_used is not None else "unknown",
+    )
+
+
+class _LoggingModelWrapper:
+    """Wraps a LangChain chat model to log all interactions."""
+
+    def __init__(self, model: BaseChatModel, model_name: str):
+        self._model = model
+        self._model_name = model_name
+
+    def __getattr__(self, name: str):
+        return getattr(self._model, name)
+
+    def invoke(self, *args, **kwargs):
+        import time
+        prompt_summary = str(args[0])[:100] if args else str(kwargs)[:100]
+        start = time.perf_counter()
+        result = self._model.invoke(*args, **kwargs)
+        latency_ms = (time.perf_counter() - start) * 1000
+        resp_len = len(result.content) if hasattr(result, "content") else 0
+        tokens = None
+        if hasattr(result, "response_metadata"):
+            usage = result.response_metadata.get("token_usage") or result.response_metadata.get("usage", {})
+            if isinstance(usage, dict):
+                tokens = usage.get("total_tokens")
+        log_llm_interaction(self._model_name, prompt_summary, resp_len, latency_ms, tokens)
+        return result
+
+    async def ainvoke(self, *args, **kwargs):
+        import time
+        prompt_summary = str(args[0])[:100] if args else str(kwargs)[:100]
+        start = time.perf_counter()
+        result = await self._model.ainvoke(*args, **kwargs)
+        latency_ms = (time.perf_counter() - start) * 1000
+        resp_len = len(result.content) if hasattr(result, "content") else 0
+        tokens = None
+        if hasattr(result, "response_metadata"):
+            usage = result.response_metadata.get("token_usage") or result.response_metadata.get("usage", {})
+            if isinstance(usage, dict):
+                tokens = usage.get("total_tokens")
+        log_llm_interaction(self._model_name, prompt_summary, resp_len, latency_ms, tokens)
+        return result
+
+
 def get_model(name: str) -> BaseChatModel:
-    """Get a LangChain chat model by registry name."""
+    """Get a LangChain chat model by registry name, wrapped with interaction logging."""
     profile = MODEL_REGISTRY.get(name)
     if not profile:
         raise ValueError(f"Unknown model: {name}. Available: {list(MODEL_REGISTRY.keys())}")
     builder = _PROVIDER_BUILDERS.get(profile.provider)
     if not builder:
         raise ValueError(f"Unknown provider: {profile.provider}")
-    return builder(profile.model_id)
+    model = builder(profile.model_id)
+    return _LoggingModelWrapper(model, name)
 
 
 def get_profile(name: str) -> ModelProfile:

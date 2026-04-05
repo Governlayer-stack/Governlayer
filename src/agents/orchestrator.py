@@ -7,8 +7,11 @@ This is the brain of the autonomous agentic system. It manages:
 - Agent memory across sessions
 """
 
+import logging
 from operator import add
 from typing import Annotated, Literal, TypedDict
+
+logger = logging.getLogger(__name__)
 
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
@@ -105,9 +108,42 @@ def decision_node(state: GovernanceState) -> dict:
 
 
 def human_review_node(state: GovernanceState) -> dict:
-    """Gate for human-in-the-loop review. In autonomous mode, logs the escalation."""
+    """Gate for human-in-the-loop review. Blocks the pipeline until approved.
+
+    Sets a pending review flag, stores a review record in the database,
+    and returns PENDING_HUMAN_REVIEW as a terminal state (does NOT continue
+    to audit_ledger).
+    """
+    from datetime import datetime
+
+    from src.models.database import compute_hash
+
+    pending_record = {
+        "system_name": state.get("system_name", "unknown"),
+        "governance_action": "PENDING_HUMAN_REVIEW",
+        "reason": state.get("reason", "Escalation required"),
+        "risk_level": state.get("risk_level", "UNKNOWN"),
+        "drift_coefficient": state.get("drift_result", {}).get("drift_coefficient", 0),
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    review_hash = compute_hash(pending_record)
+
+    logger.warning(
+        "Pipeline BLOCKED — human review required: system=%s reason=%s review_hash=%s",
+        state.get("system_name", "unknown"),
+        state.get("reason", ""),
+        review_hash[:16],
+    )
+
     return {
-        "messages": [f"HUMAN REVIEW REQUIRED: {state['reason']}"],
+        "requires_human": True,
+        "governance_action": "PENDING_HUMAN_REVIEW",
+        "audit_hash": review_hash,
+        "messages": [
+            f"PIPELINE BLOCKED — HUMAN REVIEW REQUIRED: {state.get('reason', '')}. "
+            f"Review hash: {review_hash[:16]}. Pipeline will not proceed to ledger "
+            f"until a human approves this decision."
+        ],
     }
 
 
@@ -154,7 +190,7 @@ def build_governance_graph() -> StateGraph:
     graph.add_edge("drift_analysis", "risk_scoring")
     graph.add_edge("risk_scoring", "decision")
     graph.add_conditional_edges("decision", should_escalate)
-    graph.add_edge("human_review", "audit_ledger")
+    graph.add_edge("human_review", END)  # Terminal — pipeline blocks until human approves
     graph.add_edge("audit_ledger", END)
 
     return graph.compile(checkpointer=memory)

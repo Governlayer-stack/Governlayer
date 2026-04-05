@@ -1,13 +1,16 @@
 import logging
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.models.database import User, get_db
 from src.models.schemas import ForgotPasswordRequest, ResetPasswordRequest, UserLogin, UserRegister
-from src.security.auth import create_token, hash_password, verify_password
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from src.security.auth import create_token, decode_token_payload, hash_password, revoke_token, verify_password
+
+_security = HTTPBearer()
 
 logger = logging.getLogger("governlayer")
 
@@ -53,9 +56,9 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
     if user:
         token = secrets.token_hex(32)
         user.reset_token = token
-        user.reset_token_expires_at = datetime.utcnow() + timedelta(hours=1)
+        user.reset_token_expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
         db.commit()
-        logger.info("Password reset token for %s: %s", req.email, token)
+        logger.debug("Password reset requested for %s", req.email)
         from src.notifications.email import send_email
         from src.notifications.templates import password_reset_email
         subject, html = password_reset_email(token, req.email)
@@ -67,7 +70,7 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
 def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(
         User.reset_token == req.token,
-        User.reset_token_expires_at > datetime.utcnow(),
+        User.reset_token_expires_at > datetime.now(timezone.utc),
     ).first()
     if not user:
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
@@ -76,3 +79,15 @@ def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
     user.reset_token_expires_at = None
     db.commit()
     return {"message": "Password reset successfully. Please log in."}
+
+
+@router.post("/logout")
+def logout(credentials: HTTPAuthorizationCredentials = Depends(_security)):
+    """Invalidate the current JWT token."""
+    payload = decode_token_payload(credentials.credentials)
+    jti = payload.get("jti")
+    if not jti:
+        raise HTTPException(status_code=400, detail="Token does not support revocation")
+    exp = payload.get("exp")
+    revoke_token(jti, exp)
+    return {"message": "Successfully logged out"}

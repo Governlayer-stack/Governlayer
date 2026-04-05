@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from src.models.database import get_db, MutationLog
-from src.models.tenant import ApiKey, Organization, UsageRecord, Webhook, generate_api_key
+from src.models.tenant import ApiKey, OrgMembership, Organization, UsageRecord, Webhook, generate_api_key, verify_org_access
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/enterprise", tags=["enterprise"])
@@ -45,6 +45,9 @@ def create_org(req: CreateOrgRequest, email: str = Depends(verify_token), db: Se
         raise HTTPException(status_code=409, detail="Organization slug already taken")
     org = Organization(name=req.name, slug=req.slug, plan=req.plan)
     db.add(org)
+    db.flush()  # Get org.id before committing
+    membership = OrgMembership(user_email=email, org_id=org.id, role="owner")
+    db.add(membership)
     db.commit()
     db.refresh(org)
     return {
@@ -59,9 +62,7 @@ def create_org(req: CreateOrgRequest, email: str = Depends(verify_token), db: Se
 
 @router.get("/orgs/{slug}")
 def get_org(slug: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "viewer", db)
     key_count = db.query(ApiKey).filter(ApiKey.org_id == org.id, ApiKey.is_active.is_(True)).count()
     return {
         "id": org.id, "name": org.name, "slug": org.slug,
@@ -76,9 +77,7 @@ def get_org(slug: str, email: str = Depends(verify_token), db: Session = Depends
 def create_api_key(slug: str, req: CreateApiKeyRequest, email: str = Depends(verify_token),
                    db: Session = Depends(get_db)):
     """Generate a new API key for the organization. The full key is only shown once."""
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "admin", db)
 
     full_key, prefix, key_hash = generate_api_key()
     expires_at = None
@@ -108,9 +107,7 @@ def create_api_key(slug: str, req: CreateApiKeyRequest, email: str = Depends(ver
 
 @router.get("/orgs/{slug}/api-keys")
 def list_api_keys(slug: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "member", db)
     keys = db.query(ApiKey).filter(ApiKey.org_id == org.id).all()
     return {
         "keys": [
@@ -129,9 +126,7 @@ def list_api_keys(slug: str, email: str = Depends(verify_token), db: Session = D
 @router.delete("/orgs/{slug}/api-keys/{key_id}")
 def revoke_api_key(slug: str, key_id: int, email: str = Depends(verify_token),
                    db: Session = Depends(get_db)):
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "admin", db)
     key = db.query(ApiKey).filter(ApiKey.id == key_id, ApiKey.org_id == org.id).first()
     if not key:
         raise HTTPException(status_code=404, detail="API key not found")
@@ -146,9 +141,7 @@ def revoke_api_key(slug: str, key_id: int, email: str = Depends(verify_token),
 def get_usage(slug: str, days: int = 30, email: str = Depends(verify_token),
               db: Session = Depends(get_db)):
     """Get API usage summary for billing."""
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "member", db)
 
     since = datetime.utcnow() - timedelta(days=days)
     records = db.query(UsageRecord).filter(
@@ -180,9 +173,7 @@ def get_usage(slug: str, days: int = 30, email: str = Depends(verify_token),
 @router.post("/orgs/{slug}/webhooks")
 def create_webhook(slug: str, req: CreateWebhookRequest, email: str = Depends(verify_token),
                    db: Session = Depends(get_db)):
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "admin", db)
 
     import secrets
     secret = secrets.token_hex(32)
@@ -202,9 +193,7 @@ def create_webhook(slug: str, req: CreateWebhookRequest, email: str = Depends(ve
 
 @router.get("/orgs/{slug}/webhooks")
 def list_webhooks(slug: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "member", db)
     hooks = db.query(Webhook).filter(Webhook.org_id == org.id).all()
     return {
         "webhooks": [
@@ -218,9 +207,7 @@ def list_webhooks(slug: str, email: str = Depends(verify_token), db: Session = D
 @router.delete("/orgs/{slug}/webhooks/{webhook_id}")
 def delete_webhook(slug: str, webhook_id: int, email: str = Depends(verify_token),
                    db: Session = Depends(get_db)):
-    org = db.query(Organization).filter(Organization.slug == slug).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
+    org = verify_org_access(email, slug, "admin", db)
     hook = db.query(Webhook).filter(Webhook.id == webhook_id, Webhook.org_id == org.id).first()
     if not hook:
         raise HTTPException(status_code=404, detail="Webhook not found")
