@@ -152,10 +152,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline'; "
-            "style-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
             "img-src 'self' data: https:; "
             "font-src 'self' https://fonts.gstatic.com; "
-            "connect-src 'self'"
+            "connect-src 'self' https://web-production-bdd26.up.railway.app"
         )
         return response
 
