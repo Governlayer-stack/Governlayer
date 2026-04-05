@@ -42,6 +42,8 @@ COPY docs/soc2-checklist/ docs/soc2-checklist/
 COPY docs/compliance-checklist/ docs/compliance-checklist/
 COPY docs/signup/ docs/signup/
 COPY docs/workspace/ docs/workspace/
+COPY docs/terms/ docs/terms/
+COPY docs/privacy/ docs/privacy/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app
