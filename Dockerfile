@@ -44,6 +44,10 @@ COPY docs/signup/ docs/signup/
 COPY docs/workspace/ docs/workspace/
 COPY docs/terms/ docs/terms/
 COPY docs/privacy/ docs/privacy/
+COPY docs/404/ docs/404/
+COPY docs/changelog/ docs/changelog/
+COPY docs/blog/ docs/blog/
+COPY dashboard/dist/ dashboard/dist/
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app

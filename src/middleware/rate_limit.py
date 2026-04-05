@@ -210,6 +210,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 auth_limit = 10
                 auth_key = f"auth:login:{client_ip}"
             allowed, remaining = _check_rate(auth_key, auth_limit, window=60)
+            reset_time = int(time.time()) + 60
             if not allowed:
                 return JSONResponse(
                     status_code=429,
@@ -218,17 +219,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         "message": "Too many authentication attempts. Try again later.",
                         "retry_after_seconds": 60,
                     },
-                    headers={"Retry-After": "60"},
+                    headers={
+                        "Retry-After": "60",
+                        "X-RateLimit-Limit": str(auth_limit),
+                        "X-RateLimit-Remaining": "0",
+                        "X-RateLimit-Reset": str(reset_time),
+                    },
                 )
             response = await call_next(request)
             response.headers["X-RateLimit-Limit"] = str(auth_limit)
             response.headers["X-RateLimit-Remaining"] = str(remaining)
+            response.headers["X-RateLimit-Reset"] = str(reset_time)
             return response
 
         client_key = _get_client_key(request)
         limit = _resolve_plan_limit(request)
 
         allowed, remaining = _check_rate(client_key, limit)
+        reset_time = int(time.time()) + 60
         if not allowed:
             return JSONResponse(
                 status_code=429,
@@ -238,7 +246,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "plan_limits": PLAN_LIMITS,
                     "retry_after_seconds": 60,
                 },
-                headers={"Retry-After": "60"},
+                headers={
+                    "Retry-After": "60",
+                    "X-RateLimit-Limit": str(limit),
+                    "X-RateLimit-Remaining": "0",
+                    "X-RateLimit-Reset": str(reset_time),
+                },
             )
 
         # Monthly quota check — only for metered paths with API key auth
@@ -267,6 +280,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         response.headers["X-RateLimit-Limit"] = str(limit)
         response.headers["X-RateLimit-Remaining"] = str(remaining)
+        response.headers["X-RateLimit-Reset"] = str(reset_time)
 
         # Add monthly usage headers when available
         if monthly_used is not None:

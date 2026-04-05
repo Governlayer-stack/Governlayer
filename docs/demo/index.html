@@ -11,6 +11,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://governlayer.ai/demo">
 <link rel="canonical" href="https://governlayer.ai/demo">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -145,6 +146,7 @@ code{font-family:'JetBrains Mono',monospace}
   .footer-bottom{flex-direction:column;gap:8px;text-align:center}
 }
 </style>
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
 
@@ -389,28 +391,51 @@ document.getElementById('demoForm').addEventListener('submit', function(e) {
     return;
   }
 
-  // Build mailto body
-  var lines = [
-    'Demo Request from GovernLayer.ai',
-    '',
-    'Name: ' + name,
-    'Email: ' + email,
-    'Company: ' + company
-  ];
-  if (title) lines.push('Title: ' + title);
-  if (size) lines.push('Company Size: ' + size);
-  if (useCase) { lines.push(''); lines.push('Use Case:'); lines.push(useCase); }
+  // Build message from optional fields
+  var messageParts = [];
+  if (title) messageParts.push('Title: ' + title);
+  if (size) messageParts.push('Company Size: ' + size);
+  if (useCase) messageParts.push('Use Case: ' + useCase);
 
-  var subject = encodeURIComponent('Demo Request - ' + company);
-  var body = encodeURIComponent(lines.join('\n'));
-  var mailto = 'mailto:founders@governlayer.ai?subject=' + subject + '&body=' + body;
+  var payload = {
+    name: name,
+    email: email,
+    company: company,
+    message: messageParts.join('\n'),
+    form_type: 'demo'
+  };
 
-  // Open mailto link
-  window.location.href = mailto;
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
 
-  // Show success state
-  document.getElementById('formContent').style.display = 'none';
-  document.getElementById('successState').style.display = 'block';
+  // Remove any previous error message
+  var oldErr = document.getElementById('formError');
+  if (oldErr) oldErr.remove();
+
+  fetch('/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) {
+    if (!res.ok) return res.json().then(function(d) { throw new Error(d.message || 'Submission failed'); });
+    return res.json();
+  })
+  .then(function(data) {
+    // Show success state
+    document.getElementById('formContent').style.display = 'none';
+    document.getElementById('successState').style.display = 'block';
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Request Demo';
+    var errDiv = document.createElement('div');
+    errDiv.id = 'formError';
+    errDiv.style.cssText = 'margin-top:12px;padding:10px 14px;background:var(--red-bg);border:1px solid var(--red);border-radius:var(--radius-xs);color:var(--red);font-size:.86rem;';
+    errDiv.textContent = err.message || 'Something went wrong. Please try again or email founders@governlayer.ai.';
+    btn.parentNode.appendChild(errDiv);
+  });
 });
 
 // Mobile nav toggle

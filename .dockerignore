@@ -3,6 +3,7 @@
 .env
 .env.*
 *.md
+!docs/**/*.md
 venv/
 __pycache__/
 *.pyc
@@ -18,8 +19,14 @@ Dockerfile
 .dockerignore
 tests/
 *.prof
-*.svg
 .cache/
 models/
 .claude/
 .claude-flow/
+integrations/
+dashboard/node_modules/
+dashboard/src/
+dashboard/public/
+dashboard/*.config.*
+dashboard/package-lock.json
+dashboard/package.json

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog | GovernLayer</title>
+<meta name="description" content="What's new in GovernLayer — release notes, features, and improvements.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:#0f172a;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:#2563eb;text-decoration:none}
+a:hover{text-decoration:underline}
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:0 24px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em;color:#0f172a}
+.logo-mark{width:26px;height:26px;background:#2563eb;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.wrap{max-width:800px;margin:0 auto;padding:100px 24px 60px}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
+.subtitle{font-size:1rem;color:#64748b;margin-bottom:48px}
+.entry{position:relative;padding-left:32px;margin-bottom:48px}
+.entry::before{content:'';position:absolute;left:8px;top:10px;bottom:-48px;width:2px;background:#e8eaef}
+.entry:last-child::before{display:none}
+.dot{position:absolute;left:3px;top:8px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #e8eaef}
+.dot.major{background:#2563eb;box-shadow:0 0 0 2px #2563eb}
+.dot.feature{background:#059669;box-shadow:0 0 0 2px #059669}
+.dot.launch{background:#7c3aed;box-shadow:0 0 0 2px #7c3aed}
+.entry-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.version{font-size:1.1rem;font-weight:700}
+.date{font-size:.84rem;color:#94a3b8}
+.tag{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em}
+.tag.major{background:#eff6ff;color:#2563eb}
+.tag.feature{background:#ecfdf5;color:#059669}
+.tag.launch{background:#f5f3ff;color:#7c3aed}
+.entry ul{padding-left:18px;margin-top:8px}
+.entry li{font-size:.9rem;color:#475569;margin-bottom:6px}
+.footer{border-top:1px solid rgba(0,0,0,.06);padding:24px 0;margin-top:48px;text-align:center;font-size:.78rem;color:#94a3b8}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" width="14" height="14"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <a href="/" style="font-size:.86rem;font-weight:500;color:#475569">Back to Home</a>
+  </div>
+</nav>
+<div class="wrap">
+<h1>Changelog</h1>
+<p class="subtitle">What's new in GovernLayer</p>
+
+<div class="entry">
+  <div class="dot major"></div>
+  <div class="entry-header">
+    <span class="version">v2.0.0</span>
+    <span class="date">April 4, 2026</span>
+    <span class="tag major">Major</span>
+  </div>
+  <ul>
+    <li>React dashboard at /dashboard with model registry, risk scanner, and audit trail</li>
+    <li>Contact form with email notifications via Resend</li>
+    <li>Branded 404 page, favicon, og:image for social sharing</li>
+    <li>robots.txt and sitemap.xml for SEO</li>
+    <li>Rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset)</li>
+    <li>Detailed /status endpoint and status badge for uptime monitoring</li>
+    <li>Plausible analytics integration (privacy-friendly)</li>
+    <li>Blog with SEO content: SOC 2 guide, drift detection, EU AI Act, governance programs</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="dot feature"></div>
+  <div class="entry-header">
+    <span class="version">v1.5.0</span>
+    <span class="date">March 16, 2026</span>
+    <span class="tag feature">Feature</span>
+  </div>
+  <ul>
+    <li>Enterprise layer: API keys, organizations, rate limiting, webhooks, usage metering</li>
+    <li>Stripe billing integration (checkout, portal, usage tracking)</li>
+    <li>Trust center, demo request, terms of service, privacy policy pages</li>
+    <li>CORS hardened, HSTS + Permissions-Policy security headers</li>
+    <li>Deployed to Railway with custom domain (www.governlayer.ai)</li>
+    <li>GitHub Actions CI/CD pipeline</li>
+    <li>Legacy root files removed — all code under src/</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="dot launch"></div>
+  <div class="entry-header">
+    <span class="version">v1.0.0</span>
+    <span class="date">March 6, 2026</span>
+    <span class="tag launch">Launch</span>
+  </div>
+  <ul>
+    <li>Achonye multi-LLM orchestration (14 models, 3 consensus strategies)</li>
+    <li>LangGraph agent pipeline: drift, risk, decide, audit, ledger</li>
+    <li>29-framework compliance scanning (SOC 2, EU AI Act, NIST, ISO 42001, and more)</li>
+    <li>Hash-chained immutable audit ledger with SHA-256 tamper evidence</li>
+    <li>GitHub Actions and LangChain integrations</li>
+    <li>MCP server with 12 governance tools</li>
+    <li>6-dimension deterministic risk scoring</li>
+    <li>Sentence-transformer behavioral drift detection</li>
+  </ul>
+</div>
+
+<div class="footer">&copy; 2026 GovernLayer Inc. All rights reserved.</div>
+</div>
+</body>
+</html>

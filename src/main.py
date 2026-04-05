@@ -1,13 +1,19 @@
 """GovernLayer API — application factory."""
 
+import json
 import logging
 import os
+import re
 from datetime import datetime, timezone
+from pathlib import Path
+from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, Request
+from fastapi.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 from sqlalchemy import text as sa_text
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -159,6 +165,18 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         )
         return response
 
+CONTACTS_FILE = Path("/tmp/governlayer_contacts.json")
+_EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+
+class ContactRequest(BaseModel):
+    name: str
+    email: str
+    company: str
+    message: str = ""
+    form_type: str = Field(default="demo")
+
+
 FRAMEWORKS = [
     "NIST_AI_RMF", "EU_AI_ACT", "ISO_42001", "ISO_27001", "NIS2", "DORA",
     "MITRE_ATLAS", "OWASP_AI", "SOC2", "GDPR", "CCPA", "HIPAA",
@@ -251,6 +269,18 @@ def create_app() -> FastAPI:
     app.include_router(controls.router)
     app.include_router(evidence.router)
     app.include_router(compliance_hub.router)
+
+    # Mount React dashboard (built SPA)
+    _dashboard_dist = None
+    for _ddir in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "dashboard", "dist"),
+        os.path.join("/app", "dashboard", "dist"),
+    ]:
+        if os.path.isdir(_ddir):
+            _dashboard_dist = _ddir
+            break
+    if _dashboard_dist:
+        app.mount("/dashboard", StaticFiles(directory=_dashboard_dist, html=True), name="dashboard")
 
     @app.on_event("startup")
     def startup():
@@ -354,7 +384,84 @@ def create_app() -> FastAPI:
 
         return data
 
-    @app.get("/status", response_class=HTMLResponse)
+    @app.get("/status")
+    async def detailed_status():
+        """Detailed status for uptime monitoring services (UptimeRobot, Betterstack, etc.)."""
+        checks = {"api": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+        # Check database
+        try:
+            db = SessionLocal()
+            db.execute(sa_text("SELECT 1"))
+            db.close()
+            checks["database"] = "ok"
+        except Exception:
+            checks["database"] = "degraded"
+
+        # Check Redis
+        try:
+            import redis
+            r = redis.from_url(settings.redis_url, decode_responses=True)
+            r.ping()
+            checks["redis"] = "ok"
+        except Exception:
+            checks["redis"] = "degraded"
+
+        overall = "operational" if all(
+            v == "ok" for k, v in checks.items() if k not in ("timestamp",)
+        ) else "degraded"
+        checks["status"] = overall
+        checks["version"] = settings.policy_version
+        return checks
+
+    @app.get("/status/badge")
+    async def status_badge():
+        """SVG badge showing operational status (shields.io style)."""
+        # Determine status by checking database
+        try:
+            db = SessionLocal()
+            db.execute(sa_text("SELECT 1"))
+            db.close()
+            db_ok = True
+        except Exception:
+            db_ok = False
+
+        if db_ok:
+            label_text = "Operational"
+            color = "#4c1"       # green
+            label_width = 90
+        else:
+            label_text = "Degraded"
+            color = "#dfb317"    # yellow
+            label_width = 72
+
+        prefix_text = "GovernLayer"
+        prefix_width = 92
+        total_width = prefix_width + label_width
+
+        svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_width}" height="20">
+  <linearGradient id="b" x2="0" y2="100%%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="a">
+    <rect width="{total_width}" height="20" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#a)">
+    <rect width="{prefix_width}" height="20" fill="#555"/>
+    <rect x="{prefix_width}" width="{label_width}" height="20" fill="{color}"/>
+    <rect width="{total_width}" height="20" fill="url(#b)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+    <text x="{prefix_width / 2}" y="15" fill="#010101" fill-opacity=".3">{prefix_text}</text>
+    <text x="{prefix_width / 2}" y="14">{prefix_text}</text>
+    <text x="{prefix_width + label_width / 2}" y="15" fill="#010101" fill-opacity=".3">{label_text}</text>
+    <text x="{prefix_width + label_width / 2}" y="14">{label_text}</text>
+  </g>
+</svg>"""
+        return Response(content=svg, media_type="image/svg+xml")
+
+    @app.get("/status/page", response_class=HTMLResponse)
     def status_page(request: Request):
         """Human-readable status page with dark theme."""
         denied = _check_admin_key(request)
@@ -537,6 +644,17 @@ def create_app() -> FastAPI:
     _workspace_html = _load_page("workspace")
     _terms_html = _load_page("terms")
     _privacy_html = _load_page("privacy")
+    _changelog_html = _load_page("changelog")
+    _blog_html = _load_page("blog")
+    _404_html = _load_page("404")
+
+    @app.exception_handler(404)
+    async def custom_404_handler(request: Request, exc):
+        if request.url.path.startswith("/v1/") or request.url.path.startswith("/api/"):
+            return JSONResponse(status_code=404, content={"detail": "Not found"})
+        if _404_html:
+            return HTMLResponse(content=_404_html, status_code=404)
+        return JSONResponse(status_code=404, content={"detail": "Not found"})
 
     @app.get("/workspace")
     def workspace_page():
@@ -622,6 +740,18 @@ def create_app() -> FastAPI:
             return HTMLResponse(_privacy_html)
         return {"error": "Privacy Policy not found"}
 
+    @app.get("/changelog")
+    def changelog_page():
+        if _changelog_html:
+            return HTMLResponse(_changelog_html)
+        return {"error": "Changelog not found"}
+
+    @app.get("/blog")
+    def blog_page():
+        if _blog_html:
+            return HTMLResponse(_blog_html)
+        return {"error": "Blog not found"}
+
     # Load landing page HTML once at startup
     _landing_html = None
     _landing_paths = [
@@ -633,6 +763,80 @@ def create_app() -> FastAPI:
             with open(_path) as f:
                 _landing_html = f.read()
             break
+
+    # Resolve og-image path once at startup
+    _og_image_path = None
+    for _og_path in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "landing", "og-image.svg"),
+        os.path.join("/app", "docs", "landing", "og-image.svg"),
+    ]:
+        if os.path.exists(_og_path):
+            _og_image_path = _og_path
+            break
+
+    @app.get("/og-image.svg")
+    def og_image():
+        if _og_image_path and os.path.exists(_og_image_path):
+            return FileResponse(_og_image_path, media_type="image/svg+xml")
+        return JSONResponse(status_code=404, content={"error": "og-image not found"})
+
+    # Resolve favicon path once at startup
+    _favicon_path = None
+    for _fav_path in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "landing", "favicon.svg"),
+        os.path.join("/app", "docs", "landing", "favicon.svg"),
+    ]:
+        if os.path.exists(_fav_path):
+            _favicon_path = _fav_path
+            break
+
+    @app.get("/favicon.ico")
+    def favicon_ico():
+        if _favicon_path and os.path.exists(_favicon_path):
+            return FileResponse(_favicon_path, media_type="image/svg+xml")
+        return JSONResponse(status_code=404, content={"error": "favicon not found"})
+
+    @app.get("/favicon.svg")
+    def favicon_svg():
+        if _favicon_path and os.path.exists(_favicon_path):
+            return FileResponse(_favicon_path, media_type="image/svg+xml")
+        return JSONResponse(status_code=404, content={"error": "favicon not found"})
+
+    @app.get("/robots.txt")
+    def robots_txt():
+        return Response(
+            content=(
+                "User-agent: *\n"
+                "Allow: /\n"
+                "Disallow: /v1/\n"
+                "Disallow: /docs\n"
+                "Disallow: /redoc\n"
+                "Disallow: /health\n"
+                "Disallow: /automate/\n"
+                "Sitemap: https://www.governlayer.ai/sitemap.xml\n"
+            ),
+            media_type="text/plain",
+        )
+
+    @app.get("/sitemap.xml")
+    def sitemap_xml():
+        return Response(
+            content=(
+                '<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<urlset xmlns="http://www.sitemapschemas.org/sitemap/0.9">\n'
+                '  <url><loc>https://www.governlayer.ai/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/trust</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/demo</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/terms</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/privacy</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/dashboard</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/signup</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/changelog</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://www.governlayer.ai/blog</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
+                '</urlset>\n'
+            ),
+            media_type="application/xml",
+        )
 
     @app.get("/")
     def root(request: Request):
@@ -684,6 +888,104 @@ def create_app() -> FastAPI:
             use_case=request.use_case,
             threshold=request.threshold,
         )
+
+    def _send_contact_email(entry: dict):
+        """Fire-and-forget email notification via Resend API."""
+        api_key = settings.resend_api_key
+        if not api_key:
+            logger.warning("RESEND_API_KEY not set — skipping contact email notification")
+            return
+
+        html_body = (
+            f"<h2>New {entry['form_type']} request</h2>"
+            f"<p><strong>Name:</strong> {entry['name']}</p>"
+            f"<p><strong>Email:</strong> {entry['email']}</p>"
+            f"<p><strong>Company:</strong> {entry['company']}</p>"
+            f"<p><strong>Message:</strong> {entry.get('message') or '(none)'}</p>"
+            f"<p><strong>Submitted:</strong> {entry['submitted_at']}</p>"
+        )
+
+        email_payload = {
+            "from": "GovernLayer <noreply@governlayer.ai>",
+            "to": ["founders@governlayer.ai"],
+            "subject": f"New {entry['form_type']} request from {entry['name']} at {entry['company']}",
+            "html": html_body,
+        }
+
+        try:
+            import httpx
+            with httpx.Client(timeout=10) as client:
+                resp = client.post(
+                    "https://api.resend.com/emails",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json=email_payload,
+                )
+            if resp.status_code >= 400:
+                logger.error("Resend API error %s: %s", resp.status_code, resp.text)
+            else:
+                logger.info("Contact email sent via Resend for %s", entry['email'])
+        except ImportError:
+            # httpx not available — fall back to urllib
+            try:
+                import urllib.request
+                req = urllib.request.Request(
+                    "https://api.resend.com/emails",
+                    data=json.dumps(email_payload).encode(),
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    method="POST",
+                )
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    logger.info("Contact email sent via Resend (urllib) for %s", entry['email'])
+            except Exception as exc:
+                logger.error("Failed to send contact email via urllib: %s", exc)
+        except Exception as exc:
+            logger.error("Failed to send contact email via Resend: %s", exc)
+
+    @app.post("/contact")
+    def contact_submit(payload: ContactRequest):
+        """Accept a contact/demo request form submission. No auth required."""
+        # Validate email format
+        if not _EMAIL_RE.match(payload.email):
+            return JSONResponse(
+                status_code=422,
+                content={"status": "error", "message": "Invalid email address"},
+            )
+
+        entry = {
+            "name": payload.name,
+            "email": payload.email,
+            "company": payload.company,
+            "message": payload.message,
+            "form_type": payload.form_type,
+            "submitted_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+        # Append to JSON file
+        try:
+            if CONTACTS_FILE.exists():
+                contacts = json.loads(CONTACTS_FILE.read_text())
+            else:
+                contacts = []
+            contacts.append(entry)
+            CONTACTS_FILE.write_text(json.dumps(contacts, indent=2))
+        except Exception as exc:
+            logger.error("Failed to write contact to %s: %s", CONTACTS_FILE, exc)
+
+        logger.info(
+            "Contact form submission: name=%s email=%s company=%s form_type=%s",
+            payload.name, payload.email, payload.company, payload.form_type,
+        )
+
+        # Send email notification (fire-and-forget — never blocks the response)
+        _send_contact_email(entry)
+
+        return {"status": "ok", "message": "We'll be in touch within 24 hours"}
 
     return app
 
