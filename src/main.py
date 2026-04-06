@@ -798,7 +798,7 @@ def create_app() -> FastAPI:
                 _docs_html = f.read()
             break
 
-    @app.get("/documentation")
+    @app.get("/trust")
     def documentation_page():
         if _docs_html:
             return HTMLResponse(_docs_html)
@@ -940,7 +940,7 @@ def create_app() -> FastAPI:
             return HTMLResponse(_competitive_html)
         return {"error": "Competitive analysis not found"}
 
-    @app.get("/trust")
+    @app.get("/documentation")
     def trust_center():
         if _trust_html:
             return HTMLResponse(_trust_html)
@@ -1049,12 +1049,12 @@ def create_app() -> FastAPI:
                 '<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                 '  <url><loc>https://governlayer.ai/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/trust</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/trust</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
                 '  <url><loc>https://governlayer.ai/demo</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>\n'
                 '  <url><loc>https://governlayer.ai/terms</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
                 '  <url><loc>https://governlayer.ai/privacy</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
                 '  <url><loc>https://governlayer.ai/signup</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/documentation</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/documentation</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
                 '  <url><loc>https://governlayer.ai/competitive</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>\n'
                 '</urlset>\n'
             ),
