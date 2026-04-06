@@ -21,32 +21,12 @@ WORKDIR /app
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application code
+# Copy application code — bust cache on every deploy
+ARG CACHE_BUST=1
 COPY src/ src/
 COPY alembic/ alembic/
 COPY alembic.ini .
-COPY docs/landing/ docs/landing/
-COPY docs/dashboard/ docs/dashboard/
-COPY docs/documentation/ docs/documentation/
-COPY docs/playground/ docs/playground/
-COPY docs/onboarding/ docs/onboarding/
-COPY docs/pitch/ docs/pitch/
-COPY docs/demo/ docs/demo/
-COPY docs/soc2/ docs/soc2/
-COPY docs/competitive/ docs/competitive/
-COPY docs/trust/ docs/trust/
-COPY docs/auditor/ docs/auditor/
-COPY docs/beta/ docs/beta/
-COPY docs/legal/ docs/legal/
-COPY docs/soc2-checklist/ docs/soc2-checklist/
-COPY docs/compliance-checklist/ docs/compliance-checklist/
-COPY docs/signup/ docs/signup/
-COPY docs/workspace/ docs/workspace/
-COPY docs/terms/ docs/terms/
-COPY docs/privacy/ docs/privacy/
-COPY docs/404/ docs/404/
-COPY docs/changelog/ docs/changelog/
-COPY docs/blog/ docs/blog/
+COPY docs/ docs/
 COPY dashboard/dist/ dashboard/dist/
 
 # Own the app dir
