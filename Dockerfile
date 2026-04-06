@@ -21,8 +21,8 @@ WORKDIR /app
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
 
-# Cache-buster: changes on every deploy to force fresh COPY
-COPY .railway-trigger /tmp/.railway-trigger
+# Force cache invalidation — update timestamp on each deploy
+RUN echo "deploy-$(date +%s)" > /tmp/.deploy-stamp
 
 # Copy application code
 COPY src/ src/
