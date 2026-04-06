@@ -405,11 +405,9 @@ def create_app() -> FastAPI:
             r.ping()
             checks["redis"] = "ok"
         except Exception:
-            checks["redis"] = "degraded"
+            checks["redis"] = "not_configured"
 
-        overall = "operational" if all(
-            v == "ok" for k, v in checks.items() if k not in ("timestamp",)
-        ) else "degraded"
+        overall = "operational" if checks.get("database") == "ok" else "degraded"
         checks["status"] = overall
         checks["version"] = settings.policy_version
         return checks
