@@ -21,8 +21,10 @@ WORKDIR /app
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application code — bust cache on every deploy
-ARG CACHE_BUST=1
+# Cache-buster: changes on every deploy to force fresh COPY
+COPY .railway-trigger /tmp/.railway-trigger
+
+# Copy application code
 COPY src/ src/
 COPY alembic/ alembic/
 COPY alembic.ini .
