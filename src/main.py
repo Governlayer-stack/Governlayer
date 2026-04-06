@@ -4,6 +4,9 @@ import json
 import logging
 import os
 import re
+import resource
+import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -11,9 +14,10 @@ from typing import Optional
 from fastapi import Depends, FastAPI, Header, Request
 from fastapi.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import text as sa_text
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -29,6 +33,12 @@ from src.models.schemas import DriftRequest
 from src.security.auth import verify_token
 
 logger = logging.getLogger("governlayer")
+
+# Graceful shutdown flag — checked by readiness/health endpoints
+_shutting_down = False
+
+# Startup completion flag — checked by readiness probe
+_startup_complete = False
 
 
 def _seed_demo_data():
@@ -157,8 +167,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline'; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
             "img-src 'self' data: https:; "
             "font-src 'self' https://fonts.gstatic.com; "
             "connect-src 'self' https://web-production-bdd26.up.railway.app"
@@ -170,11 +180,19 @@ _EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
 
 class ContactRequest(BaseModel):
-    name: str
-    email: str
-    company: str
-    message: str = ""
+    name: str = Field(..., min_length=1, max_length=200)
+    email: str = Field(..., max_length=254)
+    company: str = Field(..., min_length=1, max_length=200)
+    message: str = Field(default="", max_length=5000)
     form_type: str = Field(default="demo")
+
+    @field_validator("form_type")
+    @classmethod
+    def validate_form_type(cls, v):
+        allowed = {"demo", "contact", "support"}
+        if v not in allowed:
+            raise ValueError(f"form_type must be one of: {', '.join(sorted(allowed))}")
+        return v
 
 
 FRAMEWORKS = [
@@ -205,8 +223,17 @@ def create_app() -> FastAPI:
             "- **JWT**: Register at `/auth/register`, then use the returned token\n"
         ),
         version=settings.policy_version,
-        docs_url="/docs",
+        docs_url=None,
         redoc_url="/redoc",
+        openapi_tags=[
+            {"name": "Auth", "description": "Registration, login, and JWT management"},
+            {"name": "Governance", "description": "Core governance pipeline — drift, risk, decide, ledger"},
+            {"name": "Audit", "description": "LLM-powered compliance audits across 29 frameworks"},
+            {"name": "Risk", "description": "6-dimension deterministic risk scoring"},
+            {"name": "Ledger", "description": "Hash-chained immutable audit trail"},
+            {"name": "Enterprise", "description": "Organization management, API keys, usage"},
+            {"name": "Registry", "description": "AI model and agent registration"},
+        ],
     )
 
     allowed_origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()] if settings.cors_origins else []
@@ -224,6 +251,7 @@ def create_app() -> FastAPI:
     from src.middleware.logging import StructuredLoggingMiddleware, configure_logging
     from src.middleware.error_tracking import ErrorTrackingMiddleware, init_sentry
     from src.middleware.metrics import MetricsMiddleware, metrics
+    from src.middleware.validation import BodySizeLimitMiddleware
 
     # Configure structured logging
     configure_logging(level=settings.log_level, fmt=settings.log_format)
@@ -238,6 +266,8 @@ def create_app() -> FastAPI:
     app.add_middleware(ErrorTrackingMiddleware)
     # MetricsMiddleware is raw ASGI — add via app constructor
     app.add_middleware(MetricsMiddleware)
+    # BodySizeLimitMiddleware — outermost, rejects oversized payloads before any processing
+    app.add_middleware(BodySizeLimitMiddleware)
 
     # Register routers
     app.include_router(auth.router)
@@ -270,6 +300,119 @@ def create_app() -> FastAPI:
     app.include_router(evidence.router)
     app.include_router(compliance_hub.router)
 
+    # --------------- Custom Swagger UI with GovernLayer dark theme ---------------
+    _SWAGGER_DARK_CSS = (
+        "<style>"
+        "body{background:#0a0e1a!important;color:#e2e8f0!important}"
+        ".swagger-ui{background:#0a0e1a!important}"
+        ".swagger-ui .topbar{display:none!important}"
+        ".swagger-ui .info{margin:30px 0!important}"
+        ".swagger-ui .info .title{color:#f1f5f9!important;font-weight:700!important}"
+        ".swagger-ui .info .title small{background:#3b82f6!important;color:#fff!important}"
+        ".swagger-ui .info .description p,.swagger-ui .info .description li{color:#94a3b8!important}"
+        ".swagger-ui .info a{color:#3b82f6!important}"
+        ".swagger-ui .scheme-container{background:#111827!important;box-shadow:none!important;"
+        "border-bottom:1px solid #1e293b!important}"
+        ".swagger-ui .scheme-container .schemes>label{color:#94a3b8!important}"
+        ".swagger-ui select{background:#1e293b!important;color:#e2e8f0!important;"
+        "border:1px solid #334155!important}"
+        ".swagger-ui .opblock-tag{color:#f1f5f9!important;border-bottom:1px solid #1e293b!important}"
+        ".swagger-ui .opblock-tag:hover{background:#111827!important}"
+        ".swagger-ui .opblock-tag small{color:#64748b!important}"
+        ".swagger-ui .opblock{background:#111827!important;border:1px solid #1e293b!important;"
+        "border-radius:8px!important;margin-bottom:8px!important}"
+        ".swagger-ui .opblock .opblock-summary{border-bottom:1px solid #1e293b!important}"
+        ".swagger-ui .opblock .opblock-summary-method{border-radius:4px!important;font-weight:600!important}"
+        ".swagger-ui .opblock .opblock-summary-path,"
+        ".swagger-ui .opblock .opblock-summary-path__deprecated{color:#e2e8f0!important}"
+        ".swagger-ui .opblock .opblock-summary-description{color:#94a3b8!important}"
+        ".swagger-ui .opblock.opblock-get{border-color:#3b82f6!important;"
+        "background:rgba(59,130,246,.05)!important}"
+        ".swagger-ui .opblock.opblock-get .opblock-summary-method{background:#3b82f6!important}"
+        ".swagger-ui .opblock.opblock-post{border-color:#22c55e!important;"
+        "background:rgba(34,197,94,.05)!important}"
+        ".swagger-ui .opblock.opblock-post .opblock-summary-method{background:#22c55e!important}"
+        ".swagger-ui .opblock.opblock-put{border-color:#f59e0b!important;"
+        "background:rgba(245,158,11,.05)!important}"
+        ".swagger-ui .opblock.opblock-put .opblock-summary-method{background:#f59e0b!important}"
+        ".swagger-ui .opblock.opblock-delete{border-color:#ef4444!important;"
+        "background:rgba(239,68,68,.05)!important}"
+        ".swagger-ui .opblock.opblock-delete .opblock-summary-method{background:#ef4444!important}"
+        ".swagger-ui .opblock.opblock-patch{border-color:#8b5cf6!important;"
+        "background:rgba(139,92,246,.05)!important}"
+        ".swagger-ui .opblock.opblock-patch .opblock-summary-method{background:#8b5cf6!important}"
+        ".swagger-ui .opblock-body{background:#0f172a!important}"
+        ".swagger-ui .opblock-body pre.microlight{background:#1e293b!important;"
+        "color:#e2e8f0!important;border-radius:6px!important;border:1px solid #334155!important}"
+        ".swagger-ui .opblock-section-header{background:#111827!important;"
+        "border-bottom:1px solid #1e293b!important}"
+        ".swagger-ui .opblock-section-header h4{color:#e2e8f0!important}"
+        ".swagger-ui table thead tr th,.swagger-ui table thead tr td{color:#94a3b8!important;"
+        "border-bottom:1px solid #1e293b!important}"
+        ".swagger-ui table tbody tr td{color:#e2e8f0!important;"
+        "border-bottom:1px solid #1e293b!important}"
+        ".swagger-ui .parameter__name{color:#e2e8f0!important}"
+        ".swagger-ui .parameter__type{color:#64748b!important}"
+        ".swagger-ui .parameter__name.required::after{color:#ef4444!important}"
+        ".swagger-ui input[type=text],.swagger-ui textarea{background:#1e293b!important;"
+        "color:#e2e8f0!important;border:1px solid #334155!important;border-radius:4px!important}"
+        ".swagger-ui .btn{border-radius:6px!important}"
+        ".swagger-ui .btn.execute{background:#3b82f6!important;color:#fff!important;"
+        "border:none!important}"
+        ".swagger-ui .btn.execute:hover{background:#2563eb!important}"
+        ".swagger-ui .btn.cancel{color:#e2e8f0!important}"
+        ".swagger-ui .btn.authorize{color:#3b82f6!important;border-color:#3b82f6!important}"
+        ".swagger-ui .btn.authorize svg{fill:#3b82f6!important}"
+        ".swagger-ui .response-col_status{color:#e2e8f0!important}"
+        ".swagger-ui .response-col_description__inner p{color:#94a3b8!important}"
+        ".swagger-ui .responses-inner h4,.swagger-ui .responses-inner h5{color:#e2e8f0!important}"
+        ".swagger-ui .model-box{background:#1e293b!important}"
+        ".swagger-ui .model{color:#e2e8f0!important}"
+        ".swagger-ui .model-title{color:#e2e8f0!important}"
+        ".swagger-ui section.models{border:1px solid #1e293b!important}"
+        ".swagger-ui section.models h4{color:#e2e8f0!important}"
+        ".swagger-ui .model-toggle::after{background:none!important}"
+        ".swagger-ui .loading-container .loading::after{color:#3b82f6!important}"
+        ".swagger-ui .filter .operation-filter-input{background:#1e293b!important;"
+        "color:#e2e8f0!important;border:1px solid #334155!important;border-radius:6px!important}"
+        ".swagger-ui .dialog-ux .modal-ux{background:#111827!important;"
+        "border:1px solid #1e293b!important}"
+        ".swagger-ui .dialog-ux .modal-ux-header h3{color:#e2e8f0!important}"
+        ".swagger-ui .dialog-ux .modal-ux-content p{color:#94a3b8!important}"
+        ".swagger-ui .dialog-ux .modal-ux-content label{color:#e2e8f0!important}"
+        ".swagger-ui .markdown code,.swagger-ui .renderedMarkdown code{background:#1e293b!important;"
+        "color:#3b82f6!important;padding:2px 6px!important;border-radius:4px!important}"
+        ".swagger-ui .copy-to-clipboard{bottom:5px!important}"
+        ".swagger-ui .copy-to-clipboard button{background:#334155!important}"
+        "::-webkit-scrollbar{width:8px;height:8px}"
+        "::-webkit-scrollbar-track{background:#0a0e1a}"
+        "::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}"
+        "::-webkit-scrollbar-thumb:hover{background:#475569}"
+        "</style>"
+    )
+
+    @app.get("/docs", include_in_schema=False)
+    def custom_swagger_ui():
+        swagger_resp = get_swagger_ui_html(
+            openapi_url="/openapi.json",
+            title="GovernLayer API Docs",
+            swagger_favicon_url="/favicon.svg",
+            swagger_ui_parameters={
+                "deepLinking": True,
+                "persistAuthorization": True,
+                "displayRequestDuration": True,
+                "filter": True,
+                "syntaxHighlight.theme": "monokai",
+                "docExpansion": "none",
+                "defaultModelsExpandDepth": 0,
+                "tryItOutEnabled": True,
+            },
+            swagger_css_url="",
+        )
+        content = swagger_resp.body.decode()
+        content = content.replace("</head>", _SWAGGER_DARK_CSS + "</head>")
+        return HTMLResponse(content)
+
     # Mount React dashboard (built SPA)
     _dashboard_dist = None
     for _ddir in [
@@ -284,9 +427,20 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     def startup():
+        global _startup_complete
         create_tables()
         _ensure_schema_columns()
         _seed_demo_data()
+        _startup_complete = True
+
+    @app.on_event("shutdown")
+    def shutdown():
+        global _shutting_down
+        logger.info("GovernLayer shutting down — draining connections...")
+        _shutting_down = True
+        from src.models.database import engine
+        engine.dispose()
+        logger.info("Database connections closed. Shutdown complete.")
 
     def _ensure_schema_columns():
         """Legacy schema patches — these should be converted to proper Alembic migrations."""
@@ -319,6 +473,11 @@ def create_app() -> FastAPI:
     @app.get("/health")
     def health_check():
         """Lightweight health check for load balancers and monitoring."""
+        if _shutting_down:
+            return JSONResponse(
+                status_code=503,
+                content={"status": "shutting_down", "version": settings.policy_version},
+            )
         from src.models.database import SessionLocal
         try:
             db = SessionLocal()
@@ -332,6 +491,50 @@ def create_app() -> FastAPI:
             "version": settings.policy_version,
             "database": db_status,
         }
+
+    @app.get("/healthz/live")
+    def liveness():
+        """Liveness probe — returns 200 if the process is running."""
+        return {"status": "alive"}
+
+    @app.get("/healthz/ready")
+    def readiness():
+        """Readiness probe — checks if the app can serve traffic."""
+        from src.middleware.metrics import metrics as m
+
+        checks = {"startup_complete": _startup_complete}
+        ready = _startup_complete
+
+        # Check database connectivity with latency measurement
+        db_latency_ms = None
+        try:
+            db = SessionLocal()
+            t0 = time.monotonic()
+            db.execute(sa_text("SELECT 1"))
+            db_latency_ms = round((time.monotonic() - t0) * 1000, 2)
+            db.close()
+            checks["database"] = "ok"
+        except Exception:
+            checks["database"] = "unavailable"
+            ready = False
+
+        checks["db_latency_ms"] = db_latency_ms
+
+        # Memory usage (RSS) via resource.getrusage
+        rusage = resource.getrusage(resource.RUSAGE_SELF)
+        # ru_maxrss is in bytes on macOS, kilobytes on Linux
+        if sys.platform == "darwin":
+            memory_mb = round(rusage.ru_maxrss / (1024 * 1024), 2)
+        else:
+            memory_mb = round(rusage.ru_maxrss / 1024, 2)
+        checks["memory_mb"] = memory_mb
+
+        # Uptime from metrics collector
+        checks["uptime_seconds"] = round(time.time() - m.started_at, 1)
+
+        status_code = 200 if ready else 503
+        checks["status"] = "ready" if ready else "not_ready"
+        return JSONResponse(content=checks, status_code=status_code)
 
     def _check_admin_key(request: Request):
         """Verify X-Admin-Key header for protected internal endpoints.
@@ -387,16 +590,22 @@ def create_app() -> FastAPI:
     @app.get("/status")
     async def detailed_status():
         """Detailed status for uptime monitoring services (UptimeRobot, Betterstack, etc.)."""
+        from src.middleware.metrics import metrics as m
+
         checks = {"api": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
 
-        # Check database
+        # Check database with latency measurement
         try:
             db = SessionLocal()
+            t0 = time.monotonic()
             db.execute(sa_text("SELECT 1"))
+            db_latency_ms = round((time.monotonic() - t0) * 1000, 2)
             db.close()
             checks["database"] = "ok"
+            checks["db_latency_ms"] = db_latency_ms
         except Exception:
             checks["database"] = "degraded"
+            checks["db_latency_ms"] = None
 
         # Check Redis
         try:
@@ -406,6 +615,16 @@ def create_app() -> FastAPI:
             checks["redis"] = "ok"
         except Exception:
             checks["redis"] = "not_configured"
+
+        # Memory usage (RSS)
+        rusage = resource.getrusage(resource.RUSAGE_SELF)
+        if sys.platform == "darwin":
+            checks["memory_mb"] = round(rusage.ru_maxrss / (1024 * 1024), 2)
+        else:
+            checks["memory_mb"] = round(rusage.ru_maxrss / 1024, 2)
+
+        checks["uptime_seconds"] = round(time.time() - m.started_at, 1)
+        checks["python_version"] = sys.version
 
         overall = "operational" if checks.get("database") == "ok" else "degraded"
         checks["status"] = overall
@@ -811,7 +1030,7 @@ def create_app() -> FastAPI:
                 "Disallow: /redoc\n"
                 "Disallow: /health\n"
                 "Disallow: /automate/\n"
-                "Sitemap: https://www.governlayer.ai/sitemap.xml\n"
+                "Sitemap: https://governlayer.ai/sitemap.xml\n"
             ),
             media_type="text/plain",
         )
@@ -821,16 +1040,15 @@ def create_app() -> FastAPI:
         return Response(
             content=(
                 '<?xml version="1.0" encoding="UTF-8"?>\n'
-                '<urlset xmlns="http://www.sitemapschemas.org/sitemap/0.9">\n'
-                '  <url><loc>https://www.governlayer.ai/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/trust</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/demo</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/terms</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/privacy</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/dashboard</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/signup</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/changelog</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://www.governlayer.ai/blog</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+                '  <url><loc>https://governlayer.ai/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/trust</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/demo</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/terms</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/privacy</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/signup</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/documentation</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
+                '  <url><loc>https://governlayer.ai/competitive</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>\n'
                 '</urlset>\n'
             ),
             media_type="application/xml",
