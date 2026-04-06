@@ -8,6 +8,7 @@
 <meta property="og:title" content="GovernLayer Resources — AI Governance Insights">
 <meta property="og:description" content="Expert guidance on SOC 2, EU AI Act, NIST compliance for AI systems.">
 <meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0e1a">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -28,38 +29,38 @@
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:#0f172a;line-height:1.7;-webkit-font-smoothing:antialiased}
-a{color:#2563eb;text-decoration:none}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0e1a;color:#f1f5f9;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:#3b82f6;text-decoration:none}
 a:hover{text-decoration:underline}
-.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(10,14,26,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;padding:0 24px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em;color:#0f172a}
-.logo-mark{width:26px;height:26px;background:#2563eb;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em;color:#f1f5f9}
+.logo-mark{width:26px;height:26px;background:#3b82f6;border-radius:7px;display:flex;align-items:center;justify-content:center}
 .wrap{max-width:900px;margin:0 auto;padding:100px 24px 60px}
-h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
-.subtitle{font-size:1rem;color:#64748b;margin-bottom:40px}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;color:#f1f5f9}
+.subtitle{font-size:1rem;color:#94a3b8;margin-bottom:40px}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-bottom:64px}
-.card{border:1px solid #e8eaef;border-radius:12px;padding:24px;transition:box-shadow .2s,border-color .2s;cursor:pointer;text-decoration:none;color:inherit;display:block}
-.card:hover{border-color:#2563eb;box-shadow:0 4px 20px rgba(37,99,235,.1);text-decoration:none}
+.card{border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:24px;transition:box-shadow .2s,border-color .2s;cursor:pointer;text-decoration:none;color:inherit;display:block;background:#111827}
+.card:hover{border-color:#3b82f6;box-shadow:0 4px 20px rgba(59,130,246,.18);text-decoration:none}
 .card-tag{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em;display:inline-block;margin-bottom:12px}
-.tag-compliance{background:#eff6ff;color:#2563eb}
-.tag-technical{background:#ecfdf5;color:#059669}
-.tag-regulation{background:#f5f3ff;color:#7c3aed}
-.tag-strategy{background:#fffbeb;color:#d97706}
-.card h3{font-size:1rem;font-weight:700;margin-bottom:8px;line-height:1.4}
-.card p{font-size:.84rem;color:#64748b;margin-bottom:8px}
-.card .meta{font-size:.76rem;color:#94a3b8}
-article{margin-bottom:64px;padding-top:32px;border-top:1px solid #e8eaef}
+.tag-compliance{background:rgba(59,130,246,.12);color:#3b82f6}
+.tag-technical{background:rgba(16,185,129,.12);color:#10b981}
+.tag-regulation{background:rgba(139,92,246,.12);color:#8b5cf6}
+.tag-strategy{background:rgba(245,158,11,.12);color:#f59e0b}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:8px;line-height:1.4;color:#f1f5f9}
+.card p{font-size:.84rem;color:#94a3b8;margin-bottom:8px}
+.card .meta{font-size:.76rem;color:#64748b}
+article{margin-bottom:64px;padding-top:32px;border-top:1px solid rgba(255,255,255,.08)}
 article:first-of-type{border-top:none}
-article h2{font-size:1.4rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
-article .article-meta{font-size:.82rem;color:#94a3b8;margin-bottom:20px}
-article h3{font-size:1.05rem;font-weight:700;margin-top:28px;margin-bottom:10px}
-article p{font-size:.92rem;color:#475569;margin-bottom:14px}
+article h2{font-size:1.4rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em;color:#f1f5f9}
+article .article-meta{font-size:.82rem;color:#64748b;margin-bottom:20px}
+article h3{font-size:1.05rem;font-weight:700;margin-top:28px;margin-bottom:10px;color:#f1f5f9}
+article p{font-size:.92rem;color:#94a3b8;margin-bottom:14px}
 article ul,article ol{padding-left:20px;margin-bottom:14px}
-article li{font-size:.9rem;color:#475569;margin-bottom:6px}
-article strong{color:#0f172a}
-.back-top{display:inline-block;font-size:.84rem;color:#2563eb;margin-top:16px}
-.footer{border-top:1px solid rgba(0,0,0,.06);padding:24px 0;margin-top:48px;text-align:center;font-size:.78rem;color:#94a3b8}
+article li{font-size:.9rem;color:#94a3b8;margin-bottom:6px}
+article strong{color:#f1f5f9}
+.back-top{display:inline-block;font-size:.84rem;color:#3b82f6;margin-top:16px}
+.footer{border-top:1px solid rgba(255,255,255,.08);padding:24px 0;margin-top:48px;text-align:center;font-size:.78rem;color:#64748b}
 </style>
 </head>
 <body>
@@ -70,8 +71,8 @@ article strong{color:#0f172a}
       GovernLayer
     </a>
     <div style="display:flex;gap:16px">
-      <a href="/dashboard" style="font-size:.86rem;font-weight:500;color:#2563eb">Dashboard</a>
-      <a href="/" style="font-size:.86rem;font-weight:500;color:#475569">Home</a>
+      <a href="/dashboard" style="font-size:.86rem;font-weight:500;color:#3b82f6">Dashboard</a>
+      <a href="/" style="font-size:.86rem;font-weight:500;color:#94a3b8">Home</a>
     </div>
   </div>
 </nav>

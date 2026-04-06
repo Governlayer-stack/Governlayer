@@ -9,27 +9,27 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root {
-  --bg: #08080c;
-  --bg2: #0d0d13;
-  --bg3: #13131b;
-  --bg4: #1a1a24;
+  --bg: #0a0e1a;
+  --bg2: #111827;
+  --bg3: #1e293b;
+  --bg4: #1e1e28;
   --bg5: #22222e;
-  --border: rgba(108,92,231,0.12);
-  --border2: rgba(108,92,231,0.22);
-  --text: #eeeef0;
-  --text2: #9090a8;
-  --text3: #5a5a72;
+  --border: rgba(255,255,255,.08);
+  --border2: rgba(255,255,255,.15);
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #64748b;
   --accent: #6c5ce7;
   --accent-light: #a29bfe;
   --accent-glow: rgba(108,92,231,0.15);
-  --green: #00e676;
-  --green-dim: rgba(0,230,118,0.12);
-  --yellow: #ffab00;
-  --yellow-dim: rgba(255,171,0,0.12);
-  --red: #ff5252;
-  --red-dim: rgba(255,82,82,0.12);
-  --cyan: #18ffff;
-  --orange: #ff6e40;
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,.12);
+  --yellow: #f59e0b;
+  --yellow-dim: rgba(245,158,11,.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,.12);
+  --cyan: #06b6d4;
+  --orange: #f97316;
   --radius: 14px;
   --radius-sm: 8px;
   --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2);
@@ -100,7 +100,7 @@ code, .mono { font-family: 'JetBrains Mono', monospace }
 /* ── Top Bar ── */
 .topbar {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(8,8,12,0.85); backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(10,14,26,.92); backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--border);
   padding: 0 32px; height: 64px;
   display: flex; align-items: center; justify-content: space-between;
@@ -1110,7 +1110,7 @@ async function generateReport() {
     toast('Report generated: ' + (data.framework_name || framework), 'success');
     // Open a simple display
     const w = window.open('', '_blank', 'width=800,height=600');
-    w.document.write('<html><head><title>GovernLayer Report</title><style>body{background:#08080c;color:#eee;font-family:Inter,sans-serif;padding:40px;line-height:1.6}pre{background:#13131b;padding:20px;border-radius:12px;overflow:auto;font-size:13px;white-space:pre-wrap}</style></head><body>');
+    w.document.write('<html><head><title>GovernLayer Report</title><style>body{background:#0a0e1a;color:#f1f5f9;font-family:Inter,sans-serif;padding:40px;line-height:1.6}pre{background:#1e293b;padding:20px;border-radius:12px;overflow:auto;font-size:13px;white-space:pre-wrap}</style></head><body>');
     w.document.write('<h1 style="color:#a29bfe">' + (data.framework_name || framework) + ' Report</h1>');
     w.document.write('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
     w.document.write('</body></html>');

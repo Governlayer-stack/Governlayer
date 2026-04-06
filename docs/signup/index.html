@@ -5,18 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign Up — GovernLayer</title>
 <meta name="description" content="Create your GovernLayer account. AI governance, compliance, and security for every agent and model.">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#0a0e1a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f172a;--surface:#1e293b;--surface2:#273548;--border:#334155;
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.15);
   --text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;
-  --green:#10b981;--green-hover:#059669;--green-bg:rgba(16,185,129,.1);
-  --red:#ef4444;--red-bg:rgba(239,68,68,.08);
+  --green:#10b981;--green-hover:#059669;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
   --yellow:#f59e0b;--blue:#3b82f6;
+  --blue-bg:rgba(59,130,246,.12);--blue-dark:#60a5fa;
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
@@ -125,7 +128,7 @@ input{font-family:inherit}
 .feature-list li svg{flex-shrink:0;width:18px;height:18px;color:var(--green);margin-top:1px}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-.social-proof{border-top:1px solid var(--border);padding-top:24px;margin-top:8px}
+.social-proof{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;margin-top:8px}
 .social-proof h4{font-size:13px;font-weight:500;color:var(--dim);margin-bottom:16px;letter-spacing:0.04em;text-transform:uppercase}
 .badges{display:flex;flex-wrap:wrap;gap:10px}
 .badge{

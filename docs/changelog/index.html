@@ -5,39 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Changelog | GovernLayer</title>
 <meta name="description" content="What's new in GovernLayer — release notes, features, and improvements.">
+<meta name="theme-color" content="#0a0e1a">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:#0f172a;line-height:1.7;-webkit-font-smoothing:antialiased}
-a{color:#2563eb;text-decoration:none}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0e1a;color:#f1f5f9;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:#3b82f6;text-decoration:none}
 a:hover{text-decoration:underline}
-.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,0,0,.06)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(10,14,26,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:0 24px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em;color:#0f172a}
-.logo-mark{width:26px;height:26px;background:#2563eb;border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em;color:#f1f5f9}
+.logo-mark{width:26px;height:26px;background:#3b82f6;border-radius:7px;display:flex;align-items:center;justify-content:center}
 .wrap{max-width:800px;margin:0 auto;padding:100px 24px 60px}
-h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
-.subtitle{font-size:1rem;color:#64748b;margin-bottom:48px}
+h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;color:#f1f5f9}
+.subtitle{font-size:1rem;color:#94a3b8;margin-bottom:48px}
 .entry{position:relative;padding-left:32px;margin-bottom:48px}
-.entry::before{content:'';position:absolute;left:8px;top:10px;bottom:-48px;width:2px;background:#e8eaef}
+.entry::before{content:'';position:absolute;left:8px;top:10px;bottom:-48px;width:2px;background:rgba(255,255,255,.15)}
 .entry:last-child::before{display:none}
-.dot{position:absolute;left:3px;top:8px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #e8eaef}
-.dot.major{background:#2563eb;box-shadow:0 0 0 2px #2563eb}
-.dot.feature{background:#059669;box-shadow:0 0 0 2px #059669}
-.dot.launch{background:#7c3aed;box-shadow:0 0 0 2px #7c3aed}
+.dot{position:absolute;left:3px;top:8px;width:12px;height:12px;border-radius:50%;border:2px solid #0a0e1a;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
+.dot.major{background:#3b82f6;box-shadow:0 0 0 2px #3b82f6}
+.dot.feature{background:#10b981;box-shadow:0 0 0 2px #10b981}
+.dot.launch{background:#8b5cf6;box-shadow:0 0 0 2px #8b5cf6}
 .entry-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap}
-.version{font-size:1.1rem;font-weight:700}
-.date{font-size:.84rem;color:#94a3b8}
+.version{font-size:1.1rem;font-weight:700;color:#f1f5f9}
+.date{font-size:.84rem;color:#64748b}
 .tag{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em}
-.tag.major{background:#eff6ff;color:#2563eb}
-.tag.feature{background:#ecfdf5;color:#059669}
-.tag.launch{background:#f5f3ff;color:#7c3aed}
+.tag.major{background:rgba(59,130,246,.12);color:#3b82f6}
+.tag.feature{background:rgba(16,185,129,.12);color:#10b981}
+.tag.launch{background:rgba(139,92,246,.12);color:#8b5cf6}
 .entry ul{padding-left:18px;margin-top:8px}
-.entry li{font-size:.9rem;color:#475569;margin-bottom:6px}
-.footer{border-top:1px solid rgba(0,0,0,.06);padding:24px 0;margin-top:48px;text-align:center;font-size:.78rem;color:#94a3b8}
+.entry li{font-size:.9rem;color:#94a3b8;margin-bottom:6px}
+.footer{border-top:1px solid rgba(255,255,255,.08);padding:24px 0;margin-top:48px;text-align:center;font-size:.78rem;color:#64748b}
 </style>
 </head>
 <body>
@@ -48,8 +49,8 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:4px}
       GovernLayer
     </a>
     <div style="display:flex;gap:16px">
-      <a href="/dashboard" style="font-size:.86rem;font-weight:500;color:#2563eb">Dashboard</a>
-      <a href="/" style="font-size:.86rem;font-weight:500;color:#475569">Home</a>
+      <a href="/dashboard" style="font-size:.86rem;font-weight:500;color:#3b82f6">Dashboard</a>
+      <a href="/" style="font-size:.86rem;font-weight:500;color:#94a3b8">Home</a>
     </div>
   </div>
 </nav>
