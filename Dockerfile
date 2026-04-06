@@ -29,7 +29,9 @@ COPY src/ src/
 COPY alembic/ alembic/
 COPY alembic.ini .
 COPY docs/ docs/
-COPY dashboard/dist/ dashboard/dist/
+# Dashboard SPA — copy dist if present, create empty dir if not
+COPY dashboard/dis[t]/ dashboard/dist/
+RUN mkdir -p dashboard/dist
 
 # Own the app dir
 RUN chown -R governlayer:governlayer /app
