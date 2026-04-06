@@ -3,10 +3,11 @@ import logging
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.api.deps import get_llm
+from src.api.pagination import PaginationParams, paginated_response
 from src.config import get_settings
 from src.llm.consensus import ConsensusStrategy, chain_of_verification
 from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
@@ -86,21 +87,17 @@ def audit_system(request: AuditRequest, email: str = Depends(verify_token), db: 
 def audit_history(
     email: str = Depends(verify_token),
     db: Session = Depends(get_db),
-    page: int = Query(1, ge=1),
-    per_page: int = Query(50, ge=1, le=200),
+    pagination: PaginationParams = Depends(),
 ):
     query = db.query(AuditRecord).filter(AuditRecord.audited_by == email)
     total = query.count()
-    records = query.order_by(AuditRecord.created_at.desc()).offset((page - 1) * per_page).limit(per_page).all()
-    return {
-        "total": total,
-        "page": page,
-        "per_page": per_page,
-        "pages": (total + per_page - 1) // per_page if total else 0,
-        "audits": [{
+    records = query.order_by(AuditRecord.created_at.desc()).offset(pagination.offset).limit(pagination.per_page).all()
+    return paginated_response(
+        [{
             "decision_id": r.decision_id, "system_name": r.system_name,
             "governance_action": r.governance_action, "risk_score": r.risk_score,
             "risk_level": r.risk_level, "current_hash": r.current_hash,
             "created_at": r.created_at.isoformat(),
         } for r in records],
-    }
+        total, pagination.page, pagination.per_page,
+    )

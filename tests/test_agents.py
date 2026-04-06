@@ -62,12 +62,12 @@ def test_list_agents(client, auth_headers):
     r = client.get("/v1/agents")
     assert r.status_code == 200
     data = r.json()
-    assert "total" in data
-    assert "agents" in data
-    assert data["total"] >= 2
-    assert "page" in data
-    assert "limit" in data
-    assert "pages" in data
+    assert "items" in data
+    assert "pagination" in data
+    assert data["pagination"]["total"] >= 2
+    assert "page" in data["pagination"]
+    assert "per_page" in data["pagination"]
+    assert "pages" in data["pagination"]
     assert "approved" in data
     assert "shadow_detected" in data
 
@@ -78,12 +78,12 @@ def test_list_agents_pagination(client, auth_headers):
             "name": _unique_name(),
         }, headers=auth_headers)
 
-    r = client.get("/v1/agents?page=1&limit=2")
+    r = client.get("/v1/agents?page=1&per_page=2")
     assert r.status_code == 200
     data = r.json()
-    assert data["page"] == 1
-    assert data["limit"] == 2
-    assert len(data["agents"]) <= 2
+    assert data["pagination"]["page"] == 1
+    assert data["pagination"]["per_page"] == 2
+    assert len(data["items"]) <= 2
 
 
 def test_list_agents_filter_by_team(client, auth_headers):
@@ -96,8 +96,8 @@ def test_list_agents_filter_by_team(client, auth_headers):
     r = client.get(f"/v1/agents?team={team_name}")
     assert r.status_code == 200
     data = r.json()
-    assert data["total"] >= 1
-    for a in data["agents"]:
+    assert data["pagination"]["total"] >= 1
+    for a in data["items"]:
         assert a["team"] == team_name
 
 

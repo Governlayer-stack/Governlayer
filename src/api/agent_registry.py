@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from src.api.pagination import PaginationParams, paginated_response
 from src.models.database import get_db, log_mutation
 from src.models.agents import AIAgent, AgentCard, ShadowAIDetection, AgentStatus, AgentType, DiscoverySource
 from src.security.api_key_auth import AuthContext, require_scope, verify_api_key_or_jwt
@@ -101,7 +102,7 @@ def register_agent(data: AgentCreate,
 @router.get("")
 def list_agents(status: Optional[str] = None, agent_type: Optional[str] = None,
                 is_shadow: Optional[bool] = None, team: Optional[str] = None,
-                page: int = 1, limit: int = 50, db: Session = Depends(get_db)):
+                pagination: PaginationParams = Depends(), db: Session = Depends(get_db)):
     """List all registered agents with optional filters and pagination."""
     query = db.query(AIAgent)
     if status:
@@ -115,16 +116,14 @@ def list_agents(status: Optional[str] = None, agent_type: Optional[str] = None,
     total = query.count()
     approved = query.filter(AIAgent.status == AgentStatus.APPROVED).count() if total > 0 else 0
     shadow = query.filter(AIAgent.is_shadow == True).count() if total > 0 else 0
-    agents = query.order_by(AIAgent.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
-    return {
-        "total": total,
-        "page": page,
-        "limit": limit,
-        "pages": (total + limit - 1) // limit,
-        "approved": approved,
-        "shadow_detected": shadow,
-        "agents": [_agent_dict(a) for a in agents],
-    }
+    agents = query.order_by(AIAgent.created_at.desc()).offset(pagination.offset).limit(pagination.per_page).all()
+    response = paginated_response(
+        [_agent_dict(a) for a in agents],
+        total, pagination.page, pagination.per_page,
+    )
+    response["approved"] = approved
+    response["shadow_detected"] = shadow
+    return response
 
 
 @router.get("/{agent_id}")
@@ -290,23 +289,21 @@ def scan_for_shadow_ai(data: ShadowScanRequest,
 
 
 @router.get("/discovery/detections")
-def list_shadow_detections(status: Optional[str] = None, page: int = 1, limit: int = 50,
+def list_shadow_detections(status: Optional[str] = None,
+                           pagination: PaginationParams = Depends(),
                            db: Session = Depends(get_db)):
     """List all shadow AI detections."""
     query = db.query(ShadowAIDetection)
     if status:
         query = query.filter(ShadowAIDetection.status == status)
     total = query.count()
-    dets = query.order_by(ShadowAIDetection.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
-    return {
-        "total": total,
-        "page": page,
-        "limit": limit,
-        "pages": (total + limit - 1) // limit,
-        "detections": [
+    dets = query.order_by(ShadowAIDetection.created_at.desc()).offset(pagination.offset).limit(pagination.per_page).all()
+    return paginated_response(
+        [
             {"id": d.id, "detection_type": d.detection_type, "description": d.description,
              "severity": d.severity, "status": d.status, "detected_service": d.detected_service,
              "created_at": d.created_at.isoformat() if d.created_at else None}
             for d in dets
         ],
-    }
+        total, pagination.page, pagination.per_page,
+    )

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from src.api.pagination import PaginationParams, paginated_response
 from src.models.database import get_db, log_mutation
 from src.models.registry import Incident, IncidentSeverity, IncidentStatus
 from src.security.api_key_auth import AuthContext, require_scope, verify_api_key_or_jwt
@@ -77,7 +78,8 @@ def create_incident(data: IncidentCreate,
 
 @router.get("")
 def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
-                   page: int = 1, limit: int = 50, current_user: str = Depends(verify_token),
+                   pagination: PaginationParams = Depends(),
+                   current_user: str = Depends(verify_token),
                    db: Session = Depends(get_db)):
     """List all incidents with optional filters and pagination."""
     query = db.query(Incident)
@@ -86,13 +88,9 @@ def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
     if severity:
         query = query.filter(Incident.severity == severity)
     total = query.count()
-    incidents = query.order_by(Incident.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
-    return {
-        "total": total,
-        "page": page,
-        "limit": limit,
-        "pages": (total + limit - 1) // limit,
-        "incidents": [
+    incidents = query.order_by(Incident.created_at.desc()).offset(pagination.offset).limit(pagination.per_page).all()
+    return paginated_response(
+        [
             {
                 "id": i.id,
                 "title": i.title,
@@ -106,7 +104,8 @@ def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
             }
             for i in incidents
         ],
-    }
+        total, pagination.page, pagination.per_page,
+    )
 
 
 @router.get("/{incident_id}")

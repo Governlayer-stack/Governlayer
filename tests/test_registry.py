@@ -60,12 +60,12 @@ def test_list_models(client, auth_headers):
     r = client.get("/v1/models")
     assert r.status_code == 200
     data = r.json()
-    assert "total" in data
-    assert "models" in data
-    assert data["total"] >= 2
-    assert "page" in data
-    assert "limit" in data
-    assert "pages" in data
+    assert "items" in data
+    assert "pagination" in data
+    assert data["pagination"]["total"] >= 2
+    assert "page" in data["pagination"]
+    assert "per_page" in data["pagination"]
+    assert "pages" in data["pagination"]
 
 
 def test_list_models_pagination(client, auth_headers):
@@ -76,19 +76,19 @@ def test_list_models_pagination(client, auth_headers):
             "version": "1.0.0",
         }, headers=auth_headers)
 
-    r = client.get("/v1/models?page=1&limit=2")
+    r = client.get("/v1/models?page=1&per_page=2")
     assert r.status_code == 200
     data = r.json()
-    assert data["page"] == 1
-    assert data["limit"] == 2
-    assert len(data["models"]) <= 2
+    assert data["pagination"]["page"] == 1
+    assert data["pagination"]["per_page"] == 2
+    assert len(data["items"]) <= 2
 
 
 def test_list_models_filter_governance_status(client, auth_headers):
     r = client.get("/v1/models?governance_status=pending")
     assert r.status_code == 200
     data = r.json()
-    for m in data["models"]:
+    for m in data["items"]:
         assert m["governance_status"] == "pending"
 
 

@@ -52,12 +52,12 @@ def test_list_incidents(client, auth_headers):
     r = client.get("/v1/incidents", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
-    assert "total" in data
-    assert "incidents" in data
-    assert data["total"] >= 2
-    assert "page" in data
-    assert "limit" in data
-    assert "pages" in data
+    assert "items" in data
+    assert "pagination" in data
+    assert data["pagination"]["total"] >= 2
+    assert "page" in data["pagination"]
+    assert "per_page" in data["pagination"]
+    assert "pages" in data["pagination"]
 
 
 def test_list_incidents_pagination(client, auth_headers):
@@ -66,12 +66,12 @@ def test_list_incidents_pagination(client, auth_headers):
             "title": _unique_title(),
         }, headers=auth_headers)
 
-    r = client.get("/v1/incidents?page=1&limit=2", headers=auth_headers)
+    r = client.get("/v1/incidents?page=1&per_page=2", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
-    assert data["page"] == 1
-    assert data["limit"] == 2
-    assert len(data["incidents"]) <= 2
+    assert data["pagination"]["page"] == 1
+    assert data["pagination"]["per_page"] == 2
+    assert len(data["items"]) <= 2
 
 
 def test_list_incidents_filter_severity(client, auth_headers):
@@ -83,8 +83,8 @@ def test_list_incidents_filter_severity(client, auth_headers):
     r = client.get("/v1/incidents?severity=critical", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
-    assert data["total"] >= 1
-    for i in data["incidents"]:
+    assert data["pagination"]["total"] >= 1
+    for i in data["items"]:
         assert i["severity"] == "critical"
 
 

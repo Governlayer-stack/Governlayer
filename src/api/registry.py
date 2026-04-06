@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from src.api.pagination import PaginationParams, paginated_response
 from src.models.database import get_db, log_mutation
 from src.models.registry import RegisteredModel, ModelCard, ModelLifecycle
 from src.security.api_key_auth import AuthContext, require_scope, verify_api_key_or_jwt
@@ -71,7 +72,7 @@ def register_model(data: ModelCreate, auth: AuthContext = Depends(require_scope(
 
 @router.get("")
 def list_models(lifecycle: Optional[str] = None, governance_status: Optional[str] = None,
-                page: int = 1, limit: int = 50, db: Session = Depends(get_db)):
+                pagination: PaginationParams = Depends(), db: Session = Depends(get_db)):
     """List all registered models with optional filters and pagination."""
     query = db.query(RegisteredModel)
     if lifecycle:
@@ -79,13 +80,9 @@ def list_models(lifecycle: Optional[str] = None, governance_status: Optional[str
     if governance_status:
         query = query.filter(RegisteredModel.governance_status == governance_status)
     total = query.count()
-    models = query.order_by(RegisteredModel.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
-    return {
-        "total": total,
-        "page": page,
-        "limit": limit,
-        "pages": (total + limit - 1) // limit,
-        "models": [
+    models = query.order_by(RegisteredModel.created_at.desc()).offset(pagination.offset).limit(pagination.per_page).all()
+    return paginated_response(
+        [
             {
                 "id": m.id,
                 "name": m.name,
@@ -101,7 +98,8 @@ def list_models(lifecycle: Optional[str] = None, governance_status: Optional[str
             }
             for m in models
         ],
-    }
+        total, pagination.page, pagination.per_page,
+    )
 
 
 @router.get("/{model_id}")
