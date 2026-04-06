@@ -402,6 +402,185 @@ input, select { font-family: inherit; }
 /* Transitions */
 .tab-content { animation: fadeIn .2s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== Toast Notifications ========== */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  animation: toastIn .3s ease forwards;
+  max-width: 400px;
+}
+.toast-info { background: var(--blue); }
+.toast-error { background: var(--red); }
+.toast-success { background: var(--green); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== Models Tab ========== */
+.models-table { width: 100%; border-collapse: collapse; }
+.models-table th {
+  text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--muted); border-bottom: 1px solid var(--border);
+}
+.models-table td { padding: 8px 10px; font-size: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.models-table tr:hover td { background: var(--elevated); }
+.models-table tr.expandable { cursor: pointer; }
+.model-detail-row { display: none; }
+.model-detail-row.open { display: table-row; }
+.model-detail-row td { background: var(--elevated); padding: 14px; }
+.risk-badge, .lifecycle-badge, .gov-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+}
+.risk-high { background: var(--red-bg); color: var(--red); }
+.risk-medium { background: var(--amber-bg); color: var(--amber); }
+.risk-low { background: var(--green-bg); color: var(--green); }
+.lifecycle-development { background: var(--blue-bg); color: var(--blue); }
+.lifecycle-staging { background: var(--amber-bg); color: var(--amber); }
+.lifecycle-production { background: var(--green-bg); color: var(--green); }
+.lifecycle-retired { background: rgba(100,116,139,.15); color: var(--dim); }
+.gov-pending { background: var(--amber-bg); color: var(--amber); }
+.gov-approved { background: var(--green-bg); color: var(--green); }
+.gov-rejected { background: var(--red-bg); color: var(--red); }
+
+/* ========== Incidents Tab ========== */
+.kanban-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.kanban-column {
+  background: var(--elevated); border-radius: 10px; padding: 12px;
+  min-height: 200px; border: 1px solid var(--border);
+}
+.kanban-column-header {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
+}
+.kanban-column-header .count {
+  background: var(--border); padding: 1px 7px; border-radius: 10px; font-size: 10px;
+}
+.incident-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s;
+}
+.incident-card:hover { border-color: var(--dim); }
+.incident-card .ic-title { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.incident-card .ic-meta { font-size: 10px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.incident-detail-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; margin-top: 16px; display: none;
+}
+.incident-detail-panel.open { display: block; }
+.incident-timeline-item {
+  padding: 8px 0 8px 20px; border-left: 2px solid var(--border); position: relative;
+  font-size: 12px; margin-left: 8px;
+}
+.incident-timeline-item::before {
+  content: ''; position: absolute; left: -5px; top: 12px;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--blue); border: 2px solid var(--surface);
+}
+@media (max-width: 768px) { .kanban-board { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .kanban-board { grid-template-columns: 1fr; } }
+
+/* ========== Scanner Tab ========== */
+.scanner-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.scanner-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;
+}
+.scanner-card h4 { font-size: 14px; margin-bottom: 4px; }
+.scanner-card .scanner-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.scanner-field { margin-bottom: 12px; }
+.scanner-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .3px; }
+.scanner-field input[type="text"],
+.scanner-field textarea {
+  width: 100%; padding: 8px 12px; background: var(--elevated); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-size: 13px; font-family: inherit;
+}
+.scanner-field textarea { resize: vertical; min-height: 80px; }
+.scanner-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.scanner-check {
+  display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 8px;
+  background: var(--elevated); border-radius: 6px; cursor: pointer;
+}
+.scanner-check input { accent-color: var(--blue); }
+.scan-result-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; display: none;
+}
+.scan-result-panel.visible { display: block; }
+.result-gauge-wrap { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+.result-recommendations { list-style: none; padding: 0; }
+.result-recommendations li {
+  padding: 8px 12px; background: var(--elevated); border-radius: 6px;
+  margin-bottom: 6px; font-size: 12px; display: flex; align-items: flex-start; gap: 8px;
+}
+.result-recommendations li::before { content: '\2022'; color: var(--blue); font-size: 16px; flex-shrink: 0; line-height: 1; }
+.recent-scans-toggle {
+  background: none; color: var(--muted); font-size: 12px; font-weight: 600;
+  padding: 8px 0; display: flex; align-items: center; gap: 6px; cursor: pointer;
+}
+.recent-scan-item {
+  background: var(--elevated); border-radius: 8px; padding: 10px 14px;
+  margin-bottom: 6px; font-size: 12px; cursor: pointer; border: 1px solid var(--border);
+}
+.recent-scan-item:hover { border-color: var(--dim); }
+@media (max-width: 768px) { .scanner-modes { grid-template-columns: 1fr; } }
+
+/* ========== Audit Ledger Tab (Enhanced) ========== */
+.ledger-timeline { position: relative; padding-left: 30px; }
+.ledger-timeline-entry {
+  position: relative; margin-bottom: 16px; padding: 14px 16px;
+  background: var(--elevated); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 12px;
+}
+.ledger-timeline-entry::before {
+  content: ''; position: absolute; left: -22px; top: 18px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--blue);
+  border: 2px solid var(--surface);
+}
+.ledger-timeline-entry::after {
+  content: ''; position: absolute; left: -17px; top: 30px;
+  width: 2px; height: calc(100% + 4px); background: var(--border);
+}
+.ledger-timeline-entry:last-child::after { display: none; }
+.ledger-chain-icon {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; color: var(--green); margin-left: 8px;
+}
+.ledger-hash-display { font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; color: var(--blue); word-break: break-all; }
+.ledger-filters { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.ledger-filters input[type="date"],
+.ledger-filters input[type="text"],
+.ledger-filters select {
+  padding: 6px 10px; background: var(--elevated); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-size: 12px;
+}
+.chain-verify-result {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;
+}
+.chain-verify-ok { color: var(--green); }
+.chain-verify-fail { color: var(--red); }
+
+/* ========== Modal Form ========== */
+.modal-form .form-group { margin-bottom: 14px; }
+.modal-form .form-group label {
+  display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: .3px;
+}
+.modal-form .form-group input,
+.modal-form .form-group select,
+.modal-form .form-group textarea {
+  width: 100%; padding: 8px 12px; background: var(--elevated); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--text); font-size: 13px; font-family: inherit;
+}
+.modal-form .form-group textarea { resize: vertical; min-height: 60px; }
+.modal-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ========== Loading Spinner ========== */
+.loading-overlay {
+  display: flex; align-items: center; justify-content: center; padding: 40px;
+  color: var(--muted); font-size: 13px; gap: 10px;
+}
+.loading-spinner {
+  width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
 </style>
 </head>
 <body>
@@ -458,6 +637,22 @@ input, select { font-family: inherit; }
     <div class="nav-item" data-tab="settings" onclick="switchTab('settings', this)">
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
       Settings
+    </div>
+    <div class="nav-item" data-tab="models" onclick="switchTab('models', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>
+      Models
+    </div>
+    <div class="nav-item" data-tab="incidents" onclick="switchTab('incidents', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"/></svg>
+      Incidents
+    </div>
+    <div class="nav-item" data-tab="scanner" onclick="switchTab('scanner', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6m-3-3h6"/></svg>
+      Scanner
+    </div>
+    <div class="nav-item" data-tab="audit-ledger" onclick="switchTab('audit-ledger', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41"/></svg>
+      Audit Ledger
     </div>
   </nav>
   <div class="sidebar-bottom" id="sidebarBottom"></div>
@@ -752,6 +947,260 @@ input, select { font-family: inherit; }
       </div>
     </div>
 
+    <!-- ==================== MODELS TAB ==================== -->
+    <div class="tab-content" id="tab-models">
+      <div class="card">
+        <div class="card-header">
+          <h3>Model Registry</h3>
+          <button class="btn btn-primary btn-sm" onclick="openRegisterModelModal()">+ Register Model</button>
+        </div>
+        <div id="modelsLoading" class="loading-overlay" style="display:none;"><div class="loading-spinner"></div>Loading models...</div>
+        <div style="overflow-x:auto;">
+          <table class="models-table" id="modelsTable">
+            <thead><tr><th>Name</th><th>Version</th><th>Provider</th><th>Risk Tier</th><th>Lifecycle</th><th>Governance</th><th>Created</th></tr></thead>
+            <tbody id="modelsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== INCIDENTS TAB ==================== -->
+    <div class="tab-content" id="tab-incidents">
+      <div class="card">
+        <div class="card-header">
+          <h3>Incident Management</h3>
+          <button class="btn btn-primary btn-sm" onclick="openReportIncidentModal()">+ Report Incident</button>
+        </div>
+        <div id="incidentsLoading" class="loading-overlay" style="display:none;"><div class="loading-spinner"></div>Loading incidents...</div>
+        <div class="kanban-board" id="incidentBoard">
+          <div class="kanban-column" id="kanban-open">
+            <div class="kanban-column-header">Open <span class="count" id="kanban-count-open">0</span></div>
+            <div id="kanban-cards-open"></div>
+          </div>
+          <div class="kanban-column" id="kanban-investigating">
+            <div class="kanban-column-header">Investigating <span class="count" id="kanban-count-investigating">0</span></div>
+            <div id="kanban-cards-investigating"></div>
+          </div>
+          <div class="kanban-column" id="kanban-mitigated">
+            <div class="kanban-column-header">Mitigated <span class="count" id="kanban-count-mitigated">0</span></div>
+            <div id="kanban-cards-mitigated"></div>
+          </div>
+          <div class="kanban-column" id="kanban-resolved">
+            <div class="kanban-column-header">Resolved <span class="count" id="kanban-count-resolved">0</span></div>
+            <div id="kanban-cards-resolved"></div>
+          </div>
+        </div>
+      </div>
+      <div class="incident-detail-panel" id="incidentDetailPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 id="incidentDetailTitle">Incident Details</h3>
+          <button class="btn btn-ghost btn-sm" onclick="closeIncidentDetail()">Close</button>
+        </div>
+        <div id="incidentDetailContent"></div>
+      </div>
+    </div>
+
+    <!-- ==================== SCANNER TAB ==================== -->
+    <div class="tab-content" id="tab-scanner">
+      <div class="scanner-modes">
+        <div class="scanner-card">
+          <h4>Quick Scan</h4>
+          <div class="scanner-desc">Deterministic risk scoring. No LLM required. Instant results.</div>
+          <div class="scanner-field">
+            <label>System Name</label>
+            <input type="text" id="quickScanName" placeholder="e.g. my-ai-system">
+          </div>
+          <div class="scanner-field">
+            <label>Risk Factors</label>
+            <div class="scanner-checks">
+              <label class="scanner-check"><input type="checkbox" id="qs_pii"> Handles personal data</label>
+              <label class="scanner-check"><input type="checkbox" id="qs_autonomous"> Autonomous decisions</label>
+              <label class="scanner-check"><input type="checkbox" id="qs_critical"> Critical infrastructure</label>
+              <label class="scanner-check"><input type="checkbox" id="qs_oversight"> Has human oversight</label>
+              <label class="scanner-check"><input type="checkbox" id="qs_explainable"> Is explainable</label>
+              <label class="scanner-check"><input type="checkbox" id="qs_bias"> Has bias testing</label>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="quickScanBtn" onclick="runQuickScan()" style="width:100%;">Run Quick Scan</button>
+        </div>
+        <div class="scanner-card">
+          <h4>Full Governance</h4>
+          <div class="scanner-desc">LLM-powered compliance analysis with drift detection and recommendations.</div>
+          <div class="scanner-field">
+            <label>System Name</label>
+            <input type="text" id="fullGovName" placeholder="e.g. my-ai-system">
+          </div>
+          <div class="scanner-field">
+            <label>Reasoning Trace</label>
+            <textarea id="fullGovTrace" placeholder="Paste the AI system's reasoning trace or policy text here..."></textarea>
+          </div>
+          <div class="scanner-field">
+            <label>Use Case</label>
+            <input type="text" id="fullGovUseCase" placeholder="e.g. customer support chatbot">
+          </div>
+          <div class="scanner-field">
+            <label>Risk Factors</label>
+            <div class="scanner-checks">
+              <label class="scanner-check"><input type="checkbox" id="fg_pii"> Handles personal data</label>
+              <label class="scanner-check"><input type="checkbox" id="fg_autonomous"> Autonomous decisions</label>
+              <label class="scanner-check"><input type="checkbox" id="fg_critical"> Critical infrastructure</label>
+              <label class="scanner-check"><input type="checkbox" id="fg_oversight"> Has human oversight</label>
+              <label class="scanner-check"><input type="checkbox" id="fg_explainable"> Is explainable</label>
+              <label class="scanner-check"><input type="checkbox" id="fg_bias"> Has bias testing</label>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="fullGovBtn" onclick="runFullGovernance()" style="width:100%;">Run Governance</button>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="scan-result-panel" id="scanResultPanel">
+        <div class="card-header"><h3>Scan Results</h3></div>
+        <div id="scanResultContent"></div>
+      </div>
+
+      <!-- Recent Scans -->
+      <div class="card" style="margin-top:16px;">
+        <button class="recent-scans-toggle" onclick="toggleRecentScans()">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="recentScansChevron" style="transition:transform .2s;"><path d="M6 9l6 6 6-6"/></svg>
+          Recent Scans
+        </button>
+        <div id="recentScansList" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- ==================== AUDIT LEDGER TAB (Enhanced) ==================== -->
+    <div class="tab-content" id="tab-audit-ledger">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Audit Ledger <span id="auditLedgerChainStatus"></span></h3>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-primary btn-sm" onclick="verifyAuditLedgerChain()">Verify Chain</button>
+            <div style="position:relative;display:inline-block;">
+              <button class="btn btn-secondary btn-sm" onclick="toggleExportDropdown()">Export</button>
+              <div id="exportDropdown" style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;z-index:10;">
+                <button class="btn btn-ghost btn-sm" style="width:100%;text-align:left;border-radius:0;" onclick="exportAuditLedger('json')">JSON</button>
+                <button class="btn btn-ghost btn-sm" style="width:100%;text-align:left;border-radius:0;" onclick="exportAuditLedger('csv')">CSV</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ledger-filters">
+          <input type="date" id="ledgerDateFrom" placeholder="From" onchange="filterAuditLedger()">
+          <span style="color:var(--muted);font-size:12px;">to</span>
+          <input type="date" id="ledgerDateTo" placeholder="To" onchange="filterAuditLedger()">
+          <input type="text" id="ledgerSearch" placeholder="Search by system name..." oninput="filterAuditLedger()" style="min-width:200px;">
+        </div>
+        <div id="auditLedgerLoading" class="loading-overlay" style="display:none;"><div class="loading-spinner"></div>Loading ledger...</div>
+        <div class="ledger-timeline" id="auditLedgerTimeline"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Register Model Modal -->
+<div class="modal-overlay" id="registerModelModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3>Register Model</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeRegisterModelModal()">Close</button>
+    </div>
+    <div class="modal-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Model Name</label>
+          <input type="text" id="modelName" placeholder="e.g. fraud-detector-v2">
+        </div>
+        <div class="form-group">
+          <label>Version</label>
+          <input type="text" id="modelVersion" placeholder="e.g. 1.0.0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Provider</label>
+          <input type="text" id="modelProvider" placeholder="e.g. OpenAI, Internal">
+        </div>
+        <div class="form-group">
+          <label>Model Type</label>
+          <input type="text" id="modelType" placeholder="e.g. classification, generation">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Risk Tier</label>
+          <select id="modelRiskTier">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Owner</label>
+          <input type="text" id="modelOwner" placeholder="e.g. ML Team">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="modelDescription" placeholder="Brief description of the model's purpose..."></textarea>
+      </div>
+    </div>
+    <div style="margin-top:16px;text-align:right;">
+      <button class="btn btn-secondary" onclick="closeRegisterModelModal()" style="margin-right:8px;">Cancel</button>
+      <button class="btn btn-primary" onclick="submitRegisterModel()">Register</button>
+    </div>
+  </div>
+</div>
+
+<!-- Report Incident Modal -->
+<div class="modal-overlay" id="reportIncidentModal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3>Report Incident</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeReportIncidentModal()">Close</button>
+    </div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="incidentTitle" placeholder="Brief description of the incident">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Severity</label>
+          <select id="incidentSeverity">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="incidentCategory">
+            <option value="security">Security</option>
+            <option value="compliance">Compliance</option>
+            <option value="drift">Drift</option>
+            <option value="performance">Performance</option>
+            <option value="data">Data</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="incidentDescription" placeholder="Full details of the incident..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Reporter</label>
+        <input type="text" id="incidentReporter" placeholder="Your name or team">
+      </div>
+    </div>
+    <div style="margin-top:16px;text-align:right;">
+      <button class="btn btn-secondary" onclick="closeReportIncidentModal()" style="margin-right:8px;">Cancel</button>
+      <button class="btn btn-primary" onclick="submitReportIncident()">Report</button>
+    </div>
   </div>
 </div>
 
@@ -1899,6 +2348,694 @@ async function runFullScan() {
 const style = document.createElement('style');
 style.textContent = '@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}.spin{animation:spin 1s linear infinite;}';
 document.head.appendChild(style);
+
+// ========== TOAST NOTIFICATIONS ==========
+function showToast(msg, type = 'info') {
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3700);
+}
+
+// ========== API HELPER ==========
+async function api(path, opts = {}) {
+  const token = localStorage.getItem('gl_token');
+  const baseUrl = localStorage.getItem('gl_api_url') || window.location.origin;
+  const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}), ...(opts.headers || {}) };
+  try {
+    const res = await fetch(baseUrl + path, { ...opts, headers });
+    if (res.status === 401 || res.status === 403) { showToast('Authentication required. Redirecting...', 'error'); setTimeout(() => { window.location.href = '/login'; }, 1500); return null; }
+    if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail || 'Request failed (' + res.status + ')'); }
+    return await res.json();
+  } catch (e) { showToast(e.message, 'error'); return null; }
+}
+
+// ========== MODELS TAB ==========
+let modelsData = [];
+let modelsExpandedId = null;
+
+const DEMO_MODELS = [
+  { id: 'mdl_001', name: 'fraud-detector', version: '2.1.0', provider: 'Internal', model_type: 'classification', risk_tier: 'high', lifecycle: 'production', governance_status: 'approved', owner: 'ML Team', description: 'Real-time fraud detection for payment transactions. Trained on 3 years of historical data.', tags: ['fintech', 'real-time', 'supervised'], created_at: '2026-01-15T10:00:00Z' },
+  { id: 'mdl_002', name: 'support-chatbot', version: '1.3.0', provider: 'OpenAI', model_type: 'generation', risk_tier: 'medium', lifecycle: 'production', governance_status: 'approved', owner: 'Product Team', description: 'Customer support chatbot powered by GPT-4o with RAG pipeline.', tags: ['nlp', 'customer-facing', 'rag'], created_at: '2026-02-20T14:00:00Z' },
+  { id: 'mdl_003', name: 'content-moderator', version: '0.9.0', provider: 'Internal', model_type: 'classification', risk_tier: 'high', lifecycle: 'staging', governance_status: 'pending', owner: 'Trust & Safety', description: 'Content moderation model for user-generated content. Detects harmful, illegal, and policy-violating content.', tags: ['safety', 'moderation', 'multi-label'], created_at: '2026-03-10T09:00:00Z' },
+  { id: 'mdl_004', name: 'demand-forecaster', version: '3.0.1', provider: 'Internal', model_type: 'regression', risk_tier: 'low', lifecycle: 'production', governance_status: 'approved', owner: 'Data Science', description: 'Time-series demand forecasting for inventory planning.', tags: ['forecasting', 'time-series'], created_at: '2025-11-05T12:00:00Z' },
+  { id: 'mdl_005', name: 'resume-screener', version: '0.2.0', provider: 'Anthropic', model_type: 'generation', risk_tier: 'high', lifecycle: 'development', governance_status: 'rejected', owner: 'HR Engineering', description: 'AI-assisted resume screening. Rejected due to bias concerns in v0.1.', tags: ['hr', 'bias-risk', 'llm'], created_at: '2026-03-28T16:00:00Z' },
+  { id: 'mdl_006', name: 'log-anomaly-detector', version: '1.0.0', provider: 'Internal', model_type: 'anomaly_detection', risk_tier: 'low', lifecycle: 'production', governance_status: 'approved', owner: 'SRE', description: 'Unsupervised anomaly detection on infrastructure logs.', tags: ['ops', 'unsupervised', 'monitoring'], created_at: '2026-02-01T08:00:00Z' },
+  { id: 'mdl_007', name: 'pricing-optimizer', version: '1.1.0', provider: 'Internal', model_type: 'regression', risk_tier: 'medium', lifecycle: 'retired', governance_status: 'approved', owner: 'Revenue Team', description: 'Dynamic pricing model. Retired in favor of v2 architecture.', tags: ['pricing', 'deprecated'], created_at: '2025-06-15T10:00:00Z' },
+];
+
+async function initModelsTab() {
+  const loading = document.getElementById('modelsLoading');
+  loading.style.display = 'flex';
+  const data = await api('/v1/models');
+  loading.style.display = 'none';
+  if (data && Array.isArray(data)) {
+    modelsData = data;
+  } else {
+    modelsData = DEMO_MODELS;
+  }
+  renderModelsTable();
+}
+
+function renderModelsTable() {
+  const tbody = document.getElementById('modelsTableBody');
+  tbody.innerHTML = modelsData.map((m, i) => {
+    const created = m.created_at ? new Date(m.created_at).toLocaleDateString() : '--';
+    const risk = m.risk_tier || 'medium';
+    const lifecycle = m.lifecycle || 'development';
+    const gov = m.governance_status || 'pending';
+    return `<tr class="expandable" onclick="toggleModelDetail(${i})">
+      <td style="font-weight:600;">${m.name}</td>
+      <td>${m.version || '--'}</td>
+      <td>${m.provider || '--'}</td>
+      <td><span class="risk-badge risk-${risk}">${risk}</span></td>
+      <td><span class="lifecycle-badge lifecycle-${lifecycle}">${lifecycle}</span></td>
+      <td><span class="gov-badge gov-${gov}">${gov}</span></td>
+      <td>${created}</td>
+    </tr>
+    <tr class="model-detail-row" id="model-detail-${i}">
+      <td colspan="7">
+        <div style="margin-bottom:8px;"><strong>Description:</strong> ${m.description || 'No description'}</div>
+        <div style="margin-bottom:8px;"><strong>Owner:</strong> ${m.owner || '--'} &nbsp; <strong>Type:</strong> ${m.model_type || '--'}</div>
+        ${m.tags ? '<div style="margin-bottom:8px;"><strong>Tags:</strong> ' + m.tags.map(t => '<span class="badge-pill">' + t + '</span>').join(' ') + '</div>' : ''}
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+          <label style="font-size:11px;color:var(--muted);">Update Lifecycle:</label>
+          <select onchange="updateModelLifecycle('${m.id}', this.value)" style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;">
+            <option value="development" ${lifecycle==='development'?'selected':''}>Development</option>
+            <option value="staging" ${lifecycle==='staging'?'selected':''}>Staging</option>
+            <option value="production" ${lifecycle==='production'?'selected':''}>Production</option>
+            <option value="retired" ${lifecycle==='retired'?'selected':''}>Retired</option>
+          </select>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleModelDetail(i) {
+  const el = document.getElementById('model-detail-' + i);
+  if (el) el.classList.toggle('open');
+}
+
+async function updateModelLifecycle(modelId, lifecycle) {
+  const result = await api('/v1/models/' + modelId + '/lifecycle', {
+    method: 'PUT',
+    body: JSON.stringify({ lifecycle: lifecycle })
+  });
+  if (result) {
+    showToast('Lifecycle updated to ' + lifecycle, 'success');
+    const m = modelsData.find(x => x.id === modelId);
+    if (m) m.lifecycle = lifecycle;
+    renderModelsTable();
+  } else {
+    // Demo fallback
+    const m = modelsData.find(x => x.id === modelId);
+    if (m) { m.lifecycle = lifecycle; renderModelsTable(); showToast('Lifecycle updated (demo)', 'info'); }
+  }
+}
+
+function openRegisterModelModal() { document.getElementById('registerModelModal').classList.add('open'); }
+function closeRegisterModelModal() { document.getElementById('registerModelModal').classList.remove('open'); }
+
+async function submitRegisterModel() {
+  const name = document.getElementById('modelName').value.trim();
+  const version = document.getElementById('modelVersion').value.trim();
+  const provider = document.getElementById('modelProvider').value.trim();
+  const model_type = document.getElementById('modelType').value.trim();
+  const risk_tier = document.getElementById('modelRiskTier').value;
+  const owner = document.getElementById('modelOwner').value.trim();
+  const description = document.getElementById('modelDescription').value.trim();
+
+  if (!name) { showToast('Model name is required', 'error'); return; }
+
+  const payload = { name, version, provider, model_type, risk_tier, description, owner };
+  const result = await api('/v1/models', { method: 'POST', body: JSON.stringify(payload) });
+
+  if (result) {
+    modelsData.unshift(result);
+    showToast('Model registered successfully', 'success');
+  } else {
+    // Demo fallback
+    const demoModel = { id: 'mdl_' + Date.now(), ...payload, lifecycle: 'development', governance_status: 'pending', tags: [], created_at: new Date().toISOString() };
+    modelsData.unshift(demoModel);
+    showToast('Model registered (demo)', 'info');
+  }
+  renderModelsTable();
+  closeRegisterModelModal();
+  // Clear form
+  ['modelName','modelVersion','modelProvider','modelType','modelOwner','modelDescription'].forEach(id => { document.getElementById(id).value = ''; });
+}
+
+// ========== INCIDENTS TAB ==========
+let incidentsData = [];
+let selectedIncidentId = null;
+
+const DEMO_INCIDENTS = [
+  { id: 'inc_001', title: 'Unauthorized data access attempt', severity: 'critical', category: 'security', status: 'open', reporter: 'Security Team', description: 'Multiple failed login attempts from suspicious IP range 203.0.113.x targeting admin endpoints.', assignee: '', resolution_notes: '', created_at: '2026-04-05T14:30:00Z', timeline: [{ ts: '2026-04-05T14:30:00Z', action: 'Incident reported by automated alert' }, { ts: '2026-04-05T14:35:00Z', action: 'IP range flagged for review' }] },
+  { id: 'inc_002', title: 'Model drift detected in fraud-detector', severity: 'high', category: 'drift', status: 'investigating', reporter: 'ML Monitoring', description: 'Behavioral drift score exceeded threshold (0.42 > 0.30) for fraud-detector model in production.', assignee: 'ML Team', resolution_notes: '', created_at: '2026-04-04T09:15:00Z', timeline: [{ ts: '2026-04-04T09:15:00Z', action: 'Drift alert triggered' }, { ts: '2026-04-04T10:00:00Z', action: 'Investigation started by ML Team' }, { ts: '2026-04-04T11:30:00Z', action: 'Root cause: training data distribution shift' }] },
+  { id: 'inc_003', title: 'GDPR consent form missing on signup', severity: 'high', category: 'compliance', status: 'mitigated', reporter: 'Legal Team', description: 'New signup flow deployed without GDPR consent checkbox for EU users.', assignee: 'Product Team', resolution_notes: 'Hotfix deployed to restore consent checkbox. Audit of affected signups in progress.', created_at: '2026-04-03T16:00:00Z', timeline: [{ ts: '2026-04-03T16:00:00Z', action: 'Issue reported by Legal' }, { ts: '2026-04-03T16:30:00Z', action: 'Confirmed in production' }, { ts: '2026-04-03T17:15:00Z', action: 'Hotfix deployed' }, { ts: '2026-04-03T18:00:00Z', action: 'Monitoring for recurrence' }] },
+  { id: 'inc_004', title: 'API rate limiting bypass', severity: 'medium', category: 'security', status: 'resolved', reporter: 'SRE', description: 'Rate limiting was not applied to webhook endpoints, allowing unlimited requests.', assignee: 'Platform Team', resolution_notes: 'Rate limiting middleware applied to all /webhook routes. Load tested and verified.', created_at: '2026-03-30T11:00:00Z', timeline: [{ ts: '2026-03-30T11:00:00Z', action: 'Discovered during code review' }, { ts: '2026-03-30T14:00:00Z', action: 'Fix implemented' }, { ts: '2026-03-31T09:00:00Z', action: 'Verified and closed' }] },
+  { id: 'inc_005', title: 'Bias detected in content moderator', severity: 'medium', category: 'drift', status: 'open', reporter: 'Trust & Safety', description: 'Content moderator v0.9 showing disproportionate false positive rate for certain language groups.', assignee: '', resolution_notes: '', created_at: '2026-04-05T10:00:00Z', timeline: [{ ts: '2026-04-05T10:00:00Z', action: 'Bias report filed after review of false positive distribution' }] },
+  { id: 'inc_006', title: 'Audit log gap detected', severity: 'low', category: 'compliance', status: 'resolved', reporter: 'Governance Bot', description: '15-minute gap in audit logs due to log rotation misconfiguration.', assignee: 'SRE', resolution_notes: 'Log rotation config fixed. Missing entries reconstructed from backup.', created_at: '2026-03-28T08:00:00Z', timeline: [{ ts: '2026-03-28T08:00:00Z', action: 'Gap detected by integrity check' }, { ts: '2026-03-28T09:30:00Z', action: 'Logs reconstructed' }, { ts: '2026-03-28T10:00:00Z', action: 'Config fix deployed' }] },
+];
+
+async function initIncidentsTab() {
+  const loading = document.getElementById('incidentsLoading');
+  loading.style.display = 'flex';
+  const data = await api('/v1/incidents');
+  loading.style.display = 'none';
+  if (data && Array.isArray(data)) {
+    incidentsData = data;
+  } else {
+    incidentsData = DEMO_INCIDENTS;
+  }
+  renderIncidentBoard();
+}
+
+function renderIncidentBoard() {
+  const statuses = ['open', 'investigating', 'mitigated', 'resolved'];
+  statuses.forEach(status => {
+    const cards = incidentsData.filter(inc => inc.status === status);
+    document.getElementById('kanban-count-' + status).textContent = cards.length;
+    document.getElementById('kanban-cards-' + status).innerHTML = cards.map(inc => {
+      const sevClass = 'sev-' + inc.severity;
+      const timeAgo = getTimeAgo(inc.created_at);
+      return `<div class="incident-card" onclick="openIncidentDetail('${inc.id}')">
+        <div class="ic-title">${inc.title}</div>
+        <div class="ic-meta">
+          <span class="sev-badge ${sevClass}">${inc.severity}</span>
+          <span>${inc.category}</span>
+          <span>${inc.reporter}</span>
+          <span>${timeAgo}</span>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+function getTimeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  return days + 'd ago';
+}
+
+function openIncidentDetail(id) {
+  selectedIncidentId = id;
+  const inc = incidentsData.find(x => x.id === id);
+  if (!inc) return;
+
+  document.getElementById('incidentDetailTitle').textContent = inc.title;
+  const panel = document.getElementById('incidentDetailPanel');
+  const content = document.getElementById('incidentDetailContent');
+
+  const sevClass = 'sev-' + inc.severity;
+  const timeline = (inc.timeline || []).map(t => {
+    return `<div class="incident-timeline-item">
+      <div style="font-size:11px;color:var(--muted);">${new Date(t.ts).toLocaleString()}</div>
+      <div>${t.action}</div>
+    </div>`;
+  }).join('');
+
+  content.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div><strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px;">Severity</strong><span class="sev-badge ${sevClass}">${inc.severity}</span></div>
+      <div><strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px;">Category</strong><span style="font-size:13px;">${inc.category}</span></div>
+      <div><strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px;">Reporter</strong><span style="font-size:13px;">${inc.reporter || '--'}</span></div>
+      <div><strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:2px;">Created</strong><span style="font-size:13px;">${inc.created_at ? new Date(inc.created_at).toLocaleString() : '--'}</span></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Description</strong>
+      <div style="font-size:13px;line-height:1.5;">${inc.description || 'No description'}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Status</label>
+        <select id="incidentStatusSelect" onchange="updateIncidentStatus()" style="padding:6px 10px;background:var(--elevated);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;width:100%;">
+          <option value="open" ${inc.status==='open'?'selected':''}>Open</option>
+          <option value="investigating" ${inc.status==='investigating'?'selected':''}>Investigating</option>
+          <option value="mitigated" ${inc.status==='mitigated'?'selected':''}>Mitigated</option>
+          <option value="resolved" ${inc.status==='resolved'?'selected':''}>Resolved</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Assignee</label>
+        <input type="text" id="incidentAssigneeInput" value="${inc.assignee || ''}" placeholder="Assign to..." style="padding:6px 10px;background:var(--elevated);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;width:100%;">
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Resolution Notes</label>
+      <textarea id="incidentResolutionNotes" style="width:100%;padding:8px 12px;background:var(--elevated);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;min-height:60px;font-family:inherit;resize:vertical;">${inc.resolution_notes || ''}</textarea>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="saveIncidentChanges()">Save Changes</button>
+    <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:14px;">
+      <h4 style="font-size:13px;margin-bottom:10px;">Timeline</h4>
+      ${timeline || '<div style="color:var(--muted);font-size:12px;">No timeline events</div>'}
+    </div>`;
+
+  panel.classList.add('open');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeIncidentDetail() {
+  document.getElementById('incidentDetailPanel').classList.remove('open');
+  selectedIncidentId = null;
+}
+
+async function updateIncidentStatus() {
+  if (!selectedIncidentId) return;
+  const status = document.getElementById('incidentStatusSelect').value;
+  const inc = incidentsData.find(x => x.id === selectedIncidentId);
+  if (!inc) return;
+
+  const result = await api('/v1/incidents/' + selectedIncidentId, {
+    method: 'PATCH',
+    body: JSON.stringify({ status })
+  });
+
+  inc.status = status;
+  if (!result) showToast('Status updated (demo)', 'info');
+  else showToast('Status updated', 'success');
+  renderIncidentBoard();
+}
+
+async function saveIncidentChanges() {
+  if (!selectedIncidentId) return;
+  const inc = incidentsData.find(x => x.id === selectedIncidentId);
+  if (!inc) return;
+
+  const status = document.getElementById('incidentStatusSelect').value;
+  const assignee = document.getElementById('incidentAssigneeInput').value.trim();
+  const resolution_notes = document.getElementById('incidentResolutionNotes').value.trim();
+
+  const result = await api('/v1/incidents/' + selectedIncidentId, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, assignee, resolution_notes })
+  });
+
+  inc.status = status;
+  inc.assignee = assignee;
+  inc.resolution_notes = resolution_notes;
+
+  if (result) showToast('Incident updated', 'success');
+  else showToast('Incident updated (demo)', 'info');
+  renderIncidentBoard();
+}
+
+function openReportIncidentModal() { document.getElementById('reportIncidentModal').classList.add('open'); }
+function closeReportIncidentModal() { document.getElementById('reportIncidentModal').classList.remove('open'); }
+
+async function submitReportIncident() {
+  const title = document.getElementById('incidentTitle').value.trim();
+  const severity = document.getElementById('incidentSeverity').value;
+  const category = document.getElementById('incidentCategory').value;
+  const description = document.getElementById('incidentDescription').value.trim();
+  const reporter = document.getElementById('incidentReporter').value.trim();
+
+  if (!title) { showToast('Title is required', 'error'); return; }
+
+  const payload = { title, severity, category, description, reporter, status: 'open' };
+  const result = await api('/v1/incidents', { method: 'POST', body: JSON.stringify(payload) });
+
+  if (result) {
+    incidentsData.unshift(result);
+    showToast('Incident reported', 'success');
+  } else {
+    const demoInc = { id: 'inc_' + Date.now(), ...payload, assignee: '', resolution_notes: '', created_at: new Date().toISOString(), timeline: [{ ts: new Date().toISOString(), action: 'Incident reported by ' + (reporter || 'user') }] };
+    incidentsData.unshift(demoInc);
+    showToast('Incident reported (demo)', 'info');
+  }
+  renderIncidentBoard();
+  closeReportIncidentModal();
+  ['incidentTitle','incidentDescription','incidentReporter'].forEach(id => { document.getElementById(id).value = ''; });
+}
+
+// ========== SCANNER TAB ==========
+let recentScans = JSON.parse(localStorage.getItem('gl_recent_scans') || '[]');
+
+function saveRecentScan(scan) {
+  recentScans.unshift(scan);
+  if (recentScans.length > 5) recentScans = recentScans.slice(0, 5);
+  localStorage.setItem('gl_recent_scans', JSON.stringify(recentScans));
+  renderRecentScans();
+}
+
+async function runQuickScan() {
+  const name = document.getElementById('quickScanName').value.trim();
+  if (!name) { showToast('System name is required', 'error'); return; }
+
+  const btn = document.getElementById('quickScanBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="loading-spinner" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Scanning...';
+
+  const payload = {
+    system_name: name,
+    handles_personal_data: document.getElementById('qs_pii').checked,
+    makes_autonomous_decisions: document.getElementById('qs_autonomous').checked,
+    used_in_critical_infrastructure: document.getElementById('qs_critical').checked,
+    has_human_oversight: document.getElementById('qs_oversight').checked,
+    is_explainable: document.getElementById('qs_explainable').checked,
+    has_bias_testing: document.getElementById('qs_bias').checked
+  };
+
+  const result = await api('/v1/scan', { method: 'POST', body: JSON.stringify(payload) });
+  btn.disabled = false;
+  btn.textContent = 'Run Quick Scan';
+
+  if (result) {
+    displayScanResult(result, 'quick');
+    saveRecentScan({ type: 'quick', name, result, ts: new Date().toISOString() });
+  } else {
+    // Demo fallback
+    const demoResult = generateDemoScanResult(payload, 'quick');
+    displayScanResult(demoResult, 'quick');
+    saveRecentScan({ type: 'quick', name, result: demoResult, ts: new Date().toISOString() });
+  }
+}
+
+async function runFullGovernance() {
+  const name = document.getElementById('fullGovName').value.trim();
+  const trace = document.getElementById('fullGovTrace').value.trim();
+  if (!name) { showToast('System name is required', 'error'); return; }
+  if (!trace) { showToast('Reasoning trace is required for governance scan', 'error'); return; }
+
+  const btn = document.getElementById('fullGovBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="loading-spinner" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;"></div> Analyzing...';
+
+  const payload = {
+    system_name: name,
+    policy_text: trace,
+    use_case: document.getElementById('fullGovUseCase').value.trim(),
+    threshold: 0.5,
+    handles_personal_data: document.getElementById('fg_pii').checked,
+    makes_autonomous_decisions: document.getElementById('fg_autonomous').checked,
+    used_in_critical_infrastructure: document.getElementById('fg_critical').checked,
+    has_human_oversight: document.getElementById('fg_oversight').checked,
+    is_explainable: document.getElementById('fg_explainable').checked,
+    has_bias_testing: document.getElementById('fg_bias').checked
+  };
+
+  const result = await api('/v1/govern', { method: 'POST', body: JSON.stringify(payload) });
+  btn.disabled = false;
+  btn.textContent = 'Run Governance';
+
+  if (result) {
+    displayScanResult(result, 'governance');
+    saveRecentScan({ type: 'governance', name, result, ts: new Date().toISOString() });
+  } else {
+    const demoResult = generateDemoScanResult(payload, 'governance');
+    displayScanResult(demoResult, 'governance');
+    saveRecentScan({ type: 'governance', name, result: demoResult, ts: new Date().toISOString() });
+  }
+}
+
+function generateDemoScanResult(payload, type) {
+  let riskScore = 20;
+  if (payload.handles_personal_data) riskScore += 15;
+  if (payload.makes_autonomous_decisions) riskScore += 15;
+  if (payload.used_in_critical_infrastructure) riskScore += 15;
+  if (!payload.has_human_oversight) riskScore += 10;
+  if (!payload.is_explainable) riskScore += 10;
+  if (!payload.has_bias_testing) riskScore += 10;
+  riskScore = Math.min(riskScore, 100);
+  const tier = riskScore >= 70 ? 'high' : riskScore >= 40 ? 'medium' : 'low';
+
+  const result = {
+    system_name: payload.system_name,
+    risk_score: riskScore,
+    risk_tier: tier,
+    recommendations: []
+  };
+
+  if (!payload.has_human_oversight) result.recommendations.push('Implement human-in-the-loop oversight for critical decisions');
+  if (!payload.is_explainable) result.recommendations.push('Add model explainability documentation (SHAP, LIME, or feature importance)');
+  if (!payload.has_bias_testing) result.recommendations.push('Establish automated bias testing in the ML pipeline');
+  if (payload.handles_personal_data) result.recommendations.push('Ensure GDPR/CCPA compliance with data processing agreements');
+  if (payload.makes_autonomous_decisions) result.recommendations.push('Add decision audit trail and override mechanisms');
+  if (result.recommendations.length === 0) result.recommendations.push('System meets baseline governance requirements');
+
+  if (type === 'governance') {
+    result.compliance_assessment = riskScore < 40 ? 'System is within acceptable governance parameters.' : riskScore < 70 ? 'System requires additional controls before production deployment.' : 'System poses significant risk. Immediate review required.';
+    result.drift_score = Math.random() * 0.4;
+    result.decision = riskScore < 50 ? 'APPROVE' : 'ESCALATE';
+  }
+
+  return result;
+}
+
+function displayScanResult(result, type) {
+  const panel = document.getElementById('scanResultPanel');
+  const content = document.getElementById('scanResultContent');
+  panel.classList.add('visible');
+
+  const score = result.risk_score || 0;
+  const tier = result.risk_tier || 'medium';
+  const tierClass = 'risk-' + tier;
+  const scoreColor = score >= 70 ? 'var(--red)' : score >= 40 ? 'var(--amber)' : 'var(--green)';
+
+  const r = 40, circ = 2 * Math.PI * r, offset = circ * (1 - score / 100);
+
+  let html = `
+    <div class="result-gauge-wrap">
+      <div style="position:relative;width:90px;height:90px;">
+        <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg);">
+          <circle cx="45" cy="45" r="${r}" fill="none" stroke="var(--elevated)" stroke-width="8"/>
+          <circle cx="45" cy="45" r="${r}" fill="none" stroke="${scoreColor}" stroke-width="8"
+            stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:${scoreColor};">${score}</div>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:4px;">${result.system_name || 'System'}</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="risk-badge ${tierClass}">${tier} risk</span>
+          ${result.decision ? '<span class="sev-badge ' + (result.decision === 'APPROVE' ? 'sev-low' : 'sev-high') + '">' + result.decision + '</span>' : ''}
+        </div>
+      </div>
+    </div>`;
+
+  if (result.compliance_assessment) {
+    html += `<div style="background:var(--elevated);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;line-height:1.5;">
+      <strong style="color:var(--muted);font-size:11px;display:block;margin-bottom:4px;">COMPLIANCE ASSESSMENT</strong>
+      ${result.compliance_assessment}
+    </div>`;
+  }
+
+  if (result.drift_score !== undefined) {
+    const driftPct = Math.round(result.drift_score * 100);
+    const driftColor = driftPct > 30 ? 'var(--amber)' : 'var(--green)';
+    html += `<div style="margin-bottom:14px;">
+      <strong style="font-size:11px;color:var(--muted);">DRIFT SCORE</strong>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <div class="progress-bar" style="flex:1;"><div class="progress-fill" style="width:${driftPct}%;background:${driftColor}"></div></div>
+        <span style="font-size:13px;font-weight:600;color:${driftColor}">${driftPct}%</span>
+      </div>
+    </div>`;
+  }
+
+  if (result.recommendations && result.recommendations.length > 0) {
+    html += `<div>
+      <strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:8px;">RECOMMENDATIONS</strong>
+      <ul class="result-recommendations">${result.recommendations.map(r => '<li>' + r + '</li>').join('')}</ul>
+    </div>`;
+  }
+
+  content.innerHTML = html;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleRecentScans() {
+  const list = document.getElementById('recentScansList');
+  const chevron = document.getElementById('recentScansChevron');
+  if (list.style.display === 'none') {
+    list.style.display = 'block';
+    chevron.style.transform = 'rotate(180deg)';
+    renderRecentScans();
+  } else {
+    list.style.display = 'none';
+    chevron.style.transform = 'rotate(0)';
+  }
+}
+
+function renderRecentScans() {
+  const list = document.getElementById('recentScansList');
+  if (recentScans.length === 0) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0;">No recent scans.</div>';
+    return;
+  }
+  list.innerHTML = recentScans.map((s, i) => {
+    const score = s.result.risk_score || 0;
+    const tier = s.result.risk_tier || 'medium';
+    const scoreColor = score >= 70 ? 'var(--red)' : score >= 40 ? 'var(--amber)' : 'var(--green)';
+    return `<div class="recent-scan-item" onclick="displayScanResult(recentScans[${i}].result, '${s.type}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <span style="font-weight:600;">${s.name}</span>
+          <span class="badge-pill" style="margin-left:6px;">${s.type}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-weight:700;color:${scoreColor};">${score}</span>
+          <span class="risk-badge risk-${tier}">${tier}</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;">${new Date(s.ts).toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// ========== AUDIT LEDGER TAB (Enhanced) ==========
+let auditLedgerData = [];
+
+async function initAuditLedgerTab() {
+  const loading = document.getElementById('auditLedgerLoading');
+  loading.style.display = 'flex';
+  const data = await api('/ledger');
+  loading.style.display = 'none';
+  if (data && data.entries && Array.isArray(data.entries)) {
+    auditLedgerData = data.entries;
+  } else if (data && Array.isArray(data)) {
+    auditLedgerData = data;
+  } else {
+    auditLedgerData = LEDGER_ENTRIES.map(e => ({
+      system_name: e.details.split(':')[0] || 'GovernLayer',
+      action: e.action,
+      risk_score: e.action.includes('SCAN') ? parseInt(e.details.match(/\d+/) || 50) : null,
+      timestamp: e.ts,
+      hash: e.hash,
+      previous_hash: e.prev,
+      details: e.details
+    }));
+  }
+  renderAuditLedgerTimeline();
+}
+
+function renderAuditLedgerTimeline() {
+  const timeline = document.getElementById('auditLedgerTimeline');
+  const dateFrom = document.getElementById('ledgerDateFrom').value;
+  const dateTo = document.getElementById('ledgerDateTo').value;
+  const search = document.getElementById('ledgerSearch').value.toLowerCase().trim();
+
+  let filtered = [...auditLedgerData];
+
+  if (dateFrom) filtered = filtered.filter(e => (e.timestamp || e.ts || '') >= dateFrom);
+  if (dateTo) filtered = filtered.filter(e => (e.timestamp || e.ts || '') <= dateTo + 'T23:59:59Z');
+  if (search) filtered = filtered.filter(e => ((e.system_name || '') + ' ' + (e.action || '') + ' ' + (e.details || '')).toLowerCase().includes(search));
+
+  filtered = filtered.sort((a, b) => new Date(b.timestamp || b.ts) - new Date(a.timestamp || a.ts));
+
+  if (filtered.length === 0) {
+    timeline.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No ledger entries match filters.</div>';
+    return;
+  }
+
+  timeline.innerHTML = filtered.map(e => {
+    const ts = e.timestamp || e.ts || '';
+    const hash = e.hash || e.current_hash || '--';
+    const prevHash = e.previous_hash || e.prev || '--';
+    const truncHash = hash.length > 16 ? hash.substring(0, 16) + '...' : hash;
+    const truncPrev = prevHash.length > 16 ? prevHash.substring(0, 16) + '...' : prevHash;
+    const actionColor = (e.action || '').includes('SCAN') ? 'var(--green)' : (e.action || '').includes('ERROR') || (e.action || '').includes('FAIL') ? 'var(--red)' : 'var(--blue)';
+    const riskDisplay = e.risk_score !== null && e.risk_score !== undefined
+      ? `<span style="margin-left:8px;font-weight:700;color:${e.risk_score >= 70 ? 'var(--red)' : e.risk_score >= 40 ? 'var(--amber)' : 'var(--green)'};">Risk: ${e.risk_score}</span>`
+      : '';
+
+    return `<div class="ledger-timeline-entry">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-weight:700;color:${actionColor};">${e.action || 'ENTRY'}</span>
+          ${e.system_name ? '<span style="color:var(--muted);font-size:11px;">' + e.system_name + '</span>' : ''}
+          ${riskDisplay}
+        </div>
+        <span style="color:var(--muted);font-size:11px;">${ts ? new Date(ts).toLocaleString() : '--'}</span>
+      </div>
+      <div style="margin-bottom:6px;font-size:12px;">${e.details || ''}</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="ledger-hash-display">${truncHash}</span>
+        <span class="ledger-chain-icon">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </span>
+        <span style="font-size:10px;color:var(--dim);">&larr; ${truncPrev}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterAuditLedger() {
+  renderAuditLedgerTimeline();
+}
+
+async function verifyAuditLedgerChain() {
+  const statusEl = document.getElementById('auditLedgerChainStatus');
+  statusEl.innerHTML = '<span style="color:var(--muted);font-size:12px;">Verifying...</span>';
+
+  const result = await api('/ledger/verify');
+  if (result) {
+    if (result.valid || result.intact || result.verified) {
+      statusEl.innerHTML = '<span class="chain-verify-result chain-verify-ok"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Chain Verified (' + auditLedgerData.length + ' entries)</span>';
+      showToast('Audit chain integrity verified', 'success');
+    } else {
+      statusEl.innerHTML = '<span class="chain-verify-result chain-verify-fail"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg> Chain Broken</span>';
+      showToast('Chain integrity check failed!', 'error');
+    }
+  } else {
+    // Demo: always passes
+    statusEl.innerHTML = '<span class="chain-verify-result chain-verify-ok"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Chain Verified (' + auditLedgerData.length + ' entries)</span>';
+    showToast('Chain verified (demo)', 'info');
+  }
+}
+
+async function exportAuditLedger(format) {
+  toggleExportDropdown();
+  const result = await api('/ledger/export?format=' + format);
+  if (result) {
+    const blob = new Blob([format === 'json' ? JSON.stringify(result, null, 2) : result], { type: format === 'json' ? 'application/json' : 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'audit-ledger.' + format; a.click();
+    URL.revokeObjectURL(url);
+    showToast('Ledger exported as ' + format.toUpperCase(), 'success');
+  } else {
+    // Demo: export current data
+    const exportData = format === 'json'
+      ? JSON.stringify(auditLedgerData, null, 2)
+      : 'action,system_name,risk_score,timestamp,hash,previous_hash\n' + auditLedgerData.map(e => [e.action, e.system_name || '', e.risk_score || '', e.timestamp || e.ts || '', e.hash || e.current_hash || '', e.previous_hash || e.prev || ''].join(',')).join('\n');
+    const blob = new Blob([exportData], { type: format === 'json' ? 'application/json' : 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'audit-ledger.' + format; a.click();
+    URL.revokeObjectURL(url);
+    showToast('Ledger exported (demo)', 'info');
+  }
+}
+
+function toggleExportDropdown() {
+  const dd = document.getElementById('exportDropdown');
+  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close export dropdown on outside click
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('exportDropdown');
+  if (dd && !e.target.closest('#exportDropdown') && !e.target.closest('[onclick*="toggleExportDropdown"]')) {
+    dd.style.display = 'none';
+  }
+});
+
+// ========== INIT NEW TABS ON SWITCH ==========
+const origSwitchTab = switchTab;
+switchTab = function(tab, el) {
+  origSwitchTab(tab, el);
+  if (tab === 'models' && modelsData.length === 0) initModelsTab();
+  if (tab === 'incidents' && incidentsData.length === 0) initIncidentsTab();
+  if (tab === 'scanner') renderRecentScans();
+  if (tab === 'audit-ledger' && auditLedgerData.length === 0) initAuditLedgerTab();
+};
 </script>
 </body>
 </html>
