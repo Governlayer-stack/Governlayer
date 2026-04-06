@@ -70,7 +70,7 @@ input{font-family:inherit}
 
 /* PLAN SELECTOR */
 .plans-label{font-size:13px;font-weight:500;color:var(--muted);margin-bottom:10px;letter-spacing:0.02em}
-.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
 .plan-card{
   position:relative;padding:14px 16px;background:var(--surface);border:2px solid var(--border);
   border-radius:10px;cursor:pointer;transition:border-color .15s,background .15s;
@@ -222,26 +222,20 @@ input{font-family:inherit}
           <input type="radio" name="plan" value="free">
           <div class="plan-name">Free</div>
           <div class="plan-price">$0/mo</div>
-          <div class="plan-detail">20 req/min &middot; 500 req/mo &middot; Core APIs</div>
-        </label>
-        <label class="plan-card" data-plan="starter">
-          <input type="radio" name="plan" value="starter">
-          <div class="plan-name">Starter</div>
-          <div class="plan-price">$49/mo</div>
-          <div class="plan-detail">100 req/min &middot; 10K req/mo &middot; Reports</div>
+          <div class="plan-detail">3 AI models &middot; 20 req/min &middot; Core APIs</div>
         </label>
         <label class="plan-card" data-plan="pro">
           <input type="radio" name="plan" value="pro">
           <span class="plan-badge">Most Popular</span>
           <div class="plan-name">Pro</div>
-          <div class="plan-price">$199/mo</div>
-          <div class="plan-detail">500 req/min &middot; 100K req/mo &middot; Consensus</div>
+          <div class="plan-price">$149/mo</div>
+          <div class="plan-detail">25 models &middot; 500 req/min &middot; Consensus</div>
         </label>
         <label class="plan-card" data-plan="enterprise">
           <input type="radio" name="plan" value="enterprise">
           <div class="plan-name">Enterprise</div>
           <div class="plan-price">Custom</div>
-          <div class="plan-detail">Unlimited &middot; Contact sales</div>
+          <div class="plan-detail">Unlimited &middot; SSO &middot; Dedicated support</div>
         </label>
       </div>
 
@@ -297,32 +291,31 @@ input{font-family:inherit}
   // --- PLAN FEATURES ---
   const planFeatures = {
     free: [
+      '3 AI models monitored',
       'Drift detection',
       'Risk scoring',
-      'Audit ledger',
-      'Compliance checklist',
-      '1 organization'
-    ],
-    starter: [
-      'Everything in Free',
-      'Compliance reports',
-      'Usage analytics',
-      'Webhooks',
-      '3 organizations'
+      'Audit ledger (30-day)',
+      'Community support'
     ],
     pro: [
-      'Everything in Starter',
-      'Multi-LLM consensus',
-      'Achonye orchestration',
-      'Priority support',
-      '10 organizations'
+      'Everything in Free',
+      '25 AI models',
+      'Multi-LLM consensus engine',
+      'Full audit ledger (unlimited)',
+      'Model registry & incidents',
+      'Webhooks & API keys',
+      '29 compliance frameworks',
+      'Email support (48hr SLA)'
     ],
     enterprise: [
       'Everything in Pro',
-      'SSO / SAML',
-      'Dedicated support',
-      'On-premise deployment',
-      'Unlimited organizations'
+      'Unlimited models',
+      'SSO / SAML + RBAC',
+      'Air-gapped / on-premise',
+      '99.9% SLA',
+      'Dedicated CSM',
+      'Custom frameworks',
+      'Priority support (4hr SLA)'
     ]
   };
 
