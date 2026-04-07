@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About GovernLayer | Building the Governance Layer for the AI Era</title>
+<meta name="description" content="We believe every AI system deserves accountability. GovernLayer makes AI governance automatic, continuous, and cryptographically provable.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="About GovernLayer — The Governance Layer for the AI Era">
+<meta property="og:description" content="Built by engineers who've seen AI governance fail. Learn about our mission, team, and approach to autonomous AI compliance.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/about">
+<link rel="canonical" href="https://governlayer.ai/about">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-light:#60a5fa;--blue-bg:rgba(59,130,246,.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.25),0 20px 44px rgba(0,0,0,.4);
+  --transition:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+/* ============ SCROLL PROGRESS ============ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));z-index:10001;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+/* ============ REVEAL ============ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0;background:rgba(10,14,26,.82);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s var(--transition)}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.5);background:rgba(10,14,26,.95)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;transition:transform .4s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo:hover .logo-mark{transform:rotate(90deg) scale(1.05)}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--blue),var(--purple));transform:scaleX(0);transform-origin:center;transition:transform .25s var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:var(--text)}
+.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}
+.btn-fill:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4),0 0 0 1px rgba(59,130,246,.3)}
+.btn-fill:active{transform:translateY(0)}
+.btn-lg{padding:14px 32px;font-size:.95rem;border-radius:var(--radius-sm)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 28px;z-index:999;flex-direction:column;gap:4px}
+.mobile-menu.active{display:flex}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover{color:var(--text)}
+.mobile-menu-ctas{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ============ HERO ============ */
+.hero{padding:160px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-300px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.14) 0%,rgba(139,92,246,.08) 25%,rgba(16,185,129,.04) 45%,transparent 65%);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
+@keyframes heroGlow{0%{transform:translateX(-50%) scale(.85);opacity:.6}100%{transform:translateX(-50%) scale(1.15);opacity:1}}
+.hero h1{font-size:clamp(2.8rem,6vw,4.2rem);font-weight:900;letter-spacing:-.05em;line-height:1.05;margin-bottom:24px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 50%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.18rem;color:var(--text2);max-width:620px;margin:0 auto;line-height:1.75;font-weight:400}
+
+/* ============ SECTIONS ============ */
+.section{padding:100px 0}
+.section-alt{background:var(--bg2);border-top:1px solid transparent;border-bottom:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent) 1}
+.tag{display:inline-flex;padding:5px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.sec-title{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:16px}
+.sec-title-gradient{background:linear-gradient(180deg,#ffffff 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-title-color{background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-sub{font-size:1.05rem;color:var(--text2);max-width:580px;line-height:1.75}
+
+/* ============ MISSION ============ */
+.mission-block{max-width:720px;margin:0 auto;text-align:center}
+.mission-text{font-size:1.2rem;color:var(--text2);line-height:1.85;position:relative;padding:32px 0;font-weight:400}
+.mission-text::before,.mission-text::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:60px;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+.mission-text::before{top:0}
+.mission-text::after{bottom:0}
+
+/* ============ STAT CARDS ============ */
+.stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.stat-card{padding:36px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);text-align:center;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:0;transition:opacity .4s}
+.stat-card:hover{transform:translateY(-6px);box-shadow:0 0 40px rgba(245,158,11,.06),0 12px 40px rgba(0,0,0,.5);border-color:rgba(245,158,11,.2)}
+.stat-card:hover::before{opacity:1}
+.stat-card .sc-num{font-size:2.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:12px;background:linear-gradient(135deg,var(--amber),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-card .sc-txt{font-size:.9rem;color:var(--text2);line-height:1.65}
+
+/* ============ APPROACH PILLARS ============ */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.pillar{padding:36px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);transition:all .4s var(--transition);position:relative;overflow:hidden}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .4s var(--transition)}
+.pillar:hover::before{opacity:1}
+.pillar:hover{transform:translateY(-4px)}
+.pillar:nth-child(1)::before{background:var(--blue)}
+.pillar:nth-child(1):hover{border-color:rgba(59,130,246,.3);box-shadow:0 0 40px rgba(59,130,246,.08),0 12px 40px rgba(0,0,0,.5)}
+.pillar:nth-child(2)::before{background:var(--green)}
+.pillar:nth-child(2):hover{border-color:rgba(16,185,129,.3);box-shadow:0 0 40px rgba(16,185,129,.08),0 12px 40px rgba(0,0,0,.5)}
+.pillar:nth-child(3)::before{background:var(--purple)}
+.pillar:nth-child(3):hover{border-color:rgba(139,92,246,.3);box-shadow:0 0 40px rgba(139,92,246,.08),0 12px 40px rgba(0,0,0,.5)}
+.pillar-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.pillar-icon svg{width:22px;height:22px}
+.pillar h3{font-size:1.1rem;font-weight:700;margin-bottom:10px}
+.pillar p{font-size:.9rem;color:var(--text2);line-height:1.75}
+
+/* ============ TEAM ============ */
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
+.team-card{padding:32px 24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);text-align:center;transition:all .4s var(--transition)}
+.team-card:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(0,0,0,.4);border-color:var(--border2)}
+.team-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-weight:800;font-size:1.2rem;color:#fff}
+.team-card:nth-child(1) .team-avatar{background:linear-gradient(135deg,var(--blue),var(--purple))}
+.team-card:nth-child(2) .team-avatar{background:linear-gradient(135deg,var(--green),#06b6d4)}
+.team-card:nth-child(3) .team-avatar{background:linear-gradient(135deg,var(--amber),var(--red))}
+.team-card:nth-child(4) .team-avatar{background:linear-gradient(135deg,var(--purple),#ec4899)}
+.team-name{font-size:1rem;font-weight:700;margin-bottom:4px}
+.team-title{font-size:.78rem;color:var(--blue);font-weight:600;margin-bottom:12px}
+.team-bio{font-size:.84rem;color:var(--text2);line-height:1.65}
+
+/* ============ VALUES ============ */
+.values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:48px}
+.value-card{padding:32px 28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);transition:all .4s var(--transition)}
+.value-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.value-card h3{font-size:1.05rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.value-card h3 .v-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.value-card p{font-size:.9rem;color:var(--text2);line-height:1.75}
+
+/* ============ CTA ============ */
+.cta-section{padding:120px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);z-index:0}
+.cta-section::after{content:'';position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.12) 0%,rgba(139,92,246,.06) 30%,transparent 60%);pointer-events:none;animation:heroGlow 10s ease-in-out infinite alternate}
+.cta-section>*{position:relative;z-index:1}
+.cta-section h2{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;margin-bottom:14px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-section p{font-size:1.08rem;color:var(--text2);margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ============ FOOTER ============ */
+.footer{padding:60px 0 28px;border-top:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(59,130,246,.3),transparent) 1}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand p{font-size:.84rem;color:var(--text3);line-height:1.65;max-width:260px;margin-top:12px}
+.footer-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600;color:var(--text3);margin-top:10px}
+.fcol h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
+.fcol a{display:block;font-size:.84rem;color:var(--text2);padding:4px 0;transition:color .2s}
+.fcol a:hover{color:var(--blue)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1024px){
+  .stat-cards{grid-template-columns:repeat(3,1fr)}
+  .pillars{grid-template-columns:1fr 1fr}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .section{padding:72px 0}
+  .nav-links{display:none}
+  .nav-ctas .btn-ghost{display:none}
+  .mobile-toggle{display:block}
+  .stat-cards{grid-template-columns:1fr}
+  .pillars{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr}
+  .values-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+  .hero h1{font-size:2.4rem}
+  .hero{padding:130px 0 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/product">Product</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/documentation">Trust Center</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/careers">Careers</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/login" class="btn btn-ghost">Log In</a>
+      <a href="/signup" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/product">Product</a>
+  <a href="/#pricing">Pricing</a>
+  <a href="/documentation">Trust Center</a>
+  <a href="/blog">Blog</a>
+  <a href="/careers">Careers</a>
+  <div class="mobile-menu-ctas">
+    <a href="/login" class="btn btn-ghost" style="flex:1;justify-content:center">Log In</a>
+    <a href="/signup" class="btn btn-fill" style="flex:1;justify-content:center">Start Free</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1 class="reveal">Building the Governance Layer<br><span class="accent">for the AI Era</span></h1>
+    <p class="hero-sub reveal reveal-delay-1">We believe every AI system deserves accountability. GovernLayer makes it automatic.</p>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Our Mission</div>
+      <h2 class="sec-title sec-title-gradient">Why We Exist</h2>
+    </div>
+    <div class="mission-block reveal reveal-delay-1">
+      <div class="mission-text">To make AI governance as natural as CI/CD. Continuous, automated, and built into the development workflow &mdash; not bolted on as an afterthought.</div>
+    </div>
+  </div>
+</section>
+
+<!-- The Problem We Solve -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-amber">The Problem</div>
+      <h2 class="sec-title sec-title-color">The Problem We Solve</h2>
+      <p class="sec-sub" style="margin:0 auto">AI is moving faster than governance can keep up. The gap between AI deployment and AI accountability is widening every day.</p>
+    </div>
+    <div class="stat-cards">
+      <div class="stat-card reveal">
+        <div class="sc-num">60%</div>
+        <div class="sc-txt">of enterprises scaling AI lack governance frameworks to manage risk and ensure compliance.</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="sc-num">89%</div>
+        <div class="sc-txt">report an urgent need for automated AI oversight as regulations accelerate globally.</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="sc-num">$4.2M</div>
+        <div class="sc-txt">average cost of AI compliance failure including fines, remediation, and reputational damage.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Approach -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-purple">Our Approach</div>
+      <h2 class="sec-title sec-title-gradient">Three Pillars of Autonomous Governance</h2>
+      <p class="sec-sub" style="margin:0 auto">We didn't bolt AI features onto a GRC tool. We built governance from first principles for the agentic AI era.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="pillar-icon" style="background:var(--blue-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>In-Decision-Path</h3>
+        <p>Governance happens during AI decisions, not after. Real-time monitoring and enforcement in the inference pipeline. Every decision is assessed before it reaches the end user.</p>
+      </div>
+      <div class="pillar reveal reveal-delay-1">
+        <div class="pillar-icon" style="background:var(--green-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>Cryptographic Proof</h3>
+        <p>Every governance decision is SHA-256 hash-chained into a tamper-proof audit ledger. Auditors can mathematically verify your entire governance history with a single API call.</p>
+      </div>
+      <div class="pillar reveal reveal-delay-2">
+        <div class="pillar-icon" style="background:var(--purple-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <h3>Multi-Model Consensus</h3>
+        <p>No single point of failure. 14 models across local and cloud providers, 3 consensus strategies (Voting, Chain-of-Verification, Adversarial Debate) eliminate hallucination risk.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">Team</div>
+      <h2 class="sec-title sec-title-gradient">Built by engineers who've seen AI governance fail</h2>
+      <p class="sec-sub" style="margin:0 auto">We've spent years inside enterprises watching manual compliance processes break down. We built the tool we wished existed.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-avatar">EU</div>
+        <div class="team-name">Ekene Uwaezuoke</div>
+        <div class="team-title">Founder & CEO</div>
+        <div class="team-bio">Former enterprise engineer. Building the future of AI accountability.</div>
+      </div>
+      <div class="team-card reveal reveal-delay-1">
+        <div class="team-avatar">AO</div>
+        <div class="team-name">Dr. Amara Okafor</div>
+        <div class="team-title">Head of AI Safety</div>
+        <div class="team-bio">PhD in ML Fairness. Ex-Google DeepMind.</div>
+      </div>
+      <div class="team-card reveal reveal-delay-2">
+        <div class="team-avatar">JC</div>
+        <div class="team-name">James Chen</div>
+        <div class="team-title">Head of Engineering</div>
+        <div class="team-bio">15 years in distributed systems. Ex-Stripe, ex-Datadog.</div>
+      </div>
+      <div class="team-card reveal reveal-delay-3">
+        <div class="team-avatar">SW</div>
+        <div class="team-name">Sarah Williams</div>
+        <div class="team-title">Head of Compliance</div>
+        <div class="team-bio">Former SOC 2 auditor. CISA certified.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Values</div>
+      <h2 class="sec-title sec-title-gradient">What We Stand For</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <h3>
+          <span class="v-icon" style="background:var(--blue-bg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+          Ship Fast, Ship Safe
+        </h3>
+        <p>Speed and safety are not opposites. We believe in rapid iteration with guardrails built in from day one. Move fast with cryptographic proof.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-1">
+        <h3>
+          <span class="v-icon" style="background:var(--green-bg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          Transparency by Default
+        </h3>
+        <p>Every governance decision is logged, hashed, and auditable. No black boxes. Customers can verify every assessment we make.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-2">
+        <h3>
+          <span class="v-icon" style="background:var(--purple-bg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+          Local-First Privacy
+        </h3>
+        <p>Sensitive data never leaves your infrastructure. Our local LLM inference path ensures zero external API calls for classified or regulated environments.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-3">
+        <h3>
+          <span class="v-icon" style="background:var(--amber-bg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M18 10h-4V3L8 14h4v7l6-11z"/></svg></span>
+          Open Standards
+        </h3>
+        <p>We build on open frameworks: NIST AI RMF, ISO 42001, MITRE ATLAS. No proprietary lock-in. Your governance data is always exportable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Join Us in Building Trustworthy AI</h2>
+    <p class="reveal reveal-delay-1">Whether you want to govern your AI systems or help us build the future of AI accountability, there is a place for you.</p>
+    <div class="cta-row reveal reveal-delay-2">
+      <a href="/signup" class="btn btn-fill btn-lg">Start Free</a>
+      <a href="/careers" class="btn btn-ghost btn-lg">View Careers <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <p>The governance layer for agentic AI. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SOC 2 Compliant Infrastructure
+        </div>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="/product">Platform</a>
+        <a href="/demo">Demo</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#frameworks">Frameworks</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="/documentation">Trust Center</a>
+        <a href="/blog">Blog</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/docs">API Docs</a>
+        <a href="/health">System Status</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/careers">Careers</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/trust">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth reveal on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    }
+  });
+}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+  document.getElementById('nav').classList.toggle('scrolled', scrollTop > 20);
+}, { passive: true });
+
+// Mobile menu toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  const menu = document.getElementById('mobileMenu');
+  const isActive = menu.classList.toggle('active');
+  this.innerHTML = isActive
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+});
+</script>
+</body>
+</html>

@@ -864,6 +864,11 @@ def create_app() -> FastAPI:
     _privacy_html = _load_page("privacy")
     _changelog_html = _load_page("changelog")
     _blog_html = _load_page("blog")
+    _product_html = _load_page("product")
+    _about_html = _load_page("about")
+    _contact_html = _load_page("contact")
+    _careers_html = _load_page("careers")
+    _customers_html = _load_page("customers")
     _404_html = _load_page("404")
 
     @app.exception_handler(404)
@@ -891,6 +896,36 @@ def create_app() -> FastAPI:
         if _login_html:
             return HTMLResponse(_login_html)
         return {"error": "Login page not found"}
+
+    @app.get("/product")
+    def product_page():
+        if _product_html:
+            return HTMLResponse(_product_html)
+        return {"error": "Product page not found"}
+
+    @app.get("/about")
+    def about_page():
+        if _about_html:
+            return HTMLResponse(_about_html)
+        return {"error": "About page not found"}
+
+    @app.get("/contact")
+    def contact_page():
+        if _contact_html:
+            return HTMLResponse(_contact_html)
+        return {"error": "Contact page not found"}
+
+    @app.get("/careers")
+    def careers_page():
+        if _careers_html:
+            return HTMLResponse(_careers_html)
+        return {"error": "Careers page not found"}
+
+    @app.get("/customers")
+    def customers_page():
+        if _customers_html:
+            return HTMLResponse(_customers_html)
+        return {"error": "Customers page not found"}
 
     @app.get("/compliance-checklist")
     def compliance_checklist_page():

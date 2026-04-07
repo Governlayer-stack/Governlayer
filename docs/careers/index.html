@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careers | GovernLayer — Build the Future of AI Governance</title>
+<meta name="description" content="Join GovernLayer and help make every AI system accountable. Remote-first, mission-driven roles in engineering, ML, marketing, and sales.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="Careers at GovernLayer">
+<meta property="og:description" content="Join a team that's making every AI system accountable. Remote-first. Mission-driven.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/careers">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Careers at GovernLayer">
+<meta name="twitter:description" content="Build the future of AI governance. Remote-first roles open now.">
+<link rel="canonical" href="https://governlayer.ai/careers">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-light:#60a5fa;--blue-bg:rgba(59,130,246,.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.25),0 20px 44px rgba(0,0,0,.4);
+  --shadow-xl:0 12px 28px rgba(0,0,0,.3),0 32px 64px rgba(0,0,0,.5);
+  --transition:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+/* ============ SCROLL PROGRESS BAR ============ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));z-index:10001;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+/* ============ SMOOTH REVEAL ============ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+.reveal-delay-5{transition-delay:.5s}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0;background:rgba(10,14,26,.82);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s var(--transition)}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.5);background:rgba(10,14,26,.95)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;transition:transform .4s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo:hover .logo-mark{transform:rotate(90deg) scale(1.05)}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--blue),var(--purple));transform:scaleX(0);transform-origin:center;transition:transform .25s var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-links a.active{color:var(--text)}
+.nav-links a.active::after{transform:scaleX(1)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:var(--text)}
+.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}
+.btn-fill:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4),0 0 0 1px rgba(59,130,246,.3)}
+.btn-fill:active{transform:translateY(0)}
+.btn-lg{padding:14px 32px;font-size:.95rem;border-radius:var(--radius-sm)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 28px;z-index:999;flex-direction:column;gap:4px}
+.mobile-menu.active{display:flex}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu-ctas{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ============ SECTIONS ============ */
+.section{padding:100px 0}
+.section-alt{background:var(--bg2);border-top:1px solid transparent;border-bottom:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent) 1}
+.tag{display:inline-flex;padding:5px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.sec-title{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:16px}
+.sec-title-gradient{background:linear-gradient(180deg,#ffffff 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-sub{font-size:1.05rem;color:var(--text2);max-width:580px;line-height:1.75}
+
+/* ============ HERO ============ */
+.hero{padding:160px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-300px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.14) 0%,rgba(139,92,246,.08) 25%,rgba(16,185,129,.04) 45%,transparent 65%);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
+@keyframes heroGlow{0%{transform:translateX(-50%) scale(.85);opacity:.6}100%{transform:translateX(-50%) scale(1.15);opacity:1}}
+.hero h1{font-size:clamp(2.8rem,6vw,4.2rem);font-weight:900;letter-spacing:-.05em;line-height:1.05;margin-bottom:24px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.18rem;color:var(--text2);max-width:620px;margin:0 auto 40px;line-height:1.75;font-weight:400}
+
+/* ============ WHY JOIN CARDS ============ */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
+.why-card{padding:32px 24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);transition:all .4s var(--transition);position:relative;overflow:hidden}
+.why-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .4s var(--transition)}
+.why-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.why-card:hover::before{opacity:1}
+.why-card:nth-child(1)::before{background:var(--blue)}
+.why-card:nth-child(1):hover{border-color:rgba(59,130,246,.3)}
+.why-card:nth-child(2)::before{background:var(--green)}
+.why-card:nth-child(2):hover{border-color:rgba(16,185,129,.3)}
+.why-card:nth-child(3)::before{background:var(--purple)}
+.why-card:nth-child(3):hover{border-color:rgba(139,92,246,.3)}
+.why-card:nth-child(4)::before{background:var(--amber)}
+.why-card:nth-child(4):hover{border-color:rgba(245,158,11,.3)}
+.why-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.why-icon svg{width:22px;height:22px}
+.why-card h3{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.why-card p{font-size:.88rem;color:var(--text2);line-height:1.7}
+
+/* ============ JOB CARDS ============ */
+.positions-header{display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:8px}
+.count-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--blue-bg);color:var(--blue);font-size:.78rem;font-weight:800;border:1px solid rgba(59,130,246,.2)}
+.jobs-grid{display:flex;flex-direction:column;gap:16px;margin-top:40px;max-width:800px;margin-left:auto;margin-right:auto}
+.job-card{padding:28px 32px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);transition:all .4s var(--transition);position:relative;overflow:hidden}
+.job-card:hover{transform:translateY(-4px);border-color:rgba(59,130,246,.2);box-shadow:0 0 30px rgba(59,130,246,.06),0 12px 40px rgba(0,0,0,.5)}
+.job-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}
+.job-title{font-size:1.15rem;font-weight:700;margin-bottom:4px}
+.job-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dept-badge{display:inline-flex;padding:4px 12px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.04em}
+.dept-engineering{background:var(--blue-bg);color:var(--blue)}
+.dept-ai{background:var(--purple-bg);color:var(--purple)}
+.dept-marketing{background:var(--green-bg);color:var(--green)}
+.dept-sales{background:var(--amber-bg);color:var(--amber)}
+.job-location,.job-type{font-size:.8rem;color:var(--text3);display:flex;align-items:center;gap:4px}
+.job-location svg,.job-type svg{width:13px;height:13px;flex-shrink:0}
+.job-desc{font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.job-apply{display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:var(--radius-xs);font-size:.86rem;font-weight:600;background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;border:none;cursor:pointer;transition:all .25s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.job-apply:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4)}
+.job-apply svg{width:14px;height:14px}
+
+/* ============ PERKS ============ */
+.perks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.perk{padding:28px 24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);text-align:center;transition:all .3s var(--transition)}
+.perk:hover{border-color:rgba(255,255,255,.15);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.perk-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.perk-icon svg{width:20px;height:20px;stroke:var(--text2)}
+.perk h4{font-size:.92rem;font-weight:700;margin-bottom:6px}
+.perk p{font-size:.82rem;color:var(--text3);line-height:1.6}
+
+/* ============ CTA ============ */
+.cta-section{padding:120px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);z-index:0}
+.cta-section::after{content:'';position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.12) 0%,rgba(139,92,246,.06) 30%,transparent 60%);pointer-events:none;animation:heroGlow 10s ease-in-out infinite alternate}
+.cta-section>*{position:relative;z-index:1}
+.cta-section h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:14px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-section p{font-size:1.08rem;color:var(--text2);margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-note{font-size:.86rem;color:var(--text3);margin-top:16px}
+.cta-note a{color:var(--blue);font-weight:600;transition:color .2s}
+.cta-note a:hover{color:var(--blue-light)}
+
+/* ============ FOOTER ============ */
+.footer{padding:60px 0 28px;border-top:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(59,130,246,.3),transparent) 1}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand p{font-size:.84rem;color:var(--text3);line-height:1.65;max-width:260px;margin-top:12px}
+.footer-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600;color:var(--text3);margin-top:10px}
+.fcol h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
+.fcol a{display:block;font-size:.84rem;color:var(--text2);padding:4px 0;transition:color .2s}
+.fcol a:hover{color:var(--blue)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1024px){
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .perks-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .section{padding:72px 0}
+  .nav-links{display:none}
+  .nav-ctas .btn-ghost{display:none}
+  .mobile-toggle{display:block}
+  .why-grid{grid-template-columns:1fr}
+  .perks-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+  .hero h1{font-size:2.4rem}
+  .hero{padding:140px 0 60px}
+  .job-card{padding:22px 20px}
+  .job-card-top{flex-direction:column}
+}
+@media(max-width:480px){
+  .job-meta{flex-direction:column;align-items:flex-start;gap:6px}
+}
+</style>
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/product">Product</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/documentation">Trust Center</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/careers" class="active">Careers</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/login" class="btn btn-ghost">Log In</a>
+      <a href="/signup" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/product">Product</a>
+  <a href="/#pricing">Pricing</a>
+  <a href="/documentation">Trust Center</a>
+  <a href="/blog">Blog</a>
+  <a href="/careers">Careers</a>
+  <div class="mobile-menu-ctas">
+    <a href="/login" class="btn btn-ghost" style="flex:1;justify-content:center">Log In</a>
+    <a href="/signup" class="btn btn-fill" style="flex:1;justify-content:center">Start Free</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1 class="reveal"><span class="accent">Build the Future of<br>AI Governance</span></h1>
+    <p class="hero-sub reveal reveal-delay-1">Join a team that's making every AI system accountable. Remote-first. Mission-driven.</p>
+    <div style="display:flex;gap:14px;justify-content:center" class="reveal reveal-delay-2">
+      <a href="#positions" class="btn btn-fill btn-lg">View Open Roles</a>
+      <a href="mailto:careers@governlayer.ai" class="btn btn-ghost btn-lg">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- Why Join Us -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-purple">Culture</div>
+      <h2 class="sec-title sec-title-gradient">Why Join Us</h2>
+      <p class="sec-sub" style="margin:0 auto">We are building the infrastructure that makes AI trustworthy. Here is why people choose GovernLayer.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon" style="background:var(--blue-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Mission That Matters</h3>
+        <p>AI is reshaping every industry. We are building the safety layer that ensures it stays accountable, auditable, and aligned.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-icon" style="background:var(--green-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>Remote-First</h3>
+        <p>Work from anywhere. Async communication. Results over hours. We hire the best regardless of geography.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-icon" style="background:var(--purple-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3>Technical Excellence</h3>
+        <p>14 LLM models, multi-model consensus, hash-chained ledgers. Real engineering solving hard problems.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <div class="why-icon" style="background:var(--amber-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+        </div>
+        <h3>Early Stage, Big Impact</h3>
+        <p>Your work ships to production. Shape the product and culture from day one. No red tape, no bureaucracy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Open Positions -->
+<section class="section" id="positions">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Opportunities</div>
+      <div class="positions-header">
+        <h2 class="sec-title sec-title-gradient" style="margin-bottom:0">Open Roles</h2>
+        <span class="count-badge">4</span>
+      </div>
+      <p class="sec-sub" style="margin:0 auto">Every role is remote. Every role is full-time. Every role ships real product.</p>
+    </div>
+    <div class="jobs-grid">
+
+      <!-- Job 1 -->
+      <div class="job-card reveal">
+        <div class="job-card-top">
+          <div>
+            <div class="job-title">Senior Backend Engineer</div>
+            <div class="job-meta">
+              <span class="dept-badge dept-engineering">Engineering</span>
+              <span class="job-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Remote</span>
+              <span class="job-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Full-time</span>
+            </div>
+          </div>
+        </div>
+        <div class="job-desc">Build the core governance platform. Python, FastAPI, PostgreSQL, LLM integration. Own critical infrastructure that monitors AI systems across thousands of organizations.</div>
+        <a href="mailto:careers@governlayer.ai?subject=Application%3A%20Senior%20Backend%20Engineer" class="job-apply">Apply <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      </div>
+
+      <!-- Job 2 -->
+      <div class="job-card reveal reveal-delay-1">
+        <div class="job-card-top">
+          <div>
+            <div class="job-title">ML Engineer -- Drift Detection</div>
+            <div class="job-meta">
+              <span class="dept-badge dept-ai">AI/ML</span>
+              <span class="job-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Remote</span>
+              <span class="job-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Full-time</span>
+            </div>
+          </div>
+        </div>
+        <div class="job-desc">Advance our behavioral drift detection system. Sentence transformers, embeddings, safety manifolds. Build the system that catches AI model degradation before it impacts users.</div>
+        <a href="mailto:careers@governlayer.ai?subject=Application%3A%20ML%20Engineer%20%E2%80%94%20Drift%20Detection" class="job-apply">Apply <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      </div>
+
+      <!-- Job 3 -->
+      <div class="job-card reveal reveal-delay-2">
+        <div class="job-card-top">
+          <div>
+            <div class="job-title">Developer Advocate</div>
+            <div class="job-meta">
+              <span class="dept-badge dept-marketing">Marketing</span>
+              <span class="job-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Remote</span>
+              <span class="job-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Full-time</span>
+            </div>
+          </div>
+        </div>
+        <div class="job-desc">Help developers understand AI governance. Write docs, build demos, speak at conferences. Be the bridge between our platform and the developer community.</div>
+        <a href="mailto:careers@governlayer.ai?subject=Application%3A%20Developer%20Advocate" class="job-apply">Apply <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      </div>
+
+      <!-- Job 4 -->
+      <div class="job-card reveal reveal-delay-3">
+        <div class="job-card-top">
+          <div>
+            <div class="job-title">Enterprise Account Executive</div>
+            <div class="job-meta">
+              <span class="dept-badge dept-sales">Sales</span>
+              <span class="job-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Remote</span>
+              <span class="job-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Full-time</span>
+            </div>
+          </div>
+        </div>
+        <div class="job-desc">Sell to Fortune 500 compliance and AI teams. Own the full sales cycle from demo to close. Help enterprises understand why AI governance is the next must-have infrastructure.</div>
+        <a href="mailto:careers@governlayer.ai?subject=Application%3A%20Enterprise%20Account%20Executive" class="job-apply">Apply <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Perks -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">Benefits</div>
+      <h2 class="sec-title sec-title-gradient">What We Offer</h2>
+    </div>
+    <div class="perks-grid">
+      <div class="perk reveal">
+        <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <h4>Competitive Equity</h4>
+        <p>Meaningful ownership in the company. Your work builds your wealth.</p>
+      </div>
+      <div class="perk reveal reveal-delay-1">
+        <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h4>Health & Dental</h4>
+        <p>Comprehensive health, dental, and vision coverage for you and your family.</p>
+      </div>
+      <div class="perk reveal reveal-delay-2">
+        <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <h4>Learning Budget</h4>
+        <p>$2,000 per year for courses, books, conferences, and professional development.</p>
+      </div>
+      <div class="perk reveal reveal-delay-3">
+        <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h4>Home Office Setup</h4>
+        <p>Stipend for your desk, chair, monitor, and anything you need to do your best work.</p>
+      </div>
+      <div class="perk reveal reveal-delay-4">
+        <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h4>Flexible PTO</h4>
+        <p>Take the time you need. We trust you to manage your own schedule and energy.</p>
+      </div>
+      <div class="perk reveal reveal-delay-5">
+        <div class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <h4>Conference Travel</h4>
+        <p>Attend and speak at industry conferences. Represent GovernLayer on the global stage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Don't see your role?</h2>
+    <p class="reveal reveal-delay-1">We are always looking for exceptional people. If you are passionate about AI governance and want to make an impact, reach out.</p>
+    <div class="cta-row reveal reveal-delay-2">
+      <a href="mailto:careers@governlayer.ai" class="btn btn-fill btn-lg">Email careers@governlayer.ai</a>
+      <a href="#positions" class="btn btn-ghost btn-lg">View All Positions</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <p>The governance layer for agentic AI. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SOC 2 Compliant Infrastructure
+        </div>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <a href="/status" style="color:inherit;text-decoration:none">System Status: Operational</a>
+        </div>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="/product">Platform</a>
+        <a href="/demo">Demo</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#frameworks">Frameworks</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="/documentation">Trust Center</a>
+        <a href="/blog">Blog</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/docs">API Docs</a>
+        <a href="/health">System Status</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="mailto:founders@governlayer.ai">Contact</a>
+        <a href="/careers">Careers</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/documentation">Security</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/trust">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth reveal on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    }
+  });
+}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const t = document.querySelector(this.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    document.getElementById('mobileMenu').classList.remove('active');
+  });
+});
+
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+  document.getElementById('nav').classList.toggle('scrolled', scrollTop > 20);
+}, { passive: true });
+
+// Mobile menu toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  const menu = document.getElementById('mobileMenu');
+  const isActive = menu.classList.toggle('active');
+  this.innerHTML = isActive
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+});
+</script>
+</body>
+</html>

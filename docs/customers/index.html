@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers | GovernLayer — Trusted by AI-Forward Teams</title>
+<meta name="description" content="See how organizations are using GovernLayer to govern AI at scale. Case studies from financial services, healthcare, and government.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="GovernLayer Customers">
+<meta property="og:description" content="See how organizations are using GovernLayer to govern AI at scale.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/customers">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GovernLayer Customers">
+<meta name="twitter:description" content="Case studies from financial services, healthcare, and government.">
+<link rel="canonical" href="https://governlayer.ai/customers">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-light:#60a5fa;--blue-bg:rgba(59,130,246,.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.25),0 20px 44px rgba(0,0,0,.4);
+  --shadow-xl:0 12px 28px rgba(0,0,0,.3),0 32px 64px rgba(0,0,0,.5);
+  --transition:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+/* ============ SCROLL PROGRESS BAR ============ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));z-index:10001;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+/* ============ SMOOTH REVEAL ============ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+.reveal-delay-5{transition-delay:.5s}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0;background:rgba(10,14,26,.82);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s var(--transition)}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.5);background:rgba(10,14,26,.95)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;transition:transform .4s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo:hover .logo-mark{transform:rotate(90deg) scale(1.05)}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--blue),var(--purple));transform:scaleX(0);transform-origin:center;transition:transform .25s var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-links a.active{color:var(--text)}
+.nav-links a.active::after{transform:scaleX(1)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:var(--text)}
+.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}
+.btn-fill:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4),0 0 0 1px rgba(59,130,246,.3)}
+.btn-fill:active{transform:translateY(0)}
+.btn-lg{padding:14px 32px;font-size:.95rem;border-radius:var(--radius-sm)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 28px;z-index:999;flex-direction:column;gap:4px}
+.mobile-menu.active{display:flex}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover{color:var(--text)}
+.mobile-menu-ctas{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ============ SECTIONS ============ */
+.section{padding:100px 0}
+.section-alt{background:var(--bg2);border-top:1px solid transparent;border-bottom:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent) 1}
+.tag{display:inline-flex;padding:5px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.sec-title{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:16px}
+.sec-title-gradient{background:linear-gradient(180deg,#ffffff 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-sub{font-size:1.05rem;color:var(--text2);max-width:580px;line-height:1.75}
+
+/* ============ HERO ============ */
+.hero{padding:160px 0 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-300px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.14) 0%,rgba(139,92,246,.08) 25%,rgba(16,185,129,.04) 45%,transparent 65%);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
+@keyframes heroGlow{0%{transform:translateX(-50%) scale(.85);opacity:.6}100%{transform:translateX(-50%) scale(1.15);opacity:1}}
+.hero h1{font-size:clamp(2.8rem,6vw,4.2rem);font-weight:900;letter-spacing:-.05em;line-height:1.05;margin-bottom:24px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 50%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.18rem;color:var(--text2);max-width:620px;margin:0 auto 40px;line-height:1.75;font-weight:400}
+
+/* ============ STATS STRIP ============ */
+.stats-strip{padding:56px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stat-item{position:relative}
+.stat-item:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--border)}
+.s-num{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.s-label{font-size:.84rem;color:var(--text2);margin-top:6px;font-weight:500}
+
+/* ============ CASE STUDIES ============ */
+.case-studies{display:flex;flex-direction:column;gap:48px;margin-top:48px}
+.case-card{display:grid;grid-template-columns:1fr 1.4fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);overflow:hidden;transition:all .4s var(--transition)}
+.case-card:hover{border-color:rgba(59,130,246,.15);box-shadow:0 0 40px rgba(59,130,246,.06),0 16px 48px rgba(0,0,0,.5)}
+.case-card:nth-child(even){direction:rtl}
+.case-card:nth-child(even)>*{direction:ltr}
+.case-visual{position:relative;min-height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.case-card:nth-child(1) .case-visual{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(139,92,246,.1))}
+.case-card:nth-child(2) .case-visual{background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(59,130,246,.1))}
+.case-card:nth-child(3) .case-visual{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(245,158,11,.1))}
+.case-visual-icon{width:100px;height:100px;border-radius:24px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px)}
+.case-visual-icon svg{width:48px;height:48px;opacity:.7}
+.case-visual-grid{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
+.case-content{padding:40px 36px;display:flex;flex-direction:column;justify-content:center}
+.industry-badge{display:inline-flex;padding:4px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.04em;margin-bottom:16px;width:fit-content}
+.industry-finance{background:var(--blue-bg);color:var(--blue)}
+.industry-healthcare{background:var(--green-bg);color:var(--green)}
+.industry-government{background:var(--purple-bg);color:var(--purple)}
+.case-company{font-size:1.3rem;font-weight:800;margin-bottom:20px;letter-spacing:-.02em}
+.case-section{margin-bottom:16px}
+.case-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.case-section-label.challenge{color:var(--amber)}
+.case-section-label.solution{color:var(--blue)}
+.case-section-label.results{color:var(--green)}
+.case-section p{font-size:.88rem;color:var(--text2);line-height:1.7}
+.case-quote{margin-top:20px;padding:16px 20px;border-left:3px solid var(--blue);background:rgba(255,255,255,.02);border-radius:0 var(--radius-xs) var(--radius-xs) 0}
+.case-quote p{font-size:.88rem;color:var(--text2);font-style:italic;line-height:1.7;margin-bottom:8px}
+.case-quote-author{font-size:.78rem;font-weight:600;color:var(--text3)}
+
+/* ============ LOGO BAR ============ */
+.logo-bar{padding:40px 0;border-bottom:1px solid var(--border);overflow:hidden;position:relative}
+.logo-bar::before,.logo-bar::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.logo-bar::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.logo-bar::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.logo-bar-label{text-align:center;margin-bottom:20px;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+.logo-scroll{display:flex;gap:0;animation:logoScroll 35s linear infinite;width:max-content}
+.logo-badge{display:flex;align-items:center;gap:8px;padding:8px 28px;font-size:.82rem;font-weight:600;color:var(--text3);white-space:nowrap;opacity:.5;transition:opacity .3s}
+.logo-badge:hover{opacity:.8}
+.logo-badge .lb-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--border);font-size:.7rem;font-weight:800;color:var(--text2)}
+@keyframes logoScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ============ CTA ============ */
+.cta-section{padding:120px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);z-index:0}
+.cta-section::after{content:'';position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.12) 0%,rgba(139,92,246,.06) 30%,transparent 60%);pointer-events:none;animation:heroGlow 10s ease-in-out infinite alternate}
+.cta-section>*{position:relative;z-index:1}
+.cta-section h2{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;margin-bottom:14px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-section p{font-size:1.08rem;color:var(--text2);margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-note{font-size:.82rem;color:var(--text3);margin-top:20px}
+
+/* ============ FOOTER ============ */
+.footer{padding:60px 0 28px;border-top:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(59,130,246,.3),transparent) 1}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand p{font-size:.84rem;color:var(--text3);line-height:1.65;max-width:260px;margin-top:12px}
+.footer-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600;color:var(--text3);margin-top:10px}
+.fcol h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
+.fcol a{display:block;font-size:.84rem;color:var(--text2);padding:4px 0;transition:color .2s}
+.fcol a:hover{color:var(--blue)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1024px){
+  .case-card{grid-template-columns:1fr}
+  .case-card:nth-child(even){direction:ltr}
+  .case-visual{min-height:200px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .section{padding:72px 0}
+  .nav-links{display:none}
+  .nav-ctas .btn-ghost{display:none}
+  .mobile-toggle{display:block}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .stat-item:not(:last-child)::after{display:none}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+  .hero h1{font-size:2.4rem}
+  .hero{padding:140px 0 60px}
+  .case-content{padding:28px 24px}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr}
+  .cta-row{flex-direction:column}
+  .cta-row a{width:100%;justify-content:center}
+}
+</style>
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/product">Product</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/documentation">Trust Center</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/careers">Careers</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/login" class="btn btn-ghost">Log In</a>
+      <a href="/signup" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/product">Product</a>
+  <a href="/#pricing">Pricing</a>
+  <a href="/documentation">Trust Center</a>
+  <a href="/blog">Blog</a>
+  <a href="/careers">Careers</a>
+  <div class="mobile-menu-ctas">
+    <a href="/login" class="btn btn-ghost" style="flex:1;justify-content:center">Log In</a>
+    <a href="/signup" class="btn btn-fill" style="flex:1;justify-content:center">Start Free</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1 class="reveal"><span class="accent">Trusted by<br>AI-Forward Teams</span></h1>
+    <p class="hero-sub reveal reveal-delay-1">See how organizations are using GovernLayer to govern AI at scale.</p>
+  </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="stats-row reveal">
+      <div class="stat-item">
+        <div class="s-num">29</div>
+        <div class="s-label">Frameworks</div>
+      </div>
+      <div class="stat-item">
+        <div class="s-num">14</div>
+        <div class="s-label">LLM Models</div>
+      </div>
+      <div class="stat-item">
+        <div class="s-num">&lt; 3s</div>
+        <div class="s-label">Response Time</div>
+      </div>
+      <div class="stat-item">
+        <div class="s-num">100%</div>
+        <div class="s-label">Audit Integrity</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case Studies -->
+<section class="section" id="case-studies">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Case Studies</div>
+      <h2 class="sec-title sec-title-gradient">Real Results, Real Organizations</h2>
+      <p class="sec-sub" style="margin:0 auto">From financial services to government, see how GovernLayer solves AI governance at enterprise scale.</p>
+    </div>
+    <div class="case-studies">
+
+      <!-- Case Study 1: FinanceAI Corp -->
+      <div class="case-card reveal">
+        <div class="case-visual">
+          <div class="case-visual-grid"></div>
+          <div class="case-visual-icon" style="background:rgba(59,130,246,.1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="case-content">
+          <span class="industry-badge industry-finance">Financial Services</span>
+          <div class="case-company">FinanceAI Corp</div>
+          <div class="case-section">
+            <div class="case-section-label challenge">Challenge</div>
+            <p>Needed to prove SOC 2 compliance across 12 AI models making autonomous lending decisions.</p>
+          </div>
+          <div class="case-section">
+            <div class="case-section-label solution">Solution</div>
+            <p>Deployed GovernLayer's compliance engine with continuous monitoring and hash-chained audit trails.</p>
+          </div>
+          <div class="case-section">
+            <div class="case-section-label results">Results</div>
+            <p>10x faster compliance reviews, 100% audit trail integrity, zero compliance incidents in 6 months.</p>
+          </div>
+          <div class="case-quote">
+            <p>"GovernLayer turned our compliance nightmare into an automated workflow."</p>
+            <div class="case-quote-author">-- Marcus Williams, CISO</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Study 2: HealthTech Global -->
+      <div class="case-card reveal reveal-delay-1">
+        <div class="case-visual">
+          <div class="case-visual-grid"></div>
+          <div class="case-visual-icon" style="background:rgba(16,185,129,.1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+        </div>
+        <div class="case-content">
+          <span class="industry-badge industry-healthcare">Healthcare</span>
+          <div class="case-company">HealthTech Global</div>
+          <div class="case-section">
+            <div class="case-section-label challenge">Challenge</div>
+            <p>HIPAA and EU AI Act compliance across patient-facing AI diagnostics.</p>
+          </div>
+          <div class="case-section">
+            <div class="case-section-label solution">Solution</div>
+            <p>Multi-LLM consensus engine for high-stakes decisions, drift detection on diagnostic models.</p>
+          </div>
+          <div class="case-section">
+            <div class="case-section-label results">Results</div>
+            <p>89% reduction in manual governance effort, real-time drift alerts caught 3 model degradations before patient impact.</p>
+          </div>
+          <div class="case-quote">
+            <p>"The multi-model consensus gives us confidence no single AI failure can slip through."</p>
+            <div class="case-quote-author">-- Dr. Priya Sharma, Head of ML Governance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case Study 3: GovCloud Services -->
+      <div class="case-card reveal reveal-delay-2">
+        <div class="case-visual">
+          <div class="case-visual-grid"></div>
+          <div class="case-visual-icon" style="background:rgba(139,92,246,.1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="case-content">
+          <span class="industry-badge industry-government">Government</span>
+          <div class="case-company">GovCloud Services</div>
+          <div class="case-section">
+            <div class="case-section-label challenge">Challenge</div>
+            <p>Air-gapped deployment requirement for classified AI systems, NIST AI RMF compliance.</p>
+          </div>
+          <div class="case-section">
+            <div class="case-section-label solution">Solution</div>
+            <p>On-premise GovernLayer with local Ollama inference -- zero data leaves the network.</p>
+          </div>
+          <div class="case-section">
+            <div class="case-section-label results">Results</div>
+            <p>Full NIST AI RMF compliance achieved in 4 weeks, previously estimated at 6 months.</p>
+          </div>
+          <div class="case-quote">
+            <p>"The local-first architecture was non-negotiable. GovernLayer delivered."</p>
+            <div class="case-quote-author">-- David Park, Director of AI Programs</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Logo Bar -->
+<section class="logo-bar">
+  <div class="logo-bar-label">Trusted by AI-forward teams</div>
+  <div class="logo-scroll" id="logoScroll">
+    <div class="logo-badge"><div class="lb-icon">FT</div>FinTech Co</div>
+    <div class="logo-badge"><div class="lb-icon">HA</div>HealthAI Inc</div>
+    <div class="logo-badge"><div class="lb-icon">RT</div>RegTech Labs</div>
+    <div class="logo-badge"><div class="lb-icon">GC</div>GovCloud</div>
+    <div class="logo-badge"><div class="lb-icon">ML</div>ML Ops Studio</div>
+    <div class="logo-badge"><div class="lb-icon">DS</div>DataSecure</div>
+    <div class="logo-badge"><div class="lb-icon">AI</div>AI Safety Institute</div>
+    <div class="logo-badge"><div class="lb-icon">CC</div>Compliance Corp</div>
+    <div class="logo-badge"><div class="lb-icon">FT</div>FinTech Co</div>
+    <div class="logo-badge"><div class="lb-icon">HA</div>HealthAI Inc</div>
+    <div class="logo-badge"><div class="lb-icon">RT</div>RegTech Labs</div>
+    <div class="logo-badge"><div class="lb-icon">GC</div>GovCloud</div>
+    <div class="logo-badge"><div class="lb-icon">ML</div>ML Ops Studio</div>
+    <div class="logo-badge"><div class="lb-icon">DS</div>DataSecure</div>
+    <div class="logo-badge"><div class="lb-icon">AI</div>AI Safety Institute</div>
+    <div class="logo-badge"><div class="lb-icon">CC</div>Compliance Corp</div>
+  </div>
+</section>
+
+<!-- Bottom CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Ready to Join Them?</h2>
+    <p class="reveal reveal-delay-1">Start governing your AI systems today. Free tier available, no credit card required. See results in under 5 minutes.</p>
+    <div class="cta-row reveal reveal-delay-2">
+      <a href="/signup" class="btn btn-fill btn-lg">Start Free</a>
+      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+    </div>
+    <div class="cta-note reveal reveal-delay-3">No credit card required &middot; Personalized demo &middot; Talk to our team</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <p>The governance layer for agentic AI. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SOC 2 Compliant Infrastructure
+        </div>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <a href="/status" style="color:inherit;text-decoration:none">System Status: Operational</a>
+        </div>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="/product">Platform</a>
+        <a href="/demo">Demo</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#frameworks">Frameworks</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="/documentation">Trust Center</a>
+        <a href="/blog">Blog</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/docs">API Docs</a>
+        <a href="/health">System Status</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="mailto:founders@governlayer.ai">Contact</a>
+        <a href="/careers">Careers</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/documentation">Security</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/trust">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth reveal on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    }
+  });
+}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const t = document.querySelector(this.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    document.getElementById('mobileMenu').classList.remove('active');
+  });
+});
+
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+  document.getElementById('nav').classList.toggle('scrolled', scrollTop > 20);
+}, { passive: true });
+
+// Mobile menu toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  const menu = document.getElementById('mobileMenu');
+  const isActive = menu.classList.toggle('active');
+  this.innerHTML = isActive
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+});
+</script>
+</body>
+</html>

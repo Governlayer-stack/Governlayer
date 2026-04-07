@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact GovernLayer | Get in Touch</title>
+<meta name="description" content="Contact the GovernLayer team. Book a demo, ask about enterprise plans, or get support for your AI governance needs.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="Contact GovernLayer">
+<meta property="og:description" content="Get in touch with the GovernLayer team. We typically respond within 24 hours.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/contact">
+<link rel="canonical" href="https://governlayer.ai/contact">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-light:#60a5fa;--blue-bg:rgba(59,130,246,.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.25),0 20px 44px rgba(0,0,0,.4);
+  --transition:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+/* ============ SCROLL PROGRESS ============ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));z-index:10001;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+/* ============ REVEAL ============ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0;background:rgba(10,14,26,.82);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s var(--transition)}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.5);background:rgba(10,14,26,.95)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;transition:transform .4s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo:hover .logo-mark{transform:rotate(90deg) scale(1.05)}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--blue),var(--purple));transform:scaleX(0);transform-origin:center;transition:transform .25s var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:var(--text)}
+.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}
+.btn-fill:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4),0 0 0 1px rgba(59,130,246,.3)}
+.btn-fill:active{transform:translateY(0)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 28px;z-index:999;flex-direction:column;gap:4px}
+.mobile-menu.active{display:flex}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover{color:var(--text)}
+.mobile-menu-ctas{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+/* ============ PAGE HEADER ============ */
+.page-header{padding:150px 0 60px;text-align:center;position:relative;overflow:hidden}
+.page-header::before{content:'';position:absolute;top:-300px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.1) 0%,rgba(139,92,246,.06) 25%,transparent 50%);pointer-events:none;animation:headerGlow 8s ease-in-out infinite alternate}
+@keyframes headerGlow{0%{transform:translateX(-50%) scale(.85);opacity:.5}100%{transform:translateX(-50%) scale(1.15);opacity:1}}
+.page-header h1{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:900;letter-spacing:-.05em;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--blue) 0%,var(--purple) 50%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-header p{font-size:1.1rem;color:var(--text2);max-width:520px;margin:0 auto;line-height:1.7}
+
+/* ============ CONTACT LAYOUT ============ */
+.contact-section{padding:20px 0 100px}
+.contact-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+
+/* ============ FORM ============ */
+.form-card{padding:40px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2)}
+.form-card h2{font-size:1.4rem;font-weight:800;margin-bottom:8px;letter-spacing:-.03em}
+.form-card .form-sub{font-size:.9rem;color:var(--text2);margin-bottom:28px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:.9rem;transition:all .25s var(--transition);outline:none}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.form-group select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;cursor:pointer}
+.form-group select option{background:var(--bg2);color:var(--text)}
+.form-group textarea{resize:vertical;min-height:120px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.submit-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 28px;border-radius:var(--radius-xs);font-size:.95rem;font-weight:700;border:none;cursor:pointer;background:linear-gradient(135deg,var(--green),#059669);color:#fff;box-shadow:0 2px 8px rgba(16,185,129,.3);transition:all .25s var(--transition)}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+.submit-btn:active{transform:translateY(0)}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.submit-btn .spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+.submit-btn.loading .spinner{display:block}
+.submit-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Success state */
+.form-success{display:none;text-align:center;padding:48px 24px}
+.form-success.active{display:block}
+.form-success .success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.form-success .success-icon svg{width:28px;height:28px;stroke:var(--green)}
+.form-success h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.form-success p{font-size:.9rem;color:var(--text2);line-height:1.7}
+
+/* ============ INFO COLUMN ============ */
+.info-col{display:flex;flex-direction:column;gap:28px}
+.info-card{padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2)}
+.info-card h3{font-size:1.05rem;font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
+.info-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.info-item:last-child{border-bottom:none}
+.info-item .info-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.info-item .info-icon svg{width:16px;height:16px}
+.info-item .info-content{flex:1}
+.info-item .info-label{font-size:.78rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.info-item .info-value{font-size:.9rem;color:var(--text);font-weight:500}
+.info-item .info-value a{color:var(--blue);transition:color .2s}
+.info-item .info-value a:hover{color:var(--blue-light)}
+.info-item .info-note{font-size:.78rem;color:var(--text3);margin-top:2px}
+
+/* Quick Links */
+.quick-links{list-style:none;display:flex;flex-direction:column;gap:4px}
+.quick-links li a{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:.88rem;color:var(--text2);font-weight:500;transition:all .2s var(--transition)}
+.quick-links li a:hover{color:var(--blue);padding-left:4px}
+.quick-links li a svg{width:14px;height:14px;stroke:var(--text3);transition:stroke .2s}
+.quick-links li a:hover svg{stroke:var(--blue)}
+
+/* Office */
+.office-item{display:flex;align-items:center;gap:12px}
+.office-item .office-icon{width:36px;height:36px;border-radius:8px;background:var(--purple-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.office-item .office-icon svg{width:16px;height:16px;stroke:var(--purple)}
+.office-item .office-text{font-size:.9rem;color:var(--text2);font-weight:500}
+
+/* ============ FOOTER ============ */
+.footer{padding:60px 0 28px;border-top:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(59,130,246,.3),transparent) 1}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand p{font-size:.84rem;color:var(--text3);line-height:1.65;max-width:260px;margin-top:12px}
+.footer-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600;color:var(--text3);margin-top:10px}
+.fcol h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
+.fcol a{display:block;font-size:.84rem;color:var(--text2);padding:4px 0;transition:color .2s}
+.fcol a:hover{color:var(--blue)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1024px){
+  .contact-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-ctas .btn-ghost{display:none}
+  .mobile-toggle{display:block}
+  .contact-grid{grid-template-columns:1fr;gap:28px}
+  .form-row{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+  .page-header{padding:130px 0 40px}
+  .page-header h1{font-size:2.2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/product">Product</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/documentation">Trust Center</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/careers">Careers</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/login" class="btn btn-ghost">Log In</a>
+      <a href="/signup" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/product">Product</a>
+  <a href="/#pricing">Pricing</a>
+  <a href="/documentation">Trust Center</a>
+  <a href="/blog">Blog</a>
+  <a href="/careers">Careers</a>
+  <div class="mobile-menu-ctas">
+    <a href="/login" class="btn btn-ghost" style="flex:1;justify-content:center">Log In</a>
+    <a href="/signup" class="btn btn-fill" style="flex:1;justify-content:center">Start Free</a>
+  </div>
+</div>
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <h1 class="reveal">Contact Us</h1>
+    <p class="reveal reveal-delay-1">Have a question, want to book a demo, or explore enterprise options? We would love to hear from you.</p>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- Left: Form -->
+      <div class="form-card reveal">
+        <div id="formContent">
+          <h2>Get in Touch</h2>
+          <p class="form-sub">Fill out the form and we will get back to you within 24 hours.</p>
+          <form id="contactForm" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Work Email</label>
+                <input type="email" id="email" name="email" placeholder="you@company.com" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="company">Company</label>
+                <input type="text" id="company" name="company" placeholder="Your company name">
+              </div>
+              <div class="form-group">
+                <label for="subject">Subject</label>
+                <select id="subject" name="subject" required>
+                  <option value="" disabled selected>Select a topic</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="demo">Book a Demo</option>
+                  <option value="enterprise">Enterprise Sales</option>
+                  <option value="partnership">Partnership</option>
+                  <option value="support">Support</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" placeholder="Tell us how we can help..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span class="btn-text">Send Message</span>
+              <span class="spinner"></span>
+            </button>
+          </form>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3>Message Sent</h3>
+          <p>Thank you for reaching out. Our team will review your message and get back to you within 24 hours. For urgent matters, email us directly at <a href="mailto:founders@governlayer.ai" style="color:var(--blue)">founders@governlayer.ai</a>.</p>
+        </div>
+      </div>
+
+      <!-- Right: Info -->
+      <div class="info-col">
+        <div class="info-card reveal reveal-delay-1">
+          <h3>Other Ways to Reach Us</h3>
+          <div class="info-item">
+            <div class="info-icon" style="background:var(--blue-bg)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Email</div>
+              <div class="info-value"><a href="mailto:founders@governlayer.ai">founders@governlayer.ai</a></div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon" style="background:var(--green-bg)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Response Time</div>
+              <div class="info-value">We typically respond within 24 hours</div>
+              <div class="info-note">Priority support for Enterprise customers</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon" style="background:var(--amber-bg)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Enterprise</div>
+              <div class="info-value"><a href="/demo">Book a call directly</a></div>
+              <div class="info-note">30-minute personalized walkthrough</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card reveal reveal-delay-2">
+          <h3>Quick Links</h3>
+          <ul class="quick-links">
+            <li><a href="/documentation">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Documentation
+            </a></li>
+            <li><a href="/docs">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              API Reference
+            </a></li>
+            <li><a href="/health">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              System Status
+            </a></li>
+            <li><a href="/documentation">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Trust Center
+            </a></li>
+          </ul>
+        </div>
+
+        <div class="info-card reveal reveal-delay-3">
+          <h3>Office</h3>
+          <div class="office-item">
+            <div class="office-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="office-text">San Francisco, CA</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Hidden mailto link -->
+<a id="mailtoLink" style="display:none"></a>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <p>The governance layer for agentic AI. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SOC 2 Compliant Infrastructure
+        </div>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="/product">Platform</a>
+        <a href="/demo">Demo</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#frameworks">Frameworks</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="/documentation">Trust Center</a>
+        <a href="/blog">Blog</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/docs">API Docs</a>
+        <a href="/health">System Status</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/careers">Careers</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/trust">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth reveal on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    }
+  });
+}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+  document.getElementById('nav').classList.toggle('scrolled', scrollTop > 20);
+}, { passive: true });
+
+// Mobile menu toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  const menu = document.getElementById('mobileMenu');
+  const isActive = menu.classList.toggle('active');
+  this.innerHTML = isActive
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+});
+
+// Contact form submission
+function handleSubmit(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  const form = document.getElementById('contactForm');
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const company = document.getElementById('company').value;
+  const subject = document.getElementById('subject').value;
+  const message = document.getElementById('message').value;
+
+  // Show loading state
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  // Build mailto
+  const subjectMap = {
+    general: 'General Inquiry',
+    demo: 'Book a Demo',
+    enterprise: 'Enterprise Sales',
+    partnership: 'Partnership',
+    support: 'Support'
+  };
+  const mailSubject = encodeURIComponent('[GovernLayer] ' + (subjectMap[subject] || subject));
+  const mailBody = encodeURIComponent(
+    'Name: ' + name + '\n' +
+    'Email: ' + email + '\n' +
+    'Company: ' + (company || 'N/A') + '\n' +
+    'Subject: ' + (subjectMap[subject] || subject) + '\n\n' +
+    message
+  );
+
+  const link = document.getElementById('mailtoLink');
+  link.href = 'mailto:founders@governlayer.ai?subject=' + mailSubject + '&body=' + mailBody;
+
+  // Simulate brief processing, trigger mailto, show success
+  setTimeout(() => {
+    link.click();
+    btn.classList.remove('loading');
+    btn.disabled = false;
+
+    // Show success state
+    document.getElementById('formContent').style.display = 'none';
+    const success = document.getElementById('formSuccess');
+    success.classList.add('active');
+    success.style.display = 'block';
+  }, 800);
+}
+</script>
+</body>
+</html>
