@@ -337,6 +337,47 @@ code{font-family:'JetBrains Mono',monospace}
 .footer-links a{color:var(--text3);transition:color .2s}
 .footer-links a:hover{color:var(--text2)}
 
+/* ============ LIVE PIPELINE ============ */
+.pipeline-container{margin-top:52px;position:relative;overflow:hidden;padding:32px 0}
+.pipeline-track{display:flex;align-items:center;gap:0;position:relative;justify-content:center}
+.pipeline-node{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:2;flex:0 0 auto;width:150px}
+.pipeline-card{width:100%;padding:18px 14px;border-radius:var(--radius-sm);background:rgba(255,255,255,.03);border:1px solid var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);text-align:center;transition:all .6s var(--transition);position:relative;overflow:hidden}
+.pipeline-card::before{content:'';position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .6s var(--transition)}
+.pipeline-node.active .pipeline-card{border-color:rgba(255,255,255,.2);box-shadow:0 0 30px var(--node-glow, rgba(59,130,246,.2)),0 8px 32px rgba(0,0,0,.4)}
+.pipeline-node.active .pipeline-card::before{opacity:1}
+.pipeline-node[data-color="blue"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(59,130,246,.1),transparent 70%)}
+.pipeline-node[data-color="purple"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(139,92,246,.1),transparent 70%)}
+.pipeline-node[data-color="green"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(16,185,129,.1),transparent 70%)}
+.pipeline-node[data-color="red"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(239,68,68,.1),transparent 70%)}
+.pipeline-node[data-color="amber"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(245,158,11,.1),transparent 70%)}
+.pipeline-card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:1px solid var(--border);transition:all .6s var(--transition)}
+.pipeline-node.active .pipeline-card-icon{border-color:transparent}
+.pipeline-node[data-color="blue"] .pipeline-card-icon{background:var(--blue-bg);color:var(--blue)}
+.pipeline-node[data-color="purple"] .pipeline-card-icon{background:var(--purple-bg);color:var(--purple)}
+.pipeline-node[data-color="green"] .pipeline-card-icon{background:var(--green-bg);color:var(--green)}
+.pipeline-node[data-color="red"] .pipeline-card-icon{background:var(--red-bg);color:var(--red)}
+.pipeline-node[data-color="amber"] .pipeline-card-icon{background:var(--amber-bg);color:var(--amber)}
+.pipeline-card-title{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;transition:color .4s}
+.pipeline-node.active .pipeline-card-title{color:var(--text)}
+.pipeline-card-value{font-size:.78rem;font-weight:600;color:var(--text2);min-height:1.4em;opacity:0;transform:translateY(6px);transition:all .4s var(--transition)}
+.pipeline-node.active .pipeline-card-value{opacity:1;transform:translateY(0)}
+.pipeline-connector{width:36px;height:2px;position:relative;flex-shrink:0;z-index:1}
+.pipeline-connector-line{position:absolute;top:0;left:0;right:0;height:2px;background:var(--border);border-radius:1px}
+.pipeline-connector-progress{position:absolute;top:0;left:0;width:0%;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .4s var(--transition)}
+.pipeline-connector.active .pipeline-connector-progress{width:100%}
+.pipeline-connector-dot{position:absolute;top:50%;left:0%;width:8px;height:8px;border-radius:50%;background:var(--blue);transform:translate(-50%,-50%);opacity:0;box-shadow:0 0 12px var(--blue);transition:left .4s linear}
+.pipeline-connector.animating .pipeline-connector-dot{opacity:1;left:100%}
+.pipeline-badge{margin-top:40px;text-align:center;display:flex;justify-content:center}
+.pipeline-badge-inner{display:inline-flex;align-items:center;gap:10px;padding:10px 28px;border-radius:100px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green)}
+.pipeline-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pipelineBadgePulse 2s ease-in-out infinite}
+@keyframes pipelineBadgePulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.pipeline-scenario{text-align:center;margin-top:20px;min-height:24px}
+.pipeline-scenario-text{font-size:.82rem;font-weight:600;color:var(--text3);opacity:0;transition:opacity .4s var(--transition)}
+.pipeline-scenario-text.visible{opacity:1}
+.pipeline-counter{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.pipeline-dot-indicator{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s var(--transition)}
+.pipeline-dot-indicator.active{background:var(--blue);box-shadow:0 0 8px var(--blue)}
+
 /* ============ RESPONSIVE ============ */
 @media(max-width:1024px){
   .modules{grid-template-columns:1fr 1fr}
@@ -347,6 +388,10 @@ code{font-family:'JetBrains Mono',monospace}
   .compare-cell{padding:12px 14px;font-size:.78rem}
   .footer-grid{grid-template-columns:1fr 1fr}
   .steps-grid::before{display:none}
+  .pipeline-track{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 20px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .pipeline-track::-webkit-scrollbar{display:none}
+  .pipeline-node{width:130px;min-width:130px}
+  .pipeline-connector{width:24px;min-width:24px}
   .arch-diagram{width:400px;height:400px}
   .arch-label,.arch-mid-label,.arch-inner-label{font-size:.56rem}
   .pricing-grid{grid-template-columns:1fr 1fr}
@@ -357,6 +402,14 @@ code{font-family:'JetBrains Mono',monospace}
   .nav-ctas .btn-ghost{display:none}
   .mobile-toggle{display:block}
   .modules,.problem-grid{grid-template-columns:1fr}
+  .pipeline-track{flex-direction:column;align-items:center;gap:0}
+  .pipeline-node{width:100%;max-width:280px;min-width:0}
+  .pipeline-connector{width:2px;height:28px;min-width:2px}
+  .pipeline-connector-line{width:2px;height:100%;top:0;left:50%;transform:translateX(-50%)}
+  .pipeline-connector-progress{width:2px!important;height:0%;left:50%;transform:translateX(-50%);transition:height .4s var(--transition)}
+  .pipeline-connector.active .pipeline-connector-progress{height:100%;width:2px!important}
+  .pipeline-connector-dot{left:50%!important;top:0%;transform:translate(-50%,-50%)}
+  .pipeline-connector.animating .pipeline-connector-dot{top:100%;left:50%!important}
   .stats-row{grid-template-columns:repeat(2,1fr)}
   .stat-item:not(:last-child)::after{display:none}
   .fw-grid{grid-template-columns:repeat(2,1fr)}
@@ -704,6 +757,80 @@ code{font-family:'JetBrains Mono',monospace}
         <h3>Govern</h3>
         <p>Multi-LLM consensus decisions. Hash-chained audit trails. Auditor-ready evidence generated automatically.</p>
         <code style="color:var(--green)">GET /v1/reports</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Live Pipeline Animation -->
+<section class="section section-alt" id="live-pipeline">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">Live Pipeline</div>
+      <h2 class="sec-title sec-title-gradient">Autonomous Governance in Action</h2>
+      <p class="sec-sub" style="margin:0 auto">Every AI decision flows through 6 governance checkpoints in under 3 seconds. No manual review. No quarterly audits. Continuous, cryptographic, autonomous.</p>
+    </div>
+    <div class="pipeline-container reveal reveal-delay-1">
+      <div class="pipeline-track" id="pipelineTrack">
+        <div class="pipeline-node" data-color="blue" data-stage="0">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div class="pipeline-card-title">Intercept</div>
+            <div class="pipeline-card-value" id="pipe-val-0"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="purple" data-stage="1">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="pipeline-card-title">Policy Check</div>
+            <div class="pipeline-card-value" id="pipe-val-1"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="blue" data-stage="2">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div class="pipeline-card-title">Drift Scan</div>
+            <div class="pipeline-card-value" id="pipe-val-2"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="green" data-stage="3">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="pipeline-card-title">Risk Score</div>
+            <div class="pipeline-card-value" id="pipe-val-3"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="green" data-stage="4">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+            <div class="pipeline-card-title">Decision</div>
+            <div class="pipeline-card-value" id="pipe-val-4"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="amber" data-stage="5">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <div class="pipeline-card-title">Ledger</div>
+            <div class="pipeline-card-value" id="pipe-val-5"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pipeline-scenario"><div class="pipeline-scenario-text" id="pipelineScenario"></div></div>
+      <div class="pipeline-counter" id="pipelineCounter">
+        <div class="pipeline-dot-indicator active"></div>
+        <div class="pipeline-dot-indicator"></div>
+        <div class="pipeline-dot-indicator"></div>
+      </div>
+    </div>
+    <div class="pipeline-badge reveal reveal-delay-2">
+      <div class="pipeline-badge-inner">
+        <span class="pipeline-badge-dot"></span>
+        FULLY AUTONOMOUS — ZERO HUMAN INTERVENTION REQUIRED
       </div>
     </div>
   </div>
@@ -1278,6 +1405,171 @@ const counterObs = new IntersectionObserver(entries => {
   });
 }, { threshold: .5 });
 document.querySelectorAll('[data-count]').forEach(el => counterObs.observe(el));
+
+// Live Pipeline Animation
+(function() {
+  const scenarios = [
+    {
+      label: 'Scenario 1 of 3 — Routine Request',
+      decisionColor: 'green',
+      values: [
+        'Agent Request Captured',
+        '25 Frameworks Evaluated',
+        'D\u2099 = 0.12 \u2014 Safe',
+        'R = 0.18 \u2014 LOW',
+        'APPROVED',
+        'Hash: 7f3a\u2026c9e1'
+      ]
+    },
+    {
+      label: 'Scenario 2 of 3 — Policy Violation Detected',
+      decisionColor: 'red',
+      values: [
+        'Agent Request Captured',
+        'EU AI Act Art.14 Violation',
+        'D\u2099 = 0.67 \u2014 CRITICAL',
+        'R = 0.91 \u2014 CRITICAL',
+        'BLOCKED',
+        'Hash: 2e8b\u2026a4f7'
+      ]
+    },
+    {
+      label: 'Scenario 3 of 3 — Escalation Required',
+      decisionColor: 'amber',
+      values: [
+        'Agent Request Captured',
+        'HIPAA \u00a7164.514 Review',
+        'D\u2099 = 0.28 \u2014 Borderline',
+        'R = 0.52 \u2014 MEDIUM',
+        'ESCALATED',
+        'Hash: 9d1f\u2026b3c8'
+      ]
+    }
+  ];
+
+  let currentScenario = 0;
+  let currentStage = -1;
+  let pipelineRunning = false;
+  let pipelineVisible = false;
+
+  const nodes = document.querySelectorAll('#pipelineTrack .pipeline-node');
+  const connectors = document.querySelectorAll('#pipelineTrack .pipeline-connector');
+  const scenarioEl = document.getElementById('pipelineScenario');
+  const counterDots = document.querySelectorAll('#pipelineCounter .pipeline-dot-indicator');
+
+  function resetPipeline() {
+    nodes.forEach(function(n) {
+      n.classList.remove('active');
+      n.setAttribute('data-color', 'blue');
+    });
+    connectors.forEach(function(c) {
+      c.classList.remove('active', 'animating');
+    });
+    for (var i = 0; i < 6; i++) {
+      var el = document.getElementById('pipe-val-' + i);
+      if (el) el.textContent = '';
+    }
+    currentStage = -1;
+  }
+
+  function activateStage(stage, scenario) {
+    var node = nodes[stage];
+    if (!node) return;
+
+    // Set color for decision node
+    if (stage === 4) {
+      node.setAttribute('data-color', scenario.decisionColor);
+    } else if (stage === 3 && scenario.decisionColor === 'red') {
+      node.setAttribute('data-color', 'red');
+    }
+
+    node.classList.add('active');
+    var valEl = document.getElementById('pipe-val-' + stage);
+    if (valEl) {
+      valEl.textContent = scenario.values[stage];
+      if (stage === 4) {
+        valEl.style.color = 'var(--' + scenario.decisionColor + ')';
+        valEl.style.fontWeight = '800';
+        valEl.style.fontSize = '.88rem';
+      } else {
+        valEl.style.color = '';
+        valEl.style.fontWeight = '';
+        valEl.style.fontSize = '';
+      }
+    }
+  }
+
+  function activateConnector(index) {
+    var conn = connectors[index];
+    if (!conn) return;
+    conn.classList.add('animating');
+    setTimeout(function() {
+      conn.classList.add('active');
+      conn.classList.remove('animating');
+    }, 350);
+  }
+
+  function runScenario() {
+    if (!pipelineVisible) return;
+    var scenario = scenarios[currentScenario];
+
+    // Update counter dots
+    counterDots.forEach(function(d, i) {
+      d.classList.toggle('active', i === currentScenario);
+    });
+
+    // Show scenario label
+    scenarioEl.textContent = scenario.label;
+    scenarioEl.classList.add('visible');
+
+    resetPipeline();
+
+    var stageDelay = 600;
+    var connDelay = 350;
+
+    for (var i = 0; i < 6; i++) {
+      (function(stage) {
+        // Activate connector before this stage (except first)
+        if (stage > 0) {
+          setTimeout(function() {
+            activateConnector(stage - 1);
+          }, stage * (stageDelay + connDelay));
+        }
+        // Activate the stage node
+        setTimeout(function() {
+          activateStage(stage, scenario);
+        }, stage * (stageDelay + connDelay) + (stage > 0 ? connDelay : 0));
+      })(i);
+    }
+
+    // After all stages complete, pause then move to next scenario
+    var totalTime = 5 * (stageDelay + connDelay) + connDelay + 2200;
+    setTimeout(function() {
+      scenarioEl.classList.remove('visible');
+      setTimeout(function() {
+        currentScenario = (currentScenario + 1) % scenarios.length;
+        runScenario();
+      }, 600);
+    }, totalTime);
+  }
+
+  // Start pipeline when it scrolls into view
+  var pipelineObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !pipelineRunning) {
+        pipelineVisible = true;
+        pipelineRunning = true;
+        setTimeout(runScenario, 400);
+      }
+      if (!entry.isIntersecting) {
+        pipelineVisible = false;
+      }
+    });
+  }, { threshold: 0.2 });
+
+  var pipelineSection = document.getElementById('live-pipeline');
+  if (pipelineSection) pipelineObs.observe(pipelineSection);
+})();
 
 // Framework category filter
 document.querySelectorAll('.fw-cat').forEach(cat => {
