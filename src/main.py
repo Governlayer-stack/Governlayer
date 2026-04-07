@@ -798,8 +798,25 @@ def create_app() -> FastAPI:
                 _docs_html = f.read()
             break
 
+    # Load trust center HTML
+    _trust_center_html = None
+    for _tpath in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "trust", "index.html"),
+        os.path.join("/app", "docs", "trust", "index.html"),
+    ]:
+        if os.path.exists(_tpath):
+            with open(_tpath) as f:
+                _trust_center_html = f.read()
+            break
+
     @app.get("/trust")
-    def documentation_page():
+    def trust_page():
+        if _trust_center_html:
+            return HTMLResponse(_trust_center_html)
+        return {"error": "Trust Center not found"}
+
+    @app.get("/documentation")
+    def docs_page():
         if _docs_html:
             return HTMLResponse(_docs_html)
         return {"error": "Documentation page not found"}
@@ -975,11 +992,6 @@ def create_app() -> FastAPI:
             return HTMLResponse(_competitive_html)
         return {"error": "Competitive analysis not found"}
 
-    @app.get("/documentation")
-    def trust_center():
-        if _trust_html:
-            return HTMLResponse(_trust_html)
-        return {"error": "Trust Center not found"}
 
     @app.get("/auditor")
     def auditor_portal():
