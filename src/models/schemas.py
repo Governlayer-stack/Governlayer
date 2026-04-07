@@ -101,6 +101,68 @@ class RiskScoreRequest(_SanitizedModel):
         return v.strip()
 
 
+# ---------------------------------------------------------------------------
+# Patent-compliant risk scoring (4 weighted factors)
+# ---------------------------------------------------------------------------
+
+
+class PolicyViolation(_SanitizedModel):
+    """A single policy violation detected during evaluation."""
+    severity: str = Field(..., pattern=r"^(BLOCKING|CRITICAL|WARNING)$", description="BLOCKING, CRITICAL, or WARNING")
+    description: str = Field(default="", max_length=1000)
+
+
+class PatentRiskScoreRequest(_SanitizedModel):
+    """Request body for the patent-compliant composite risk score.
+
+    The four weighted factors are:
+      1. Policy Violations  (w=0.50) -- list of violations with severity
+      2. AI Confidence      (w=0.25) -- model confidence score [0,1]
+      3. Use Case Impact    (w=0.15) -- use-case category string
+      4. Vulnerable Pop.    (w=0.10) -- income, age, adverse action flag
+    """
+    system_name: str = Field(..., min_length=1, max_length=255)
+
+    # Factor 1: Policy violations
+    policy_violations: list[PolicyViolation] = Field(default_factory=list)
+
+    # Factor 2: AI confidence
+    ai_confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="Model confidence score 0-1")
+
+    # Factor 3: Use-case impact category
+    use_case: str = Field(default="general", max_length=255, description="e.g. medical, termination, loan, hiring, general")
+
+    # Factor 4: Vulnerable population indicators
+    subject_income: Optional[float] = Field(default=None, ge=0, description="Annual income in USD")
+    subject_age: Optional[int] = Field(default=None, ge=0, le=150, description="Age of affected individual")
+    adverse_action: bool = Field(default=False, description="Whether the AI decision is an adverse action")
+
+    @field_validator("system_name")
+    @classmethod
+    def strip_system_name(cls, v):
+        return v.strip()
+
+
+class FactorEvidence(BaseModel):
+    """Evidence breakdown for a single risk factor."""
+    factor: str
+    weight: float
+    raw_contribution: float = Field(description="Unweighted contribution c_i (0-1)")
+    weighted_contribution: float = Field(description="w_i * c_i")
+    evidence: dict = Field(default_factory=dict, description="Raw data values, thresholds, gap analysis")
+
+
+class PatentRiskScoreResponse(BaseModel):
+    """Response for patent-compliant risk scoring."""
+    system: str
+    scoring_method: str = "patent_composite_v1"
+    composite_score: float = Field(description="R = min(sum(w_i * c_i), 1.0)")
+    risk_level: str = Field(description="LOW / MEDIUM / HIGH / CRITICAL")
+    factors: list[FactorEvidence]
+    scored_by: str
+    scored_at: str
+
+
 class ThreatRequest(_SanitizedModel):
     system_type: str = Field(..., min_length=1, max_length=255)
     deployment_context: str = Field(default="production", max_length=255)
