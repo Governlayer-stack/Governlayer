@@ -1173,14 +1173,14 @@ def create_app() -> FastAPI:
                 "Disallow: /docs\n"
                 "Disallow: /redoc\n"
                 "Disallow: /health\n"
-                "Sitemap: https://governlayer.ai/sitemap.xml\n"
+                "Sitemap: https://www.governlayer.ai/sitemap.xml\n"
             ),
             media_type="text/plain",
         )
 
     @app.get("/sitemap.xml")
     def sitemap_xml():
-        base = "https://governlayer.ai"
+        base = "https://www.governlayer.ai"
         pages = [
             # Priority 1.0 — Landing
             ("/", "1.0", "weekly"),
