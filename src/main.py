@@ -957,6 +957,7 @@ def create_app() -> FastAPI:
     _customers_html = _load_page("customers")
     _404_html = _load_page("404")
     _status_page_html = _load_page("status")
+    _audit_portal_html = _load_page("audit-portal")
     _dpa_html = None
     for _dpa_base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
         _dpa_path = os.path.join(_dpa_base, "docs", "legal", "dpa.html")
@@ -1075,6 +1076,47 @@ def create_app() -> FastAPI:
         if _auditor_html:
             return HTMLResponse(_auditor_html)
         return {"error": "Auditor portal not found"}
+
+    @app.get("/audit-portal")
+    def audit_portal_page():
+        if _audit_portal_html:
+            return HTMLResponse(_audit_portal_html)
+        return {"error": "Audit portal not found"}
+
+    @app.post("/api/audit-portal/evaluate")
+    def audit_portal_evaluate(request: dict):
+        """Unauthenticated regulatory framework evaluation for the audit portal.
+
+        Accepts system details and compliance context, runs deterministic policy
+        evaluation against selected frameworks, and returns the report.
+        Does NOT write to the ledger (read-only for regulators).
+        """
+        from src.governance.framework_registry import (
+            evaluate_all,
+            get_applicable_frameworks,
+            FRAMEWORK_REGISTRY,
+        )
+
+        jurisdiction = request.get("jurisdiction")
+        industry = request.get("industry")
+        context = request.get("context", {})
+        framework_ids = request.get("framework_ids")
+
+        # If specific framework IDs are provided, use those; otherwise auto-detect
+        if framework_ids:
+            frameworks = [
+                FRAMEWORK_REGISTRY[fid]
+                for fid in framework_ids
+                if fid in FRAMEWORK_REGISTRY
+            ]
+        else:
+            frameworks = get_applicable_frameworks(
+                jurisdiction=jurisdiction, industry=industry
+            )
+
+        result = evaluate_all(context, frameworks if frameworks else None)
+        result["system_name"] = request.get("system_name", "unnamed")
+        return result
 
     @app.get("/terms")
     def terms_page():
@@ -1211,6 +1253,7 @@ def create_app() -> FastAPI:
             ("/soc2", "0.4", "monthly"),
             ("/beta", "0.4", "weekly"),
             ("/playground", "0.4", "weekly"),
+            ("/audit-portal", "0.7", "weekly"),
         ]
         urls = "".join(
             f"  <url><loc>{base}{path}</loc><priority>{pri}</priority>"
