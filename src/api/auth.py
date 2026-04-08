@@ -26,10 +26,8 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     token = create_token(user.email)
-    from src.notifications.email import send_email
-    from src.notifications.templates import welcome_email
-    subject, html = welcome_email(user.email, user.company)
-    send_email(user.email, subject, html)
+    from src.email.service import send_welcome_email
+    send_welcome_email(user.email, user.company)
     return {"message": f"Welcome to GovernLayer {user.company}", "token": token, "email": user.email}
 
 
@@ -59,10 +57,8 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
         user.reset_token_expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
         db.commit()
         logger.debug("Password reset requested for %s", req.email)
-        from src.notifications.email import send_email
-        from src.notifications.templates import password_reset_email
-        subject, html = password_reset_email(token, req.email)
-        send_email(req.email, subject, html)
+        from src.email.service import send_password_reset
+        send_password_reset(req.email, token)
     return {"message": "If an account exists with that email, a reset link has been sent."}
 
 

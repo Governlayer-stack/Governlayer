@@ -656,9 +656,9 @@ def create_app() -> FastAPI:
 
         return data
 
-    @app.get("/status")
+    @app.get("/status/json")
     async def detailed_status():
-        """Detailed status for uptime monitoring services (UptimeRobot, Betterstack, etc.)."""
+        """Detailed status JSON for uptime monitoring services (UptimeRobot, Betterstack, etc.)."""
         from src.middleware.metrics import metrics as m
 
         checks = {"api": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
@@ -956,6 +956,14 @@ def create_app() -> FastAPI:
     _careers_html = _load_page("careers")
     _customers_html = _load_page("customers")
     _404_html = _load_page("404")
+    _status_page_html = _load_page("status")
+    _dpa_html = None
+    for _dpa_base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
+        _dpa_path = os.path.join(_dpa_base, "docs", "legal", "dpa.html")
+        if os.path.exists(_dpa_path):
+            with open(_dpa_path) as f:
+                _dpa_html = f.read()
+            break
 
     @app.exception_handler(404)
     async def custom_404_handler(request: Request, exc):
@@ -1092,6 +1100,18 @@ def create_app() -> FastAPI:
             return HTMLResponse(_blog_html)
         return {"error": "Blog not found"}
 
+    @app.get("/status")
+    def status_page_public():
+        if _status_page_html:
+            return HTMLResponse(_status_page_html)
+        return {"error": "Status page not found"}
+
+    @app.get("/legal/dpa")
+    def dpa_page():
+        if _dpa_html:
+            return HTMLResponse(_dpa_html)
+        return {"error": "Data Processing Agreement not found"}
+
     # Load landing page HTML once at startup
     _landing_html = None
     _landing_paths = [
@@ -1148,11 +1168,11 @@ def create_app() -> FastAPI:
             content=(
                 "User-agent: *\n"
                 "Allow: /\n"
-                "Disallow: /v1/\n"
+                "Disallow: /workspace\n"
+                "Disallow: /api/\n"
                 "Disallow: /docs\n"
                 "Disallow: /redoc\n"
                 "Disallow: /health\n"
-                "Disallow: /automate/\n"
                 "Sitemap: https://governlayer.ai/sitemap.xml\n"
             ),
             media_type="text/plain",
@@ -1160,19 +1180,49 @@ def create_app() -> FastAPI:
 
     @app.get("/sitemap.xml")
     def sitemap_xml():
+        base = "https://governlayer.ai"
+        pages = [
+            # Priority 1.0 — Landing
+            ("/", "1.0", "weekly"),
+            # Priority 0.9 — Core conversion
+            ("/product", "0.9", "weekly"),
+            ("/signup", "0.9", "weekly"),
+            # Priority 0.8 — Key pages
+            ("/workspace", "0.8", "weekly"),
+            ("/documentation", "0.8", "weekly"),
+            ("/trust", "0.8", "weekly"),
+            ("/pricing", "0.8", "weekly"),
+            # Priority 0.7 — Content & engagement
+            ("/blog", "0.7", "weekly"),
+            ("/about", "0.7", "weekly"),
+            ("/customers", "0.7", "weekly"),
+            ("/demo", "0.7", "weekly"),
+            # Priority 0.6 — Secondary pages
+            ("/contact", "0.6", "weekly"),
+            ("/careers", "0.6", "weekly"),
+            ("/login", "0.6", "weekly"),
+            ("/status", "0.6", "weekly"),
+            # Priority 0.5 — Legal & changelog
+            ("/privacy", "0.5", "monthly"),
+            ("/terms", "0.5", "monthly"),
+            ("/changelog", "0.5", "weekly"),
+            ("/legal/dpa", "0.5", "monthly"),
+            # Priority 0.4 — Supplementary
+            ("/soc2", "0.4", "monthly"),
+            ("/beta", "0.4", "weekly"),
+            ("/playground", "0.4", "weekly"),
+        ]
+        urls = "".join(
+            f"  <url><loc>{base}{path}</loc><priority>{pri}</priority>"
+            f"<changefreq>{freq}</changefreq></url>\n"
+            for path, pri, freq in pages
+        )
         return Response(
             content=(
                 '<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                '  <url><loc>https://governlayer.ai/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/trust</loc><priority>0.7</priority><changefreq>weekly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/demo</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/terms</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/privacy</loc><priority>0.3</priority><changefreq>yearly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/signup</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/documentation</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>\n'
-                '  <url><loc>https://governlayer.ai/competitive</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>\n'
-                '</urlset>\n'
+                f"{urls}"
+                "</urlset>\n"
             ),
             media_type="application/xml",
         )

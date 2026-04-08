@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Processing Agreement | GovernLayer</title>
+<meta name="description" content="GovernLayer Data Processing Agreement (DPA) for GDPR compliance. Details on how GovernLayer processes data as a processor on behalf of controllers.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="GovernLayer Data Processing Agreement">
+<meta property="og:description" content="GDPR-compliant Data Processing Agreement detailing GovernLayer's obligations as a data processor.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/legal/dpa">
+<link rel="canonical" href="https://governlayer.ai/legal/dpa">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.12);--blue-dark:#60a5fa;
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:14px;--radius-sm:10px;--radius-xs:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:var(--blue);text-decoration:none;transition:color .2s}
+a:hover{color:var(--blue-dark)}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:780px;margin:0 auto;padding:0 24px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(10,14,26,.85);backdrop-filter:blur(16px) saturate(1.8);-webkit-backdrop-filter:blur(16px) saturate(1.8);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:780px;margin:0 auto;padding:0 24px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em;color:var(--text)}
+.logo-mark{width:26px;height:26px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:26px;list-style:none}
+.nav-links a{font-size:.86rem;color:var(--text2);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.86rem;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg2);border-color:var(--border2)}
+.btn-fill{background:var(--blue);color:#fff}
+.btn-fill:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(59,130,246,.3)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px}
+
+/* Hero */
+.hero{padding:110px 0 48px;text-align:center}
+.hero h1{font-size:clamp(2rem,4.5vw,2.8rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:14px;background:linear-gradient(180deg,#ffffff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1rem;color:var(--text2);max-width:560px;margin:0 auto;line-height:1.7}
+.tag{display:inline-flex;padding:4px 12px;border-radius:100px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+
+/* Content */
+.dpa-content{padding-bottom:60px}
+.dpa-section{padding:32px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(17,24,39,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-bottom:16px;transition:all .3s}
+.dpa-section:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.dpa-section h2{font-size:1.1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.dpa-section h2 .sec-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;font-size:.72rem;font-weight:700;flex-shrink:0}
+.dpa-section p,.dpa-section li{font-size:.88rem;color:var(--text2);line-height:1.75}
+.dpa-section p+p{margin-top:12px}
+.dpa-section ul,.dpa-section ol{margin:12px 0;padding-left:20px}
+.dpa-section li{margin-bottom:8px}
+.dpa-section li::marker{color:var(--text3)}
+.dpa-section strong{color:var(--text);font-weight:600}
+.dpa-section .def-term{color:var(--blue-dark);font-weight:600}
+
+/* Table */
+.sub-table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:var(--radius-xs);overflow:hidden}
+.sub-table th,.sub-table td{padding:12px 16px;text-align:left;font-size:.82rem;border-bottom:1px solid var(--border)}
+.sub-table th{background:var(--bg);color:var(--text);font-weight:700;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em}
+.sub-table td{color:var(--text2)}
+.sub-table tr:last-child td{border-bottom:none}
+
+/* Contact card */
+.contact-card{padding:28px;border:2px solid var(--purple);border-radius:var(--radius);background:var(--purple-bg);margin-top:24px}
+.contact-card h3{font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--purple)}
+.contact-card p{font-size:.88rem;color:var(--text2);line-height:1.7;margin-bottom:4px}
+.contact-card a.email-link{color:var(--purple);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.contact-card a.email-link:hover{color:var(--blue-dark)}
+
+/* Effective date */
+.effective-date{text-align:center;font-size:.78rem;color:var(--text3);padding:24px 0 0}
+
+/* Footer */
+.footer{padding:48px 0 24px;border-top:1px solid var(--border)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--text3)}
+.footer-links{display:flex;gap:18px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .mobile-toggle{display:block}
+  .hero h1{font-size:1.8rem}
+  .dpa-section{padding:20px}
+  .footer-inner{flex-direction:column;gap:12px;text-align:center}
+}
+</style>
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#platform">Product</a></li>
+      <li><a href="/documentation">Docs</a></li>
+      <li><a href="/trust">Trust Center</a></li>
+      <li><a href="/status">Status</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/demo" class="btn btn-ghost">Get a Demo</a>
+      <a href="/signup?plan=free" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="reveal">
+      <div class="tag tag-purple">GDPR</div>
+    </div>
+    <h1 class="reveal">Data Processing Agreement</h1>
+    <p class="hero-sub reveal">This Data Processing Agreement ("DPA") forms part of the agreement between the Customer ("Controller") and GovernLayer, Inc. ("Processor") for the provision of AI governance services.</p>
+  </div>
+</section>
+
+<!-- DPA Content -->
+<div class="container dpa-content">
+
+  <!-- 1. Definitions -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--blue-bg);color:var(--blue)">1</span> Definitions</h2>
+    <ul>
+      <li><span class="def-term">"Controller"</span> means the entity that determines the purposes and means of processing Personal Data. In the context of this DPA, the Controller is the Customer who uses GovernLayer's services.</li>
+      <li><span class="def-term">"Processor"</span> means the entity that processes Personal Data on behalf of the Controller. GovernLayer acts as the Processor when handling data submitted through its platform.</li>
+      <li><span class="def-term">"Data Subject"</span> means an identified or identifiable natural person whose Personal Data is processed. This may include the Controller's employees, end-users, or other individuals whose data is referenced in AI governance workflows.</li>
+      <li><span class="def-term">"Personal Data"</span> means any information relating to a Data Subject, as defined in Article 4(1) of the GDPR. In GovernLayer's context, this primarily includes metadata attached to governance decisions rather than direct end-user PII.</li>
+      <li><span class="def-term">"Processing"</span> means any operation performed on Personal Data, including collection, recording, organisation, storage, adaptation, retrieval, consultation, use, disclosure, erasure, or destruction.</li>
+    </ul>
+  </div>
+
+  <!-- 2. Scope of Processing -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--green-bg);color:var(--green)">2</span> Scope of Processing</h2>
+    <p>GovernLayer processes data strictly in the context of AI governance operations. The categories of data processed include:</p>
+    <ul>
+      <li><strong>AI decision logs</strong> &mdash; Records of automated decisions made by AI agents under governance, including model identifiers, input summaries, and output classifications.</li>
+      <li><strong>Reasoning traces</strong> &mdash; Chain-of-thought or reasoning outputs produced during compliance audits and drift detection analyses.</li>
+      <li><strong>Risk scores</strong> &mdash; Deterministic 6-dimension risk assessments computed from boolean policy inputs. These scores do not contain PII.</li>
+      <li><strong>Audit records</strong> &mdash; SHA-256 hash-chained ledger entries documenting governance actions, timestamps, and associated compliance frameworks.</li>
+    </ul>
+    <p><strong>GovernLayer does not directly process end-user PII.</strong> The platform operates on AI system metadata and governance telemetry. If a Controller submits data containing PII (e.g., in policy descriptions or audit notes), GovernLayer processes it solely to deliver the requested governance service and does not use it for any other purpose.</p>
+  </div>
+
+  <!-- 3. Processor Obligations -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--purple-bg);color:var(--purple)">3</span> Processor Obligations</h2>
+    <p>GovernLayer, as Processor, shall:</p>
+    <ol>
+      <li><strong>Process data only on documented instructions</strong> from the Controller, unless required by applicable law. GovernLayer will not process Personal Data for any purpose other than delivering the contracted governance services.</li>
+      <li><strong>Implement appropriate technical and organisational measures</strong> to ensure a level of security appropriate to the risk, including:
+        <ul>
+          <li>Encryption of data at rest (AES-256) and in transit (TLS 1.2+)</li>
+          <li>bcrypt password hashing with per-user salt</li>
+          <li>SHA-256 hash-chained immutable audit ledger</li>
+          <li>Redis-backed rate limiting per organization</li>
+          <li>Scoped API key authentication with rotation support</li>
+          <li>HSTS enforcement with 2-year max-age and preload</li>
+          <li>Security headers on all responses (CSP, X-Frame-Options, Permissions-Policy)</li>
+        </ul>
+      </li>
+      <li><strong>Notify the Controller of a data breach</strong> without undue delay and in any event within <strong>72 hours</strong> of becoming aware of a Personal Data breach. Notification shall include the nature of the breach, categories and approximate number of Data Subjects affected, likely consequences, and measures taken or proposed to address the breach.</li>
+      <li><strong>Ensure personnel are bound by confidentiality</strong> obligations. All GovernLayer employees and contractors with access to Customer data have signed confidentiality agreements.</li>
+      <li><strong>Assist the Controller</strong> in ensuring compliance with obligations under Articles 32 to 36 of the GDPR (security, breach notification, impact assessments, and prior consultation).</li>
+      <li><strong>Delete or return all Personal Data</strong> upon termination of the service, at the Controller's election, unless retention is required by applicable law.</li>
+      <li><strong>Make available all information necessary</strong> to demonstrate compliance with this DPA and allow for audits and inspections conducted by the Controller or an authorized auditor.</li>
+    </ol>
+  </div>
+
+  <!-- 4. Data Subject Rights -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--amber-bg);color:var(--amber)">4</span> Data Subject Rights</h2>
+    <p>GovernLayer shall assist the Controller in fulfilling its obligations to respond to Data Subject requests under Chapter III of the GDPR, including:</p>
+    <ul>
+      <li><strong>Right of Access</strong> (Article 15) &mdash; Data Subjects may request confirmation of whether their Personal Data is being processed and, if so, access to that data. GovernLayer provides API endpoints and dashboard tools enabling Controllers to export all governance records associated with a given subject.</li>
+      <li><strong>Right to Rectification</strong> (Article 16) &mdash; Data Subjects may request correction of inaccurate Personal Data. Controllers can update records through the GovernLayer API. Note: hash-chained audit ledger entries are immutable by design; corrections are recorded as new ledger entries referencing the original.</li>
+      <li><strong>Right to Erasure</strong> (Article 17) &mdash; Data Subjects may request deletion of their Personal Data. GovernLayer supports organization-level data deletion on request. Deletion is permanent and irreversible, covering audit records, API keys, usage history, and account information.</li>
+      <li><strong>Right to Data Portability</strong> (Article 20) &mdash; Data Subjects may request their data in a structured, commonly used, machine-readable format. GovernLayer supports JSON export of all governance records via the API.</li>
+    </ul>
+    <p>Requests should be directed to the Controller. If GovernLayer receives a request directly from a Data Subject, it will promptly notify the Controller and will not respond to the request without the Controller's authorization, unless legally required to do so.</p>
+  </div>
+
+  <!-- 5. International Transfers -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--blue-bg);color:var(--blue)">5</span> International Transfers</h2>
+    <p>GovernLayer's primary infrastructure is hosted within the United States via Railway (SOC 2 Type II compliant hosting). Where Personal Data originating from the European Economic Area (EEA), United Kingdom, or Switzerland is transferred to a country outside those regions, GovernLayer ensures adequate safeguards are in place:</p>
+    <ul>
+      <li><strong>Standard Contractual Clauses (SCCs)</strong> &mdash; GovernLayer enters into the European Commission's Standard Contractual Clauses (Module Two: Controller to Processor) with Controllers located in the EEA, as approved by Commission Implementing Decision (EU) 2021/914.</li>
+      <li><strong>UK International Data Transfer Addendum</strong> &mdash; For transfers from the UK, GovernLayer supplements the SCCs with the UK International Data Transfer Addendum as issued by the Information Commissioner's Office.</li>
+      <li><strong>Supplementary measures</strong> &mdash; In addition to SCCs, GovernLayer implements encryption in transit and at rest, access controls, and audit logging as supplementary technical measures.</li>
+    </ul>
+    <p>Controllers who require data residency within the EEA may deploy GovernLayer's self-hosted option with local Ollama inference, ensuring no data leaves the Controller's infrastructure.</p>
+  </div>
+
+  <!-- 6. Data Retention -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--green-bg);color:var(--green)">6</span> Data Retention</h2>
+    <p>GovernLayer retains data according to the following principles:</p>
+    <ul>
+      <li><strong>Audit records</strong> are retained for the duration of the Controller's subscription and for a period of 90 days following termination, to allow for data export. After this retention period, records are permanently deleted.</li>
+      <li><strong>Risk scores and drift detection results</strong> are retained as part of the audit ledger for the same period as audit records.</li>
+      <li><strong>Account data</strong> (organization name, billing information, API keys) is retained for the duration of the subscription and deleted upon account closure, subject to any legal retention obligations.</li>
+      <li><strong>Usage metrics</strong> (request counts, latency data) are retained in aggregate form for up to 12 months for service improvement. These metrics do not contain Personal Data.</li>
+    </ul>
+    <p>Controllers may request early deletion of all their data at any time by contacting <a href="mailto:dpo@governlayer.ai">dpo@governlayer.ai</a>. GovernLayer will process deletion requests within 30 days and provide written confirmation upon completion.</p>
+  </div>
+
+  <!-- 7. Sub-Processors -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--red-bg);color:var(--red)">7</span> Sub-Processors</h2>
+    <p>GovernLayer engages the following sub-processors to deliver its services. The Controller authorizes GovernLayer to engage these sub-processors, subject to the conditions set out in this section.</p>
+    <table class="sub-table">
+      <thead>
+        <tr>
+          <th>Sub-Processor</th>
+          <th>Purpose</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Railway</strong></td>
+          <td>Application hosting, compute, and deployment infrastructure</td>
+          <td>United States</td>
+        </tr>
+        <tr>
+          <td><strong>PostgreSQL (Railway-managed)</strong></td>
+          <td>Primary database storage for audit records, governance data, and account information</td>
+          <td>United States</td>
+        </tr>
+        <tr>
+          <td><strong>Redis (Railway-managed)</strong></td>
+          <td>Caching, session management, and rate limiting</td>
+          <td>United States</td>
+        </tr>
+        <tr>
+          <td><strong>Stripe</strong></td>
+          <td>Payment processing and subscription billing</td>
+          <td>United States</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>GovernLayer will notify the Controller at least <strong>30 days in advance</strong> of adding or replacing a sub-processor by updating this page and notifying Controllers via their registered email address. If the Controller objects to a new sub-processor, the Controller may terminate the affected services within 30 days of the notification.</p>
+    <p>GovernLayer ensures that all sub-processors are bound by data protection obligations no less protective than those set out in this DPA.</p>
+  </div>
+
+  <!-- 8. Contact -->
+  <div class="dpa-section reveal">
+    <h2><span class="sec-num" style="background:var(--purple-bg);color:var(--purple)">8</span> Contact</h2>
+    <div class="contact-card">
+      <h3>Data Protection Officer</h3>
+      <p>For questions about this DPA, data processing practices, or to exercise data subject rights:</p>
+      <p>Email: <a href="mailto:dpo@governlayer.ai" class="email-link">dpo@governlayer.ai</a></p>
+      <p>General inquiries: <a href="mailto:founders@governlayer.ai" class="email-link">founders@governlayer.ai</a></p>
+      <p style="margin-top:12px;font-size:.82rem;color:var(--text3)">GovernLayer, Inc.<br>Response time: within 5 business days</p>
+    </div>
+  </div>
+
+  <div class="effective-date">Effective date: April 2026 &middot; Last updated: April 7, 2026</div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/trust">Trust Center</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/status">Status</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Reveal animations
+const obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(el) {
+    if (el.isIntersecting) { el.target.classList.add('visible'); obs.unobserve(el.target); }
+  });
+}, {threshold: .1, rootMargin: '0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+// Mobile toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  var l = document.querySelector('.nav-links');
+  var c = document.querySelector('.nav-ctas');
+  if (l.style.display === 'flex') {
+    l.style.cssText = '';
+    c.style.cssText = '';
+    this.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+  } else {
+    l.style.cssText = 'display:flex;position:fixed;top:52px;left:0;right:0;background:#111827;flex-direction:column;padding:20px 24px;gap:14px;border-bottom:1px solid rgba(255,255,255,.08);z-index:999;box-shadow:0 8px 20px rgba(0,0,0,.4)';
+    c.style.display = 'none';
+    this.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  }
+});
+</script>
+</body>
+</html>

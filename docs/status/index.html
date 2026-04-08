@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Status | GovernLayer</title>
+<meta name="description" content="Real-time system status for the GovernLayer autonomous AI governance platform. Monitor component health, uptime, and service availability.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="GovernLayer System Status">
+<meta property="og:description" content="Real-time system status and component health for the GovernLayer platform.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/status">
+<link rel="canonical" href="https://governlayer.ai/status">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.12);--blue-dark:#60a5fa;
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:14px;--radius-sm:10px;--radius-xs:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:860px;margin:0 auto;padding:0 24px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 0;background:rgba(10,14,26,.85);backdrop-filter:blur(16px) saturate(1.8);-webkit-backdrop-filter:blur(16px) saturate(1.8);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:860px;margin:0 auto;padding:0 24px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.12rem;letter-spacing:-.03em}
+.logo-mark{width:26px;height:26px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:26px;list-style:none}
+.nav-links a{font-size:.86rem;color:var(--text2);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.86rem;font-weight:600;border:none;cursor:pointer;transition:all .2s}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg2);border-color:var(--border2)}
+.btn-fill{background:var(--blue);color:#fff}
+.btn-fill:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 14px rgba(59,130,246,.3)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px}
+
+/* Hero / Banner */
+.hero{padding:110px 0 40px;text-align:center}
+.hero h1{font-size:clamp(2rem,4.5vw,2.8rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:14px;background:linear-gradient(180deg,#ffffff,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1rem;color:var(--text2);max-width:540px;margin:0 auto 28px;line-height:1.7}
+
+/* Overall status banner */
+.status-banner{display:flex;align-items:center;justify-content:center;gap:12px;padding:16px 28px;border-radius:var(--radius);margin:0 auto 40px;max-width:480px;font-weight:700;font-size:1rem;transition:all .4s ease}
+.status-banner.operational{background:var(--green-bg);border:1px solid rgba(16,185,129,.25);color:var(--green)}
+.status-banner.degraded{background:var(--amber-bg);border:1px solid rgba(245,158,11,.25);color:var(--amber)}
+.status-banner.down{background:var(--red-bg);border:1px solid rgba(239,68,68,.25);color:var(--red)}
+.status-banner.loading{background:var(--blue-bg);border:1px solid rgba(59,130,246,.15);color:var(--blue)}
+.status-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;position:relative}
+.status-dot::after{content:'';position:absolute;inset:-3px;border-radius:50%;animation:pulse 2s ease-in-out infinite;opacity:.4}
+.status-banner.operational .status-dot{background:var(--green)}
+.status-banner.operational .status-dot::after{background:var(--green)}
+.status-banner.degraded .status-dot{background:var(--amber)}
+.status-banner.degraded .status-dot::after{background:var(--amber)}
+.status-banner.down .status-dot{background:var(--red)}
+.status-banner.down .status-dot::after{background:var(--red)}
+.status-banner.loading .status-dot{background:var(--blue)}
+.status-banner.loading .status-dot::after{background:var(--blue)}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.8);opacity:0}}
+
+/* Component list */
+.components{margin-bottom:40px}
+.component-card{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border:1px solid var(--border);border-radius:var(--radius-sm);background:rgba(17,24,39,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-bottom:8px;transition:all .3s}
+.component-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.component-left{display:flex;align-items:center;gap:14px}
+.component-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.component-name{font-weight:600;font-size:.9rem}
+.component-desc{font-size:.76rem;color:var(--text3);margin-top:2px}
+.component-status{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600}
+.component-status .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-ok{background:var(--green)}
+.dot-degraded{background:var(--amber)}
+.dot-down{background:var(--red)}
+.dot-unknown{background:var(--text3)}
+
+/* Uptime card */
+.info-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:40px}
+.info-card{padding:20px;border:1px solid var(--border);border-radius:var(--radius-sm);background:rgba(17,24,39,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);text-align:center}
+.info-card .label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.info-card .value{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+.info-card .value.green{color:var(--green)}
+.info-card .value.blue{color:var(--blue)}
+.info-card .value.amber{color:var(--amber)}
+
+/* Last checked */
+.last-checked{text-align:center;font-size:.78rem;color:var(--text3);margin-bottom:12px}
+.last-checked span{color:var(--text2);font-weight:500}
+.auto-refresh{text-align:center;font-size:.7rem;color:var(--text3);margin-bottom:40px}
+.auto-refresh svg{vertical-align:middle;margin-right:4px}
+
+/* Footer */
+.footer{padding:48px 0 24px;border-top:1px solid var(--border)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--text3)}
+.footer-links{display:flex;gap:18px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .mobile-toggle{display:block}
+  .info-cards{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+  .footer-inner{flex-direction:column;gap:12px;text-align:center}
+}
+</style>
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/#platform">Product</a></li>
+      <li><a href="/documentation">Docs</a></li>
+      <li><a href="/trust">Trust Center</a></li>
+      <li><a href="/status" style="color:var(--text);font-weight:600">Status</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/demo" class="btn btn-ghost">Get a Demo</a>
+      <a href="/signup?plan=free" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1 class="reveal">GovernLayer System Status</h1>
+    <p class="hero-sub reveal">Real-time health monitoring for all platform components.</p>
+    <div id="statusBanner" class="status-banner loading reveal">
+      <span class="status-dot"></span>
+      <span id="bannerText">Checking systems...</span>
+    </div>
+  </div>
+</section>
+
+<!-- Components -->
+<div class="container">
+  <div class="components" id="componentList">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-cards reveal">
+    <div class="info-card">
+      <div class="label">Uptime</div>
+      <div class="value green" id="uptimeValue">--</div>
+    </div>
+    <div class="info-card">
+      <div class="label">DB Latency</div>
+      <div class="value blue" id="latencyValue">--</div>
+    </div>
+    <div class="info-card">
+      <div class="label">API Version</div>
+      <div class="value amber" id="versionValue">--</div>
+    </div>
+  </div>
+
+  <!-- Timestamps -->
+  <div class="last-checked">Last checked: <span id="lastChecked">--</span></div>
+  <div class="auto-refresh">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+    Auto-refreshes every 30 seconds
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/trust">Trust Center</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/legal/dpa">DPA</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Component definitions (static list with icons)
+const COMPONENTS = [
+  {id:'database',   name:'Database',           desc:'PostgreSQL primary store',      icon:'db',      color:'var(--blue)'},
+  {id:'redis',      name:'Redis Cache',         desc:'Session & rate-limit store',    icon:'cache',   color:'var(--purple)'},
+  {id:'policy',     name:'Policy Engine',        desc:'25 compliance frameworks',     icon:'shield',  color:'var(--green)'},
+  {id:'drift',      name:'Drift Detection',      desc:'Behavioral deviation monitor', icon:'wave',    color:'var(--amber)'},
+  {id:'risk',       name:'Risk Scoring',          desc:'6-dimension deterministic',   icon:'chart',   color:'var(--red)'},
+  {id:'ledger',     name:'Audit Ledger',          desc:'SHA-256 hash-chained',       icon:'chain',   color:'var(--purple)'},
+  {id:'agi',        name:'AGI Governance',        desc:'Multi-LLM orchestration',    icon:'brain',   color:'var(--blue)'},
+  {id:'hitl',       name:'HITL Orchestrator',     desc:'Human-in-the-loop escalation',icon:'user',   color:'var(--green)'},
+  {id:'vault',      name:'Credential Vault',      desc:'Encrypted secret storage',   icon:'lock',    color:'var(--amber)'},
+];
+
+const SVG_ICONS = {
+  db:     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+  cache:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1" fill="currentColor"/><circle cx="6" cy="18" r="1" fill="currentColor"/></svg>',
+  shield: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+  wave:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  chart:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>',
+  chain:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="5" width="6" height="14" rx="1"/><rect x="9" y="5" width="6" height="14" rx="1"/><rect x="17" y="5" width="6" height="14" rx="1"/><path d="M7 10h2M15 10h2"/></svg>',
+  brain:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 017 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 01-2 2h-4a2 2 0 01-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 017-7z"/><path d="M9 21h6"/><path d="M10 17v4"/><path d="M14 17v4"/></svg>',
+  user:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  lock:   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>',
+};
+
+function formatUptime(seconds) {
+  if (!seconds || seconds <= 0) return '--';
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (d > 0) return d + 'd ' + h + 'h ' + m + 'm';
+  if (h > 0) return h + 'h ' + m + 'm';
+  return m + 'm';
+}
+
+function renderComponents(data) {
+  const list = document.getElementById('componentList');
+  list.innerHTML = '';
+
+  COMPONENTS.forEach((comp, i) => {
+    let status = 'operational';
+    let statusLabel = 'Operational';
+    let dotClass = 'dot-ok';
+
+    // Map API response to component status
+    if (comp.id === 'database') {
+      if (data && data.database === 'degraded') { status = 'degraded'; statusLabel = 'Degraded'; dotClass = 'dot-degraded'; }
+      else if (data && data.database !== 'ok') { status = 'down'; statusLabel = 'Down'; dotClass = 'dot-down'; }
+    } else if (comp.id === 'redis') {
+      if (data && data.redis === 'not_configured') { status = 'degraded'; statusLabel = 'Not Configured'; dotClass = 'dot-degraded'; }
+      else if (data && data.redis !== 'ok') { status = 'degraded'; statusLabel = 'Degraded'; dotClass = 'dot-degraded'; }
+    } else if (!data) {
+      status = 'unknown'; statusLabel = 'Unknown'; dotClass = 'dot-unknown';
+    }
+
+    const card = document.createElement('div');
+    card.className = 'component-card reveal';
+    card.style.animationDelay = (i * 50) + 'ms';
+    card.innerHTML =
+      '<div class="component-left">' +
+        '<div class="component-icon" style="background:' + comp.color.replace(')', ',.12)').replace('var(', 'rgba(').replace('--', '') + ';background:' + comp.color.replace(/var\(--(\w+)\)/, function(m,c){return 'rgba('+{blue:'59,130,246',purple:'139,92,246',green:'16,185,129',amber:'245,158,11',red:'239,68,68'}[c]+',.12)'}) + '">' +
+          '<span style="color:' + comp.color + '">' + SVG_ICONS[comp.icon] + '</span>' +
+        '</div>' +
+        '<div>' +
+          '<div class="component-name">' + comp.name + '</div>' +
+          '<div class="component-desc">' + comp.desc + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="component-status">' +
+        '<span class="dot ' + dotClass + '"></span>' +
+        '<span>' + statusLabel + '</span>' +
+      '</div>';
+    list.appendChild(card);
+  });
+
+  // Trigger reveal animation
+  setTimeout(function() {
+    document.querySelectorAll('.component-card.reveal').forEach(function(el) {
+      el.classList.add('visible');
+    });
+  }, 50);
+}
+
+function updateBanner(data) {
+  const banner = document.getElementById('statusBanner');
+  const text = document.getElementById('bannerText');
+
+  if (!data) {
+    banner.className = 'status-banner down reveal visible';
+    text.textContent = 'Unable to Reach API';
+    return;
+  }
+
+  const overall = data.status || 'unknown';
+  if (overall === 'operational') {
+    banner.className = 'status-banner operational reveal visible';
+    text.textContent = 'All Systems Operational';
+  } else if (overall === 'degraded') {
+    banner.className = 'status-banner degraded reveal visible';
+    text.textContent = 'Degraded Performance';
+  } else {
+    banner.className = 'status-banner down reveal visible';
+    text.textContent = 'Service Disruption';
+  }
+}
+
+function updateInfoCards(data) {
+  document.getElementById('uptimeValue').textContent = data ? formatUptime(data.uptime_seconds) : '--';
+  document.getElementById('latencyValue').textContent = data && data.db_latency_ms != null ? data.db_latency_ms + ' ms' : '--';
+  document.getElementById('versionValue').textContent = data && data.version ? data.version : '--';
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  document.getElementById('lastChecked').textContent = now.toLocaleString(undefined, {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+}
+
+async function fetchStatus() {
+  try {
+    const resp = await fetch('/status/json', {headers: {'Accept': 'application/json'}});
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    updateBanner(data);
+    renderComponents(data);
+    updateInfoCards(data);
+    updateTimestamp();
+  } catch (e) {
+    console.error('Status fetch failed:', e);
+    updateBanner(null);
+    renderComponents(null);
+    updateInfoCards(null);
+    updateTimestamp();
+  }
+}
+
+// Initial fetch and auto-refresh
+fetchStatus();
+setInterval(fetchStatus, 30000);
+
+// Reveal animations
+const obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(el) {
+    if (el.isIntersecting) { el.target.classList.add('visible'); obs.unobserve(el.target); }
+  });
+}, {threshold: .1, rootMargin: '0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+// Mobile toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  var l = document.querySelector('.nav-links');
+  var c = document.querySelector('.nav-ctas');
+  if (l.style.display === 'flex') {
+    l.style.cssText = '';
+    c.style.cssText = '';
+    this.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+  } else {
+    l.style.cssText = 'display:flex;position:fixed;top:52px;left:0;right:0;background:#111827;flex-direction:column;padding:20px 24px;gap:14px;border-bottom:1px solid rgba(255,255,255,.08);z-index:999;box-shadow:0 8px 20px rgba(0,0,0,.4)';
+    c.style.display = 'none';
+    this.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  }
+});
+</script>
+</body>
+</html>
