@@ -368,13 +368,37 @@
     .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
     .cols { flex-direction: column; gap: 24px; }
     .nav { display: none; }
+    .hier-fan { flex-direction: column; align-items: stretch; }
+    .hier-fan .hier-level { min-width: 0; width: 100%; }
   }
   @media (max-width: 600px) {
-    .slide { padding: 32px 20px; }
-    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-    .arch-flow { flex-direction: column; }
+    html { scroll-snap-type: none; }
+    .slide { padding: 24px 16px; min-height: auto; padding-top: 40px; padding-bottom: 40px; }
+    .slide-inner { max-width: 100%; }
+    h1 { font-size: 1.6rem; line-height: 1.2; }
+    h2 { font-size: 1.3rem; }
+    h3 { font-size: 1rem; }
+    p, li { font-size: 0.9rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 12px; }
+    .arch-flow { flex-direction: column; gap: 8px; }
     .arch-arrow { transform: rotate(90deg); }
     .dash-row { flex-direction: column; }
+    .stat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat { padding: 16px; }
+    .stat .num { font-size: 1.5rem; }
+    .bar-track { height: 22px; }
+    .bar-label { font-size: 0.75rem; }
+    .card { padding: 16px; }
+    .key-hint { display: none; }
+    .slide-counter { bottom: 12px; right: 16px; font-size: 11px; }
+    .glow { display: none; }
+    .logo-mark { flex-direction: column; gap: 8px; }
+    .hier-fan { flex-direction: column; align-items: stretch; gap: 8px; }
+    .hier-fan .hier-level, .hier-l4 { min-width: 0; width: 100%; font-size: 0.8rem; padding: 10px; }
+    .hier-row { flex-wrap: wrap; gap: 6px; }
+    table { font-size: 0.78rem; }
+    td, th { padding: 8px 6px; }
+    .cols .col { width: 100%; }
   }
 </style>
 </head>
