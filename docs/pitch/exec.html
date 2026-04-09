@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer — Executive Platform Overview</title>
+<meta name="description" content="GovernLayer: The complete AI governance platform. 17 services, 29 frameworks, cryptographic audit proof. Enterprise-ready.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f8f9fb;--bg3:#f1f3f7;
+  --border:#e8eaef;--border2:#d1d5dc;
+  --text:#0c1222;--text2:#4b5563;--text3:#9ca3af;
+  --blue:#2563eb;--blue-light:#3b82f6;--blue-bg:#eff6ff;--blue-dark:#1d4ed8;
+  --green:#059669;--green-bg:#ecfdf5;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;
+  --purple:#7c3aed;--purple-bg:#f5f3ff;
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04),0 1px 3px rgba(0,0,0,.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,.03),0 10px 24px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.04),0 20px 44px rgba(0,0,0,.08);
+  --t:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--bg2);padding:2px 7px;border-radius:4px;border:1px solid var(--border)}
+.container{max-width:1100px;margin:0 auto;padding:0 28px}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s var(--t),transform .7s var(--t)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,.05)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:0 28px;height:56px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.1rem;letter-spacing:-.03em}
+.logo-mark{width:26px;height:26px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:13px;height:13px}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{font-size:.82rem;color:var(--text2);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--blue)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.86rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--t)}
+.btn-fill{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(37,99,235,.3)}
+.btn-fill:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--border2);background:var(--bg2)}
+
+/* Hero */
+.hero{padding:130px 0 80px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(37,99,235,.04) 0%,transparent 65%);pointer-events:none}
+.hero h1{font-size:clamp(2.4rem,5vw,3.4rem);font-weight:900;letter-spacing:-.045em;line-height:1.1;margin-bottom:18px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.12rem;color:var(--text2);max-width:620px;margin:0 auto 32px;line-height:1.75}
+.hero-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+.hero-stat .num{font-size:2.2rem;font-weight:900;color:var(--blue);letter-spacing:-.03em}
+.hero-stat .label{font-size:.82rem;color:var(--text3);font-weight:500}
+
+/* Sections */
+.section{padding:88px 0}
+.section-alt{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.tag{display:inline-flex;padding:5px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.sec-title{font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-.035em;line-height:1.15;margin-bottom:12px}
+.sec-sub{font-size:1rem;color:var(--text2);max-width:560px;line-height:1.75}
+
+/* Service Grid */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.service-card{padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);transition:all .35s var(--t);position:relative;overflow:hidden}
+.service-card:hover{border-color:transparent;transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;transition:opacity .3s;opacity:0}
+.service-card:hover::before{opacity:1}
+.service-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.service-icon svg{width:22px;height:22px}
+.service-card h3{font-size:.98rem;font-weight:700;margin-bottom:8px}
+.service-card p{font-size:.84rem;color:var(--text2);line-height:1.65}
+.service-card .endpoints{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+.service-card .ep{font-size:.7rem;padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--text2)}
+
+/* Use Cases */
+.usecase-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
+.usecase{padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);transition:all .35s var(--t)}
+.usecase:hover{box-shadow:var(--shadow-md);border-color:transparent}
+.usecase-industry{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.usecase h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.usecase p{font-size:.86rem;color:var(--text2);line-height:1.7}
+.usecase .result{margin-top:14px;padding:12px 16px;background:var(--green-bg);border-radius:var(--radius-xs);font-size:.82rem;color:var(--green);font-weight:600;border-left:3px solid var(--green)}
+
+/* Comparison */
+.compare-table{width:100%;border-collapse:collapse;margin-top:36px;font-size:.86rem}
+.compare-table th{text-align:left;padding:14px 18px;font-weight:700;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border)}
+.compare-table td{padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:top}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .dim{font-weight:600;color:var(--text)}
+.check{color:var(--green);font-weight:700}
+.cross{color:var(--text3)}
+.compare-table .highlight{background:var(--blue-bg)}
+
+/* Deployment */
+.deploy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.deploy-card{padding:28px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);text-align:center;transition:all .3s var(--t)}
+.deploy-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.deploy-card h3{font-size:1rem;font-weight:700;margin:14px 0 8px}
+.deploy-card p{font-size:.84rem;color:var(--text2);line-height:1.6}
+.deploy-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.deploy-icon svg{width:26px;height:26px}
+
+/* CTA */
+.cta-section{padding:100px 0;text-align:center;position:relative}
+.cta-section::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%)}
+.cta-section>*{position:relative;z-index:1}
+.cta-section h2{font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-.03em;margin-bottom:12px}
+.cta-section p{font-size:1.02rem;color:var(--text2);margin-bottom:32px}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* Footer */
+.footer{padding:32px 0;border-top:1px solid var(--border);text-align:center;font-size:.78rem;color:var(--text3)}
+
+/* Responsive */
+@media(max-width:1024px){
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+  .deploy-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .section{padding:64px 0}
+  .services-grid,.usecase-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .hero h1{font-size:2rem}
+  .hero-stats{gap:24px}
+  .compare-table{font-size:.78rem}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Platform</a></li>
+      <li><a href="#usecases">Use Cases</a></li>
+      <li><a href="#comparison">Why Us</a></li>
+      <li><a href="#deployment">Deployment</a></li>
+    </ul>
+    <div style="display:flex;gap:10px">
+      <a href="/demo" class="btn btn-ghost">Get a Demo</a>
+      <a href="/signup?plan=free" class="btn btn-fill">Start Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="tag tag-blue reveal">Executive Overview</div>
+    <h1 class="reveal">The complete governance platform<br>for <span class="accent">enterprise AI.</span></h1>
+    <p class="hero-sub reveal">GovernLayer sits in the decision path of every AI system in your organization. Real-time governance, cryptographic audit proof, and continuous compliance across 29 regulatory frameworks.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap" class="reveal">
+      <a href="/demo" class="btn btn-fill" style="padding:13px 30px;font-size:.95rem">Schedule a Demo</a>
+      <a href="/signup?plan=free" class="btn btn-ghost" style="padding:13px 30px;font-size:.95rem">Start Free</a>
+    </div>
+    <div class="hero-stats reveal">
+      <div class="hero-stat"><div class="num">17</div><div class="label">Platform Services</div></div>
+      <div class="hero-stat"><div class="num">29</div><div class="label">Compliance Frameworks</div></div>
+      <div class="hero-stat"><div class="num">14</div><div class="label">LLM Models</div></div>
+      <div class="hero-stat"><div class="num">100+</div><div class="label">API Endpoints</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Platform Services -->
+<section class="section section-alt" id="services">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Platform</div>
+      <h2 class="sec-title">17 integrated services. One API.</h2>
+      <p class="sec-sub" style="margin:0 auto">Everything an enterprise needs to govern AI at scale — from discovery to audit-ready proof.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <div class="service-card reveal" style="--c:var(--blue)">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);opacity:1"></div>
+        <div class="service-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>AI Governance Engine</h3>
+        <p>Real-time governance decisions on every AI output. Drift detection, risk scoring, policy enforcement, and audit logging in one call.</p>
+        <div class="endpoints"><span class="ep">POST /v1/govern</span><span class="ep">POST /v1/risk</span><span class="ep">POST /v1/drift</span><span class="ep">POST /v1/scan</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);opacity:1"></div>
+        <div class="service-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>Model and Agent Registry</h3>
+        <p>Central inventory of every AI model and agent. Governance cards, risk tiers, approval workflows, dependency mapping, and shadow AI discovery.</p>
+        <div class="endpoints"><span class="ep">POST /v1/registry</span><span class="ep">POST /v1/agents</span><span class="ep">POST /agents/discovery/scan</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);opacity:1"></div>
+        <div class="service-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></div>
+        <h3>Compliance Hub</h3>
+        <p>Create compliance programs, auto-generate policies, track readiness, schedule audits, and export audit-ready packages. 29 frameworks pre-built.</p>
+        <div class="endpoints"><span class="ep">POST /v1/compliance/programs</span><span class="ep">GET /readiness</span><span class="ep">POST /schedule-audit</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber);opacity:1"></div>
+        <div class="service-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+        <h3>Evidence Collection</h3>
+        <p>Connect to GitHub, Jira, cloud platforms. Automated evidence gathering on schedule. Coverage mapping shows auditors exactly what's documented.</p>
+        <div class="endpoints"><span class="ep">POST /evidence/connect</span><span class="ep">POST /evidence/collect</span><span class="ep">POST /evidence/schedule</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);opacity:1"></div>
+        <div class="service-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Tamper-Proof Audit Ledger</h3>
+        <p>SHA-256 hash-chained audit trail. Every governance decision cryptographically linked. Auditors verify the entire chain with one API call.</p>
+        <div class="endpoints"><span class="ep">GET /ledger</span><span class="ep">GET /ledger/verify</span><span class="ep">GET /ledger/export</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);opacity:1"></div>
+        <div class="service-icon" style="background:var(--red-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <h3>Threat Intelligence</h3>
+        <p>MITRE ATLAS threat analysis, OWASP AI security scans, incident response playbooks, and jurisdiction-specific regulatory deadline monitoring.</p>
+        <div class="endpoints"><span class="ep">POST /threats</span><span class="ep">POST /incident-response</span><span class="ep">GET /deadlines</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);opacity:1"></div>
+        <div class="service-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Incident Management</h3>
+        <p>Create, track, and resolve AI-related incidents. Severity-based triage, status workflows, and integrations with Slack, Jira, and ServiceNow.</p>
+        <div class="endpoints"><span class="ep">POST /incidents</span><span class="ep">GET /incidents</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);opacity:1"></div>
+        <div class="service-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
+        <h3>Policy Engine</h3>
+        <p>Configurable governance rules with real-time evaluation. Automated enforcement: allow, warn, or block AI decisions based on your policies.</p>
+        <div class="endpoints"><span class="ep">POST /policies</span><span class="ep">POST /policies/evaluate</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber);opacity:1"></div>
+        <div class="service-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Continuous Control Monitoring</h3>
+        <p>Map controls to regulatory requirements. Automated effectiveness checks, gap analysis, framework-specific views, and real-time alerts.</p>
+        <div class="endpoints"><span class="ep">GET /controls</span><span class="ep">GET /controls/gaps</span><span class="ep">POST /controls/check</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);opacity:1"></div>
+        <div class="service-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Vendor Risk Management</h3>
+        <p>Assess third-party AI vendors. Risk matrix, automated questionnaires, and continuous monitoring of OpenAI, Anthropic, Google, and custom providers.</p>
+        <div class="endpoints"><span class="ep">POST /vendor-risk</span><span class="ep">GET /risk-matrix</span><span class="ep">POST /questionnaire</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);opacity:1"></div>
+        <div class="service-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <h3>Analytics and Reporting</h3>
+        <p>Fairness analysis, explainability (XAI), data drift detection, security scanning, and custom compliance reports for any framework.</p>
+        <div class="endpoints"><span class="ep">POST /analytics/fairness</span><span class="ep">POST /analytics/explain</span><span class="ep">POST /reports</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);opacity:1"></div>
+        <div class="service-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div>
+        <h3>Knowledge Graph</h3>
+        <p>Regulatory relationship mapping. Understand how controls link to regulations, identify gaps, and get AI-powered regulatory advisory.</p>
+        <div class="endpoints"><span class="ep">GET /knowledge/graph</span><span class="ep">POST /gap-analysis</span><span class="ep">POST /advisory</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);opacity:1"></div>
+        <div class="service-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+        <h3>Multi-LLM Consensus</h3>
+        <p>14 models with 3 hallucination-resistance strategies: Voting, Chain-of-Verification, and Adversarial Debate. No single point of failure.</p>
+        <div class="endpoints"><span class="ep">POST /achonye/process</span><span class="ep">POST /achonye/consensus</span><span class="ep">GET /achonye/models</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber);opacity:1"></div>
+        <div class="service-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+        <h3>Enterprise Multi-Tenancy</h3>
+        <p>Organizations, API key provisioning, SSO, role-based dashboards (Engineering, Compliance, Executive, Security, Data Science), and audit log export.</p>
+        <div class="endpoints"><span class="ep">POST /enterprise/orgs</span><span class="ep">POST /sso/configure</span><span class="ep">GET /audit-log</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);opacity:1"></div>
+        <div class="service-icon" style="background:var(--red-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div>
+        <h3>Human-in-the-Loop Escalation</h3>
+        <p>Automatic escalation when AI decisions exceed risk thresholds. Review queue with SLA tracking. Resolution workflows for compliance teams.</p>
+        <div class="endpoints"><span class="ep">POST /hitl/escalate</span><span class="ep">GET /hitl/queue</span><span class="ep">POST /hitl/resolve</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);opacity:1"></div>
+        <div class="service-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>Health and Continuous Monitoring</h3>
+        <p>System health checks, autonomous governance daemon (hourly pipeline), scheduled evidence collection, and webhook-based alerting to Slack and email.</p>
+        <div class="endpoints"><span class="ep">GET /health</span><span class="ep">GET /automate/health</span><span class="ep">POST /automate/full-pipeline</span></div>
+      </div>
+
+      <div class="service-card reveal">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);opacity:1"></div>
+        <div class="service-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <h3>AGI Safety (Future-Ready)</h3>
+        <p>Recursive self-improvement monitoring, capability containment verification, deceptive alignment detection, and multi-agent coordination safety.</p>
+        <div class="endpoints"><span class="ep">POST /agi/rsim/check</span><span class="ep">POST /agi/ccv/validate</span><span class="ep">POST /agi/dad/check</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Use Cases -->
+<section class="section" id="usecases">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">Use Cases</div>
+      <h2 class="sec-title">How enterprises use GovernLayer</h2>
+      <p class="sec-sub" style="margin:0 auto">Real scenarios across regulated industries.</p>
+    </div>
+
+    <div class="usecase-grid">
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--blue)">Financial Services</div>
+        <h3>Governing Loan Approval AI</h3>
+        <p>A bank routes every loan decision through GovernLayer. Drift detection catches when the model starts approving riskier profiles. The 6-dimension risk score flags autonomy and fairness concerns. Every decision is hash-chained to the audit ledger.</p>
+        <div class="result">Outcome: OCC auditor verifies the entire governance history with a single API call. Zero manual evidence compilation.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--green)">Healthcare</div>
+        <h3>Clinical Decision Support Compliance</h3>
+        <p>A hospital governs its clinical AI systems. Air-gapped deployment with Ollama means zero PHI leaves the network. HIPAA compliance documentation is auto-generated. Behavioral drift alerts fire when the model's recommendations shift.</p>
+        <div class="result">Outcome: HIPAA audit completed in days instead of months. Continuous monitoring replaces annual point-in-time reviews.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--red)">HR and Recruiting</div>
+        <h3>Shadow AI Discovery in Hiring</h3>
+        <p>GovernLayer's agent discovery scan finds unregistered GPT-4 usage in the marketing department running resume screening. The fairness analysis flags gender disparity. Policy engine blocks biased outputs automatically.</p>
+        <div class="result">Outcome: NYC LL144 compliance documentation generated automatically. Shadow AI registered, governed, and compliant within one week.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--purple)">Enterprise AI Platform</div>
+        <h3>Governing 50+ AI Agents at Scale</h3>
+        <p>A CTO registers all AI agents — customer chatbots, code reviewers, data pipelines, fraud detectors. The executive dashboard shows governance health across the entire fleet. Role-based views give each team what they need.</p>
+        <div class="result">Outcome: Board-ready governance report generated on demand. Mean time to detect ungoverned AI: less than 24 hours.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--amber)">EU-Regulated Company</div>
+        <h3>EU AI Act Compliance Before Enforcement</h3>
+        <p>A European company needs full EU AI Act compliance before August 2026. GovernLayer's compliance hub creates the program, auto-generates required policies, schedules quarterly audits, and continuously monitors all high-risk AI systems.</p>
+        <div class="result">Outcome: Audit-ready EU AI Act compliance package exported in one click. Continuous monitoring ensures no compliance gaps between audits.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--blue)">Multi-Vendor AI Operations</div>
+        <h3>Cross-Provider Governance</h3>
+        <p>A company using OpenAI, Anthropic, Google, and internal Ollama models. Vendor risk management scores each provider. The multi-LLM consensus engine cross-validates critical outputs — no single hallucinating model corrupts compliance.</p>
+        <div class="result">Outcome: Vendor risk dashboard shows real-time posture across all providers. Critical decisions validated by 3+ models before execution.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--green)">Government and Defense</div>
+        <h3>Classified AI Governance</h3>
+        <p>Air-gapped deployment with local Ollama inference. Zero external API calls. Full audit trail for classified AI systems. FedRAMP and NIST CSF compliance auto-documented.</p>
+        <div class="result">Outcome: Complete AI governance with zero data exfiltration risk. Auditors verify compliance without accessing classified systems directly.</div>
+      </div>
+
+      <div class="usecase reveal">
+        <div class="usecase-industry" style="color:var(--purple)">Insurance</div>
+        <h3>Claims Processing AI Governance</h3>
+        <p>An insurer governs AI-powered claims assessment. Risk scoring ensures fairness across demographics. The audit ledger proves to regulators that every claim decision was governed. Incident management tracks when the model flags unusual patterns.</p>
+        <div class="result">Outcome: Regulatory examination completed with zero findings. Continuous control monitoring catches drift before it impacts policyholders.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Comparison -->
+<section class="section section-alt" id="comparison">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-purple">Why GovernLayer</div>
+      <h2 class="sec-title">Built for AI governance from day one</h2>
+      <p class="sec-sub" style="margin:0 auto">Not a GRC tool with AI features bolted on. Not a model card generator. A complete governance platform.</p>
+    </div>
+
+    <table class="compare-table reveal">
+      <thead>
+        <tr>
+          <th style="width:30%">Capability</th>
+          <th class="highlight" style="width:23%">GovernLayer</th>
+          <th style="width:23%">Credo AI</th>
+          <th style="width:24%">Vanta / Drata</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim">Audit proof method</td>
+          <td class="highlight"><span class="check">SHA-256 hash-chain</span><br><span style="font-size:.78rem;color:var(--text2)">Mathematically verifiable</span></td>
+          <td>PDF reports</td>
+          <td>Screenshots + PDFs</td>
+        </tr>
+        <tr>
+          <td class="dim">Governance timing</td>
+          <td class="highlight"><span class="check">In the decision path</span><br><span style="font-size:.78rem;color:var(--text2)">Veto before output</span></td>
+          <td>Pre-deploy + monitoring</td>
+          <td>Point-in-time scans</td>
+        </tr>
+        <tr>
+          <td class="dim">AI-specific frameworks</td>
+          <td class="highlight"><span class="check">29 frameworks</span></td>
+          <td>EU AI Act, NIST, ISO</td>
+          <td>SOC 2, ISO (IT only)</td>
+        </tr>
+        <tr>
+          <td class="dim">Behavioral drift detection</td>
+          <td class="highlight"><span class="check">Real-time embeddings</span></td>
+          <td>Basic monitoring</td>
+          <td class="cross">No</td>
+        </tr>
+        <tr>
+          <td class="dim">Multi-LLM consensus</td>
+          <td class="highlight"><span class="check">14 models, 3 strategies</span></td>
+          <td class="cross">Single model</td>
+          <td class="cross">No AI assessment</td>
+        </tr>
+        <tr>
+          <td class="dim">Self-hosted / air-gapped</td>
+          <td class="highlight"><span class="check">Docker, K8s, Ollama</span></td>
+          <td class="cross">SaaS only</td>
+          <td class="cross">SaaS only</td>
+        </tr>
+        <tr>
+          <td class="dim">Fail mode</td>
+          <td class="highlight"><span class="check">Fail-closed</span><br><span style="font-size:.78rem;color:var(--text2)">Blocks risky decisions</span></td>
+          <td>Fail-open</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td class="dim">Time to first audit</td>
+          <td class="highlight"><span class="check">Under 60 minutes</span></td>
+          <td>Weeks of onboarding</td>
+          <td>Days to weeks</td>
+        </tr>
+        <tr>
+          <td class="dim">Free tier</td>
+          <td class="highlight"><span class="check">Yes, up to 3 models</span></td>
+          <td class="cross">Enterprise only</td>
+          <td class="cross">No</td>
+        </tr>
+        <tr>
+          <td class="dim">AGI safety controls</td>
+          <td class="highlight"><span class="check">RSIM, CCV, DAD, MACM</span></td>
+          <td class="cross">No</td>
+          <td class="cross">No</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Deployment -->
+<section class="section" id="deployment">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">Deployment</div>
+      <h2 class="sec-title">Deploy how you need to</h2>
+      <p class="sec-sub" style="margin:0 auto">Cloud, self-hosted, or air-gapped. Your data, your infrastructure, your rules.</p>
+    </div>
+
+    <div class="deploy-grid">
+      <div class="deploy-card reveal">
+        <div class="deploy-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
+        <h3>Cloud SaaS</h3>
+        <p>Managed deployment on Railway. SOC 2 compliant infrastructure. TLS 1.2+, encrypted at rest. Zero ops required.</p>
+      </div>
+      <div class="deploy-card reveal">
+        <div class="deploy-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <h3>Self-Hosted</h3>
+        <p>Docker Compose or Kubernetes. Full control over data residency. Includes PostgreSQL, Redis, and optional Ollama for local LLM.</p>
+      </div>
+      <div class="deploy-card reveal">
+        <div class="deploy-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Air-Gapped</h3>
+        <p>Zero external API calls. All inference via local Ollama (Llama, Mistral, DeepSeek). For classified, regulated, and high-security environments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Frameworks -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-amber">Compliance Coverage</div>
+      <h2 class="sec-title">29 frameworks. Every jurisdiction.</h2>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:32px" class="reveal">
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">EU AI Act</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">NIST AI RMF</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">ISO 42001</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">ISO 27001</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">SOC 2</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">GDPR</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">HIPAA</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">NIS2</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">DORA</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">PCI DSS</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">CCPA</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">NIST CSF</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">MITRE ATLAS</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">OWASP AI</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">OECD AI</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">FedRAMP</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">DSA</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">DMA</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">NYC LL144</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">Colorado SB-169</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">IEEE Ethics</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">UNESCO AI</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">Singapore AI</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">UK AI</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">Canada AIDA</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">China AI</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">COBIT</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">Zero Trust</span>
+      <span style="padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg)">CIS Controls</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Ready to govern your AI?</h2>
+    <p class="reveal">Start free today, or schedule a personalized walkthrough with our team.</p>
+    <div class="cta-row reveal">
+      <a href="/demo" class="btn btn-fill" style="padding:14px 32px;font-size:.98rem">Schedule a Demo</a>
+      <a href="/signup?plan=free" class="btn btn-ghost" style="padding:14px 32px;font-size:.98rem">Start Free — No Credit Card</a>
+    </div>
+    <p class="reveal" style="margin-top:20px;font-size:.84rem;color:var(--text3)">founders@governlayer.ai</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">&copy; 2026 GovernLayer. All rights reserved.</div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) { el.target.classList.add('visible'); obs.unobserve(el.target); }
+  });
+}, { threshold: .08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const t = document.querySelector(this.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>
