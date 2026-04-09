@@ -2,9 +2,13 @@
 
 Ties together evidence collection, control mapping, policy generation, and audit readiness
 into unified compliance programs spanning multiple frameworks (SOC 2, ISO 27001, NIST AI RMF, etc.).
+
+Persistence: all data stored in PostgreSQL via SQLAlchemy (compliance_programs, compliance_policies,
+compliance_audits tables). No in-memory state.
 """
 
 import hashlib
+import json
 import random
 from datetime import datetime, timedelta
 from enum import Enum
@@ -13,7 +17,10 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from src.models.compliance import ComplianceAudit, CompliancePolicy, ComplianceProgram
+from src.models.database import get_db
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/compliance", tags=["Compliance Hub"])
@@ -205,13 +212,72 @@ POLICY_TEMPLATES: list[dict] = [
 
 
 # ---------------------------------------------------------------------------
-# In-memory storage
+# Helpers: serialization between DB (JSON text) and Python dicts/lists
 # ---------------------------------------------------------------------------
 
-_programs: dict[str, dict] = {}
-_policies: dict[str, dict] = {}
-_audits: dict[str, dict] = {}
+def _load_json(text: str | None) -> list | dict:
+    """Safely parse a JSON text column back to Python."""
+    if not text:
+        return []
+    return json.loads(text)
 
+
+def _dump_json(obj) -> str:
+    """Serialize a Python object to JSON string for storage."""
+    return json.dumps(obj, default=str)
+
+
+def _program_to_dict(prog: ComplianceProgram) -> dict:
+    """Convert a ComplianceProgram ORM row to the dict format used by endpoints."""
+    return {
+        "id": prog.id,
+        "name": prog.name,
+        "frameworks": _load_json(prog.frameworks),
+        "owner": prog.owner,
+        "start_date": prog.start_date,
+        "target_audit_date": prog.target_audit_date,
+        "created_at": prog.created_at,
+        "controls": _load_json(prog.controls),
+    }
+
+
+def _policy_to_dict(pol: CompliancePolicy) -> dict:
+    """Convert a CompliancePolicy ORM row to the dict format used by endpoints."""
+    return {
+        "id": pol.id,
+        "program_id": pol.program_id,
+        "title": pol.title,
+        "summary": pol.summary,
+        "sections": _load_json(pol.sections),
+        "applicable_frameworks": _load_json(pol.applicable_frameworks),
+        "status": pol.status,
+        "version": pol.version,
+        "word_count": pol.word_count,
+        "generated_by": pol.generated_by,
+        "generated_at": pol.generated_at,
+        "last_modified_by": pol.last_modified_by,
+    }
+
+
+def _audit_to_dict(aud: ComplianceAudit) -> dict:
+    """Convert a ComplianceAudit ORM row to the dict format used by endpoints."""
+    return {
+        "id": aud.id,
+        "program_id": aud.program_id,
+        "auditor_firm": aud.auditor_firm,
+        "proposed_date": aud.proposed_date,
+        "audit_type": aud.audit_type,
+        "notes": aud.notes,
+        "status": aud.status,
+        "readiness_at_scheduling": aud.readiness_at_scheduling,
+        "scheduled_by": aud.scheduled_by,
+        "scheduled_at": aud.scheduled_at,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Helpers: controls generation and progress calculation
+# ---------------------------------------------------------------------------
 
 def _generate_controls(frameworks: list[str]) -> list[dict]:
     """Generate a realistic set of controls mapped to the given frameworks."""
@@ -269,13 +335,16 @@ def _calculate_progress(controls: list[dict]) -> dict:
     }
 
 
-def _seed_demo_program():
-    """Pre-seed a demo compliance program if storage is empty."""
-    if _programs:
+def _ensure_demo_program(db: Session) -> None:
+    """Seed a demo compliance program if the database is empty."""
+    existing = db.query(ComplianceProgram).first()
+    if existing:
         return
+
     pid = "demo-" + uuid4().hex[:8]
     frameworks = ["SOC2", "NIST_AI_RMF"]
     controls = _generate_controls(frameworks)
+
     # Make the demo program partially complete
     random.seed(42)
     for c in controls:
@@ -295,21 +364,18 @@ def _seed_demo_program():
             c["evidence_count"] = 0
     random.seed()
 
-    _programs[pid] = {
-        "id": pid,
-        "name": "SOC 2 + NIST AI RMF Compliance Program",
-        "frameworks": frameworks,
-        "owner": "ciso@company.com",
-        "start_date": "2026-01-15",
-        "target_audit_date": "2026-06-30",
-        "created_at": "2026-01-15T09:00:00Z",
-        "controls": controls,
-        "audits": [],
-    }
-
-
-# Seed on module load
-_seed_demo_program()
+    program = ComplianceProgram(
+        id=pid,
+        name="SOC 2 + NIST AI RMF Compliance Program",
+        frameworks=_dump_json(frameworks),
+        owner="ciso@company.com",
+        start_date="2026-01-15",
+        target_audit_date="2026-06-30",
+        created_at="2026-01-15T09:00:00Z",
+        controls=_dump_json(controls),
+    )
+    db.add(program)
+    db.commit()
 
 
 # ---------------------------------------------------------------------------
@@ -317,7 +383,7 @@ _seed_demo_program()
 # ---------------------------------------------------------------------------
 
 @router.post("/programs")
-def create_program(req: CreateProgramRequest, email: str = Depends(verify_token)):
+def create_program(req: CreateProgramRequest, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Create a new compliance program spanning one or more frameworks."""
     # Validate frameworks
     invalid = [f for f in req.frameworks if f not in STANDARDS_CATALOGUE]
@@ -335,18 +401,21 @@ def create_program(req: CreateProgramRequest, email: str = Depends(verify_token)
         c["status"] = ControlStatus.NOT_STARTED.value
         c["evidence_count"] = 0
 
-    program = {
-        "id": pid,
-        "name": req.name,
-        "frameworks": req.frameworks,
-        "owner": req.owner,
-        "start_date": req.start_date,
-        "target_audit_date": req.target_audit_date,
-        "created_at": datetime.utcnow().isoformat() + "Z",
-        "controls": controls,
-        "audits": [],
-    }
-    _programs[pid] = program
+    created_at = datetime.utcnow().isoformat() + "Z"
+
+    program = ComplianceProgram(
+        id=pid,
+        name=req.name,
+        frameworks=_dump_json(req.frameworks),
+        owner=req.owner,
+        start_date=req.start_date,
+        target_audit_date=req.target_audit_date,
+        created_at=created_at,
+        controls=_dump_json(controls),
+    )
+    db.add(program)
+    db.commit()
+
     progress = _calculate_progress(controls)
 
     return {
@@ -356,7 +425,7 @@ def create_program(req: CreateProgramRequest, email: str = Depends(verify_token)
         "owner": req.owner,
         "start_date": req.start_date,
         "target_audit_date": req.target_audit_date,
-        "created_at": program["created_at"],
+        "created_at": created_at,
         "controls_total": progress["controls_total"],
         "message": f"Compliance program created with {progress['controls_total']} controls across {len(req.frameworks)} framework(s).",
     }
@@ -367,10 +436,14 @@ def create_program(req: CreateProgramRequest, email: str = Depends(verify_token)
 # ---------------------------------------------------------------------------
 
 @router.get("/programs")
-def list_programs(email: str = Depends(verify_token)):
+def list_programs(email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """List all compliance programs with progress summaries."""
+    _ensure_demo_program(db)
+
+    rows = db.query(ComplianceProgram).all()
     results = []
-    for p in _programs.values():
+    for row in rows:
+        p = _program_to_dict(row)
         progress = _calculate_progress(p["controls"])
         results.append({
             "id": p["id"],
@@ -392,13 +465,18 @@ def list_programs(email: str = Depends(verify_token)):
 # ---------------------------------------------------------------------------
 
 @router.get("/programs/{program_id}")
-def get_program(program_id: str, email: str = Depends(verify_token)):
+def get_program(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Get detailed program status: progress, controls, evidence, gaps, timeline."""
-    program = _programs.get(program_id)
-    if not program:
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
 
-    progress = _calculate_progress(program["controls"])
+    program = _program_to_dict(row)
+    controls = program["controls"]
+    progress = _calculate_progress(controls)
+
     start = datetime.strptime(program["start_date"], "%Y-%m-%d")
     target = datetime.strptime(program["target_audit_date"], "%Y-%m-%d")
     today = datetime.utcnow()
@@ -410,15 +488,18 @@ def get_program(program_id: str, email: str = Depends(verify_token)):
     # Framework breakdown
     fw_breakdown = {}
     for fw in program["frameworks"]:
-        fw_controls = [c for c in program["controls"] if c["framework"] == fw]
+        fw_controls = [c for c in controls if c["framework"] == fw]
         fw_breakdown[fw] = _calculate_progress(fw_controls)
 
     # Identify top gaps
-    gap_controls = [c for c in program["controls"] if c["status"] in ("not_started", "in_progress")]
+    gap_controls = [c for c in controls if c["status"] in ("not_started", "in_progress")]
     gap_controls.sort(key=lambda c: (0 if c["status"] == "not_started" else 1, c["evidence_count"]))
 
     # Count policies linked to this program
-    program_policies = [p for p in _policies.values() if p.get("program_id") == program_id]
+    policy_count = db.query(CompliancePolicy).filter_by(program_id=program_id).count()
+
+    # Count audits linked to this program
+    audit_count = db.query(ComplianceAudit).filter_by(program_id=program_id).count()
 
     return {
         "id": program["id"],
@@ -436,8 +517,8 @@ def get_program(program_id: str, email: str = Depends(verify_token)):
             "time_elapsed_pct": time_elapsed_pct,
             "on_track": progress["overall_pct"] >= time_elapsed_pct * 0.8,
         },
-        "policies_generated": len(program_policies),
-        "audits_scheduled": len(program.get("audits", [])),
+        "policies_generated": policy_count,
+        "audits_scheduled": audit_count,
         "top_gaps": gap_controls[:10],
         "created_at": program["created_at"],
     }
@@ -448,18 +529,22 @@ def get_program(program_id: str, email: str = Depends(verify_token)):
 # ---------------------------------------------------------------------------
 
 @router.get("/programs/{program_id}/readiness")
-def get_readiness(program_id: str, email: str = Depends(verify_token)):
+def get_readiness(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Generate an audit readiness report with framework-by-framework breakdown."""
-    program = _programs.get(program_id)
-    if not program:
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
 
-    progress = _calculate_progress(program["controls"])
+    program = _program_to_dict(row)
+    controls = program["controls"]
+    progress = _calculate_progress(controls)
 
     # Framework breakdown with readiness scores
     fw_readiness = {}
     for fw in program["frameworks"]:
-        fw_controls = [c for c in program["controls"] if c["framework"] == fw]
+        fw_controls = [c for c in controls if c["framework"] == fw]
         fw_prog = _calculate_progress(fw_controls)
         evidence_coverage = round((fw_prog["evidence_collected"] / max(fw_prog["evidence_required"], 1)) * 100, 1)
         fw_readiness[fw] = {
@@ -475,13 +560,17 @@ def get_readiness(program_id: str, email: str = Depends(verify_token)):
     # Critical gaps: not_started controls
     critical_gaps = [
         {"control_id": c["id"], "framework": c["framework"], "category": c["category"], "title": c["title"]}
-        for c in program["controls"]
+        for c in controls
         if c["status"] == "not_started"
     ]
 
     # Overall readiness
     overall_score = progress["overall_pct"]
     evidence_total_coverage = round((progress["evidence_collected"] / max(progress["evidence_required"], 1)) * 100, 1)
+
+    # Check if policies exist for this program
+    has_policies = db.query(CompliancePolicy).filter_by(program_id=program_id).first() is not None
+    has_audits = db.query(ComplianceAudit).filter_by(program_id=program_id).first() is not None
 
     # Recommended actions
     actions = []
@@ -503,13 +592,13 @@ def get_readiness(program_id: str, email: str = Depends(verify_token)):
             "action": f"Complete {progress['in_progress']} controls currently in progress.",
             "impact": "Reduces risk of audit delays.",
         })
-    if not any(p.get("program_id") == program_id for p in _policies.values()):
+    if not has_policies:
         actions.append({
             "priority": "high",
             "action": "Generate policy documents via POST /v1/compliance/programs/{id}/generate-policies.",
             "impact": "Auditors require documented policies for every control domain.",
         })
-    if not program.get("audits"):
+    if not has_audits:
         actions.append({
             "priority": "medium",
             "action": "Schedule an audit engagement via POST /v1/compliance/programs/{id}/schedule-audit.",
@@ -535,19 +624,23 @@ def get_readiness(program_id: str, email: str = Depends(verify_token)):
 # ---------------------------------------------------------------------------
 
 @router.post("/programs/{program_id}/generate-policies")
-def generate_policies(program_id: str, email: str = Depends(verify_token)):
+def generate_policies(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Auto-generate policy documents for the compliance program (simulated LLM generation)."""
-    program = _programs.get(program_id)
-    if not program:
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
 
+    program = _program_to_dict(row)
+
     # Check if already generated
-    existing = [p for p in _policies.values() if p.get("program_id") == program_id]
+    existing = db.query(CompliancePolicy).filter_by(program_id=program_id).all()
     if existing:
         return {
             "message": f"Policies already generated for this program ({len(existing)} policies).",
             "policies": [
-                {"id": p["id"], "title": p["title"], "status": p["status"]}
+                {"id": p.id, "title": p.title, "status": p.status}
                 for p in existing
             ],
         }
@@ -563,21 +656,24 @@ def generate_policies(program_id: str, email: str = Depends(verify_token)):
 
         policy_id = "pol-" + uuid4().hex[:8]
         word_count = random.randint(2800, 6500)
-        policy = {
-            "id": policy_id,
-            "program_id": program_id,
-            "title": tmpl["title"],
-            "summary": tmpl["summary"],
-            "sections": tmpl["sections"],
-            "applicable_frameworks": [fw for fw in tmpl["frameworks"] if fw in program["frameworks"]] or tmpl["frameworks"][:1],
-            "status": PolicyStatus.DRAFT.value,
-            "version": "1.0",
-            "word_count": word_count,
-            "generated_by": "governlayer-ai",
-            "generated_at": datetime.utcnow().isoformat() + "Z",
-            "last_modified_by": email,
-        }
-        _policies[policy_id] = policy
+        generated_at = datetime.utcnow().isoformat() + "Z"
+        applicable_fws = [fw for fw in tmpl["frameworks"] if fw in program["frameworks"]] or tmpl["frameworks"][:1]
+
+        policy = CompliancePolicy(
+            id=policy_id,
+            program_id=program_id,
+            title=tmpl["title"],
+            summary=tmpl["summary"],
+            sections=_dump_json(tmpl["sections"]),
+            applicable_frameworks=_dump_json(applicable_fws),
+            status=PolicyStatus.DRAFT.value,
+            version="1.0",
+            word_count=word_count,
+            generated_by="governlayer-ai",
+            generated_at=generated_at,
+            last_modified_by=email,
+        )
+        db.add(policy)
         generated.append({
             "id": policy_id,
             "title": tmpl["title"],
@@ -586,6 +682,8 @@ def generate_policies(program_id: str, email: str = Depends(verify_token)):
             "word_count": word_count,
             "status": PolicyStatus.DRAFT.value,
         })
+
+    db.commit()
 
     return {
         "program_id": program_id,
@@ -604,29 +702,34 @@ def list_policies(
     status: Optional[str] = Query(default=None, description="Filter by status: draft, review, approved, published"),
     program_id: Optional[str] = Query(default=None, description="Filter by program ID"),
     email: str = Depends(verify_token),
+    db: Session = Depends(get_db),
 ):
     """List all generated compliance policies with status."""
-    results = list(_policies.values())
+    _ensure_demo_program(db)
 
+    query = db.query(CompliancePolicy)
     if status:
-        results = [p for p in results if p["status"] == status]
+        query = query.filter(CompliancePolicy.status == status)
     if program_id:
-        results = [p for p in results if p.get("program_id") == program_id]
+        query = query.filter(CompliancePolicy.program_id == program_id)
+
+    rows = query.all()
+    results = [_policy_to_dict(p) for p in rows]
 
     return {
         "total": len(results),
         "policies": [
             {
                 "id": p["id"],
-                "program_id": p.get("program_id"),
+                "program_id": p["program_id"],
                 "title": p["title"],
                 "summary": p["summary"],
                 "status": p["status"],
                 "version": p["version"],
-                "applicable_frameworks": p.get("applicable_frameworks", []),
-                "word_count": p.get("word_count", 0),
-                "generated_at": p.get("generated_at"),
-                "last_modified_by": p.get("last_modified_by"),
+                "applicable_frameworks": p["applicable_frameworks"],
+                "word_count": p["word_count"] or 0,
+                "generated_at": p["generated_at"],
+                "last_modified_by": p["last_modified_by"],
             }
             for p in results
         ],
@@ -638,29 +741,34 @@ def list_policies(
 # ---------------------------------------------------------------------------
 
 @router.post("/programs/{program_id}/schedule-audit")
-def schedule_audit(program_id: str, req: ScheduleAuditRequest, email: str = Depends(verify_token)):
+def schedule_audit(program_id: str, req: ScheduleAuditRequest, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Schedule a formal audit engagement for the compliance program."""
-    program = _programs.get(program_id)
-    if not program:
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
 
-    audit_id = "aud-" + uuid4().hex[:8]
+    program = _program_to_dict(row)
     progress = _calculate_progress(program["controls"])
 
-    audit = {
-        "id": audit_id,
-        "program_id": program_id,
-        "auditor_firm": req.auditor_firm,
-        "proposed_date": req.proposed_date,
-        "audit_type": req.audit_type.value,
-        "notes": req.notes,
-        "status": "scheduled",
-        "readiness_at_scheduling": progress["overall_pct"],
-        "scheduled_by": email,
-        "scheduled_at": datetime.utcnow().isoformat() + "Z",
-    }
-    _audits[audit_id] = audit
-    program.setdefault("audits", []).append(audit_id)
+    audit_id = "aud-" + uuid4().hex[:8]
+    scheduled_at = datetime.utcnow().isoformat() + "Z"
+
+    audit = ComplianceAudit(
+        id=audit_id,
+        program_id=program_id,
+        auditor_firm=req.auditor_firm,
+        proposed_date=req.proposed_date,
+        audit_type=req.audit_type.value,
+        notes=req.notes,
+        status="scheduled",
+        readiness_at_scheduling=progress["overall_pct"],
+        scheduled_by=email,
+        scheduled_at=scheduled_at,
+    )
+    db.add(audit)
+    db.commit()
 
     # Warn if readiness is low
     warnings = []
@@ -678,7 +786,7 @@ def schedule_audit(program_id: str, req: ScheduleAuditRequest, email: str = Depe
         "status": "scheduled",
         "readiness_at_scheduling_pct": progress["overall_pct"],
         "warnings": warnings,
-        "scheduled_at": audit["scheduled_at"],
+        "scheduled_at": scheduled_at,
     }
 
 
@@ -706,45 +814,48 @@ def list_standards(email: str = Depends(verify_token)):
 # ---------------------------------------------------------------------------
 
 @router.get("/programs/{program_id}/export")
-def export_program(program_id: str, email: str = Depends(verify_token)):
+def export_program(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Export the full compliance package as JSON (evidence, controls, policies, gaps)."""
-    program = _programs.get(program_id)
-    if not program:
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
 
-    progress = _calculate_progress(program["controls"])
+    program = _program_to_dict(row)
+    controls = program["controls"]
+    progress = _calculate_progress(controls)
 
     # Gather policies
+    policy_rows = db.query(CompliancePolicy).filter_by(program_id=program_id).all()
     program_policies = [
         {
-            "id": p["id"],
-            "title": p["title"],
-            "summary": p["summary"],
-            "sections": p["sections"],
-            "status": p["status"],
-            "version": p["version"],
-            "applicable_frameworks": p.get("applicable_frameworks", []),
-            "word_count": p.get("word_count", 0),
+            "id": p.id,
+            "title": p.title,
+            "summary": p.summary,
+            "sections": _load_json(p.sections),
+            "status": p.status,
+            "version": p.version,
+            "applicable_frameworks": _load_json(p.applicable_frameworks),
+            "word_count": p.word_count or 0,
         }
-        for p in _policies.values()
-        if p.get("program_id") == program_id
+        for p in policy_rows
     ]
 
     # Gather audits
-    program_audits = [
-        _audits[aid] for aid in program.get("audits", []) if aid in _audits
-    ]
+    audit_rows = db.query(ComplianceAudit).filter_by(program_id=program_id).all()
+    program_audits = [_audit_to_dict(a) for a in audit_rows]
 
     # Gaps
     gaps = [
         {"control_id": c["id"], "framework": c["framework"], "category": c["category"], "title": c["title"], "status": c["status"], "evidence_count": c["evidence_count"], "evidence_required": c["evidence_required"]}
-        for c in program["controls"]
+        for c in controls
         if c["status"] in ("not_started", "in_progress")
     ]
 
     # Evidence summary
     evidence_items = []
-    for c in program["controls"]:
+    for c in controls:
         if c["evidence_count"] > 0:
             for i in range(c["evidence_count"]):
                 evidence_items.append({
@@ -755,7 +866,7 @@ def export_program(program_id: str, email: str = Depends(verify_token)):
                 })
 
     # Package hash for integrity
-    package_str = f"{program_id}:{len(program['controls'])}:{len(program_policies)}:{progress['overall_pct']}"
+    package_str = f"{program_id}:{len(controls)}:{len(program_policies)}:{progress['overall_pct']}"
     package_hash = hashlib.sha256(package_str.encode()).hexdigest()
 
     return {
@@ -773,7 +884,7 @@ def export_program(program_id: str, email: str = Depends(verify_token)):
             "created_at": program["created_at"],
         },
         "progress": progress,
-        "controls": program["controls"],
+        "controls": controls,
         "policies": program_policies,
         "evidence": evidence_items,
         "gaps": gaps,
@@ -795,11 +906,15 @@ def export_program(program_id: str, email: str = Depends(verify_token)):
 # ---------------------------------------------------------------------------
 
 @router.get("/benchmarks")
-def get_benchmarks(email: str = Depends(verify_token)):
+def get_benchmarks(email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Industry benchmarks: compare organizational compliance scores against median."""
+    _ensure_demo_program(db)
+
     # Calculate org-level stats from all programs
     all_controls = []
-    for p in _programs.values():
+    rows = db.query(ComplianceProgram).all()
+    programs = [_program_to_dict(r) for r in rows]
+    for p in programs:
         all_controls.extend(p["controls"])
 
     org_progress = _calculate_progress(all_controls) if all_controls else {"overall_pct": 0, "controls_total": 0}
@@ -852,7 +967,7 @@ def get_benchmarks(email: str = Depends(verify_token)):
 
     # Per-framework comparison for this org
     org_vs_industry = {}
-    for p in _programs.values():
+    for p in programs:
         for fw in p["frameworks"]:
             if fw in benchmarks:
                 fw_controls = [c for c in p["controls"] if c["framework"] == fw]
@@ -870,7 +985,7 @@ def get_benchmarks(email: str = Depends(verify_token)):
     return {
         "org_overall_readiness_pct": org_progress["overall_pct"],
         "org_total_controls": org_progress["controls_total"],
-        "programs_count": len(_programs),
+        "programs_count": len(programs),
         "org_vs_industry": org_vs_industry,
         "industry_benchmarks": benchmarks,
         "data_source": "GovernLayer aggregated benchmark data (anonymized)",

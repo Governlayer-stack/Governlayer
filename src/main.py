@@ -25,7 +25,7 @@ from src.api import (
     achonye, agent_registry, agi, analytics, analytics_usage, audit, auth,
     automation, billing, compliance_hub, controls, credentials, dashboard,
     enterprise, enterprise_features, evidence, governance, growth, hitl,
-    incidents, integrations, knowledge_graph, ledger, mfa, policies,
+    incidents, integrations, knowledge_graph, ledger, mfa, oauth, policies,
     rbac_views, registry, reports, risk, threats, v1, vendor_risk,
 )
 from src.config import get_settings
@@ -272,6 +272,7 @@ def create_app() -> FastAPI:
 
     # Register routers
     app.include_router(auth.router)
+    app.include_router(oauth.router)
     app.include_router(mfa.router)
     app.include_router(governance.router)
     app.include_router(audit.router)

@@ -42,6 +42,15 @@ class Settings(BaseSettings):
     stripe_price_pro: str = ""
     stripe_price_enterprise: str = ""
 
+    # OAuth SSO
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    microsoft_client_id: str = ""
+    microsoft_client_secret: str = ""
+    github_client_id: str = ""
+    github_client_secret: str = ""
+    oauth_redirect_base: str = ""
+
     # Redis
     redis_url: str = "redis://localhost:6379/0"
 

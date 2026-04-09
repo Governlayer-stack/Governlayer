@@ -44,6 +44,7 @@ class User(Base):
     verification_token = Column(String(64), nullable=True)
     oauth_provider = Column(String(50), nullable=True)
     oauth_provider_id = Column(String(255), nullable=True)
+    oauth_linked_providers = Column(Text, nullable=True)  # JSON list of linked providers
 
 
 class AuditRecord(Base):
@@ -127,4 +128,6 @@ def get_last_hash(db) -> str:
 
 
 def create_tables():
+    import src.models.compliance  # noqa: F401
+    import src.models.vendor  # noqa: F401
     Base.metadata.create_all(bind=engine)
