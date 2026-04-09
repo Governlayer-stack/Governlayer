@@ -25,9 +25,11 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
     overflow-y: scroll;
     overflow-x: hidden;
+  }
+  @media (min-width: 1024px) {
+    html { scroll-snap-type: y proximity; }
   }
 
   body {
@@ -362,7 +364,7 @@
 
   /* Responsive */
   @media (max-width: 900px) {
-    .slide { padding: 40px 32px; }
+    .slide { padding: 40px 32px; min-height: auto; scroll-snap-align: none; }
     h1 { font-size: 2.2rem; }
     h2 { font-size: 1.8rem; }
     .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
@@ -372,8 +374,7 @@
     .hier-fan .hier-level { min-width: 0; width: 100%; }
   }
   @media (max-width: 600px) {
-    html { scroll-snap-type: none; }
-    .slide { padding: 24px 16px; min-height: auto; padding-top: 40px; padding-bottom: 40px; }
+    .slide { padding: 24px 16px; min-height: auto; padding-top: 40px; padding-bottom: 40px; scroll-snap-align: none; }
     .slide-inner { max-width: 100%; }
     h1 { font-size: 1.6rem; line-height: 1.2; }
     h2 { font-size: 1.3rem; }
