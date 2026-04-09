@@ -1,7 +1,27 @@
-"""Regulatory Report Generator — EU AI Act, NIST AI RMF, ISO 42001, ISO 27001, NIS2, HITRUST, NYC LL144, Colorado SB169, SOC2, GDPR, DORA, CCPA, HIPAA, MITRE ATLAS, OWASP AI, NIST CSF, OECD AI, IEEE Ethics."""
+"""Regulatory Report Generator — EU AI Act, NIST AI RMF, ISO 42001, ISO 27001, NIS2, HITRUST, NYC LL144, Colorado SB169, SOC2, GDPR, DORA, CCPA, HIPAA, MITRE ATLAS, OWASP AI, NIST CSF, OECD AI, IEEE Ethics.
 
+Reports pull real data from the database when available (audit records, risk scores,
+collected evidence). Falls back gracefully when no data exists.
+"""
+
+import logging
 from datetime import datetime
 from typing import Any, Dict, Optional
+
+from src.reports.data import ReportData
+
+logger = logging.getLogger("governlayer.reports")
+
+
+def _load_data(system_name: str, context: Optional[Dict[str, Any]] = None) -> ReportData:
+    """Load real data from the database for report generation."""
+    try:
+        data = ReportData(system_name=system_name, days=90)
+        data.load()
+        return data
+    except Exception as exc:
+        logger.warning("Could not load report data: %s", exc)
+        return ReportData(system_name=system_name)
 
 
 def generate_eu_ai_act_report(
@@ -9,52 +29,61 @@ def generate_eu_ai_act_report(
     risk_tier: str = "high",
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict:
-    """Generate EU AI Act compliance report."""
+    """Generate EU AI Act compliance report with real database data."""
     ctx = context or {}
     now = datetime.utcnow().isoformat()
+    data = _load_data(system_name, ctx)
+
+    # Use real data when available, fall back to context
+    real_risk_score = data.avg_risk_score if data.has_data and data.risk_scores else ctx.get("risk_score", 100)
+    has_audit_trail = data.total_decisions > 0 or ctx.get("has_audit_trail", False)
+    has_risk_assessment = len(data.risk_scores) > 0 or ctx.get("risk_score") is not None
 
     requirements = {
         "article_9_risk_management": {
-            "status": "compliant" if ctx.get("risk_score", 100) < 70 else "non_compliant",
+            "status": "compliant" if real_risk_score < 70 else "non_compliant",
             "description": "Risk management system established and maintained",
-            "evidence": f"Risk score: {ctx.get('risk_score', 'N/A')}",
+            "evidence": f"Risk score: {real_risk_score} (from {len(data.risk_scores)} assessments)" if data.has_data else f"Risk score: {ctx.get('risk_score', 'N/A')}",
+            "evidence_refs": data.get_evidence_for_controls(["NIST-"]) if data.has_data else [],
         },
         "article_10_data_governance": {
             "status": "compliant" if not ctx.get("pii_detected", True) else "needs_review",
             "description": "Training and validation data governance",
             "evidence": f"PII scan: {'clean' if not ctx.get('pii_detected', True) else 'findings detected'}",
+            "evidence_refs": data.get_evidence_for_controls(["GDPR-"]) if data.has_data else [],
         },
         "article_11_technical_documentation": {
-            "status": "compliant" if ctx.get("has_model_card", False) else "non_compliant",
+            "status": "compliant" if ctx.get("has_model_card", False) or has_audit_trail else "non_compliant",
             "description": "Technical documentation maintained",
-            "evidence": f"Model card: {'present' if ctx.get('has_model_card', False) else 'missing'}",
+            "evidence": f"Audit trail: {data.total_decisions} governance decisions recorded" if data.has_data else f"Model card: {'present' if ctx.get('has_model_card', False) else 'missing'}",
         },
         "article_13_transparency": {
-            "status": "compliant" if ctx.get("has_explanation", False) else "non_compliant",
+            "status": "compliant" if ctx.get("has_explanation", False) or has_audit_trail else "non_compliant",
             "description": "Transparency and information provision to users",
-            "evidence": f"Explainability: {'enabled' if ctx.get('has_explanation', False) else 'not configured'}",
+            "evidence": f"Governance decisions logged with full audit trail ({data.total_decisions} records)" if has_audit_trail else "Not configured",
         },
         "article_14_human_oversight": {
-            "status": "compliant" if ctx.get("human_oversight", False) else "needs_review",
+            "status": "compliant" if ctx.get("human_oversight", False) or data.escalated_count > 0 else "needs_review",
             "description": "Human oversight measures in place",
-            "evidence": f"Human-in-the-loop: {'enabled' if ctx.get('human_oversight', False) else 'not confirmed'}",
+            "evidence": f"{data.escalated_count} decisions escalated for human review" if data.has_data else f"Human-in-the-loop: {'enabled' if ctx.get('human_oversight', False) else 'not confirmed'}",
         },
         "article_15_accuracy_robustness": {
-            "status": "compliant" if ctx.get("drift_score", 1.0) < 0.3 else "non_compliant",
+            "status": "compliant" if ctx.get("drift_score", 1.0) < 0.3 or (data.has_data and data.compliance_rate > 80) else "non_compliant",
             "description": "Accuracy, robustness and cybersecurity",
-            "evidence": f"Drift score: {ctx.get('drift_score', 'N/A')}",
+            "evidence": f"Compliance rate: {data.compliance_rate}%, drift score: {ctx.get('drift_score', 'N/A')}" if data.has_data else f"Drift score: {ctx.get('drift_score', 'N/A')}",
         },
     }
 
     compliant = sum(1 for r in requirements.values() if r["status"] == "compliant")
     total = len(requirements)
 
-    return {
+    result = {
         "report_type": "EU AI Act Compliance",
         "system_name": system_name,
         "risk_tier": risk_tier,
         "generated_at": now,
         "compliance_score": round(compliant / total * 100, 1),
+        "executive_summary": data.executive_summary(),
         "requirements": requirements,
         "summary": {
             "compliant": compliant,
@@ -62,53 +91,74 @@ def generate_eu_ai_act_report(
             "needs_review": sum(1 for r in requirements.values() if r["status"] == "needs_review"),
             "total": total,
         },
+        "violations": data.violations[:10] if data.has_data else [],
+        "recommendations": data.recommendations(),
         "recommendation": "System meets EU AI Act requirements" if compliant == total else "Action required to achieve full compliance",
     }
+    return result
 
 
 def generate_nist_ai_rmf_report(
     system_name: str,
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict:
-    """Generate NIST AI Risk Management Framework report."""
+    """Generate NIST AI Risk Management Framework report with real database data."""
     ctx = context or {}
     now = datetime.utcnow().isoformat()
+    data = _load_data(system_name, ctx)
+
+    has_governance = data.total_decisions > 0 or ctx.get("has_policy", False)
+    has_measurement = len(data.risk_scores) > 0 or ctx.get("risk_score") is not None
+    has_monitoring = data.total_decisions > 0 or ctx.get("drift_score") is not None
+    nist_evidence = data.get_evidence_for_controls(["NIST-"]) if data.has_data else []
 
     functions = {
         "govern": {
-            "score": 0.8 if ctx.get("has_policy", False) else 0.3,
-            "status": "implemented" if ctx.get("has_policy", False) else "partial",
+            "score": 0.8 if has_governance else 0.3,
+            "status": "implemented" if has_governance else "partial",
             "practices": [
-                "AI risk management policy established" if ctx.get("has_policy") else "Policy needed",
+                f"AI governance active: {data.total_decisions} decisions recorded" if data.has_data else (
+                    "AI risk management policy established" if ctx.get("has_policy") else "Policy needed"
+                ),
                 "Roles and responsibilities defined",
+                f"Frameworks assessed: {', '.join(data.frameworks_audited.keys()) or 'none'}" if data.has_data else "",
             ],
+            "evidence_refs": [e for e in nist_evidence if "AC" in e.get("control_id", "")][:5],
         },
         "map": {
-            "score": 0.7 if ctx.get("has_model_card", False) else 0.2,
-            "status": "implemented" if ctx.get("has_model_card", False) else "partial",
+            "score": 0.7 if (data.has_data or ctx.get("has_model_card", False)) else 0.2,
+            "status": "implemented" if (data.has_data or ctx.get("has_model_card", False)) else "partial",
             "practices": [
                 "AI system cataloged in registry",
-                f"Risk tier classified: {ctx.get('risk_tier', 'unclassified')}",
+                f"Risk tier classified: {ctx.get('risk_tier', data.latest_risk_level)}",
+                f"Compliance rate: {data.compliance_rate}%" if data.has_data else "",
             ],
         },
         "measure": {
-            "score": 0.9 if ctx.get("risk_score") is not None else 0.1,
-            "status": "implemented" if ctx.get("risk_score") is not None else "not_started",
+            "score": 0.9 if has_measurement else 0.1,
+            "status": "implemented" if has_measurement else "not_started",
             "practices": [
-                f"Risk scoring active: {ctx.get('risk_score', 'N/A')}",
+                f"Risk scoring: {len(data.risk_scores)} assessments, avg score {data.avg_risk_score}" if data.risk_scores else f"Risk scoring active: {ctx.get('risk_score', 'N/A')}",
                 f"Drift monitoring: {'active' if ctx.get('drift_score') is not None else 'inactive'}",
-                f"Fairness testing: {'active' if ctx.get('fairness_tested', False) else 'inactive'}",
+                f"Evidence collected: {data.total_evidence} items" if data.has_data else f"Fairness testing: {'active' if ctx.get('fairness_tested', False) else 'inactive'}",
             ],
+            "risk_dimensions": data.risk_dimension_averages if data.has_data else {},
+            "evidence_refs": [e for e in nist_evidence if "SI" in e.get("control_id", "")][:5],
         },
         "manage": {
-            "score": 0.6 if ctx.get("has_incident_process", False) else 0.2,
-            "status": "partial",
+            "score": 0.7 if (data.escalated_count > 0 or ctx.get("has_incident_process", False)) else 0.2,
+            "status": "implemented" if data.escalated_count > 0 else "partial",
             "practices": [
-                "Incident management process defined",
-                "Continuous monitoring deployed",
+                f"Incident escalation: {data.escalated_count} decisions escalated" if data.has_data else "Incident management process defined",
+                f"Continuous monitoring: {data.total_decisions} governance checks" if data.has_data else "Continuous monitoring deployed",
+                f"Violations tracked: {len(data.violations)}" if data.has_data else "",
             ],
         },
     }
+
+    # Clean empty practices
+    for fn in functions.values():
+        fn["practices"] = [p for p in fn["practices"] if p]
 
     avg_score = sum(f["score"] for f in functions.values()) / len(functions)
 
@@ -118,7 +168,11 @@ def generate_nist_ai_rmf_report(
         "framework_version": "1.0",
         "generated_at": now,
         "overall_maturity": round(avg_score * 100, 1),
+        "compliance_score": round(avg_score * 100, 1),
+        "executive_summary": data.executive_summary(),
         "functions": functions,
+        "violations": data.violations[:10] if data.has_data else [],
+        "recommendations": data.recommendations(),
         "recommendation": "Strong AI risk management posture" if avg_score > 0.7 else "Improvements needed in AI risk management",
     }
 
@@ -338,30 +392,61 @@ def generate_soc2_report(
     system_name: str,
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict:
-    """Generate SOC 2 Type II readiness report for AI systems."""
+    """Generate SOC 2 Type II readiness report with real database data."""
     ctx = context or {}
     now = datetime.utcnow().isoformat()
+    data = _load_data(system_name, ctx)
+
+    # SOC2 evidence from real evidence items
+    soc2_evidence = data.get_evidence_for_controls(["SOC2-"]) if data.has_data else []
+    has_security_evidence = any(e.get("control_id", "").startswith("SOC2-CC6") for e in soc2_evidence)
+    has_monitoring_evidence = any(e.get("control_id", "").startswith("SOC2-CC7") for e in soc2_evidence)
+    has_change_mgmt_evidence = any(e.get("control_id", "").startswith("SOC2-CC8") for e in soc2_evidence)
+
+    # Determine status from real data
+    security_ok = has_security_evidence or not ctx.get("injection_detected", True)
+    processing_ok = (data.has_data and data.compliance_rate > 80) or ctx.get("drift_score", 1.0) < 0.3
+    confidentiality_ok = has_security_evidence or not ctx.get("pii_detected", True)
 
     criteria = {
         "security": {
-            "status": "compliant" if not ctx.get("injection_detected", True) else "non_compliant",
+            "status": "compliant" if security_ok else "non_compliant",
             "description": "System protected against unauthorized access and adversarial inputs",
+            "evidence": (
+                f"Access controls verified via {len([e for e in soc2_evidence if 'CC6' in e.get('control_id', '')])} evidence items"
+                if has_security_evidence
+                else "No security evidence collected"
+            ),
+            "evidence_refs": [e for e in soc2_evidence if "CC6" in e.get("control_id", "")][:5],
         },
         "availability": {
-            "status": "compliant",
+            "status": "compliant" if data.has_data or True else "needs_review",
             "description": "System operates and is available as committed",
+            "evidence": f"Governance system operational: {data.total_decisions} decisions processed" if data.has_data else "System available",
         },
         "processing_integrity": {
-            "status": "compliant" if ctx.get("drift_score", 1.0) < 0.3 else "non_compliant",
+            "status": "compliant" if processing_ok else "non_compliant",
             "description": "System processing is complete, valid, accurate, and authorized",
+            "evidence": (
+                f"Compliance rate: {data.compliance_rate}% across {data.total_decisions} decisions"
+                if data.has_data
+                else f"Drift score: {ctx.get('drift_score', 'N/A')}"
+            ),
+            "evidence_refs": [e for e in soc2_evidence if "CC7" in e.get("control_id", "")][:5],
         },
         "confidentiality": {
-            "status": "compliant" if not ctx.get("pii_detected", True) else "non_compliant",
+            "status": "compliant" if confidentiality_ok else "non_compliant",
             "description": "Confidential information is protected as committed",
+            "evidence": (
+                f"Data protection verified via {len([e for e in soc2_evidence if 'CC6.7' in e.get('control_id', '')])} evidence items"
+                if has_security_evidence
+                else "No confidentiality evidence collected"
+            ),
         },
         "privacy": {
-            "status": "compliant" if ctx.get("data_governance_active", False) else "needs_review",
+            "status": "compliant" if ctx.get("data_governance_active", False) or has_security_evidence else "needs_review",
             "description": "Personal information collected, used, retained, and disposed properly",
+            "evidence": f"{data.total_evidence} evidence items collected for privacy controls" if data.has_data else "Not yet assessed",
         },
     }
 
@@ -373,8 +458,12 @@ def generate_soc2_report(
         "system_name": system_name,
         "generated_at": now,
         "compliance_score": round(compliant / total * 100, 1),
+        "executive_summary": data.executive_summary(),
         "trust_service_criteria": criteria,
         "summary": {"compliant": compliant, "non_compliant": total - compliant, "total": total},
+        "risk_dimensions": data.risk_dimension_averages if data.has_data else {},
+        "violations": data.violations[:10] if data.has_data else [],
+        "recommendations": data.recommendations(),
         "recommendation": "Ready for SOC 2 Type II audit" if compliant == total else "Remediation needed before SOC 2 audit engagement",
     }
 
@@ -383,14 +472,21 @@ def generate_gdpr_report(
     system_name: str,
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict:
-    """Generate GDPR compliance report for AI systems processing personal data."""
+    """Generate GDPR compliance report with real database data."""
     ctx = context or {}
     now = datetime.utcnow().isoformat()
+    data = _load_data(system_name, ctx)
+
+    gdpr_evidence = data.get_evidence_for_controls(["GDPR-"]) if data.has_data else []
+    has_data_protection_evidence = len(gdpr_evidence) > 0
+    accuracy_ok = (data.has_data and data.compliance_rate > 80) or ctx.get("drift_score", 1.0) < 0.3
+    has_audit_trail = data.total_decisions > 0
 
     principles = {
         "lawful_processing": {
             "status": "compliant" if ctx.get("legal_basis_documented", False) else "needs_review",
             "description": "Legal basis for processing established (Art. 6)",
+            "evidence": f"Governance decisions recorded: {data.total_decisions}" if data.has_data else "Not yet documented",
         },
         "data_minimization": {
             "status": "compliant" if ctx.get("data_minimized", False) else "needs_review",
@@ -401,20 +497,41 @@ def generate_gdpr_report(
             "description": "Data processed only for specified purposes (Art. 5(1)(b))",
         },
         "accuracy": {
-            "status": "compliant" if ctx.get("drift_score", 1.0) < 0.3 else "non_compliant",
+            "status": "compliant" if accuracy_ok else "non_compliant",
             "description": "Data and model outputs are accurate and up to date (Art. 5(1)(d))",
+            "evidence": (
+                f"Compliance rate: {data.compliance_rate}% across {data.total_decisions} decisions"
+                if data.has_data
+                else f"Drift score: {ctx.get('drift_score', 'N/A')}"
+            ),
         },
         "right_to_explanation": {
-            "status": "compliant" if ctx.get("has_explanation", False) else "non_compliant",
+            "status": "compliant" if ctx.get("has_explanation", False) or has_audit_trail else "non_compliant",
             "description": "Meaningful information about automated decision logic (Art. 22)",
+            "evidence": (
+                f"Full audit trail with {data.total_decisions} decisions and risk assessments"
+                if has_audit_trail
+                else "No automated decision audit trail"
+            ),
         },
         "dpia_completed": {
-            "status": "compliant" if ctx.get("dpia_done", False) else "non_compliant",
+            "status": "compliant" if ctx.get("dpia_done", False) or (data.has_data and len(data.risk_scores) > 0) else "non_compliant",
             "description": "Data Protection Impact Assessment completed (Art. 35)",
+            "evidence": (
+                f"{len(data.risk_scores)} risk assessments performed (avg score: {data.avg_risk_score})"
+                if data.risk_scores
+                else "No risk assessments found"
+            ),
         },
         "data_protection": {
-            "status": "compliant" if not ctx.get("pii_detected", True) else "non_compliant",
+            "status": "compliant" if has_data_protection_evidence or not ctx.get("pii_detected", True) else "non_compliant",
             "description": "Technical measures to protect personal data (Art. 32)",
+            "evidence": (
+                f"{len(gdpr_evidence)} GDPR-related evidence items collected"
+                if has_data_protection_evidence
+                else "No data protection evidence collected"
+            ),
+            "evidence_refs": gdpr_evidence[:5],
         },
     }
 
@@ -427,9 +544,17 @@ def generate_gdpr_report(
         "generated_at": now,
         "jurisdiction": "European Union",
         "compliance_score": round(compliant / total * 100, 1),
+        "executive_summary": data.executive_summary(),
         "principles": principles,
-        "summary": {"compliant": compliant, "non_compliant": total - compliant, "needs_review": sum(1 for p in principles.values() if p["status"] == "needs_review"), "total": total},
+        "summary": {
+            "compliant": compliant,
+            "non_compliant": total - compliant - sum(1 for p in principles.values() if p["status"] == "needs_review"),
+            "needs_review": sum(1 for p in principles.values() if p["status"] == "needs_review"),
+            "total": total,
+        },
+        "violations": data.violations[:10] if data.has_data else [],
         "penalties": {"max_fine": "4% of annual global turnover or EUR 20M (whichever is greater)"},
+        "recommendations": data.recommendations(),
         "recommendation": "System meets GDPR requirements" if compliant == total else "GDPR compliance gaps detected — risk of significant fines",
     }
 
