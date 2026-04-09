@@ -1,13 +1,17 @@
 """Vendor Risk Management API — third-party AI vendor assessment and monitoring."""
 
+import json
 import uuid
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from enum import Enum
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from src.models.database import get_db
+from src.models.vendor import Vendor, VendorAssessment
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/vendors", tags=["Vendor Risk"])
@@ -115,14 +119,23 @@ class RiskAssessment(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# In-memory storage
+# JSON helpers for list columns
 # ---------------------------------------------------------------------------
 
-_vendors: dict[str, dict] = {}
+def _json_loads(value: Optional[str]) -> list[str]:
+    """Deserialize a JSON text column into a Python list."""
+    if not value:
+        return []
+    return json.loads(value)
+
+
+def _json_dumps(value: list[str]) -> str:
+    """Serialize a Python list into a JSON string for text columns."""
+    return json.dumps(value)
 
 
 # ---------------------------------------------------------------------------
-# Scoring helpers
+# Scoring helpers (pure functions — unchanged)
 # ---------------------------------------------------------------------------
 
 # Weights for overall risk (must sum to 1.0)
@@ -247,17 +260,19 @@ def _score_concentration_risk(services: list[str]) -> int:
     return 95
 
 
-def _assess_vendor(vendor: dict, assessed_by: str) -> dict:
-    """Run deterministic risk assessment on a vendor and return scores."""
-    data_sens = _score_data_sensitivity(vendor["data_shared"])
-    ai_dep = _score_ai_dependency(vendor["ai_usage"], vendor["services"])
-    compliance = _score_compliance(vendor["compliance_certifications"])
-    contract = _score_contract_risk(
-        date.fromisoformat(vendor["contract_end_date"])
-        if vendor.get("contract_end_date")
-        else None
-    )
-    concentration = _score_concentration_risk(vendor["services"])
+def _assess_vendor_record(vendor: Vendor, assessed_by: str) -> dict:
+    """Run deterministic risk assessment on a Vendor ORM object and return scores."""
+    data_shared = _json_loads(vendor.data_shared)
+    services = _json_loads(vendor.services)
+    certifications = _json_loads(vendor.compliance_certifications)
+
+    contract_date = vendor.contract_end_date.date() if vendor.contract_end_date else None
+
+    data_sens = _score_data_sensitivity(data_shared)
+    ai_dep = _score_ai_dependency(vendor.ai_usage or "none", services)
+    compliance = _score_compliance(certifications)
+    contract = _score_contract_risk(contract_date)
+    concentration = _score_concentration_risk(services)
 
     overall = round(
         data_sens * _WEIGHTS["data_sensitivity"]
@@ -276,6 +291,8 @@ def _assess_vendor(vendor: dict, assessed_by: str) -> dict:
     else:
         level = RiskLevel.LOW
 
+    now = datetime.now(timezone.utc)
+
     assessment = {
         "data_sensitivity_score": data_sens,
         "ai_dependency_score": ai_dep,
@@ -284,30 +301,36 @@ def _assess_vendor(vendor: dict, assessed_by: str) -> dict:
         "concentration_risk_score": concentration,
         "overall_risk_score": overall,
         "risk_level": level.value,
-        "assessed_at": datetime.utcnow().isoformat(),
+        "assessed_at": now.isoformat(),
         "assessed_by": assessed_by,
     }
     return assessment
 
 
-def _vendor_response(vendor: dict) -> dict:
-    """Build a safe response dict from internal vendor record."""
+# ---------------------------------------------------------------------------
+# ORM -> response dict helpers
+# ---------------------------------------------------------------------------
+
+def _vendor_response(vendor: Vendor) -> dict:
+    """Build a safe response dict from a Vendor ORM object."""
+    risk_details = json.loads(vendor.risk_details) if vendor.risk_details else None
+
     return {
-        "id": vendor["id"],
-        "name": vendor["name"],
-        "category": vendor["category"],
-        "services": vendor["services"],
-        "data_shared": vendor["data_shared"],
-        "ai_usage": vendor["ai_usage"],
-        "compliance_certifications": vendor["compliance_certifications"],
-        "contract_end_date": vendor.get("contract_end_date"),
-        "contact_email": vendor.get("contact_email"),
-        "notes": vendor.get("notes"),
-        "questionnaire_status": vendor.get("questionnaire_status", QuestionnaireStatus.NOT_SENT.value),
-        "risk_assessment": vendor.get("risk_assessment"),
-        "created_at": vendor["created_at"],
-        "updated_at": vendor["updated_at"],
-        "created_by": vendor["created_by"],
+        "id": vendor.id,
+        "name": vendor.name,
+        "category": vendor.category,
+        "services": _json_loads(vendor.services),
+        "data_shared": _json_loads(vendor.data_shared),
+        "ai_usage": vendor.ai_usage,
+        "compliance_certifications": _json_loads(vendor.compliance_certifications),
+        "contract_end_date": vendor.contract_end_date.date().isoformat() if vendor.contract_end_date else None,
+        "contact_email": vendor.contact_email,
+        "notes": vendor.notes,
+        "questionnaire_status": vendor.questionnaire_status,
+        "risk_assessment": risk_details,
+        "created_at": vendor.created_at.isoformat() if vendor.created_at else None,
+        "updated_at": vendor.updated_at.isoformat() if vendor.updated_at else None,
+        "created_by": vendor.created_by,
     }
 
 
@@ -316,50 +339,46 @@ def _vendor_response(vendor: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 @router.post("", status_code=201)
-def create_vendor(body: VendorCreate, email: str = Depends(verify_token)):
+def create_vendor(body: VendorCreate, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Register a new third-party vendor for risk tracking."""
-    vendor_id = str(uuid.uuid4())
-    now = datetime.utcnow().isoformat()
-
-    vendor = {
-        "id": vendor_id,
-        "name": body.name,
-        "category": body.category.value,
-        "services": body.services,
-        "data_shared": body.data_shared,
-        "ai_usage": body.ai_usage,
-        "compliance_certifications": body.compliance_certifications,
-        "contract_end_date": body.contract_end_date.isoformat() if body.contract_end_date else None,
-        "contact_email": body.contact_email,
-        "notes": body.notes,
-        "questionnaire_status": QuestionnaireStatus.NOT_SENT.value,
-        "risk_assessment": None,
-        "created_at": now,
-        "updated_at": now,
-        "created_by": email,
-    }
-    _vendors[vendor_id] = vendor
+    vendor = Vendor(
+        id=str(uuid.uuid4()),
+        name=body.name,
+        category=body.category.value,
+        services=_json_dumps(body.services),
+        data_shared=_json_dumps(body.data_shared),
+        ai_usage=body.ai_usage,
+        compliance_certifications=_json_dumps(body.compliance_certifications),
+        contract_end_date=datetime.combine(body.contract_end_date, datetime.min.time()) if body.contract_end_date else None,
+        contact_email=body.contact_email,
+        notes=body.notes,
+        questionnaire_status=QuestionnaireStatus.NOT_SENT.value,
+        created_by=email,
+    )
+    db.add(vendor)
+    db.commit()
+    db.refresh(vendor)
     return _vendor_response(vendor)
 
 
 @router.get("")
-def list_vendors(email: str = Depends(verify_token)):
+def list_vendors(email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """List all registered vendors with their latest risk scores."""
+    vendors = db.query(Vendor).order_by(Vendor.name).all()
     results = []
-    for v in _vendors.values():
+    for v in vendors:
         resp = _vendor_response(v)
-        # Include a summary risk level for list view
-        ra = v.get("risk_assessment")
-        resp["overall_risk_score"] = ra["overall_risk_score"] if ra else None
-        resp["risk_level"] = ra["risk_level"] if ra else None
+        resp["overall_risk_score"] = v.risk_score
+        resp["risk_level"] = v.risk_level
         results.append(resp)
     return {"total": len(results), "vendors": results}
 
 
 @router.get("/summary")
-def vendor_summary(email: str = Depends(verify_token)):
+def vendor_summary(email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Dashboard summary: total vendors, high-risk count, expiring contracts, assessment coverage."""
-    total = len(_vendors)
+    vendors = db.query(Vendor).all()
+    total = len(vendors)
     assessed = 0
     high_risk = 0
     critical_risk = 0
@@ -369,23 +388,21 @@ def vendor_summary(email: str = Depends(verify_token)):
 
     today = date.today()
 
-    for v in _vendors.values():
+    for v in vendors:
         # Category breakdown
-        cat = v["category"]
-        by_category[cat] = by_category.get(cat, 0) + 1
+        by_category[v.category] = by_category.get(v.category, 0) + 1
 
         # Assessment coverage
-        ra = v.get("risk_assessment")
-        if ra:
+        if v.risk_level:
             assessed += 1
-            if ra["risk_level"] == RiskLevel.HIGH.value:
+            if v.risk_level == RiskLevel.HIGH.value:
                 high_risk += 1
-            elif ra["risk_level"] == RiskLevel.CRITICAL.value:
+            elif v.risk_level == RiskLevel.CRITICAL.value:
                 critical_risk += 1
 
         # Expiring contracts
-        if v.get("contract_end_date"):
-            end = date.fromisoformat(v["contract_end_date"])
+        if v.contract_end_date:
+            end = v.contract_end_date.date() if hasattr(v.contract_end_date, 'date') else v.contract_end_date
             days_left = (end - today).days
             if 0 <= days_left <= 30:
                 expiring_30d += 1
@@ -405,7 +422,7 @@ def vendor_summary(email: str = Depends(verify_token)):
 
 
 @router.get("/risk-matrix")
-def risk_matrix(email: str = Depends(verify_token)):
+def risk_matrix(email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Return all assessed vendors plotted on a likelihood x impact grid.
 
     Likelihood is derived from compliance + contract risk (how likely an incident is).
@@ -418,10 +435,10 @@ def risk_matrix(email: str = Depends(verify_token)):
         "high_likelihood_high_impact": [],
     }
 
-    for v in _vendors.values():
-        ra = v.get("risk_assessment")
-        if not ra:
-            continue
+    vendors = db.query(Vendor).filter(Vendor.risk_details.isnot(None)).all()
+
+    for v in vendors:
+        ra = json.loads(v.risk_details)
 
         # Likelihood = average of compliance gap + contract risk
         likelihood = (ra["compliance_score"] + ra["contract_risk_score"]) / 2
@@ -433,8 +450,8 @@ def risk_matrix(email: str = Depends(verify_token)):
         ) / 3
 
         entry = {
-            "id": v["id"],
-            "name": v["name"],
+            "id": v.id,
+            "name": v.name,
             "likelihood": round(likelihood, 1),
             "impact": round(impact, 1),
             "overall_risk_score": ra["overall_risk_score"],
@@ -460,50 +477,73 @@ def risk_matrix(email: str = Depends(verify_token)):
 
 
 @router.get("/{vendor_id}")
-def get_vendor(vendor_id: str, email: str = Depends(verify_token)):
+def get_vendor(vendor_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Get full vendor detail including risk assessment."""
-    vendor = _vendors.get(vendor_id)
+    vendor = db.query(Vendor).filter_by(id=vendor_id).first()
     if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
     return _vendor_response(vendor)
 
 
 @router.put("/{vendor_id}")
-def update_vendor(vendor_id: str, body: VendorUpdate, email: str = Depends(verify_token)):
+def update_vendor(vendor_id: str, body: VendorUpdate, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Update vendor information. Clears the existing risk assessment so it must be re-run."""
-    vendor = _vendors.get(vendor_id)
+    vendor = db.query(Vendor).filter_by(id=vendor_id).first()
     if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
 
     update_data = body.model_dump(exclude_unset=True)
 
-    # Convert date to ISO string for storage
-    if "contract_end_date" in update_data and update_data["contract_end_date"] is not None:
-        update_data["contract_end_date"] = update_data["contract_end_date"].isoformat()
-    # Convert enum to string
+    if "name" in update_data:
+        vendor.name = update_data["name"]
     if "category" in update_data and update_data["category"] is not None:
-        update_data["category"] = update_data["category"].value
-
-    vendor.update(update_data)
-    vendor["updated_at"] = datetime.utcnow().isoformat()
+        vendor.category = update_data["category"].value
+    if "services" in update_data:
+        vendor.services = _json_dumps(update_data["services"]) if update_data["services"] is not None else None
+    if "data_shared" in update_data:
+        vendor.data_shared = _json_dumps(update_data["data_shared"]) if update_data["data_shared"] is not None else None
+    if "ai_usage" in update_data:
+        vendor.ai_usage = update_data["ai_usage"]
+    if "compliance_certifications" in update_data:
+        vendor.compliance_certifications = (
+            _json_dumps(update_data["compliance_certifications"])
+            if update_data["compliance_certifications"] is not None
+            else None
+        )
+    if "contract_end_date" in update_data:
+        cd = update_data["contract_end_date"]
+        vendor.contract_end_date = datetime.combine(cd, datetime.min.time()) if cd else None
+    if "contact_email" in update_data:
+        vendor.contact_email = update_data["contact_email"]
+    if "notes" in update_data:
+        vendor.notes = update_data["notes"]
 
     # Invalidate previous assessment since data changed
-    vendor["risk_assessment"] = None
+    vendor.risk_score = None
+    vendor.risk_level = None
+    vendor.risk_details = None
+    vendor.last_assessed = None
 
+    vendor.updated_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(vendor)
     return _vendor_response(vendor)
 
 
 @router.delete("/{vendor_id}", status_code=204)
-def delete_vendor(vendor_id: str, email: str = Depends(verify_token)):
+def delete_vendor(vendor_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Remove a vendor from tracking."""
-    if vendor_id not in _vendors:
+    vendor = db.query(Vendor).filter_by(id=vendor_id).first()
+    if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
-    del _vendors[vendor_id]
+    db.delete(vendor)
+    db.commit()
     return None
 
 
 @router.post("/{vendor_id}/assess")
-def assess_vendor(vendor_id: str, email: str = Depends(verify_token)):
+def assess_vendor(vendor_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
     """Run a deterministic risk assessment on a vendor.
 
     Scores five dimensions (0-100, higher = more risk):
@@ -515,17 +555,44 @@ def assess_vendor(vendor_id: str, email: str = Depends(verify_token)):
 
     Overall risk is a weighted average of all dimensions.
     """
-    vendor = _vendors.get(vendor_id)
+    vendor = db.query(Vendor).filter_by(id=vendor_id).first()
     if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
 
-    assessment = _assess_vendor(vendor, assessed_by=email)
-    vendor["risk_assessment"] = assessment
-    vendor["updated_at"] = datetime.utcnow().isoformat()
+    assessment = _assess_vendor_record(vendor, assessed_by=email)
+    now = datetime.now(timezone.utc)
+
+    # Update denormalized fields on the vendor
+    vendor.risk_score = float(assessment["overall_risk_score"])
+    vendor.risk_level = assessment["risk_level"]
+    vendor.risk_details = json.dumps(assessment)
+    vendor.last_assessed = now
+    vendor.updated_at = now
+
+    # Store the assessment as a historical record
+    assessment_record = VendorAssessment(
+        id=str(uuid.uuid4()),
+        vendor_id=vendor_id,
+        assessment_type="deterministic",
+        scores=json.dumps({
+            "data_sensitivity_score": assessment["data_sensitivity_score"],
+            "ai_dependency_score": assessment["ai_dependency_score"],
+            "compliance_score": assessment["compliance_score"],
+            "contract_risk_score": assessment["contract_risk_score"],
+            "concentration_risk_score": assessment["concentration_risk_score"],
+        }),
+        overall_score=float(assessment["overall_risk_score"]),
+        risk_level=assessment["risk_level"],
+        assessed_by=email,
+        assessed_at=now,
+    )
+    db.add(assessment_record)
+    db.commit()
+    db.refresh(vendor)
 
     return {
         "vendor_id": vendor_id,
-        "vendor_name": vendor["name"],
+        "vendor_name": vendor.name,
         **assessment,
         "weights": _WEIGHTS,
     }
@@ -536,17 +603,18 @@ def send_questionnaire(
     vendor_id: str,
     body: QuestionnaireRequest,
     email: str = Depends(verify_token),
+    db: Session = Depends(get_db),
 ):
     """Simulate sending a security questionnaire to a vendor.
 
     In production this would dispatch an email with a secure link.
     For now it records the request and updates the vendor status.
     """
-    vendor = _vendors.get(vendor_id)
+    vendor = db.query(Vendor).filter_by(id=vendor_id).first()
     if not vendor:
         raise HTTPException(status_code=404, detail="Vendor not found")
 
-    recipient = body.contact_email or vendor.get("contact_email")
+    recipient = body.contact_email or vendor.contact_email
     if not recipient:
         raise HTTPException(
             status_code=400,
@@ -554,17 +622,20 @@ def send_questionnaire(
         )
 
     questionnaire_id = str(uuid.uuid4())
-    vendor["questionnaire_status"] = QuestionnaireStatus.SENT.value
-    vendor["updated_at"] = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc)
+
+    vendor.questionnaire_status = QuestionnaireStatus.SENT.value
+    vendor.updated_at = now
+    db.commit()
 
     return {
         "questionnaire_id": questionnaire_id,
         "vendor_id": vendor_id,
-        "vendor_name": vendor["name"],
+        "vendor_name": vendor.name,
         "recipient": recipient,
         "sections": body.sections,
         "status": QuestionnaireStatus.SENT.value,
-        "sent_at": datetime.utcnow().isoformat(),
+        "sent_at": now.isoformat(),
         "sent_by": email,
         "message": f"Security questionnaire dispatched to {recipient} (simulated)",
     }

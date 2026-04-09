@@ -40,6 +40,10 @@ class User(Base):
     mfa_secret = Column(String(32), nullable=True)
     mfa_enabled = Column(Boolean, default=False, nullable=False)
     mfa_backup_codes = Column(Text, nullable=True)  # JSON array of hashed backup codes
+    email_verified = Column(Boolean, default=False, nullable=False)
+    verification_token = Column(String(64), nullable=True)
+    oauth_provider = Column(String(50), nullable=True)
+    oauth_provider_id = Column(String(255), nullable=True)
 
 
 class AuditRecord(Base):

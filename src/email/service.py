@@ -107,6 +107,27 @@ def send_welcome_email(email: str, name: str) -> bool:
     return send_email(email, subject, html)
 
 
+def send_verification_email(email: str, verification_token: str) -> bool:
+    """Send email verification link.
+
+    Args:
+        email: User's email address.
+        verification_token: The secure verification token.
+    """
+    subject = "Verify your GovernLayer email"
+    verify_url = f"https://www.governlayer.ai/verify-email?token={verification_token}"
+    html = (
+        '<div style="font-family:Inter,sans-serif;max-width:600px;margin:0 auto;background:#0a0e1a;color:#f1f5f9;padding:40px;border-radius:16px">'
+        '<h2 style="color:#00d4aa">Verify Your Email</h2>'
+        f'<p>Click below to verify your email address:</p>'
+        f'<a href="{verify_url}" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">Verify Email</a>'
+        f'<p style="color:#94a3b8;font-size:13px">Or copy this link: {verify_url}</p>'
+        '<p style="color:#64748b;font-size:12px;margin-top:32px">If you didn\'t create this account, ignore this email.</p>'
+        '</div>'
+    )
+    return send_email(email, subject, html)
+
+
 def send_password_reset(email: str, reset_token: str) -> bool:
     """Send password reset link.
 

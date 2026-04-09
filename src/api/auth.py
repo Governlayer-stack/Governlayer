@@ -22,13 +22,18 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == user.email).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
-    new_user = User(email=user.email, password_hash=hash_password(user.password), company=user.company)
+    verification_token = secrets.token_hex(32)
+    new_user = User(
+        email=user.email, password_hash=hash_password(user.password),
+        company=user.company, verification_token=verification_token,
+    )
     db.add(new_user)
     db.commit()
     token = create_token(user.email)
-    from src.email.service import send_welcome_email
+    from src.email.service import send_welcome_email, send_verification_email
     send_welcome_email(user.email, user.company)
-    return {"message": f"Welcome to GovernLayer {user.company}", "token": token, "email": user.email}
+    send_verification_email(user.email, verification_token)
+    return {"message": f"Welcome to GovernLayer {user.company}", "token": token, "email": user.email, "email_verified": False}
 
 
 @router.post("/login")
@@ -45,7 +50,35 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         if not verify_mfa_code(db_user, user.mfa_code, db):
             raise HTTPException(status_code=401, detail="Invalid MFA code")
 
-    return {"token": create_token(user.email), "email": user.email}
+    return {"token": create_token(user.email), "email": user.email, "email_verified": db_user.email_verified}
+
+
+@router.post("/verify-email")
+def verify_email(token: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.verification_token == token).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification token")
+    user.email_verified = True
+    user.verification_token = None
+    db.commit()
+    return {"message": "Email verified successfully", "email": user.email}
+
+
+@router.post("/resend-verification")
+def resend_verification(credentials: HTTPAuthorizationCredentials = Depends(_security), db: Session = Depends(get_db)):
+    payload = decode_token_payload(credentials.credentials)
+    email = payload.get("sub")
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.email_verified:
+        return {"message": "Email already verified"}
+    token = secrets.token_hex(32)
+    user.verification_token = token
+    db.commit()
+    from src.email.service import send_verification_email
+    send_verification_email(email, token)
+    return {"message": "Verification email sent"}
 
 
 @router.post("/forgot-password")
