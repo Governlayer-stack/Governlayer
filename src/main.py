@@ -157,6 +157,15 @@ def _seed_demo_data():
         db.close()
 
 
+class LowercasePathMiddleware(BaseHTTPMiddleware):
+    """Normalize URL paths to lowercase so /Pitch, /PITCH, /pitch all work."""
+    async def dispatch(self, request: Request, call_next):
+        path = request.scope["path"]
+        if path != path.lower() and not path.startswith("/api/"):
+            request.scope["path"] = path.lower()
+        return await call_next(request)
+
+
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
@@ -246,6 +255,7 @@ def create_app() -> FastAPI:
         allow_headers=["Authorization", "Content-Type", "X-API-Key"],
     )
     app.add_middleware(SecurityHeadersMiddleware)
+    app.add_middleware(LowercasePathMiddleware)
 
     from src.middleware.rate_limit import RateLimitMiddleware
     from src.middleware.usage import UsageMeteringMiddleware
