@@ -3,7 +3,7 @@ import logging
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.api.deps import get_llm
@@ -28,8 +28,14 @@ def audit_system(request: AuditRequest, email: str = Depends(verify_token), db: 
         f"in {request.industry}. Description: {request.system_description}. "
         f"Frameworks: {request.frameworks}. For each framework provide compliance status, gaps and recommendations."
     )
-    response = llm.invoke(prompt)
-    initial_result = response.content
+    try:
+        response = llm.invoke(prompt)
+        initial_result = response.content
+    except Exception as e:
+        err_str = str(e).lower()
+        if "402" in err_str or "payment" in err_str or "credits" in err_str or "quota" in err_str:
+            raise HTTPException(status_code=503, detail="LLM service temporarily unavailable — provider quota exceeded.")
+        raise HTTPException(status_code=503, detail=f"LLM service error: {type(e).__name__}")
 
     # Run Chain-of-Verification consensus pass for hallucination resistance
     verified = False
