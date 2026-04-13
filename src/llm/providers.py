@@ -392,22 +392,43 @@ def list_models(
     return results
 
 
+def _provider_available(provider: str) -> bool:
+    """Check if a provider has a working API key configured."""
+    settings = get_settings()
+    if provider == "groq":
+        return bool(settings.groq_api_key)
+    if provider == "openrouter":
+        return bool(settings.openrouter_api_key)
+    if provider == "ollama":
+        return settings.use_local_llm
+    return False
+
+
 def get_best_for(capability: ModelCapability, prefer_local: bool = False) -> str:
     """Get the best model name for a given capability.
 
     If prefer_local is True, picks a local model first (saves tokens).
     Otherwise picks the highest-tier model with that capability.
+    Only considers models whose providers have API keys configured.
     """
     candidates = [
         (name, p) for name, p in MODEL_REGISTRY.items()
-        if capability in p.capabilities
+        if capability in p.capabilities and _provider_available(p.provider)
     ]
     if not candidates:
-        return "llama-groq"  # fallback
+        # Fall back to any model with a working provider
+        candidates = [
+            (name, p) for name, p in MODEL_REGISTRY.items()
+            if _provider_available(p.provider)
+        ]
+    if not candidates:
+        return "llama-groq"  # last resort
 
-    tier_order = [ModelTier.LOCAL, ModelTier.FAST_CLOUD, ModelTier.STANDARD_CLOUD, ModelTier.PREMIUM_CLOUD]
-    if not prefer_local:
-        tier_order = list(reversed(tier_order))
+    # Default: prefer cost-effective models (Groq free tier) over expensive premium
+    # Premium models are reserved for consensus/Achonye escalation, not routine calls
+    tier_order = [ModelTier.FAST_CLOUD, ModelTier.STANDARD_CLOUD, ModelTier.PREMIUM_CLOUD, ModelTier.LOCAL]
+    if prefer_local:
+        tier_order = [ModelTier.LOCAL, ModelTier.FAST_CLOUD, ModelTier.STANDARD_CLOUD, ModelTier.PREMIUM_CLOUD]
 
     for tier in tier_order:
         for name, p in candidates:
