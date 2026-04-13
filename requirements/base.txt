@@ -32,6 +32,7 @@ langgraph-prebuilt>=1.0.8
 
 # Search
 duckduckgo-search>=8.1.0
+ddgs>=8.0.0
 
 # MCP
 fastmcp>=3.1.0

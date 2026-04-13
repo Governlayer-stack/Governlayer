@@ -2,8 +2,6 @@
 
 from functools import lru_cache
 
-from langchain_community.tools import DuckDuckGoSearchRun
-
 from src.config import get_settings
 from src.llm.providers import ModelCapability, get_best_for, get_model
 
@@ -17,4 +15,8 @@ def get_llm():
 
 @lru_cache
 def get_search():
-    return DuckDuckGoSearchRun()
+    try:
+        from langchain_community.tools import DuckDuckGoSearchRun
+        return DuckDuckGoSearchRun()
+    except (ImportError, Exception):
+        return None

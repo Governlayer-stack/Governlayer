@@ -13,10 +13,15 @@ router = APIRouter(tags=["threats"])
 def analyze_threats(request: ThreatRequest, email: str = Depends(verify_token)):
     search = get_search()
     llm = get_llm()
-    results = search.run(f"MITRE ATLAS AI attacks {request.system_type} 2025")
+    search_context = ""
+    if search:
+        try:
+            search_context = f" Search results: {search.run(f'MITRE ATLAS AI attacks {request.system_type} 2025')}"
+        except Exception:
+            pass
     response = llm.invoke(
-        f"Analyze AI threats for {request.system_type} in {request.deployment_context}. "
-        f"Search results: {results}. List top threats and security controls."
+        f"Analyze AI threats for {request.system_type} in {request.deployment_context}."
+        f"{search_context} List top threats and security controls."
     )
     return {
         "system_type": request.system_type,
@@ -49,6 +54,11 @@ def jurisdiction_map(request: JurisdictionRequest, email: str = Depends(verify_t
 def compliance_deadlines(region: str = "global", email: str = Depends(verify_token)):
     search = get_search()
     llm = get_llm()
-    results = search.run(f"AI regulation compliance deadline 2025 2026 {region}")
-    response = llm.invoke(f"List upcoming AI compliance deadlines for {region}: {results}")
+    search_context = ""
+    if search:
+        try:
+            search_context = f": {search.run(f'AI regulation compliance deadline 2025 2026 {region}')}"
+        except Exception:
+            pass
+    response = llm.invoke(f"List upcoming AI compliance deadlines for {region}{search_context}")
     return {"region": region, "deadlines": response.content}
