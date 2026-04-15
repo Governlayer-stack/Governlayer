@@ -1,15 +1,10 @@
 """GovernLayer transactional email service.
 
-Uses Resend (https://resend.com) as the email provider via their REST API.
+Uses Resend (https://resend.com) as the email provider via httpx.
 Falls back to logging when RESEND_API_KEY is not configured (dev/test mode).
-
-No extra dependencies -- uses urllib.request to call the Resend API.
 """
 
-import json
 import logging
-import urllib.request
-import urllib.error
 from typing import Optional
 
 from src.email import templates
@@ -53,40 +48,26 @@ def send_email(to: str, subject: str, html_body: str, from_addr: Optional[str] =
         logger.debug("EMAIL body preview: %.500s", html_body)
         return True
 
-    payload = json.dumps({
-        "from": sender,
-        "to": [to],
-        "subject": subject,
-        "html": html_body,
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        _RESEND_ENDPOINT,
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "User-Agent": "GovernLayer/1.0 (https://governlayer.ai)",
-        },
-        method="POST",
-    )
-
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            status = resp.status
-            body = resp.read().decode("utf-8", errors="replace")
-            if status in (200, 201):
-                logger.info("Email sent via Resend to %s (subject: %s)", to, subject)
-                return True
-            logger.warning("Resend returned %d: %.200s", status, body)
-            return False
-    except urllib.error.HTTPError as exc:
-        error_body = ""
-        try:
-            error_body = exc.read().decode("utf-8", errors="replace")[:200]
-        except Exception:
-            pass
-        logger.error("Resend HTTP error %d: %s", exc.code, error_body)
+        import httpx
+        resp = httpx.post(
+            _RESEND_ENDPOINT,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": sender,
+                "to": [to],
+                "subject": subject,
+                "html": html_body,
+            },
+            timeout=10,
+        )
+        if resp.status_code in (200, 201):
+            logger.info("Email sent via Resend to %s (subject: %s)", to, subject)
+            return True
+        logger.error("Resend HTTP error %d: %s", resp.status_code, resp.text[:200])
         return False
     except Exception as exc:
         logger.error("Resend request failed: %s", exc)
