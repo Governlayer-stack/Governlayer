@@ -969,6 +969,7 @@ def create_app() -> FastAPI:
     _404_html = _load_page("404")
     _status_page_html = _load_page("status")
     _audit_portal_html = _load_page("audit-portal")
+    _beta_sign_html = _load_page("beta-sign")
     _dpa_html = None
     for _dpa_base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
         _dpa_path = os.path.join(_dpa_base, "docs", "legal", "dpa.html")
@@ -1429,6 +1430,147 @@ def create_app() -> FastAPI:
         _send_contact_email(entry)
 
         return {"status": "ok", "message": "We'll be in touch within 24 hours"}
+
+    # ── Beta Agreement Signing ──────────────────────────────────────────
+
+    @app.get("/beta-sign")
+    def beta_sign_page():
+        if _beta_sign_html:
+            return HTMLResponse(_beta_sign_html)
+        return {"error": "Beta agreement signing page not found"}
+
+    @app.post("/api/beta-sign")
+    async def sign_beta_agreement(request: Request):
+        """Accept a beta agreement signature. No auth required."""
+        body = await request.json()
+
+        name = (body.get("name") or "").strip()
+        title = (body.get("title") or "").strip()
+        company = (body.get("company") or "").strip()
+        email = (body.get("email") or "").strip()
+        signature = (body.get("signature") or "").strip()
+
+        # Validate required fields
+        missing = []
+        if not name:
+            missing.append("name")
+        if not company:
+            missing.append("company")
+        if not email:
+            missing.append("email")
+        if not signature:
+            missing.append("signature")
+        if missing:
+            raise StarletteHTTPException(
+                status_code=422,
+                detail=f"Missing required fields: {', '.join(missing)}",
+            )
+
+        # Validate email format
+        if not _EMAIL_RE.match(email):
+            raise StarletteHTTPException(
+                status_code=422, detail="Invalid email address"
+            )
+
+        # Signature must match name (case-insensitive)
+        if signature.lower() != name.lower():
+            raise StarletteHTTPException(
+                status_code=422,
+                detail="Signature must match your full name exactly",
+            )
+
+        ip_address = request.client.host if request.client else "unknown"
+        user_agent = request.headers.get("user-agent", "unknown")
+        signed_at = datetime.now(timezone.utc).isoformat()
+
+        # Store in database
+        try:
+            db = SessionLocal()
+            try:
+                db.execute(
+                    sa_text(
+                        "INSERT INTO beta_agreements "
+                        "(signer_name, signer_title, signer_company, signer_email, "
+                        "signature_text, ip_address, user_agent) "
+                        "VALUES (:name, :title, :company, :email, :sig, :ip, :ua)"
+                    ),
+                    {
+                        "name": name,
+                        "title": title,
+                        "company": company,
+                        "email": email,
+                        "sig": signature,
+                        "ip": ip_address,
+                        "ua": user_agent,
+                    },
+                )
+                db.commit()
+            finally:
+                db.close()
+        except Exception as exc:
+            logger.error("Failed to store beta agreement: %s", exc)
+            # Continue even if DB insert fails — still send emails
+
+        # Send confirmation email to the signer
+        try:
+            from src.email.service import send_email
+
+            confirmation_html = (
+                '<div style="font-family:Inter,sans-serif;max-width:600px;margin:0 auto;'
+                'background:#0a0e1a;color:#f1f5f9;padding:40px;border-radius:12px;">'
+                '<h1 style="color:#00d4aa;font-size:24px;margin-bottom:8px;">GovernLayer</h1>'
+                '<h2 style="font-size:20px;font-weight:600;margin-bottom:24px;">'
+                "Thank you for signing the Beta Testing Agreement</h2>"
+                '<div style="background:#111827;border:1px solid #1e293b;border-radius:8px;padding:20px;margin-bottom:24px;">'
+                f'<p style="margin:0 0 8px;"><strong>Name:</strong> {name}</p>'
+                f'<p style="margin:0 0 8px;"><strong>Company:</strong> {company}</p>'
+                f'<p style="margin:0;"><strong>Date Signed:</strong> {signed_at}</p>'
+                "</div>"
+                '<p style="color:#94a3b8;font-size:14px;line-height:1.6;">'
+                "Welcome to the GovernLayer beta program. Our team will be in touch "
+                "shortly to get you set up with platform access and schedule your onboarding call.</p>"
+                '<p style="color:#94a3b8;font-size:14px;line-height:1.6;margin-top:16px;">'
+                "If you have any questions in the meantime, reply to this email or reach us at "
+                '<a href="mailto:founders@governlayer.ai" style="color:#3b82f6;">founders@governlayer.ai</a>.</p>'
+                '<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">'
+                '<p style="color:#64748b;font-size:12px;">GovernLayer Inc.</p>'
+                "</div>"
+            )
+            send_email(email, "GovernLayer Beta Agreement Signed", confirmation_html)
+        except Exception as exc:
+            logger.error("Failed to send beta confirmation email to %s: %s", email, exc)
+
+        # Send notification to founders
+        try:
+            from src.email.service import send_email
+
+            notify_html = (
+                "<h2>Beta Agreement Signed</h2>"
+                f"<p><strong>Name:</strong> {name}</p>"
+                f"<p><strong>Title:</strong> {title or '(not provided)'}</p>"
+                f"<p><strong>Company:</strong> {company}</p>"
+                f"<p><strong>Email:</strong> {email}</p>"
+                f"<p><strong>Signed At:</strong> {signed_at}</p>"
+                f"<p><strong>IP Address:</strong> {ip_address}</p>"
+            )
+            send_email(
+                "founders@governlayer.ai",
+                f"Beta Agreement Signed: {company} ({name})",
+                notify_html,
+            )
+        except Exception as exc:
+            logger.error("Failed to send beta notification email: %s", exc)
+
+        logger.info(
+            "Beta agreement signed: name=%s company=%s email=%s",
+            name, company, email,
+        )
+
+        return {
+            "message": "Agreement signed successfully",
+            "signed_at": signed_at,
+            "signer": name,
+        }
 
     return app
 
