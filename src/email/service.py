@@ -66,6 +66,7 @@ def send_email(to: str, subject: str, html_body: str, from_addr: Optional[str] =
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            "User-Agent": "GovernLayer/1.0 (https://governlayer.ai)",
         },
         method="POST",
     )

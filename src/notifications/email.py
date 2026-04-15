@@ -33,7 +33,10 @@ def _send_resend(to, subject, html_body, settings) -> bool:
         import httpx
         resp = httpx.post(
             "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {settings.resend_api_key}"},
+            headers={
+                "Authorization": f"Bearer {settings.resend_api_key}",
+                "User-Agent": "GovernLayer/1.0 (https://governlayer.ai)",
+            },
             json={
                 "from": settings.email_from,
                 "to": [to],
