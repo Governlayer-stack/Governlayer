@@ -80,9 +80,10 @@ code{font-family:'JetBrains Mono',monospace}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition)}
 .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
 .btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:var(--text)}
-.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}
-.btn-fill:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.4),0 0 0 1px rgba(59,130,246,.3)}
+.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2);animation:btnGlow 3s ease-in-out infinite alternate}
+.btn-fill:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.45),0 0 0 1px rgba(59,130,246,.3);animation:none}
 .btn-fill:active{transform:translateY(0)}
+@keyframes btnGlow{0%{box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}100%{box-shadow:0 4px 16px rgba(99,102,241,.4),0 0 0 1px rgba(99,102,241,.25)}}
 .btn-lg{padding:14px 32px;font-size:.95rem;border-radius:var(--radius-sm)}
 .mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
 .mobile-menu{display:none;position:fixed;top:96px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 28px;z-index:999;flex-direction:column;gap:4px}
@@ -97,7 +98,9 @@ code{font-family:'JetBrains Mono',monospace}
 .hero::before{content:'';position:absolute;top:-400px;left:50%;transform:translateX(-50%);width:1400px;height:1400px;background:radial-gradient(ellipse at center,rgba(59,130,246,.18) 0%,rgba(139,92,246,.1) 20%,rgba(16,185,129,.05) 40%,transparent 60%);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
 .hero::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='.6' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");pointer-events:none}
 @keyframes heroGlow{0%{transform:translateX(-50%) scale(.85);opacity:.6}100%{transform:translateX(-50%) scale(1.15);opacity:1}}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;border-radius:100px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);font-size:.78rem;font-weight:600;color:var(--blue-dark);margin-bottom:28px;letter-spacing:.02em}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;border-radius:100px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);font-size:.78rem;font-weight:600;color:var(--blue-dark);margin-bottom:28px;letter-spacing:.02em;position:relative;overflow:hidden}
+.hero-eyebrow::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);animation:eyebrowShimmer 3s ease-in-out infinite}
+@keyframes eyebrowShimmer{0%{left:-100%}100%{left:200%}}
 .hero-eyebrow .eb-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:ebPulse 2s ease-in-out infinite;flex-shrink:0}
 @keyframes ebPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{box-shadow:0 0 0 6px rgba(16,185,129,0)}}
 .hero h1{font-size:clamp(2.8rem,6.5vw,4.6rem);font-weight:900;letter-spacing:-.05em;line-height:1.05;margin-bottom:10px}
@@ -156,29 +159,19 @@ code{font-family:'JetBrains Mono',monospace}
 
 /* ============ PLATFORM MODULES ============ */
 .modules{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:48px}
-.module{padding:32px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);transition:all .4s var(--transition);position:relative;overflow:hidden}
-.module:hover{transform:translateY(-4px)}
-.module:nth-child(1):hover{border-color:rgba(59,130,246,.3);box-shadow:0 0 40px rgba(59,130,246,.08),0 12px 40px rgba(0,0,0,.5)}
-.module:nth-child(2):hover{border-color:rgba(16,185,129,.3);box-shadow:0 0 40px rgba(16,185,129,.08),0 12px 40px rgba(0,0,0,.5)}
-.module:nth-child(3):hover{border-color:rgba(139,92,246,.3);box-shadow:0 0 40px rgba(139,92,246,.08),0 12px 40px rgba(0,0,0,.5)}
-.module:nth-child(4):hover{border-color:rgba(245,158,11,.3);box-shadow:0 0 40px rgba(245,158,11,.08),0 12px 40px rgba(0,0,0,.5)}
-.module::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .4s var(--transition)}
+.module{padding:32px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);transition:all .5s var(--transition);position:relative;overflow:hidden}
+.module:hover{transform:translateY(-6px);border-color:rgba(59,130,246,.25);box-shadow:0 0 50px rgba(59,130,246,.06),0 16px 48px rgba(0,0,0,.5)}
+.module::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));opacity:0;transition:opacity .4s var(--transition)}
 .module:hover::before{opacity:1}
-.module:nth-child(1)::before{background:var(--blue)}
-.module:nth-child(2)::before{background:var(--green)}
-.module:nth-child(3)::before{background:var(--purple)}
-.module:nth-child(4)::before{background:var(--amber)}
+.module::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at center,rgba(59,130,246,.04),transparent 50%);opacity:0;transition:opacity .5s var(--transition);pointer-events:none}
+.module:hover::after{opacity:1}
 .mod-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
 .mod-icon svg{width:22px;height:22px}
 .module h3{font-size:1.05rem;font-weight:700;margin-bottom:10px}
 .module .mod-sub{font-size:.88rem;color:var(--text2);margin-bottom:18px;line-height:1.7}
 .module ul{list-style:none}
 .module li{font-size:.82rem;color:var(--text2);padding:4px 0;display:flex;align-items:center;gap:8px}
-.module li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.module:nth-child(1) li::before{background:var(--blue)}
-.module:nth-child(2) li::before{background:var(--green)}
-.module:nth-child(3) li::before{background:var(--purple)}
-.module:nth-child(4) li::before{background:var(--amber)}
+.module li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;background:var(--blue)}
 
 /* ============ HOW IT WORKS ============ */
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:52px;position:relative}
@@ -388,6 +381,27 @@ code{font-family:'JetBrains Mono',monospace}
 .pipeline-dot-indicator{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s var(--transition)}
 .pipeline-dot-indicator.active{background:var(--blue);box-shadow:0 0 8px var(--blue)}
 
+/* ============ FLOATING ORBS ============ */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:.35;will-change:transform}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(59,130,246,.18),transparent 70%);top:-100px;left:-100px;animation:orbFloat1 20s ease-in-out infinite alternate}
+.orb-2{width:400px;height:400px;background:radial-gradient(circle,rgba(139,92,246,.14),transparent 70%);bottom:-50px;right:-80px;animation:orbFloat2 25s ease-in-out infinite alternate}
+.orb-3{width:300px;height:300px;background:radial-gradient(circle,rgba(16,185,129,.1),transparent 70%);top:40%;right:10%;animation:orbFloat3 18s ease-in-out infinite alternate}
+@keyframes orbFloat1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes orbFloat2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-60px,-80px) scale(1.1)}}
+@keyframes orbFloat3{0%{transform:translate(0,0) scale(.9)}100%{transform:translate(-40px,50px) scale(1.05)}}
+
+/* ============ GRAIN TEXTURE OVERLAY ============ */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
+
+/* ============ ANIMATED COUNTER ============ */
+.s-num{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:transform .3s var(--transition)}
+.stat-item:hover .s-num{transform:scale(1.08)}
+
+/* ============ ENHANCED CARD GLASS ============ */
+.problem-card,.testimonial,.price-card{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.price-card.featured{background:linear-gradient(var(--bg2),var(--bg2)) padding-box,linear-gradient(135deg,var(--blue),var(--purple),var(--green)) border-box;animation:featuredShimmer 4s ease-in-out infinite alternate}
+@keyframes featuredShimmer{0%{box-shadow:0 0 50px rgba(59,130,246,.1),0 12px 40px rgba(0,0,0,.3)}100%{box-shadow:0 0 60px rgba(139,92,246,.15),0 16px 48px rgba(0,0,0,.4)}}
+
 /* ============ RESPONSIVE ============ */
 @media(max-width:1024px){
   .modules{grid-template-columns:1fr 1fr}
@@ -487,6 +501,11 @@ code{font-family:'JetBrains Mono',monospace}
 </head>
 <body>
 
+<!-- Floating Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
 <!-- Scroll Progress -->
 <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -563,7 +582,7 @@ code{font-family:'JetBrains Mono',monospace}
     <div class="hero-metrics reveal reveal-delay-3">
       <div class="hero-pill"><span class="pill-dot" style="background:var(--blue)"></span><strong>25</strong> Frameworks</div>
       <div class="hero-pill"><span class="pill-dot" style="background:var(--green)"></span><strong>90</strong> Enforceable Policies</div>
-      <div class="hero-pill"><span class="pill-dot" style="background:var(--purple)"></span><strong>10</strong> Governance Components</div>
+      <div class="hero-pill"><span class="pill-dot" style="background:var(--purple)"></span><strong>12</strong> Governance Components</div>
       <div class="hero-pill"><span class="pill-dot" style="background:var(--amber)"></span><strong>&lt; 3s</strong> Decision Latency</div>
     </div>
     <div class="hero-trust-row reveal reveal-delay-4">
@@ -1080,10 +1099,10 @@ code{font-family:'JetBrains Mono',monospace}
 <section class="stats-strip">
   <div class="container">
     <div class="stats-row">
-      <div class="stat-item reveal"><div class="s-num" data-count="29">29</div><div class="s-label">Regulatory Frameworks</div></div>
-      <div class="stat-item reveal reveal-delay-1"><div class="s-num">&lt;60 min</div><div class="s-label">To First Audit Report</div></div>
-      <div class="stat-item reveal reveal-delay-2"><div class="s-num" data-count="6">6</div><div class="s-label">Risk Dimensions Scored</div></div>
-      <div class="stat-item reveal reveal-delay-3"><div class="s-num">SHA-256</div><div class="s-label">Hash-Chained Ledger</div></div>
+      <div class="stat-item reveal"><div class="s-num" data-count="29" data-suffix="">0</div><div class="s-label">Regulatory Frameworks</div></div>
+      <div class="stat-item reveal reveal-delay-1"><div class="s-num" data-count="247" data-suffix="">0</div><div class="s-label">API Endpoints</div></div>
+      <div class="stat-item reveal reveal-delay-2"><div class="s-num" data-count="14" data-suffix="">0</div><div class="s-label">LLM Models Orchestrated</div></div>
+      <div class="stat-item reveal reveal-delay-3"><div class="s-num" data-count="20" data-suffix="">0</div><div class="s-label">Integrated Services</div></div>
     </div>
   </div>
 </section>
@@ -1634,6 +1653,31 @@ document.querySelectorAll('.fw-cat').forEach(cat => {
       }
     });
   });
+});
+
+// Animated stat counters
+var counterObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      var el = entry.target;
+      var target = parseInt(el.getAttribute('data-count'));
+      var suffix = el.getAttribute('data-suffix') || '';
+      if (!target || el.dataset.counted) return;
+      el.dataset.counted = '1';
+      var duration = 1800;
+      var start = performance.now();
+      function tick(now) {
+        var p = Math.min((now - start) / duration, 1);
+        var ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * ease) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.s-num[data-count]').forEach(function(el) {
+  counterObs.observe(el);
 });
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"GovernLayer","applicationCategory":"BusinessApplication","description":"Autonomous AI governance platform. 29 compliance frameworks, real-time drift detection, multi-LLM consensus, and tamper-proof audit trails.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"creator":{"@type":"Organization","name":"GovernLayer","url":"https://governlayer.ai"}}</script>
