@@ -57,6 +57,7 @@ code{font-family:'JetBrains Mono',monospace}
 /* ============ SMOOTH REVEAL ============ */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
 .reveal.visible{opacity:1;transform:translateY(0)}
+.no-js .reveal,.reveal-fallback .reveal{opacity:1!important;transform:none!important}
 .reveal-delay-1{transition-delay:.1s}
 .reveal-delay-2{transition-delay:.2s}
 .reveal-delay-3{transition-delay:.3s}
@@ -1389,15 +1390,21 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 
 <script>
 // Smooth reveal on scroll
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(el => {
-    if (el.isIntersecting) {
-      el.target.classList.add('visible');
-      obs.unobserve(el.target);
-    }
-  });
-}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+try {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(el => {
+      if (el.isIntersecting) {
+        el.target.classList.add('visible');
+        obs.unobserve(el.target);
+      }
+    });
+  }, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+} catch(e) {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+}
+// Safety fallback — if reveals haven't fired after 2s, force visible
+setTimeout(function(){ document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){ el.classList.add('visible'); }); }, 2000);
 
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(a => {
