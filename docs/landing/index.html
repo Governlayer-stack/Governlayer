@@ -578,7 +578,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 <main>
 <section class="hero" id="main-content">
   <div class="container">
-    <div class="hero-eyebrow reveal"><span class="eb-dot"></span> EU AI Act enforcement begins August 2026</div>
+    <div class="hero-eyebrow reveal"><span class="eb-dot"></span> EU AI Act enforcement begins August 2026 &mdash; Are you ready?</div>
     <h1 class="reveal">Your AI agents are making<br>decisions <span class="accent">right now.</span><br>Who&rsquo;s watching?</h1>
     <p class="hero-sub reveal reveal-delay-1">GovernLayer monitors every AI action in real time, enforces compliance across 29 regulatory frameworks, and gives auditors a tamper-proof record of every decision your AI has ever made. Deploy with confidence. Prove it to regulators.</p>
     <div class="hero-ctas reveal reveal-delay-2">
@@ -653,188 +653,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
   </div>
 </section>
 
-<!-- Platform Overview -->
-<section class="section section-alt" id="platform">
-  <div class="container">
-    <div style="text-align:center" class="reveal">
-      <div class="tag tag-blue">Platform</div>
-      <h2 class="sec-title sec-title-gradient">12-Component Governance Control Plane</h2>
-      <p class="sec-sub" style="margin:0 auto">Eight core modules plus four AGI-era extensions — the most comprehensive AI governance architecture ever built. Patent-protected (30 claims).</p>
-    </div>
-    <div class="modules">
-      <div class="module reveal">
-        <div class="mod-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-        <h3>Cedar-Style Policy Engine</h3>
-        <div class="mod-sub">Default-deny, fail-closed runtime governance. Every agent tool call evaluated against Cedar-style policies before execution. FORBID always overrides PERMIT. Full enforcement audit trail.</div>
-        <ul>
-          <li>Default-deny posture</li>
-          <li>Pre-execution evaluation gate</li>
-          <li>Condition-based policy rules</li>
-          <li>Real-time enforcement logging</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-        <h3>Behavioral Drift Detection</h3>
-        <div class="mod-sub">Deep Reasoning Inspection. Vectorize AI reasoning traces against safety manifolds. Calculate drift coefficient D<sub>c</sub> and veto before harm occurs.</div>
-        <ul>
-          <li>Sentence-transformer embeddings</li>
-          <li>Safety manifold comparison</li>
-          <li>Real-time hardware-level veto</li>
-          <li>Drift coefficient threshold (&tau; = 0.3)</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-2">
-        <div class="mod-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        <h3>Risk Scoring</h3>
-        <div class="mod-sub">Multi-dimensional composite score: R = min(&Sigma;(w<sub>i</sub> &times; c<sub>i</sub>), 1.0). Four weighted factors with machine-readable evidence for every assessment.</div>
-        <ul>
-          <li>Policy violations (50% weight)</li>
-          <li>AI confidence analysis (25%)</li>
-          <li>Use case impact (15%)</li>
-          <li>Vulnerable population detection (10%)</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-3">
-        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        <h3>Decision Controller</h3>
-        <div class="mod-sub">Graduated response logic. APPROVE low-risk decisions instantly. ESCALATE critical decisions to human reviewers. BLOCK non-compliant actions before execution.</div>
-        <ul>
-          <li>Synchronous pre-action enforcement</li>
-          <li>APPROVE / ESCALATE / BLOCK</li>
-          <li>Context-aware escalation</li>
-          <li>Zero post-hoc liability</li>
-        </ul>
-      </div>
-      <div class="module reveal">
-        <div class="mod-icon" style="background:rgba(6,182,212,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <h3>HITL Orchestrator</h3>
-        <div class="mod-sub">Intelligent human-in-the-loop routing with SLA deadlines. HIPAA decisions to medical professionals (2hr), ECOA to compliance officers (4hr), general escalations (8-24hr).</div>
-        <ul>
-          <li>Violation-based reviewer routing</li>
-          <li>SLA deadline enforcement</li>
-          <li>Justification requirements</li>
-          <li>Escalation audit trail</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <h3>Immutable Audit Ledger</h3>
-        <div class="mod-sub">SHA-256 hash-chained, tamper-proof audit trail. Every governance decision cryptographically linked. One API call to verify chain integrity.</div>
-        <ul>
-          <li>SHA-256 hash chain</li>
-          <li>Genesis hash verification</li>
-          <li>Policy version per record</li>
-          <li>One-click regulator export</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-2">
-        <div class="mod-icon" style="background:rgba(236,72,153,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg></div>
-        <h3>Secretless Credentials</h3>
-        <div class="mod-sub">Just-In-Time transient tokens with TTL &le; 60 seconds. Agents never possess persistent credentials. Deep-packet injection into request headers.</div>
-        <ul>
-          <li>JIT token generation</li>
-          <li>60-second auto-expiry</li>
-          <li>SHA-256 hashed storage</li>
-          <li>Zero persistent secrets</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-3">
-        <div class="mod-icon" style="background:rgba(14,165,233,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>Runtime Agent Control</h3>
-        <div class="mod-sub">Pre-execution gate evaluates every agent tool call against policies before it runs. Default-deny — nothing executes without explicit authorization. 11 governance API endpoints.</div>
-        <ul>
-          <li>Pre-execution evaluation gate</li>
-          <li>Default-deny, fail-closed</li>
-          <li>Policy CRUD API</li>
-          <li>Enforcement audit trail</li>
-        </ul>
-      </div>
-      <div class="module reveal">
-        <div class="mod-icon" style="background:rgba(34,197,94,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
-        <h3>Vendor Security Questionnaire</h3>
-        <div class="mod-sub">External-facing 5-section security questionnaire for third-party vendors. Data handling, access controls, AI governance, and incident response — auto-scored risk assessments.</div>
-        <ul>
-          <li>5-section wizard flow</li>
-          <li>AI governance section</li>
-          <li>No login required (vendor-facing)</li>
-          <li>Auto-notification on submission</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:var(--red-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" aria-hidden="true"><path d="M12 9v2m0 4h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
-        <h3>AGI: Self-Improvement Monitor</h3>
-        <div class="mod-sub">RSIM — Cryptographic model fingerprinting detects unauthorized weight modifications. Automatic suspension when models self-modify beyond threshold.</div>
-        <ul>
-          <li>SHA-256 weight fingerprinting</li>
-          <li>Cosine divergence detection</li>
-          <li>Automatic suspension</li>
-          <li>Human re-certification required</li>
-        </ul>
-      </div>
-      <div class="module reveal">
-        <div class="mod-icon" style="background:rgba(251,146,60,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-        <h3>AGI: Causal Chain Validator</h3>
-        <div class="mod-sub">CCV — Multi-step temporal harm projection. Simulate consequences across T+1 to T+N decision cycles. Catch emergent harms invisible at decision time.</div>
-        <ul>
-          <li>Causal graph construction</li>
-          <li>Monte Carlo projection</li>
-          <li>Harmful path detection</li>
-          <li>Irreversibility weighting</li>
-        </ul>
-      </div>
-      <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:rgba(168,85,247,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h3>AGI: Deception &amp; Coordination</h3>
-        <div class="mod-sub">DAD + MACM — Detect deceptive alignment through 3-layer verification. Monitor multi-agent coordination for collectively harmful patterns.</div>
-        <ul>
-          <li>Semantic consistency checks</li>
-          <li>Behavioral anomaly detection</li>
-          <li>Covert channel detection</li>
-          <li>Consensus disruption protocols</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- How It Works -->
-<section class="section" id="how-it-works">
-  <div class="container">
-    <div style="text-align:center" class="reveal">
-      <div class="tag tag-green">How It Works</div>
-      <h2 class="sec-title sec-title-gradient">Three Steps to Autonomous Governance</h2>
-    </div>
-    <div class="steps-grid">
-      <div class="step reveal">
-        <div class="step-num" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue)">1</div>
-        <h3>Connect</h3>
-        <p>Register your AI models and agents. Point GovernLayer at your inference endpoints. One API call to start governing.</p>
-        <code style="color:var(--blue)">POST /v1/enterprise/orgs</code>
-      </div>
-      <div class="step reveal reveal-delay-1">
-        <div class="step-num" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple)">2</div>
-        <h3>Monitor</h3>
-        <p>Continuous drift detection, risk scoring, and compliance scanning — fully automated. Route every AI decision through GovernLayer.</p>
-        <code style="color:var(--purple)">POST /v1/govern</code>
-      </div>
-      <div class="step reveal reveal-delay-2">
-        <div class="step-num" style="background:var(--green-bg);color:var(--green);border-color:var(--green)">3</div>
-        <h3>Govern</h3>
-        <p>Multi-LLM consensus decisions. Hash-chained audit trails. Auditor-ready evidence generated automatically.</p>
-        <code style="color:var(--green)">GET /v1/reports</code>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- Live Pipeline Animation -->
 <section class="section section-alt" id="live-pipeline">
   <div class="container">
     <div style="text-align:center" class="reveal">
-      <div class="tag tag-green">Live Pipeline</div>
-      <h2 class="sec-title sec-title-gradient">Autonomous Governance in Action</h2>
-      <p class="sec-sub" style="margin:0 auto">Every AI decision flows through 6 governance checkpoints in under 3 seconds. No manual review. No quarterly audits. Continuous, cryptographic, autonomous.</p>
+      <div class="tag tag-green">See It Work</div>
+      <h2 class="sec-title sec-title-gradient">Every AI Decision. Governed in Under 3 Seconds.</h2>
+      <p class="sec-sub" style="margin:0 auto">Watch a real governance pipeline: intercept an AI action, check it against your policies, score the risk, record the decision. No humans in the loop unless you want them.</p>
     </div>
     <div class="pipeline-container reveal reveal-delay-1">
       <div class="pipeline-track" id="pipelineTrack">
@@ -897,6 +722,129 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
       <div class="pipeline-badge-inner">
         <span class="pipeline-badge-dot"></span>
         FULLY AUTONOMOUS — ZERO HUMAN INTERVENTION REQUIRED
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Platform Overview -->
+<section class="section" id="platform">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Platform</div>
+      <h2 class="sec-title sec-title-gradient">Four Pillars of AI Governance</h2>
+      <p class="sec-sub" style="margin:0 auto">Every AI decision is intercepted, evaluated, and recorded before it executes. No exceptions. No workarounds. No post-hoc liability.</p>
+    </div>
+    <div class="modules">
+      <div class="module reveal">
+        <div class="mod-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Runtime Control</h3>
+        <div class="mod-sub">No AI decision executes without explicit approval. Every agent action is intercepted and evaluated against your policies in real time. Approve, escalate to a human, or block &mdash; before harm occurs.</div>
+        <ul>
+          <li>Pre-execution gate on every action</li>
+          <li>Instant approve, escalate, or block</li>
+          <li>Human-in-the-loop with SLA deadlines</li>
+          <li>Works with any LLM or agent framework</li>
+        </ul>
+      </div>
+      <div class="module reveal reveal-delay-1">
+        <div class="mod-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3>Drift Detection</h3>
+        <div class="mod-sub">AI models change in production. GovernLayer watches for it. We compare every AI reasoning trace against your safety baselines and flag anomalies before they reach users.</div>
+        <ul>
+          <li>Continuous behavioral monitoring</li>
+          <li>Automatic veto on unsafe drift</li>
+          <li>No manual reviews needed</li>
+          <li>Catches regressions humans miss</li>
+        </ul>
+      </div>
+      <div class="module reveal reveal-delay-2">
+        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Tamper-Proof Audit Trail</h3>
+        <div class="mod-sub">Every governance decision creates a permanent, cryptographically linked record. Alter one entry and the entire chain breaks. Give auditors mathematical proof of your compliance history.</div>
+        <ul>
+          <li>Permanent, unbreakable record</li>
+          <li>One-click regulator export</li>
+          <li>Chain integrity verification</li>
+          <li>Replaces quarterly spreadsheet audits</li>
+        </ul>
+      </div>
+      <div class="module reveal reveal-delay-3">
+        <div class="mod-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>Risk Scoring</h3>
+        <div class="mod-sub">Deterministic, explainable risk scores for every AI decision. Four weighted dimensions &mdash; policy compliance, confidence, impact, and vulnerable populations. No black boxes.</div>
+        <ul>
+          <li>Scores every decision automatically</li>
+          <li>Explainable to auditors and legal</li>
+          <li>Machine-readable evidence attached</li>
+          <li>Threshold-based escalation rules</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;" class="reveal">
+      <details style="display:inline-block;text-align:left;max-width:800px;width:100%;">
+        <summary style="cursor:pointer;color:var(--blue);font-weight:600;font-size:.95rem;padding:12px 0;">See all 12 governance components &rarr;</summary>
+        <div class="modules" style="margin-top:20px;">
+          <div class="module">
+            <h3>Multi-LLM Consensus</h3>
+            <div class="mod-sub">13 AI models vote on critical decisions, protecting against single-model bias or hallucination. Three strategies: voting, chain-of-verification, and adversarial debate.</div>
+          </div>
+          <div class="module">
+            <h3>Human-in-the-Loop Routing</h3>
+            <div class="mod-sub">Intelligent escalation with SLA deadlines. HIPAA decisions to medical staff (2hr), compliance violations to officers (4hr). Full justification audit trail.</div>
+          </div>
+          <div class="module">
+            <h3>Secretless Credentials</h3>
+            <div class="mod-sub">Agents never hold persistent secrets. Just-In-Time tokens auto-expire in 60 seconds. Zero credential sprawl, zero leaked keys.</div>
+          </div>
+          <div class="module">
+            <h3>Vendor Security Questionnaire</h3>
+            <div class="mod-sub">External questionnaire for third-party vendors covering data handling, access controls, AI governance, and incident response. Auto-scored risk assessments.</div>
+          </div>
+          <div class="module">
+            <h3>Compliance Hub</h3>
+            <div class="mod-sub">29 regulatory frameworks including EU AI Act, SOC 2, NIST AI RMF, ISO 42001, HIPAA, and GDPR. Auto-generate policies mapped to your specific requirements.</div>
+          </div>
+          <div class="module">
+            <h3>Model &amp; Agent Registry</h3>
+            <div class="mod-sub">Shadow AI discovery across your organization. Track every model, every agent, every version. Know exactly what AI is running and where.</div>
+          </div>
+          <div class="module">
+            <h3>Evidence Auto-Collection</h3>
+            <div class="mod-sub">Pull compliance evidence from GitHub, Jira, and cloud providers automatically. No more chasing screenshots for audit season.</div>
+          </div>
+          <div class="module">
+            <h3>AGI Safety Extensions</h3>
+            <div class="mod-sub">Forward-looking: self-improvement monitoring, causal chain validation, and deceptive alignment detection. Built for the models of tomorrow, available today.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">How It Works</div>
+      <h2 class="sec-title sec-title-gradient">Live in Under 10 Minutes</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <div class="step-num" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue)">1</div>
+        <h3>Connect Your AI</h3>
+        <p>Register your models and agents. One API call. Works with OpenAI, Anthropic, open-source &mdash; any LLM provider.</p>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple)">2</div>
+        <h3>Set Your Policies</h3>
+        <p>Choose from 29 pre-built compliance frameworks or write custom rules. Default-deny means nothing slips through.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num" style="background:var(--green-bg);color:var(--green);border-color:var(--green)">3</div>
+        <h3>Sleep at Night</h3>
+        <p>Every AI decision is monitored, scored, and recorded. When the auditor calls, export your entire compliance history in one click.</p>
       </div>
     </div>
   </div>
