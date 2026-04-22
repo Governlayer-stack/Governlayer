@@ -1,7 +1,7 @@
 """Governance Policy database model."""
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime, JSON, Boolean
+from sqlalchemy import Column, Integer, String, Text, DateTime, JSON, Boolean, ForeignKey
 
 from src.models.database import Base
 
@@ -10,6 +10,7 @@ class GovernancePolicy(Base):
     __tablename__ = "governance_policies"
 
     id = Column(Integer, primary_key=True, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
     description = Column(Text)
     version = Column(String(50), default="1.0")

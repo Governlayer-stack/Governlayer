@@ -11,7 +11,7 @@ from src.api.pagination import PaginationParams, paginated_response
 from src.models.database import get_db, log_mutation
 from src.models.registry import Incident, IncidentSeverity, IncidentStatus
 from src.security.api_key_auth import AuthContext, require_scope, verify_api_key_or_jwt
-from src.security.auth import verify_token
+
 
 router = APIRouter(prefix="/v1/incidents", tags=["Incidents"])
 
@@ -47,6 +47,7 @@ def create_incident(data: IncidentCreate,
         category=data.category,
         reporter=data.reporter or auth.identity,
         timeline=[{"timestamp": datetime.utcnow().isoformat(), "action": "created", "actor": auth.identity}],
+        org_id=auth.org_id,
     )
     db.add(incident)
     log_mutation(db, auth.identity, "create", "incident", details=f"Incident: {data.title}")
@@ -79,10 +80,12 @@ def create_incident(data: IncidentCreate,
 @router.get("")
 def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
                    pagination: PaginationParams = Depends(),
-                   current_user: str = Depends(verify_token),
+                   auth: AuthContext = Depends(verify_api_key_or_jwt),
                    db: Session = Depends(get_db)):
     """List all incidents with optional filters and pagination."""
     query = db.query(Incident)
+    if auth.org_id:
+        query = query.filter(Incident.org_id == auth.org_id)
     if status:
         query = query.filter(Incident.status == status)
     if severity:
@@ -109,11 +112,13 @@ def list_incidents(status: Optional[str] = None, severity: Optional[str] = None,
 
 
 @router.get("/{incident_id}")
-def get_incident(incident_id: int, current_user: str = Depends(verify_token),
+def get_incident(incident_id: int, auth: AuthContext = Depends(verify_api_key_or_jwt),
                  db: Session = Depends(get_db)):
     """Get detailed incident information."""
     incident = db.query(Incident).filter(Incident.id == incident_id).first()
     if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    if auth.org_id and incident.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Incident not found")
     return {
         "id": incident.id,
@@ -141,6 +146,8 @@ def update_incident(incident_id: int, data: IncidentUpdate,
     """Update incident status, assignment, or resolution."""
     incident = db.query(Incident).filter(Incident.id == incident_id).first()
     if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    if auth.org_id and incident.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Incident not found")
 
     changes = []

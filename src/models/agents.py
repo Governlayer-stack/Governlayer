@@ -38,6 +38,7 @@ class AIAgent(Base):
     __tablename__ = "ai_agents"
 
     id = Column(Integer, primary_key=True, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=True, index=True)
     name = Column(String(255), nullable=False, index=True)
     agent_type = Column(SAEnum(AgentType), default=AgentType.AUTONOMOUS)
     status = Column(SAEnum(AgentStatus), default=AgentStatus.UNDER_REVIEW)
@@ -97,6 +98,7 @@ class ShadowAIDetection(Base):
     __tablename__ = "shadow_ai_detections"
 
     id = Column(Integer, primary_key=True, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=True, index=True)
     detection_type = Column(String(100), nullable=False)
     source = Column(String(255))
     description = Column(Text)

@@ -55,6 +55,7 @@ def register_model(data: ModelCreate, auth: AuthContext = Depends(require_scope(
         tags=data.tags,
         metadata_=data.metadata,
         governance_status="pending",
+        org_id=auth.org_id,
     )
     db.add(model)
     log_mutation(db, auth.identity, "create", "model", details=f"Registered model {data.name} v{data.version}")
@@ -72,9 +73,13 @@ def register_model(data: ModelCreate, auth: AuthContext = Depends(require_scope(
 
 @router.get("")
 def list_models(lifecycle: Optional[str] = None, governance_status: Optional[str] = None,
-                pagination: PaginationParams = Depends(), db: Session = Depends(get_db)):
+                pagination: PaginationParams = Depends(),
+                auth: AuthContext = Depends(verify_api_key_or_jwt),
+                db: Session = Depends(get_db)):
     """List all registered models with optional filters and pagination."""
     query = db.query(RegisteredModel)
+    if auth.org_id:
+        query = query.filter(RegisteredModel.org_id == auth.org_id)
     if lifecycle:
         query = query.filter(RegisteredModel.lifecycle == lifecycle)
     if governance_status:
@@ -103,10 +108,13 @@ def list_models(lifecycle: Optional[str] = None, governance_status: Optional[str
 
 
 @router.get("/{model_id}")
-def get_model(model_id: int, db: Session = Depends(get_db)):
+def get_model(model_id: int, auth: AuthContext = Depends(verify_api_key_or_jwt),
+              db: Session = Depends(get_db)):
     """Get detailed model information."""
     model = db.query(RegisteredModel).filter(RegisteredModel.id == model_id).first()
     if not model:
+        raise HTTPException(status_code=404, detail="Model not found")
+    if auth.org_id and model.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Model not found")
     return {
         "id": model.id,
@@ -140,6 +148,8 @@ def update_lifecycle(model_id: int, data: LifecycleUpdate,
     model = db.query(RegisteredModel).filter(RegisteredModel.id == model_id).first()
     if not model:
         raise HTTPException(status_code=404, detail="Model not found")
+    if auth.org_id and model.org_id != auth.org_id:
+        raise HTTPException(status_code=404, detail="Model not found")
     old_lc = model.lifecycle.value if model.lifecycle else "unknown"
     model.lifecycle = ModelLifecycle(data.lifecycle)
     model.updated_at = datetime.utcnow()
@@ -156,6 +166,8 @@ def create_model_card(model_id: int, data: ModelCardCreate,
     """Create or update a model card for transparency documentation."""
     model = db.query(RegisteredModel).filter(RegisteredModel.id == model_id).first()
     if not model:
+        raise HTTPException(status_code=404, detail="Model not found")
+    if auth.org_id and model.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Model not found")
     card = ModelCard(
         model_id=model_id,
@@ -180,8 +192,15 @@ def create_model_card(model_id: int, data: ModelCardCreate,
 
 
 @router.get("/{model_id}/card")
-def get_model_card(model_id: int, db: Session = Depends(get_db)):
+def get_model_card(model_id: int, auth: AuthContext = Depends(verify_api_key_or_jwt),
+                   db: Session = Depends(get_db)):
     """Get the latest model card."""
+    # Verify the parent model belongs to the caller's org
+    model = db.query(RegisteredModel).filter(RegisteredModel.id == model_id).first()
+    if not model:
+        raise HTTPException(status_code=404, detail="No model card found")
+    if auth.org_id and model.org_id != auth.org_id:
+        raise HTTPException(status_code=404, detail="No model card found")
     card = (
         db.query(ModelCard)
         .filter(ModelCard.model_id == model_id)

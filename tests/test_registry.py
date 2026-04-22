@@ -57,7 +57,7 @@ def test_list_models(client, auth_headers):
             "version": "1.0.0",
         }, headers=auth_headers)
 
-    r = client.get("/v1/models")
+    r = client.get("/v1/models", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert "items" in data
@@ -76,7 +76,7 @@ def test_list_models_pagination(client, auth_headers):
             "version": "1.0.0",
         }, headers=auth_headers)
 
-    r = client.get("/v1/models?page=1&per_page=2")
+    r = client.get("/v1/models?page=1&per_page=2", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["pagination"]["page"] == 1
@@ -85,7 +85,7 @@ def test_list_models_pagination(client, auth_headers):
 
 
 def test_list_models_filter_governance_status(client, auth_headers):
-    r = client.get("/v1/models?governance_status=pending")
+    r = client.get("/v1/models?governance_status=pending", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     for m in data["items"]:
@@ -102,7 +102,7 @@ def test_get_model_by_id(client, auth_headers):
     }, headers=auth_headers)
     model_id = create_resp.json()["id"]
 
-    r = client.get(f"/v1/models/{model_id}")
+    r = client.get(f"/v1/models/{model_id}", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["id"] == model_id
@@ -112,8 +112,8 @@ def test_get_model_by_id(client, auth_headers):
     assert data["owner"] == "ml-team@company.com"
 
 
-def test_get_model_not_found(client):
-    r = client.get("/v1/models/999999")
+def test_get_model_not_found(client, auth_headers):
+    r = client.get("/v1/models/999999", headers=auth_headers)
     assert r.status_code == 404
 
 
@@ -224,7 +224,7 @@ def test_get_model_card(client, auth_headers):
         "fairness_analysis": {"age_group_parity": 0.91},
     }, headers=auth_headers)
 
-    r = client.get(f"/v1/models/{model_id}/card")
+    r = client.get(f"/v1/models/{model_id}/card", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["model_id"] == model_id
@@ -234,6 +234,6 @@ def test_get_model_card(client, auth_headers):
     assert data["fairness_analysis"]["age_group_parity"] == 0.91
 
 
-def test_get_model_card_not_found(client):
-    r = client.get("/v1/models/999999/card")
+def test_get_model_card_not_found(client, auth_headers):
+    r = client.get("/v1/models/999999/card", headers=auth_headers)
     assert r.status_code == 404

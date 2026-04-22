@@ -62,10 +62,14 @@ def verify_api_key_or_jwt(
             api_key_id=api_key.id,
         )
 
-    # JWT path (existing behavior)
+    # JWT path
     from src.security.auth import verify_token_raw
     email = verify_token_raw(token)
-    return AuthContext(identity=email, auth_type="jwt", scopes=list(JWT_DEFAULT_SCOPES))
+    # Resolve org from membership
+    from src.models.tenant import OrgMembership
+    membership = db.query(OrgMembership).filter(OrgMembership.user_email == email).first()
+    org_id = membership.org_id if membership else None
+    return AuthContext(identity=email, org_id=org_id, auth_type="jwt", scopes=list(JWT_DEFAULT_SCOPES))
 
 
 def require_scope(scope: str):

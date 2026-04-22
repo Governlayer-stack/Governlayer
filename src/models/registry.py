@@ -35,6 +35,7 @@ class RegisteredModel(Base):
     __tablename__ = "registered_models"
 
     id = Column(Integer, primary_key=True, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=True, index=True)
     name = Column(String(255), nullable=False, index=True)
     version = Column(String(50), nullable=False)
     provider = Column(String(100))
@@ -76,6 +77,7 @@ class Incident(Base):
     __tablename__ = "incidents"
 
     id = Column(Integer, primary_key=True, index=True)
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=True, index=True)
     model_id = Column(Integer, ForeignKey("registered_models.id"), nullable=True)
     title = Column(String(500), nullable=False)
     description = Column(Text)

@@ -59,7 +59,7 @@ def test_list_agents(client, auth_headers):
             "name": _unique_name(),
         }, headers=auth_headers)
 
-    r = client.get("/v1/agents")
+    r = client.get("/v1/agents", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert "items" in data
@@ -78,7 +78,7 @@ def test_list_agents_pagination(client, auth_headers):
             "name": _unique_name(),
         }, headers=auth_headers)
 
-    r = client.get("/v1/agents?page=1&per_page=2")
+    r = client.get("/v1/agents?page=1&per_page=2", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["pagination"]["page"] == 1
@@ -93,7 +93,7 @@ def test_list_agents_filter_by_team(client, auth_headers):
         "team": team_name,
     }, headers=auth_headers)
 
-    r = client.get(f"/v1/agents?team={team_name}")
+    r = client.get(f"/v1/agents?team={team_name}", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["pagination"]["total"] >= 1
@@ -115,7 +115,7 @@ def test_get_agent_by_id(client, auth_headers):
     }, headers=auth_headers)
     agent_id = create_resp.json()["id"]
 
-    r = client.get(f"/v1/agents/{agent_id}")
+    r = client.get(f"/v1/agents/{agent_id}", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
     assert data["id"] == agent_id
@@ -125,8 +125,8 @@ def test_get_agent_by_id(client, auth_headers):
     assert data["model_provider"] == "Anthropic"
 
 
-def test_get_agent_not_found(client):
-    r = client.get("/v1/agents/999999")
+def test_get_agent_not_found(client, auth_headers):
+    r = client.get("/v1/agents/999999", headers=auth_headers)
     assert r.status_code == 404
 
 

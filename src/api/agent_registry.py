@@ -91,6 +91,7 @@ def register_agent(data: AgentCreate,
         tags=data.tags, metadata_=data.metadata,
         discovery_source=DiscoverySource.MANUAL, is_shadow=False,
         first_seen_at=datetime.utcnow(),
+        org_id=auth.org_id,
     )
     db.add(agent)
     log_mutation(db, auth.identity, "create", "agent", details=f"Registered agent {data.name}")
@@ -102,9 +103,13 @@ def register_agent(data: AgentCreate,
 @router.get("")
 def list_agents(status: Optional[str] = None, agent_type: Optional[str] = None,
                 is_shadow: Optional[bool] = None, team: Optional[str] = None,
-                pagination: PaginationParams = Depends(), db: Session = Depends(get_db)):
+                pagination: PaginationParams = Depends(),
+                auth: AuthContext = Depends(verify_api_key_or_jwt),
+                db: Session = Depends(get_db)):
     """List all registered agents with optional filters and pagination."""
     query = db.query(AIAgent)
+    if auth.org_id:
+        query = query.filter(AIAgent.org_id == auth.org_id)
     if status:
         query = query.filter(AIAgent.status == status)
     if agent_type:
@@ -127,10 +132,13 @@ def list_agents(status: Optional[str] = None, agent_type: Optional[str] = None,
 
 
 @router.get("/{agent_id}")
-def get_agent(agent_id: int, db: Session = Depends(get_db)):
+def get_agent(agent_id: int, auth: AuthContext = Depends(verify_api_key_or_jwt),
+              db: Session = Depends(get_db)):
     """Get detailed agent information including agent card."""
     agent = db.query(AIAgent).filter(AIAgent.id == agent_id).first()
     if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    if auth.org_id and agent.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Agent not found")
     result = _agent_dict(agent)
     if agent.card:
@@ -153,6 +161,8 @@ def create_agent_card(agent_id: int, data: AgentCardCreate,
     """Create an agent card for transparency documentation."""
     agent = db.query(AIAgent).filter(AIAgent.id == agent_id).first()
     if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    if auth.org_id and agent.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Agent not found")
     existing = db.query(AgentCard).filter(AgentCard.agent_id == agent_id).first()
     if existing:
@@ -191,6 +201,8 @@ def update_agent_governance(agent_id: int, data: AgentApproval,
 
     agent = db.query(AIAgent).filter(AIAgent.id == agent_id).first()
     if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    if auth.org_id and agent.org_id != auth.org_id:
         raise HTTPException(status_code=404, detail="Agent not found")
     old_status = agent.status.value if agent.status else "unknown"
     agent.status = action_map[data.action]
@@ -269,6 +281,7 @@ def scan_for_shadow_ai(data: ShadowScanRequest,
                         description=f"Unregistered {info['provider']} AI usage detected",
                         evidence={"target": target, "pattern": info["pattern"]},
                         severity=info["severity"], detected_service=info["provider"], detected_model=pid,
+                        org_id=auth.org_id,
                     )
                     db.add(det)
                     detections.append({"provider": info["provider"], "severity": info["severity"], "source": target, "registered": False})
@@ -291,9 +304,12 @@ def scan_for_shadow_ai(data: ShadowScanRequest,
 @router.get("/discovery/detections")
 def list_shadow_detections(status: Optional[str] = None,
                            pagination: PaginationParams = Depends(),
+                           auth: AuthContext = Depends(verify_api_key_or_jwt),
                            db: Session = Depends(get_db)):
     """List all shadow AI detections."""
     query = db.query(ShadowAIDetection)
+    if auth.org_id:
+        query = query.filter(ShadowAIDetection.org_id == auth.org_id)
     if status:
         query = query.filter(ShadowAIDetection.status == status)
     total = query.count()

@@ -475,7 +475,7 @@ def create_app() -> FastAPI:
         global _startup_complete
         create_tables()
         _ensure_schema_columns()
-        if os.getenv("SEED_DEMO_DATA", "").lower() in ("true", "1", "yes") or settings.debug:
+        if os.getenv("SEED_DEMO_DATA", "").lower() in ("true", "1", "yes"):
             _seed_demo_data()
         _startup_complete = True
 
