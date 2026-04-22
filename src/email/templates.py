@@ -121,25 +121,98 @@ def _badge(label: str, color: str) -> str:
 # ---------------------------------------------------------------------------
 
 def welcome(email: str, name: str) -> tuple[str, str]:
-    """Welcome email for new signups. Returns (subject, html)."""
-    subject = f"Welcome to GovernLayer, {name}"
+    """Welcome / onboarding email for new signups. Returns (subject, html)."""
+    subject = f"Welcome to GovernLayer Beta -- Your Onboarding Guide"
+    api_url = "https://web-production-bdd26.up.railway.app"
+
+    def _step(num: str, color: str, title: str) -> str:
+        return (
+            f'<h3 style="color:#e2e8f0;font-size:16px;margin:28px 0 12px">'
+            f'<span style="background:{color};color:#fff;width:24px;height:24px;'
+            f'border-radius:50%;display:inline-block;text-align:center;line-height:24px;'
+            f'font-size:13px;font-weight:700;margin-right:8px">{num}</span>'
+            f'{title}</h3>'
+        )
+
+    def _api_block(method_path: str, body: str = "", note: str = "") -> str:
+        parts = f'<div style="background:#0a0e1a;border:1px solid #1e293b;border-radius:6px;padding:16px;margin:0 0 8px">'
+        parts += f'<code style="color:#94a3b8;font-size:13px;display:block">{method_path}</code>'
+        if body:
+            parts += f'<code style="color:#64748b;font-size:12px;display:block;margin-top:8px">{body}</code>'
+        if note:
+            parts += f'<p style="color:#64748b;font-size:12px;margin:8px 0 0">{note}</p>'
+        parts += '</div>'
+        return parts
+
     content = _card(f"""\
-<h2 style="color:#e2e8f0;margin:0 0 12px;font-size:20px">Welcome aboard</h2>
-<p style="color:#94a3b8;line-height:1.7;margin:0 0 16px">
+<h2 style="color:#e2e8f0;margin:0 0 8px;font-size:22px">Welcome to the Founding Cohort</h2>
+<p style="color:#94a3b8;line-height:1.7;margin:0 0 20px">
 Your account {_code_block(email)} for <strong style="color:#e2e8f0">{name}</strong> is ready.
-GovernLayer provides autonomous compliance auditing, behavioral drift detection,
-and risk scoring for your AI systems.
+You are one of our earliest enterprise beta partners. Here is how to get your environment set up.
 </p>
-<div style="background:#0a0e1a;border:1px solid #1e293b;border-radius:6px;padding:16px;margin:16px 0">
-<p style="color:#94a3b8;font-size:13px;margin:0 0 10px;font-weight:600">Quick start:</p>
-<ol style="color:#94a3b8;font-size:13px;line-height:2;margin:0;padding-left:20px">
-<li>Create an organization: {_code_block("POST /v1/enterprise/orgs")}</li>
-<li>Generate an API key: {_code_block("POST /v1/enterprise/orgs/{slug}/api-keys")}</li>
-<li>Run your first governance check: {_code_block("POST /v1/govern")}</li>
-</ol>
+
+<div style="background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(16,185,129,0.08));border:1px solid rgba(59,130,246,0.15);border-radius:6px;padding:16px;margin:0 0 8px">
+<p style="color:#60a5fa;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 6px">Your API Base URL</p>
+<code style="color:#00ff88;font-size:14px">{api_url}</code>
 </div>
-{_button("https://governlayer.ai/docs", "Read the Docs")}
+
+{_step("1", "#3b82f6", "Log In")}
+{_api_block(
+    "POST /auth/login",
+    '{{"email": "' + email + '", "password": "your-password"}}',
+    "Returns a JWT token. Use it in the Authorization header for the next steps."
+)}
+
+{_step("2", "#8b5cf6", "Create Your Organization")}
+{_api_block(
+    "POST /v1/enterprise/orgs",
+    '{{"name": "' + name + '", "slug": "' + name.lower().replace(" ", "-") + '"}}',
+    "This creates your isolated tenant. All your data is scoped to your org."
+)}
+
+{_step("3", "#10b981", "Generate Your API Key")}
+{_api_block(
+    "POST /v1/enterprise/orgs/" + name.lower().replace(" ", "-") + "/api-keys",
+    '{{"name": "production", "scopes": "govern,audit,risk,scan,read"}}',
+    '<strong style="color:#f59e0b">Save the API key -- it is only shown once.</strong> Use as: Authorization: Bearer gl_xxx'
+)}
+
+{_step("4", "#f59e0b", "Start Governing")}
+<div style="background:#0a0e1a;border:1px solid #1e293b;border-radius:6px;padding:16px">
+<p style="color:#94a3b8;font-size:13px;margin:0 0 12px">With your API key, you can now:</p>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+<tr><td style="color:#00ff88;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b;font-family:monospace">POST /v1/models</td><td style="color:#94a3b8;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b">Register your AI models</td></tr>
+<tr><td style="color:#00ff88;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b;font-family:monospace">POST /v1/agents</td><td style="color:#94a3b8;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b">Register your AI agents</td></tr>
+<tr><td style="color:#00ff88;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b;font-family:monospace">POST /v1/policies</td><td style="color:#94a3b8;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b">Set governance policies</td></tr>
+<tr><td style="color:#00ff88;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b;font-family:monospace">POST /v1/govern</td><td style="color:#94a3b8;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b">Run full governance pipeline</td></tr>
+<tr><td style="color:#00ff88;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b;font-family:monospace">GET /v1/dashboard</td><td style="color:#94a3b8;font-size:12px;padding:6px 0;border-bottom:1px solid #1e293b">Your org health at a glance</td></tr>
+<tr><td style="color:#00ff88;font-size:12px;padding:6px 0;font-family:monospace">POST /v1/scan</td><td style="color:#94a3b8;font-size:12px;padding:6px 0">Quick deterministic scan (instant)</td></tr>
+</table>
+</div>
+
+<div style="background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(59,130,246,0.06));border:1px solid rgba(16,185,129,0.15);border-radius:6px;padding:16px;margin:24px 0 0">
+<h4 style="color:#10b981;margin:0 0 8px;font-size:14px">Included in your beta access:</h4>
+<ul style="color:#94a3b8;font-size:13px;line-height:2;margin:0;padding-left:20px">
+<li>Full API access -- 29 compliance frameworks (EU AI Act, SOC 2, NIST, ISO 42001, HIPAA, GDPR)</li>
+<li>Real-time drift detection on AI reasoning traces</li>
+<li>Tamper-proof hash-chained audit ledger</li>
+<li>Deterministic 6-dimension risk scoring</li>
+<li>Shadow AI discovery scanning</li>
+<li>Webhook notifications (HMAC-signed)</li>
+<li>Direct support from the founding team</li>
+</ul>
+</div>
 """)
+
+    content += f"""\
+<tr><td style="padding-top:24px;text-align:center">
+{_button(api_url + "/docs", "Explore the API Docs", color="#3b82f6", text_color="#ffffff")}
+<p style="color:#64748b;font-size:13px;margin:8px 0 0">
+Questions? Reply to this email or reach out to
+<a href="mailto:founders@governlayer.ai" style="color:#3b82f6;text-decoration:none">founders@governlayer.ai</a>
+</p>
+</td></tr>
+"""
     return subject, _wrap(subject, content)
 
 

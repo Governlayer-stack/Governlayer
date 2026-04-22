@@ -19,7 +19,8 @@ _FROM_ADDRESS = "notifications@governlayer.ai"
 # Core send function
 # ---------------------------------------------------------------------------
 
-def send_email(to: str, subject: str, html_body: str, from_addr: Optional[str] = None) -> bool:
+def send_email(to: str, subject: str, html_body: str, from_addr: Optional[str] = None,
+               reply_to: Optional[str] = None) -> bool:
     """Send a transactional email via Resend.
 
     If RESEND_API_KEY is not configured, logs the email instead of sending.
@@ -29,6 +30,7 @@ def send_email(to: str, subject: str, html_body: str, from_addr: Optional[str] =
         subject: Email subject line.
         html_body: HTML content of the email.
         from_addr: Override the default from address.
+        reply_to: Reply-to address (defaults to founders@governlayer.ai).
 
     Returns:
         True if the email was sent (or logged) successfully.
@@ -50,18 +52,20 @@ def send_email(to: str, subject: str, html_body: str, from_addr: Optional[str] =
 
     try:
         import httpx
+        payload = {
+            "from": sender,
+            "to": [to],
+            "subject": subject,
+            "html": html_body,
+            "reply_to": reply_to or "founders@governlayer.ai",
+        }
         resp = httpx.post(
             _RESEND_ENDPOINT,
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
             },
-            json={
-                "from": sender,
-                "to": [to],
-                "subject": subject,
-                "html": html_body,
-            },
+            json=payload,
             timeout=10,
         )
         if resp.status_code in (200, 201):
