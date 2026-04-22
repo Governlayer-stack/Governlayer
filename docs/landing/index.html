@@ -324,7 +324,6 @@ code{font-family:'JetBrains Mono',monospace}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
 .stat-item{position:relative}
 .stat-item:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--border)}
-.s-num{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .s-label{font-size:.84rem;color:var(--text2);margin-top:6px;font-weight:500}
 
 /* ============ FOOTER ============ */
@@ -391,7 +390,7 @@ code{font-family:'JetBrains Mono',monospace}
 @keyframes orbFloat3{0%{transform:translate(0,0) scale(.9)}100%{transform:translate(-40px,50px) scale(1.05)}}
 
 /* ============ GRAIN TEXTURE OVERLAY ============ */
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
 
 /* ============ ANIMATED COUNTER ============ */
 .s-num{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:transform .3s var(--transition)}
