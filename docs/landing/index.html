@@ -55,9 +55,9 @@ code{font-family:'JetBrains Mono',monospace}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ============ SMOOTH REVEAL ============ */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal{opacity:1;transform:translateY(0);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.pending{opacity:0;transform:translateY(28px)}
 .reveal.visible{opacity:1;transform:translateY(0)}
-.no-js .reveal,.reveal-fallback .reveal{opacity:1!important;transform:none!important}
 .reveal-delay-1{transition-delay:.1s}
 .reveal-delay-2{transition-delay:.2s}
 .reveal-delay-3{transition-delay:.3s}
@@ -1389,22 +1389,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 </footer>
 
 <script>
-// Smooth reveal on scroll
-try {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(el => {
-      if (el.isIntersecting) {
-        el.target.classList.add('visible');
-        obs.unobserve(el.target);
-      }
-    });
-  }, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-} catch(e) {
-  document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-}
-// Safety fallback — if reveals haven't fired after 2s, force visible
-setTimeout(function(){ document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){ el.classList.add('visible'); }); }, 2000);
+// Smooth reveal on scroll — content visible by default, JS adds animation
+document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('pending'); });
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(el) {
+    if (el.isIntersecting) {
+      el.target.classList.remove('pending');
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    }
+  });
+}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
 
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(a => {
