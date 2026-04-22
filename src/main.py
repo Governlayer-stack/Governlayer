@@ -478,6 +478,34 @@ def create_app() -> FastAPI:
                     # Column already exists or table not yet created — safe to ignore
                     db.rollback()
                     continue
+            # Ensure standalone tables exist
+            for ddl in [
+                """CREATE TABLE IF NOT EXISTS beta_agreements (
+                    id SERIAL PRIMARY KEY,
+                    signer_name VARCHAR(255) NOT NULL,
+                    signer_title VARCHAR(255),
+                    signer_company VARCHAR(255) NOT NULL,
+                    signer_email VARCHAR(255) NOT NULL,
+                    signature_text VARCHAR(255) NOT NULL,
+                    ip_address VARCHAR(45),
+                    user_agent TEXT,
+                    signed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )""",
+                """CREATE TABLE IF NOT EXISTS vendor_questionnaire_submissions (
+                    id SERIAL PRIMARY KEY,
+                    company_name VARCHAR(255) NOT NULL,
+                    contact_name VARCHAR(255) NOT NULL,
+                    contact_email VARCHAR(255) NOT NULL,
+                    responses JSONB,
+                    ip_address VARCHAR(45),
+                    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )""",
+            ]:
+                try:
+                    db.execute(sa_text(ddl))
+                except Exception:
+                    db.rollback()
+                    continue
             db.commit()
         except Exception:
             # Schema patches are best-effort; failures are non-fatal
@@ -970,6 +998,8 @@ def create_app() -> FastAPI:
     _status_page_html = _load_page("status")
     _audit_portal_html = _load_page("audit-portal")
     _beta_sign_html = _load_page("beta-sign")
+    _vendor_html = _load_page("vendor")
+    _vendor_questionnaire_html = _load_page("vendor-questionnaire")
     _dpa_html = None
     for _dpa_base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
         _dpa_path = os.path.join(_dpa_base, "docs", "legal", "dpa.html")
@@ -1570,6 +1600,101 @@ def create_app() -> FastAPI:
             "message": "Agreement signed successfully",
             "signed_at": signed_at,
             "signer": name,
+        }
+
+    # ── Vendor Risk Management Dashboard ─────────────────────────────────
+
+    @app.get("/vendor")
+    def vendor_dashboard_page():
+        if _vendor_html:
+            return HTMLResponse(_vendor_html)
+        return {"error": "Vendor dashboard not found"}
+
+    @app.get("/vendor-questionnaire")
+    def vendor_questionnaire_page():
+        if _vendor_questionnaire_html:
+            return HTMLResponse(_vendor_questionnaire_html)
+        return {"error": "Vendor questionnaire not found"}
+
+    @app.post("/api/vendor-questionnaire")
+    async def submit_vendor_questionnaire(request: Request):
+        """Accept a vendor security questionnaire submission. No auth required."""
+        body = await request.json()
+
+        # Fields may be top-level or nested in section1
+        s1 = body.get("section1") or {}
+        company_name = (body.get("company_name") or s1.get("companyName") or "").strip()
+        contact_name = (body.get("contact_name") or s1.get("contactName") or "").strip()
+        contact_email = (body.get("contact_email") or s1.get("contactEmail") or "").strip()
+
+        if not company_name or not contact_name or not contact_email:
+            raise StarletteHTTPException(
+                status_code=422,
+                detail="company_name, contact_name, and contact_email are required",
+            )
+        if not _EMAIL_RE.match(contact_email):
+            raise StarletteHTTPException(
+                status_code=422, detail="Invalid email address"
+            )
+
+        ip_address = request.client.host if request.client else "unknown"
+        submitted_at = datetime.now(timezone.utc).isoformat()
+
+        import json as _json
+        responses_json = _json.dumps(body)
+
+        try:
+            db = SessionLocal()
+            try:
+                db.execute(
+                    sa_text(
+                        "INSERT INTO vendor_questionnaire_submissions "
+                        "(company_name, contact_name, contact_email, responses, "
+                        "ip_address, submitted_at) "
+                        "VALUES (:company, :name, :email, :responses, :ip, :submitted)"
+                    ),
+                    {
+                        "company": company_name,
+                        "name": contact_name,
+                        "email": contact_email,
+                        "responses": responses_json,
+                        "ip": ip_address,
+                        "submitted": submitted_at,
+                    },
+                )
+                db.commit()
+            finally:
+                db.close()
+        except Exception as exc:
+            logger.error("Failed to store vendor questionnaire: %s", exc)
+
+        # Notify founders
+        try:
+            from src.email.service import send_email
+
+            notify_html = (
+                "<h2>Vendor Questionnaire Submitted</h2>"
+                f"<p><strong>Company:</strong> {company_name}</p>"
+                f"<p><strong>Contact:</strong> {contact_name} ({contact_email})</p>"
+                f"<p><strong>Submitted:</strong> {submitted_at}</p>"
+            )
+            send_email(
+                "founders@governlayer.ai",
+                f"Vendor Questionnaire: {company_name}",
+                notify_html,
+            )
+        except Exception as exc:
+            logger.error("Failed to send vendor questionnaire notification: %s", exc)
+
+        logger.info(
+            "Vendor questionnaire submitted: company=%s contact=%s",
+            company_name, contact_name,
+        )
+
+        return {
+            "message": "Questionnaire submitted successfully",
+            "submitted_at": submitted_at,
+            "company": company_name,
         }
 
     return app

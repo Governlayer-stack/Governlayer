@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Risk Management — GovernLayer</title>
+<meta name="theme-color" content="#0a0e1a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --accent:#00d4aa;--accent-bg:rgba(0,212,170,.12);
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --transition:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+
+/* ===== HEADER ===== */
+.header{display:flex;align-items:center;justify-content:space-between;max-width:1280px;margin:0 auto;padding:24px 28px 0}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo-mark svg{width:14px;height:14px}
+.header-divider{width:1px;height:28px;background:var(--border2)}
+.header-title{font-size:1rem;font-weight:500;color:var(--text2)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-sm);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition);font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#00b894);color:#0a0e1a}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,212,170,.3)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:6px 14px;font-size:.8rem;border-radius:6px}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text)}
+
+/* ===== LOGIN ===== */
+.login-bar{max-width:1280px;margin:16px auto 0;padding:0 28px}
+.login-form{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px}
+.login-form label{font-size:.85rem;color:var(--text2);font-weight:500;white-space:nowrap}
+.login-form input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;transition:border-color .2s}
+.login-form input:focus{border-color:var(--accent)}
+.login-form input[type="email"]{width:220px}
+.login-form input[type="password"]{width:180px}
+.login-error{color:var(--red);font-size:.8rem;margin-left:8px}
+
+/* ===== CONTAINER ===== */
+.container{max-width:1280px;margin:0 auto;padding:24px 28px 60px}
+
+/* ===== SUMMARY CARDS ===== */
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.summary-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;transition:border-color .3s}
+.summary-card:hover{border-color:var(--border2)}
+.summary-label{font-size:.8rem;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.summary-value{font-size:1.75rem;font-weight:700;letter-spacing:-.02em}
+.summary-value.green{color:var(--accent)}
+.summary-value.red{color:var(--red)}
+.summary-value.amber{color:var(--amber)}
+.summary-value.default{color:var(--text)}
+
+/* ===== TABLE ===== */
+.table-section{margin-bottom:36px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:1.1rem;font-weight:700;letter-spacing:-.01em}
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg2)}
+table{width:100%;border-collapse:collapse;min-width:800px}
+thead{background:rgba(255,255,255,.03)}
+th{text-align:left;padding:12px 16px;font-size:.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+td{padding:14px 16px;font-size:.875rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover{background:rgba(255,255,255,.02)}
+
+/* ===== BADGES ===== */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;letter-spacing:.02em}
+.badge-low{background:var(--accent-bg);color:var(--accent)}
+.badge-medium{background:var(--amber-bg);color:var(--amber)}
+.badge-high{background:var(--red-bg);color:var(--red)}
+.badge-critical{background:var(--purple-bg);color:var(--purple)}
+.badge-none{background:rgba(255,255,255,.05);color:var(--text3)}
+.cert-tag{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:500;background:var(--blue-bg);color:var(--blue);margin:2px 2px 2px 0}
+
+/* ===== RISK MATRIX ===== */
+.matrix-section{margin-bottom:36px}
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:2px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.matrix-cell{padding:20px;min-height:160px}
+.matrix-cell.hi-hi{background:rgba(239,68,68,.1)}
+.matrix-cell.hi-lo{background:rgba(245,158,11,.08)}
+.matrix-cell.lo-hi{background:rgba(249,115,22,.08)}
+.matrix-cell.lo-lo{background:rgba(0,212,170,.06)}
+.matrix-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;color:var(--text3)}
+.matrix-vendors{display:flex;flex-wrap:wrap;gap:6px}
+.matrix-chip{padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:500;background:rgba(255,255,255,.06);border:1px solid var(--border)}
+.matrix-chip .chip-score{font-weight:700;margin-left:4px;color:var(--text2)}
+.matrix-axes{display:flex;justify-content:space-between;margin-bottom:8px}
+.matrix-axis-label{font-size:.7rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+
+/* ===== VENDOR DETAIL (expanded row) ===== */
+.vendor-detail{background:var(--bg);border-top:1px solid var(--border);padding:20px 24px}
+.vendor-detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.detail-field{margin-bottom:8px}
+.detail-label{font-size:.7rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.detail-value{font-size:.85rem;color:var(--text2)}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state p{font-size:.95rem;margin-bottom:4px}
+.empty-state .hint{font-size:.8rem;color:var(--text3)}
+
+/* ===== LOADING ===== */
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row{text-align:center;padding:40px}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.modal-overlay.active{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);width:100%;max-width:640px;padding:28px 32px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-title{font-size:1.15rem;font-weight:700;margin-bottom:20px}
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-size:.8rem;font-weight:600;color:var(--text2);margin-bottom:6px}
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="date"],
+.form-row select,
+.form-row textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-size:.875rem;font-family:inherit;outline:none;transition:border-color .2s}
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus{border-color:var(--accent)}
+.form-row textarea{resize:vertical;min-height:72px}
+.form-row select{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:8px}
+.checkbox-item{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;background:var(--bg);border:1px solid var(--border);cursor:pointer;transition:all .2s;font-size:.8rem;color:var(--text2)}
+.checkbox-item:hover{border-color:var(--accent);color:var(--text)}
+.checkbox-item input{display:none}
+.checkbox-item.checked{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:16px;border-top:1px solid var(--border)}
+.form-error{color:var(--red);font-size:.8rem;margin-top:4px;display:none}
+.form-row.has-error .form-error{display:block}
+.form-row.has-error input,
+.form-row.has-error select{border-color:var(--red)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .summary-row{grid-template-columns:repeat(2,1fr)}
+  .vendor-detail-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .header{flex-direction:column;gap:12px;align-items:flex-start}
+  .summary-row{grid-template-columns:1fr}
+  .matrix-grid{grid-template-columns:1fr}
+  .vendor-detail-grid{grid-template-columns:1fr}
+  .login-form{flex-wrap:wrap}
+  .login-form input[type="email"],
+  .login-form input[type="password"]{width:100%}
+  .modal{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      GovernLayer
+    </div>
+    <div class="header-divider"></div>
+    <span class="header-title">Vendor Risk Management</span>
+  </div>
+  <button class="btn btn-primary" id="addVendorBtn" style="display:none" onclick="openModal()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Vendor
+  </button>
+</header>
+
+<!-- ===== LOGIN BAR ===== -->
+<div class="login-bar" id="loginBar">
+  <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+    <label>Sign in to continue:</label>
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button type="submit" class="btn btn-primary btn-sm">Sign In</button>
+    <span class="login-error" id="loginError"></span>
+  </form>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container" id="mainContent" style="display:none">
+
+  <!-- Summary Cards -->
+  <div class="summary-row" id="summaryRow">
+    <div class="summary-card">
+      <div class="summary-label">Total Vendors</div>
+      <div class="summary-value default" id="totalVendors"><span class="spinner"></span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">High / Critical Risk</div>
+      <div class="summary-value red" id="highRiskCount"><span class="spinner"></span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Assessment Coverage</div>
+      <div class="summary-value green" id="assessmentCoverage"><span class="spinner"></span></div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Contracts Expiring &lt;90d</div>
+      <div class="summary-value amber" id="expiringContracts"><span class="spinner"></span></div>
+    </div>
+  </div>
+
+  <!-- Vendor Table -->
+  <div class="table-section">
+    <div class="section-header">
+      <h2 class="section-title">All Vendors</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Risk Level</th>
+            <th>Risk Score</th>
+            <th>Certifications</th>
+            <th>Contract End</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="vendorTableBody">
+          <tr><td colspan="7" class="loading-row"><span class="spinner"></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Risk Matrix -->
+  <div class="matrix-section">
+    <div class="section-header">
+      <h2 class="section-title">Risk Matrix</h2>
+    </div>
+    <div class="matrix-axes">
+      <span class="matrix-axis-label">Likelihood --></span>
+      <span class="matrix-axis-label">Impact shown vertically</span>
+    </div>
+    <div class="matrix-grid" id="riskMatrix">
+      <div class="matrix-cell hi-hi">
+        <div class="matrix-label">High Likelihood / High Impact</div>
+        <div class="matrix-vendors" id="matrix-hi-hi"></div>
+      </div>
+      <div class="matrix-cell lo-hi">
+        <div class="matrix-label">Low Likelihood / High Impact</div>
+        <div class="matrix-vendors" id="matrix-lo-hi"></div>
+      </div>
+      <div class="matrix-cell hi-lo">
+        <div class="matrix-label">High Likelihood / Low Impact</div>
+        <div class="matrix-vendors" id="matrix-hi-lo"></div>
+      </div>
+      <div class="matrix-cell lo-lo">
+        <div class="matrix-label">Low Likelihood / Low Impact</div>
+        <div class="matrix-vendors" id="matrix-lo-lo"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== ADD VENDOR MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">Add New Vendor</div>
+    <form id="vendorForm" onsubmit="handleAddVendor(event)">
+      <div class="form-row" id="row-name">
+        <label for="vName">Vendor Name *</label>
+        <input type="text" id="vName" required placeholder="e.g. Acme AI Corp">
+        <div class="form-error">Vendor name is required.</div>
+      </div>
+
+      <div class="form-row">
+        <label for="vCategory">Category</label>
+        <select id="vCategory">
+          <option value="AI Platform">AI Platform</option>
+          <option value="Data Provider">Data Provider</option>
+          <option value="Cloud Infrastructure">Cloud Infrastructure</option>
+          <option value="SaaS Application">SaaS Application</option>
+          <option value="Consulting">Consulting</option>
+          <option value="Hardware">Hardware</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="vServices">Services (comma-separated)</label>
+        <input type="text" id="vServices" placeholder="e.g. NLP API, Data Labeling, Model Hosting">
+      </div>
+
+      <div class="form-row">
+        <label>Data Shared</label>
+        <div class="checkbox-group" id="dataSharedGroup">
+          <label class="checkbox-item"><input type="checkbox" value="PII"><span>PII</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="PHI"><span>PHI</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="Financial"><span>Financial</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="Biometric"><span>Biometric</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="Behavioral"><span>Behavioral</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="Usage Analytics"><span>Usage Analytics</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="Anonymized"><span>Anonymized</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="Public"><span>Public</span></label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="vAiUsage">AI Usage</label>
+        <textarea id="vAiUsage" placeholder="Describe how this vendor uses AI in their services..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <label>Compliance Certifications</label>
+        <div class="checkbox-group" id="certsGroup">
+          <label class="checkbox-item"><input type="checkbox" value="SOC2"><span>SOC2</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="SOC2 Type II"><span>SOC2 Type II</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="ISO 27001"><span>ISO 27001</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="ISO 42001"><span>ISO 42001</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="HIPAA"><span>HIPAA</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="GDPR"><span>GDPR</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="FedRAMP"><span>FedRAMP</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="PCI DSS"><span>PCI DSS</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="NIST CSF"><span>NIST CSF</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="NIST AI RMF"><span>NIST AI RMF</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="EU AI Act"><span>EU AI Act</span></label>
+          <label class="checkbox-item"><input type="checkbox" value="CCPA"><span>CCPA</span></label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="vContractEnd">Contract End Date</label>
+        <input type="date" id="vContractEnd">
+      </div>
+
+      <div class="form-row">
+        <label for="vContactEmail">Contact Email</label>
+        <input type="email" id="vContactEmail" placeholder="vendor-contact@example.com">
+      </div>
+
+      <div class="form-row">
+        <label for="vNotes">Notes</label>
+        <textarea id="vNotes" placeholder="Any additional notes about this vendor..."></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="submitVendorBtn">Add Vendor</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== CONFIG =====
+  const API_BASE = window.location.origin;
+  let token = localStorage.getItem('gl_token');
+  let expandedVendorId = null;
+  let vendorsCache = [];
+
+  // ===== AUTH =====
+  function isAuthenticated() {
+    return !!token;
+  }
+
+  function showApp() {
+    document.getElementById('loginBar').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    document.getElementById('addVendorBtn').style.display = 'inline-flex';
+  }
+
+  function showLogin() {
+    token = null;
+    localStorage.removeItem('gl_token');
+    document.getElementById('loginBar').style.display = 'block';
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('addVendorBtn').style.display = 'none';
+  }
+
+  window.handleLogin = async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+    errorEl.textContent = '';
+
+    try {
+      const res = await fetch(API_BASE + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || 'Login failed');
+      }
+      const data = await res.json();
+      token = data.access_token || data.token;
+      if (!token) throw new Error('No token in response');
+      localStorage.setItem('gl_token', token);
+      showApp();
+      init();
+    } catch (err) {
+      errorEl.textContent = err.message;
+    }
+  };
+
+  // ===== API HELPERS =====
+  async function apiFetch(path, options = {}) {
+    const res = await fetch(API_BASE + path, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        ...(options.headers || {})
+      }
+    });
+    if (res.status === 401) {
+      showLogin();
+      throw new Error('Session expired. Please sign in again.');
+    }
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || 'Request failed (' + res.status + ')');
+    }
+    return res.json();
+  }
+
+  // ===== LOAD SUMMARY =====
+  async function loadSummary() {
+    try {
+      const data = await apiFetch('/v1/vendors/summary');
+      document.getElementById('totalVendors').textContent = data.total_vendors ?? 0;
+
+      const highRisk = (data.high_risk_count ?? 0) + (data.critical_risk_count ?? 0);
+      document.getElementById('highRiskCount').textContent = highRisk;
+
+      const coverage = data.assessment_coverage ?? 0;
+      const coverageEl = document.getElementById('assessmentCoverage');
+      coverageEl.textContent = coverage + '%';
+      coverageEl.className = 'summary-value ' + (coverage >= 80 ? 'green' : 'amber');
+
+      document.getElementById('expiringContracts').textContent = data.contracts_expiring_90d ?? 0;
+    } catch (err) {
+      document.getElementById('totalVendors').textContent = '--';
+      document.getElementById('highRiskCount').textContent = '--';
+      document.getElementById('assessmentCoverage').textContent = '--';
+      document.getElementById('expiringContracts').textContent = '--';
+      console.error('Failed to load summary:', err);
+    }
+  }
+
+  // ===== LOAD VENDORS =====
+  function riskBadge(level) {
+    if (!level) return '<span class="badge badge-none">Not assessed</span>';
+    const cls = {
+      'LOW': 'badge-low', 'MEDIUM': 'badge-medium',
+      'HIGH': 'badge-high', 'CRITICAL': 'badge-critical'
+    }[level.toUpperCase()] || 'badge-none';
+    return '<span class="badge ' + cls + '">' + level.toUpperCase() + '</span>';
+  }
+
+  function certTags(certs) {
+    if (!certs || !certs.length) return '<span style="color:var(--text3)">--</span>';
+    return certs.map(function(c) { return '<span class="cert-tag">' + escapeHtml(c) + '</span>'; }).join('');
+  }
+
+  function formatDate(d) {
+    if (!d) return '--';
+    try {
+      const dt = new Date(d);
+      return dt.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (_) { return d; }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function vendorDetailRow(v) {
+    const services = (v.services || []).join(', ') || '--';
+    const dataShared = (v.data_shared || []).join(', ') || '--';
+    const aiUsage = v.ai_usage || '--';
+    const contactEmail = v.contact_email || '--';
+    const notes = v.notes || '--';
+
+    return '<tr class="vendor-detail-row" id="detail-' + v.id + '" style="display:none">' +
+      '<td colspan="7"><div class="vendor-detail"><div class="vendor-detail-grid">' +
+      '<div class="detail-field"><div class="detail-label">Services</div><div class="detail-value">' + escapeHtml(services) + '</div></div>' +
+      '<div class="detail-field"><div class="detail-label">Data Shared</div><div class="detail-value">' + escapeHtml(dataShared) + '</div></div>' +
+      '<div class="detail-field"><div class="detail-label">AI Usage</div><div class="detail-value">' + escapeHtml(aiUsage) + '</div></div>' +
+      '<div class="detail-field"><div class="detail-label">Contact Email</div><div class="detail-value">' + escapeHtml(contactEmail) + '</div></div>' +
+      '<div class="detail-field"><div class="detail-label">Notes</div><div class="detail-value">' + escapeHtml(notes) + '</div></div>' +
+      '<div class="detail-field"><div class="detail-label">All Certifications</div><div class="detail-value">' + certTags(v.certifications) + '</div></div>' +
+      '</div></div></td></tr>';
+  }
+
+  async function loadVendors() {
+    const tbody = document.getElementById('vendorTableBody');
+    try {
+      const data = await apiFetch('/v1/vendors');
+      const vendors = Array.isArray(data) ? data : (data.vendors || []);
+      vendorsCache = vendors;
+
+      // Sort by risk_score descending
+      vendors.sort(function(a, b) { return (b.risk_score ?? -1) - (a.risk_score ?? -1); });
+
+      if (!vendors.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>No vendors yet</p><p class="hint">Add your first vendor using the button above.</p></div></td></tr>';
+        return;
+      }
+
+      let html = '';
+      vendors.forEach(function(v) {
+        const displayCerts = (v.certifications || []).slice(0, 3);
+        const extraCount = (v.certifications || []).length - 3;
+        let certsHtml = certTags(displayCerts);
+        if (extraCount > 0) certsHtml += '<span class="cert-tag">+' + extraCount + '</span>';
+
+        html += '<tr>' +
+          '<td style="font-weight:600">' + escapeHtml(v.name) + '</td>' +
+          '<td style="color:var(--text2)">' + escapeHtml(v.category || '--') + '</td>' +
+          '<td>' + riskBadge(v.risk_level) + '</td>' +
+          '<td style="font-weight:600">' + (v.risk_score != null ? v.risk_score : '--') + '</td>' +
+          '<td>' + certsHtml + '</td>' +
+          '<td style="color:var(--text2)">' + formatDate(v.contract_end_date) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-sm btn-secondary" onclick="assessVendor(\'' + v.id + '\')">Assess</button> ' +
+            '<button class="btn btn-sm btn-ghost" onclick="toggleDetail(\'' + v.id + '\')">View</button>' +
+          '</td>' +
+          '</tr>';
+        html += vendorDetailRow(v);
+      });
+
+      tbody.innerHTML = html;
+    } catch (err) {
+      tbody.innerHTML = '<tr><td colspan="7" class="loading-row" style="color:var(--red)">Failed to load vendors: ' + escapeHtml(err.message) + '</td></tr>';
+      console.error('Failed to load vendors:', err);
+    }
+  }
+
+  window.toggleDetail = function(vendorId) {
+    const row = document.getElementById('detail-' + vendorId);
+    if (!row) return;
+    if (expandedVendorId && expandedVendorId !== vendorId) {
+      const prev = document.getElementById('detail-' + expandedVendorId);
+      if (prev) prev.style.display = 'none';
+    }
+    if (row.style.display === 'none') {
+      row.style.display = 'table-row';
+      expandedVendorId = vendorId;
+    } else {
+      row.style.display = 'none';
+      expandedVendorId = null;
+    }
+  };
+
+  // ===== ASSESS VENDOR =====
+  window.assessVendor = async function(vendorId) {
+    try {
+      await apiFetch('/v1/vendors/' + vendorId + '/assess', { method: 'POST' });
+      await Promise.all([loadVendors(), loadSummary(), loadRiskMatrix()]);
+    } catch (err) {
+      alert('Assessment failed: ' + err.message);
+    }
+  };
+
+  // ===== LOAD RISK MATRIX =====
+  async function loadRiskMatrix() {
+    try {
+      const data = await apiFetch('/v1/vendors/risk-matrix');
+      const quadrants = {
+        'hi-hi': data.high_likelihood_high_impact || [],
+        'hi-lo': data.high_likelihood_low_impact || [],
+        'lo-hi': data.low_likelihood_high_impact || [],
+        'lo-lo': data.low_likelihood_low_impact || []
+      };
+
+      Object.keys(quadrants).forEach(function(key) {
+        const el = document.getElementById('matrix-' + key);
+        if (!el) return;
+        const vendors = quadrants[key];
+        if (!vendors.length) {
+          el.innerHTML = '<span style="color:var(--text3);font-size:.8rem">No vendors</span>';
+          return;
+        }
+        el.innerHTML = vendors.map(function(v) {
+          return '<div class="matrix-chip">' + escapeHtml(v.name) + '<span class="chip-score">' + (v.risk_score != null ? v.risk_score : '?') + '</span></div>';
+        }).join('');
+      });
+    } catch (err) {
+      console.error('Failed to load risk matrix:', err);
+    }
+  }
+
+  // ===== MODAL =====
+  window.openModal = function() {
+    document.getElementById('modalOverlay').classList.add('active');
+    document.getElementById('vName').focus();
+  };
+
+  window.closeModal = function() {
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.getElementById('vendorForm').reset();
+    clearCheckboxStyles();
+  };
+
+  window.closeModalOutside = function(e) {
+    if (e.target === document.getElementById('modalOverlay')) {
+      closeModal();
+    }
+  };
+
+  // Checkbox toggle styling
+  document.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      this.closest('.checkbox-item').classList.toggle('checked', this.checked);
+    });
+  });
+
+  function clearCheckboxStyles() {
+    document.querySelectorAll('.checkbox-item.checked').forEach(function(el) {
+      el.classList.remove('checked');
+    });
+  }
+
+  function getCheckedValues(groupId) {
+    var values = [];
+    document.querySelectorAll('#' + groupId + ' input[type="checkbox"]:checked').forEach(function(cb) {
+      values.push(cb.value);
+    });
+    return values;
+  }
+
+  // ===== ADD VENDOR =====
+  window.handleAddVendor = async function(e) {
+    e.preventDefault();
+    const name = document.getElementById('vName').value.trim();
+    if (!name) {
+      document.getElementById('row-name').classList.add('has-error');
+      return;
+    }
+    document.getElementById('row-name').classList.remove('has-error');
+
+    const services = document.getElementById('vServices').value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    const dataShared = getCheckedValues('dataSharedGroup');
+    const certifications = getCheckedValues('certsGroup');
+
+    const payload = {
+      name: name,
+      category: document.getElementById('vCategory').value,
+      services: services,
+      data_shared: dataShared,
+      ai_usage: document.getElementById('vAiUsage').value.trim() || null,
+      certifications: certifications,
+      contract_end_date: document.getElementById('vContractEnd').value || null,
+      contact_email: document.getElementById('vContactEmail').value.trim() || null,
+      notes: document.getElementById('vNotes').value.trim() || null
+    };
+
+    const submitBtn = document.getElementById('submitVendorBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+
+    try {
+      await apiFetch('/v1/vendors', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      closeModal();
+      await Promise.all([loadVendors(), loadSummary()]);
+    } catch (err) {
+      alert('Failed to add vendor: ' + err.message);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Add Vendor';
+    }
+  };
+
+  // ===== KEYBOARD =====
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // ===== INIT =====
+  async function init() {
+    await Promise.all([loadSummary(), loadVendors(), loadRiskMatrix()]);
+  }
+
+  // ===== BOOT =====
+  if (isAuthenticated()) {
+    showApp();
+    init();
+  } else {
+    showLogin();
+  }
+
+})();
+</script>
+</body>
+</html>
