@@ -593,7 +593,7 @@
     <span class="label">The Solution</span>
     <h2>Governance That Runs <span class="accent">Itself</span></h2>
     <p class="subtitle" style="max-width:700px;">GovernLayer is the first fully autonomous AI governance platform &mdash; continuously monitoring, auditing, and enforcing compliance across 29 frameworks without human intervention.</p>
-    <p style="margin-top:28px;text-align:center;font-size:1rem;color:var(--accent);font-weight:700;">17 Integrated Services &mdash; One API</p>
+    <p style="margin-top:28px;text-align:center;font-size:1rem;color:var(--accent);font-weight:700;">20 Integrated Services &mdash; One API</p>
     <div class="card-grid grid-3" style="margin-top:20px;">
       <div class="card card-accent">
         <h3 class="accent">AI Governance Engine</h3>
@@ -624,8 +624,8 @@
         <p class="dim" style="font-size:0.85rem;">Map controls to regulatory requirements. Automated effectiveness checks, gap analysis, framework-specific views, and real-time alerts on failures.</p>
       </div>
       <div class="card card-accent">
-        <h3 class="accent">Policy Engine</h3>
-        <p class="dim" style="font-size:0.85rem;">Configurable governance rules with real-time evaluation. Automated enforcement: allow, warn, or block AI decisions based on your custom policies.</p>
+        <h3 class="accent">Cedar-Style Policy Engine</h3>
+        <p class="dim" style="font-size:0.85rem;">Default-deny, fail-closed policy evaluation on every agent tool call. FORBID always overrides PERMIT. Condition-based rules with full enforcement audit trail.</p>
       </div>
       <div class="card card-accent">
         <h3 class="accent">6-Dimension Risk Scoring</h3>
@@ -662,6 +662,18 @@
       <div class="card card-accent">
         <h3 class="accent">AGI Safety (Future-Ready)</h3>
         <p class="dim" style="font-size:0.85rem;">Recursive self-improvement monitoring, capability containment, deceptive alignment detection, and multi-agent coordination safety.</p>
+      </div>
+      <div class="card card-accent">
+        <h3 class="accent">Runtime Agent Control</h3>
+        <p class="dim" style="font-size:0.85rem;">Pre-execution gate evaluates every agent tool call against Cedar-style policies before it runs. Default-deny posture &mdash; nothing executes without explicit authorization.</p>
+      </div>
+      <div class="card card-accent">
+        <h3 class="accent">Secretless Credential Vault</h3>
+        <p class="dim" style="font-size:0.85rem;">Agents never hold raw secrets. JIT tokens with 60-second TTL, single-use, auto-expiring. Deep-packet injection into request headers. Zero persistent credentials.</p>
+      </div>
+      <div class="card card-accent">
+        <h3 class="accent">Vendor Security Questionnaire</h3>
+        <p class="dim" style="font-size:0.85rem;">External-facing 5-section security questionnaire: data handling, access controls, AI governance, incident response. Auto-scored vendor risk assessments.</p>
       </div>
     </div>
   </div>
@@ -1056,6 +1068,20 @@
         <p class="dim" style="font-size:0.8rem;">HMAC-SHA256 signed payloads. Recipients can verify every webhook originated from GovernLayer</p>
       </div>
     </div>
+    <div class="card-grid grid-3" style="margin-top:20px;">
+      <div class="card" style="text-align:center;padding:20px;">
+        <h3 style="color:var(--accent);font-size:1rem;">Cedar-Style Runtime Control</h3>
+        <p class="dim" style="font-size:0.8rem;">Default-deny policy engine evaluates every agent action pre-execution. FORBID overrides PERMIT. Full enforcement audit trail.</p>
+      </div>
+      <div class="card" style="text-align:center;padding:20px;">
+        <h3 style="color:var(--blue);font-size:1rem;">Secretless Credential Vault</h3>
+        <p class="dim" style="font-size:0.8rem;">JIT tokens (60s TTL), single-use, auto-expiry. Agents never hold raw secrets. Deep-packet header injection.</p>
+      </div>
+      <div class="card" style="text-align:center;padding:20px;">
+        <h3 style="color:var(--purple);font-size:1rem;">11 Governance API Endpoints</h3>
+        <p class="dim" style="font-size:0.8rem;">Policy CRUD, enforcement logging, credential issuance/revocation, and real-time stats at /agent-governance/*</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1080,6 +1106,20 @@
           <td class="check">&#10003; Built for AI</td>
           <td class="cross">&#10007; Generic GRC</td>
           <td class="check">&#10003; AI-focused</td>
+          <td class="cross">&#10007; No</td>
+        </tr>
+        <tr>
+          <td>Runtime agent control (Cedar-style)</td>
+          <td class="check">&#10003; Default-deny</td>
+          <td class="cross">&#10007; No</td>
+          <td class="cross">&#10007; No</td>
+          <td class="cross">&#10007; No</td>
+        </tr>
+        <tr>
+          <td>Secretless credential vault</td>
+          <td class="check">&#10003; JIT 60s tokens</td>
+          <td class="cross">&#10007; No</td>
+          <td class="cross">&#10007; No</td>
           <td class="cross">&#10007; No</td>
         </tr>
         <tr>
@@ -1111,25 +1151,11 @@
           <td class="cross">&#10007; Spreadsheets</td>
         </tr>
         <tr>
-          <td>Shadow AI discovery</td>
-          <td class="check">&#10003; Auto-scan</td>
-          <td class="cross">&#10007; No</td>
-          <td class="check">&#10003; Limited</td>
-          <td class="cross">&#10007; No</td>
-        </tr>
-        <tr>
           <td>Vendor risk management</td>
-          <td class="check">&#10003; Full TPRM</td>
+          <td class="check">&#10003; Full TPRM + questionnaire</td>
           <td class="check">&#10003; Basic</td>
           <td class="cross">&#10007; No</td>
           <td class="cross">&#10007; No</td>
-        </tr>
-        <tr>
-          <td>Evidence auto-collection</td>
-          <td class="check">&#10003; Scheduled</td>
-          <td class="check">&#10003; Yes</td>
-          <td class="cross">&#10007; Manual</td>
-          <td class="cross">&#10007; Manual</td>
         </tr>
         <tr>
           <td>AGI safety controls</td>
@@ -1146,13 +1172,6 @@
           <td class="check">&#10003; On-prem</td>
         </tr>
         <tr>
-          <td>MCP tool integration</td>
-          <td class="check">&#10003; 12 tools</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
-        </tr>
-        <tr>
           <td>Time to first audit</td>
           <td class="check">&lt; 60 minutes</td>
           <td>Weeks</td>
@@ -1162,7 +1181,7 @@
       </tbody>
     </table>
     <p style="margin-top:24px;font-size:0.95rem;text-align:center;color:var(--text-dim);">
-      GovernLayer is the only platform combining <strong class="accent">autonomous operation</strong>, <strong class="accent">multi-LLM consensus</strong>, and <strong class="accent">cryptographic audit trails</strong> &mdash; purpose-built for AI governance.
+      GovernLayer is the only platform combining <strong class="accent">Cedar-style runtime control</strong>, <strong class="accent">multi-LLM consensus</strong>, <strong class="accent">secretless credential vault</strong>, and <strong class="accent">cryptographic audit trails</strong> &mdash; purpose-built for AI governance.
     </p>
   </div>
 </section>
