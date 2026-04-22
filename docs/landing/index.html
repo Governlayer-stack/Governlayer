@@ -1099,10 +1099,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 <section class="stats-strip">
   <div class="container">
     <div class="stats-row">
-      <div class="stat-item reveal"><div class="s-num" data-count="29" data-suffix="">0</div><div class="s-label">Regulatory Frameworks</div></div>
-      <div class="stat-item reveal reveal-delay-1"><div class="s-num" data-count="247" data-suffix="">0</div><div class="s-label">API Endpoints</div></div>
-      <div class="stat-item reveal reveal-delay-2"><div class="s-num" data-count="14" data-suffix="">0</div><div class="s-label">LLM Models Orchestrated</div></div>
-      <div class="stat-item reveal reveal-delay-3"><div class="s-num" data-count="20" data-suffix="">0</div><div class="s-label">Integrated Services</div></div>
+      <div class="stat-item reveal"><div class="s-num" data-count="29">29</div><div class="s-label">Regulatory Frameworks</div></div>
+      <div class="stat-item reveal reveal-delay-1"><div class="s-num" data-count="247">247</div><div class="s-label">API Endpoints</div></div>
+      <div class="stat-item reveal reveal-delay-2"><div class="s-num" data-count="14">14</div><div class="s-label">LLM Models Orchestrated</div></div>
+      <div class="stat-item reveal reveal-delay-3"><div class="s-num" data-count="20">20</div><div class="s-label">Integrated Services</div></div>
     </div>
   </div>
 </section>
@@ -1455,20 +1455,21 @@ const barObs = new IntersectionObserver(entries => {
 }, { threshold: .3 });
 document.querySelectorAll('.mock-bars').forEach(el => barObs.observe(el));
 
-// Number counter animation
+// Number counter animation — numbers show real values by default, animate on scroll
 const counterObs = new IntersectionObserver(entries => {
   entries.forEach(el => {
     if (el.isIntersecting) {
       const target = el.target;
       const countTo = parseInt(target.getAttribute('data-count'));
-      const suffix = target.getAttribute('data-suffix') || '';
-      if (!countTo) return;
+      if (!countTo || target.dataset.counted) return;
+      target.dataset.counted = '1';
+      target.textContent = '0';
       let current = 0;
       const step = Math.max(1, Math.floor(countTo / 40));
       const interval = setInterval(() => {
         current += step;
         if (current >= countTo) { current = countTo; clearInterval(interval); }
-        target.textContent = current + suffix;
+        target.textContent = current;
       }, 30);
       counterObs.unobserve(target);
     }
@@ -1657,30 +1658,6 @@ document.querySelectorAll('.fw-cat').forEach(cat => {
   });
 });
 
-// Animated stat counters
-var counterObs = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      var el = entry.target;
-      var target = parseInt(el.getAttribute('data-count'));
-      var suffix = el.getAttribute('data-suffix') || '';
-      if (!target || el.dataset.counted) return;
-      el.dataset.counted = '1';
-      var duration = 1800;
-      var start = performance.now();
-      function tick(now) {
-        var p = Math.min((now - start) / duration, 1);
-        var ease = 1 - Math.pow(1 - p, 3);
-        el.textContent = Math.round(target * ease) + suffix;
-        if (p < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-  });
-}, { threshold: 0.3 });
-document.querySelectorAll('.s-num[data-count]').forEach(function(el) {
-  counterObs.observe(el);
-});
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"GovernLayer","applicationCategory":"BusinessApplication","description":"Autonomous AI governance platform. 29 compliance frameworks, real-time drift detection, multi-LLM consensus, and tamper-proof audit trails.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"creator":{"@type":"Organization","name":"GovernLayer","url":"https://governlayer.ai"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI governance and why do I need it?","acceptedAnswer":{"@type":"Answer","text":"AI governance monitors, audits, and controls how AI systems make decisions. Required by EU AI Act, NIST, and ISO 42001. Fines up to 35M EUR for non-compliance."}},{"@type":"Question","name":"How does GovernLayer differ from Vanta or Credo AI?","acceptedAnswer":{"@type":"Answer","text":"GovernLayer governs AI in real time with cryptographic proof and multi-LLM consensus. Vanta does IT compliance. Credo AI does pre-deployment assessments. GovernLayer is the only platform where auditors can mathematically verify your entire governance history."}},{"@type":"Question","name":"How does behavioral drift detection work?","acceptedAnswer":{"@type":"Answer","text":"Sentence-transformer embeddings compare AI decisions against safety manifolds in real time, with automatic veto capability."}},{"@type":"Question","name":"What makes the audit ledger tamper-proof?","acceptedAnswer":{"@type":"Answer","text":"Every governance decision is SHA-256 hash-chained. Each record contains the hash of the previous record. Altering any record breaks the chain."}},{"@type":"Question","name":"Can I self-host GovernLayer?","acceptedAnswer":{"@type":"Answer","text":"Yes. Cloud SaaS, Docker/K8s self-hosted, or air-gapped with local LLM inference via Ollama. Zero external API calls for classified environments."}},{"@type":"Question","name":"When does the EU AI Act start enforcement?","acceptedAnswer":{"@type":"Answer","text":"Entered into force August 2024. High-risk AI system requirements apply from August 2026. Fines reach 35M EUR or 7% of global revenue."}}]}</script>
