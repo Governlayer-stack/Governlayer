@@ -459,6 +459,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
   .hero-ctas a{width:100%;justify-content:center}
   .arch-diagram{width:260px;height:260px}
 }
+
+/* ============ SKIP TO CONTENT ============ */
+.sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:10000}
+.sr-only:focus{position:fixed;top:8px;left:8px;width:auto;height:auto;padding:12px 24px;background:var(--bg);color:var(--text);border:2px solid var(--blue);border-radius:8px;font-size:1rem;z-index:10000}
 </style>
 <script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
 <script type="application/ld+json">
@@ -501,6 +505,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 </head>
 <body>
 
+<a href="#main-content" class="sr-only">Skip to content</a>
+
 <!-- Floating Orbs -->
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
@@ -510,7 +516,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <!-- Notification Bar -->
-<div class="notif-bar">
+<div class="notif-bar" aria-hidden="true">
   <div class="notif-track">
     <span>Patent Pending &middot; USPTO GOVERNLAYER-001</span>
     <span>29 Compliance Frameworks &middot; 90 Policies</span>
@@ -528,10 +534,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 </div>
 
 <!-- Nav -->
-<nav class="nav" id="nav">
+<nav class="nav" id="nav" aria-label="Navigation">
   <div class="nav-inner">
     <a href="/" class="logo">
-      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" role="img" aria-label="GovernLayer logo"><path d="M4 8h8M8 4v8"/></svg></div>
       GovernLayer
     </a>
     <ul class="nav-links">
@@ -569,7 +575,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 </div>
 
 <!-- Hero -->
-<section class="hero">
+<main>
+<section class="hero" id="main-content">
   <div class="container">
     <div class="hero-eyebrow reveal"><span class="eb-dot"></span> Patent Pending &middot; USPTO GOVERNLAYER-001</div>
     <h1 class="reveal">Govern AI<br><span class="accent">Before It Acts.</span></h1>
@@ -577,7 +584,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
     <p class="hero-sub reveal reveal-delay-1">Default-deny runtime control on every agent action. Enforce 29 regulatory frameworks in real-time. Prove compliance with cryptographic audit trails. Secretless credential vault. From agentic AI to AGI — governed.</p>
     <div class="hero-ctas reveal reveal-delay-2">
       <a href="/signup?plan=free" class="btn btn-fill btn-lg">Start Free — No Credit Card</a>
-      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
     <div class="hero-metrics reveal reveal-delay-3">
       <div class="hero-pill"><span class="pill-dot" style="background:var(--blue)"></span><strong>29</strong> Frameworks</div>
@@ -586,13 +593,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
       <div class="hero-pill"><span class="pill-dot" style="background:var(--amber)"></span><strong>&lt; 3s</strong> Decision Latency</div>
     </div>
     <div class="hero-trust-row reveal reveal-delay-4">
-      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> SOC 2 Infrastructure</div>
-      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg> EU AI Act Compliant</div>
-      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SHA-256 Audit Chain</div>
-      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Provider Agnostic</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> SOC 2 Infrastructure</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/></svg> EU AI Act Compliant</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SHA-256 Audit Chain</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Provider Agnostic</div>
     </div>
     <div class="scroll-hint reveal reveal-delay-4">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
     </div>
   </div>
 </section>
@@ -663,7 +670,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
     </div>
     <div class="modules">
       <div class="module reveal">
-        <div class="mod-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="mod-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
         <h3>Cedar-Style Policy Engine</h3>
         <div class="mod-sub">Default-deny, fail-closed runtime governance. Every agent tool call evaluated against Cedar-style policies before execution. FORBID always overrides PERMIT. Full enforcement audit trail.</div>
         <ul>
@@ -674,7 +681,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <div class="mod-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
         <h3>Behavioral Drift Detection</h3>
         <div class="mod-sub">Deep Reasoning Inspection. Vectorize AI reasoning traces against safety manifolds. Calculate drift coefficient D<sub>c</sub> and veto before harm occurs.</div>
         <ul>
@@ -685,7 +692,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-2">
-        <div class="mod-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="mod-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <h3>Risk Scoring</h3>
         <div class="mod-sub">Multi-dimensional composite score: R = min(&Sigma;(w<sub>i</sub> &times; c<sub>i</sub>), 1.0). Four weighted factors with machine-readable evidence for every assessment.</div>
         <ul>
@@ -696,7 +703,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-3">
-        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
         <h3>Decision Controller</h3>
         <div class="mod-sub">Graduated response logic. APPROVE low-risk decisions instantly. ESCALATE critical decisions to human reviewers. BLOCK non-compliant actions before execution.</div>
         <ul>
@@ -707,7 +714,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal">
-        <div class="mod-icon" style="background:rgba(6,182,212,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="mod-icon" style="background:rgba(6,182,212,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
         <h3>HITL Orchestrator</h3>
         <div class="mod-sub">Intelligent human-in-the-loop routing with SLA deadlines. HIPAA decisions to medical professionals (2hr), ECOA to compliance officers (4hr), general escalations (8-24hr).</div>
         <ul>
@@ -718,7 +725,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <h3>Immutable Audit Ledger</h3>
         <div class="mod-sub">SHA-256 hash-chained, tamper-proof audit trail. Every governance decision cryptographically linked. One API call to verify chain integrity.</div>
         <ul>
@@ -729,7 +736,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-2">
-        <div class="mod-icon" style="background:rgba(236,72,153,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg></div>
+        <div class="mod-icon" style="background:rgba(236,72,153,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 3v18"/></svg></div>
         <h3>Secretless Credentials</h3>
         <div class="mod-sub">Just-In-Time transient tokens with TTL &le; 60 seconds. Agents never possess persistent credentials. Deep-packet injection into request headers.</div>
         <ul>
@@ -740,7 +747,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-3">
-        <div class="mod-icon" style="background:rgba(14,165,233,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="mod-icon" style="background:rgba(14,165,233,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <h3>Runtime Agent Control</h3>
         <div class="mod-sub">Pre-execution gate evaluates every agent tool call against policies before it runs. Default-deny — nothing executes without explicit authorization. 11 governance API endpoints.</div>
         <ul>
@@ -751,7 +758,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal">
-        <div class="mod-icon" style="background:rgba(34,197,94,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M9 11l3 3L22 4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
+        <div class="mod-icon" style="background:rgba(34,197,94,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>
         <h3>Vendor Security Questionnaire</h3>
         <div class="mod-sub">External-facing 5-section security questionnaire for third-party vendors. Data handling, access controls, AI governance, and incident response — auto-scored risk assessments.</div>
         <ul>
@@ -762,7 +769,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:var(--red-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M12 9v2m0 4h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+        <div class="mod-icon" style="background:var(--red-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" aria-hidden="true"><path d="M12 9v2m0 4h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
         <h3>AGI: Self-Improvement Monitor</h3>
         <div class="mod-sub">RSIM — Cryptographic model fingerprinting detects unauthorized weight modifications. Automatic suspension when models self-modify beyond threshold.</div>
         <ul>
@@ -773,7 +780,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal">
-        <div class="mod-icon" style="background:rgba(251,146,60,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div class="mod-icon" style="background:rgba(251,146,60,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
         <h3>AGI: Causal Chain Validator</h3>
         <div class="mod-sub">CCV — Multi-step temporal harm projection. Simulate consequences across T+1 to T+N decision cycles. Catch emergent harms invisible at decision time.</div>
         <ul>
@@ -784,7 +791,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         </ul>
       </div>
       <div class="module reveal reveal-delay-1">
-        <div class="mod-icon" style="background:rgba(168,85,247,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="mod-icon" style="background:rgba(168,85,247,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
         <h3>AGI: Deception &amp; Coordination</h3>
         <div class="mod-sub">DAD + MACM — Detect deceptive alignment through 3-layer verification. Monitor multi-agent coordination for collectively harmful patterns.</div>
         <ul>
@@ -840,7 +847,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
       <div class="pipeline-track" id="pipelineTrack">
         <div class="pipeline-node" data-color="blue" data-stage="0">
           <div class="pipeline-card">
-            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
             <div class="pipeline-card-title">Intercept</div>
             <div class="pipeline-card-value" id="pipe-val-0"></div>
           </div>
@@ -848,7 +855,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
         <div class="pipeline-node" data-color="purple" data-stage="1">
           <div class="pipeline-card">
-            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
             <div class="pipeline-card-title">Policy Check</div>
             <div class="pipeline-card-value" id="pipe-val-1"></div>
           </div>
@@ -856,7 +863,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
         <div class="pipeline-node" data-color="blue" data-stage="2">
           <div class="pipeline-card">
-            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
             <div class="pipeline-card-title">Drift Scan</div>
             <div class="pipeline-card-value" id="pipe-val-2"></div>
           </div>
@@ -864,7 +871,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
         <div class="pipeline-node" data-color="green" data-stage="3">
           <div class="pipeline-card">
-            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
             <div class="pipeline-card-title">Risk Score</div>
             <div class="pipeline-card-value" id="pipe-val-3"></div>
           </div>
@@ -872,7 +879,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
         <div class="pipeline-node" data-color="green" data-stage="4">
           <div class="pipeline-card">
-            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
             <div class="pipeline-card-title">Decision</div>
             <div class="pipeline-card-value" id="pipe-val-4"></div>
           </div>
@@ -880,7 +887,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
         <div class="pipeline-node" data-color="amber" data-stage="5">
           <div class="pipeline-card">
-            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
             <div class="pipeline-card-title">Ledger</div>
             <div class="pipeline-card-value" id="pipe-val-5"></div>
           </div>
@@ -1111,10 +1118,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 <div class="trust-strip">
   <div class="container">
     <div class="trust-row">
-      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Runs on Railway (SOC 2)</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>PostgreSQL Encrypted</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>TLS 1.2+</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Zero PII in Logs</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Runs on Railway (SOC 2)</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>PostgreSQL Encrypted</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>TLS 1.2+</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Zero PII in Logs</span>
     </div>
   </div>
 </div>
@@ -1239,12 +1246,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="price-amount">$0 <span class="price-suffix">/month</span></div>
         <p class="price-sub">For developers exploring AI governance</p>
         <ul class="price-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>3 AI models monitored</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Drift detection</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Risk scoring</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Audit ledger (30-day retention)</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>20 API calls/min</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Community support</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>3 AI models monitored</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Drift detection</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Risk scoring</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Audit ledger (30-day retention)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>20 API calls/min</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Community support</li>
         </ul>
         <a href="/signup?plan=free" class="price-cta price-cta-ghost">Start Free</a>
       </div>
@@ -1256,15 +1263,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="price-amount">$149 <span class="price-suffix">/month</span></div>
         <p class="price-sub">For teams shipping AI to production</p>
         <ul class="price-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Everything in Free</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>25 AI models</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>500 API calls/min</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Multi-LLM consensus engine</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>29 compliance frameworks</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Model registry &amp; incidents</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Webhooks &amp; API keys</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Full audit ledger (unlimited)</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Email support (48hr SLA)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Everything in Free</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>25 AI models</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>500 API calls/min</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Multi-LLM consensus engine</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>29 compliance frameworks</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Model registry &amp; incidents</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Webhooks &amp; API keys</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Full audit ledger (unlimited)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Email support (48hr SLA)</li>
         </ul>
         <a href="/signup?plan=pro" class="price-cta price-cta-fill">Start Pro</a>
       </div>
@@ -1275,14 +1282,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
         <div class="price-amount">Custom</div>
         <p class="price-sub">For regulated organizations at scale</p>
         <ul class="price-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Everything in Pro</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Unlimited models</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>SSO/SAML + RBAC</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Air-gapped / on-premise</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>99.9% uptime SLA</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Dedicated CSM</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Custom compliance frameworks</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Priority support (4hr SLA)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Everything in Pro</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Unlimited models</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>SSO/SAML + RBAC</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Air-gapped / on-premise</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>99.9% uptime SLA</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Dedicated CSM</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Custom compliance frameworks</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Priority support (4hr SLA)</li>
         </ul>
         <a href="mailto:founders@governlayer.ai" class="price-cta price-cta-ghost">Contact Sales</a>
       </div>
@@ -1297,25 +1304,27 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opa
     <p class="reveal reveal-delay-1">Join the teams building trustworthy AI. Free tier available — no credit card required. See how GovernLayer discovers risks, enforces policies, and proves compliance — all from one API.</p>
     <div class="cta-row reveal reveal-delay-2">
       <a href="/signup?plan=free" class="btn btn-fill btn-lg">Start Free</a>
-      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
     <div class="cta-note reveal reveal-delay-3">No credit card required &middot; Personalized demo &middot; Talk to our team</div>
   </div>
 </section>
+
+</main>
 
 <!-- Footer -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px" aria-hidden="true"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
         <p>The governance layer for the agentic era. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
         <div class="footer-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Hosted on SOC 2 Certified Infrastructure
         </div>
         <div class="footer-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           <a href="/status" style="color:inherit;text-decoration:none">System Status: Operational</a>
         </div>
       </div>

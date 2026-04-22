@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     # Auth
     secret_key: str = _DEFAULT_SECRET
     jwt_algorithm: str = "HS256"
-    jwt_expiry_hours: int = 24
+    jwt_expiry_hours: int = 1
 
     # LLM
     groq_api_key: str = ""

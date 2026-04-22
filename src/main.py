@@ -1,5 +1,6 @@
 """GovernLayer API — application factory."""
 
+import contextvars
 import hmac
 import json
 import logging
@@ -8,6 +9,7 @@ import re
 import resource
 import sys
 import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -42,6 +44,28 @@ _shutting_down = False
 # Startup completion flag — checked by readiness probe
 _startup_complete = False
 
+# Request correlation ID context var — available throughout the request lifecycle
+_request_id_ctx: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="")
+
+
+def get_request_id() -> str:
+    """Return the current request's correlation ID from context."""
+    return _request_id_ctx.get()
+
+
+class RequestCorrelationMiddleware(BaseHTTPMiddleware):
+    """Attach a unique correlation ID to every request/response cycle."""
+
+    async def dispatch(self, request: Request, call_next):
+        request_id = request.headers.get("x-request-id") or str(uuid.uuid4())
+        token = _request_id_ctx.set(request_id)
+        try:
+            response = await call_next(request)
+            response.headers["X-Request-ID"] = request_id
+            return response
+        finally:
+            _request_id_ctx.reset(token)
+
 
 def _seed_demo_data():
     """Seed demo data on first startup so the dashboard isn't empty."""
@@ -50,7 +74,7 @@ def _seed_demo_data():
         from src.models.registry import RegisteredModel, Incident, ModelLifecycle, IncidentSeverity, IncidentStatus
         from src.models.policy import GovernancePolicy
         from src.models.agents import AIAgent, AgentType, AgentStatus, DiscoverySource
-        from datetime import datetime
+        from datetime import datetime, timezone
 
         # Only seed if DB is empty
         if db.query(RegisteredModel).count() > 0:
@@ -128,7 +152,7 @@ def _seed_demo_data():
                     autonomy_level=2, risk_tier="medium", risk_score=35.0,
                     governance_status="compliant", discovery_source=DiscoverySource.MANUAL,
                     is_shadow=False, approved_by="ciso@company.com",
-                    approved_at=datetime.utcnow(), first_seen_at=datetime.utcnow()),
+                    approved_at=datetime.now(timezone.utc), first_seen_at=datetime.now(timezone.utc)),
             AIAgent(name="code-review-agent", agent_type=AgentType.TOOL_AGENT,
                     status=AgentStatus.APPROVED, description="Automated code review assistant",
                     owner="devtools@company.com", team="Engineering",
@@ -137,7 +161,7 @@ def _seed_demo_data():
                     tools=["github_api", "static_analysis", "dependency_check"],
                     autonomy_level=1, risk_tier="low", risk_score=18.0,
                     governance_status="compliant", discovery_source=DiscoverySource.MANUAL,
-                    is_shadow=False, first_seen_at=datetime.utcnow()),
+                    is_shadow=False, first_seen_at=datetime.now(timezone.utc)),
             AIAgent(name="unknown-gpt-usage", agent_type=AgentType.AUTONOMOUS,
                     status=AgentStatus.UNDER_REVIEW, description="Unregistered GPT-4 API usage detected in marketing department",
                     owner="unknown", team="Marketing",
@@ -145,7 +169,7 @@ def _seed_demo_data():
                     model_provider="OpenAI", model_name="gpt-4",
                     autonomy_level=3, risk_tier="high", risk_score=72.0,
                     governance_status="non_compliant", discovery_source=DiscoverySource.API_SCAN,
-                    is_shadow=True, first_seen_at=datetime.utcnow()),
+                    is_shadow=True, first_seen_at=datetime.now(timezone.utc)),
         ]
         db.add_all(agents)
 
@@ -235,7 +259,7 @@ def create_app() -> FastAPI:
         ),
         version=settings.policy_version,
         docs_url=None,
-        redoc_url="/redoc",
+        redoc_url="/redoc" if (settings.debug or os.getenv("ENABLE_DOCS", "").lower() in ("true", "1")) else None,
         openapi_tags=[
             {"name": "Auth", "description": "Registration, login, and JWT management"},
             {"name": "Governance", "description": "Core governance pipeline — drift, risk, decide, ledger"},
@@ -280,6 +304,8 @@ def create_app() -> FastAPI:
     app.add_middleware(MetricsMiddleware)
     # BodySizeLimitMiddleware — outermost, rejects oversized payloads before any processing
     app.add_middleware(BodySizeLimitMiddleware)
+    # RequestCorrelationMiddleware — runs before everything else (added last = outermost)
+    app.add_middleware(RequestCorrelationMiddleware)
 
     # Register routers
     app.include_router(auth.router)
@@ -410,6 +436,8 @@ def create_app() -> FastAPI:
 
     @app.get("/docs", include_in_schema=False)
     def custom_swagger_ui():
+        if not settings.debug and os.getenv("ENABLE_DOCS", "").lower() not in ("true", "1"):
+            raise StarletteHTTPException(status_code=404, detail="Not Found")
         swagger_resp = get_swagger_ui_html(
             openapi_url="/openapi.json",
             title="GovernLayer API Docs",
@@ -447,7 +475,8 @@ def create_app() -> FastAPI:
         global _startup_complete
         create_tables()
         _ensure_schema_columns()
-        _seed_demo_data()
+        if os.getenv("SEED_DEMO_DATA", "").lower() in ("true", "1", "yes") or settings.debug:
+            _seed_demo_data()
         _startup_complete = True
 
     @app.on_event("shutdown")

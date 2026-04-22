@@ -1,3 +1,4 @@
+import logging
 import threading
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -10,16 +11,46 @@ from jwt.exceptions import PyJWTError
 
 from src.config import get_settings
 
+logger = logging.getLogger(__name__)
+
 settings = get_settings()
 security = HTTPBearer()
 
-# In-memory token blacklist: {jti: expiry_timestamp}
+# In-memory token blacklist (fallback): {jti: expiry_timestamp}
 _token_blacklist: dict[str, float] = {}
 _blacklist_lock = threading.Lock()
 
+# Lazy Redis connection
+_redis_client = None
+_redis_available: bool | None = None  # None = not yet checked
+
+
+def _get_redis():
+    """Lazy Redis connection. Returns the client or None if unavailable."""
+    global _redis_client, _redis_available
+
+    if _redis_available is False:
+        return None
+
+    if _redis_client is not None:
+        return _redis_client
+
+    try:
+        import redis
+        client = redis.from_url(settings.redis_url, decode_responses=True, socket_connect_timeout=2)
+        client.ping()
+        _redis_client = client
+        _redis_available = True
+        logger.info("Token blacklist using Redis at %s", settings.redis_url)
+        return _redis_client
+    except Exception:
+        _redis_available = False
+        logger.warning("Redis unavailable for token blacklist, falling back to in-memory store")
+        return None
+
 
 def _cleanup_blacklist() -> None:
-    """Remove expired entries from the blacklist."""
+    """Remove expired entries from the in-memory blacklist."""
     now = datetime.now(timezone.utc).timestamp()
     with _blacklist_lock:
         expired = [jti for jti, exp in _token_blacklist.items() if exp < now]
@@ -31,15 +62,33 @@ def revoke_token(jti: str, exp: float | None = None) -> None:
     """Add a token's jti to the blacklist. exp is the token's expiry as a unix timestamp."""
     if exp is None:
         exp = (datetime.now(timezone.utc) + timedelta(hours=settings.jwt_expiry_hours)).timestamp()
+
+    r = _get_redis()
+    if r is not None:
+        try:
+            ttl_seconds = max(int(exp - datetime.now(timezone.utc).timestamp()), 1)
+            r.set(f"revoked:{jti}", "1", ex=ttl_seconds)
+            return
+        except Exception:
+            logger.warning("Redis write failed for token revocation, falling back to in-memory")
+
+    # Fallback: in-memory
     with _blacklist_lock:
         _token_blacklist[jti] = exp
-    # Opportunistic cleanup
     if len(_token_blacklist) > 1000:
         _cleanup_blacklist()
 
 
 def is_token_revoked(jti: str) -> bool:
     """Check if a token has been revoked."""
+    r = _get_redis()
+    if r is not None:
+        try:
+            return r.exists(f"revoked:{jti}") > 0
+        except Exception:
+            logger.warning("Redis read failed for token check, falling back to in-memory")
+
+    # Fallback: in-memory
     with _blacklist_lock:
         return jti in _token_blacklist
 
