@@ -1,5 +1,6 @@
 """GovernLayer API — application factory."""
 
+import hmac
 import json
 import logging
 import os
@@ -528,13 +529,16 @@ def create_app() -> FastAPI:
 
         # Database check
         from src.models.database import SessionLocal
+        db = None
         try:
             db = SessionLocal()
             db.execute(sa_text("SELECT 1"))
-            db.close()
             db_status = "connected"
         except Exception:
             db_status = "unavailable"
+        finally:
+            if db:
+                db.close()
 
         # Redis check
         redis_status = "not_configured"
@@ -616,16 +620,19 @@ def create_app() -> FastAPI:
 
         # Check database connectivity with latency measurement
         db_latency_ms = None
+        db = None
         try:
             db = SessionLocal()
             t0 = time.monotonic()
             db.execute(sa_text("SELECT 1"))
             db_latency_ms = round((time.monotonic() - t0) * 1000, 2)
-            db.close()
             checks["database"] = "ok"
         except Exception:
             checks["database"] = "unavailable"
             ready = False
+        finally:
+            if db:
+                db.close()
 
         checks["db_latency_ms"] = db_latency_ms
 
@@ -652,7 +659,7 @@ def create_app() -> FastAPI:
         """
         if settings.admin_key:
             provided = request.headers.get("x-admin-key", "")
-            if provided != settings.admin_key:
+            if not hmac.compare_digest(provided, settings.admin_key):
                 return JSONResponse(
                     status_code=403,
                     content={"error": "forbidden", "message": "Invalid or missing X-Admin-Key header"},

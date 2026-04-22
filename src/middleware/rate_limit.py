@@ -196,7 +196,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # Skip rate limiting for health/docs endpoints
         path = request.url.path
         skip = path in ("/", "/docs", "/openapi.json", "/redoc", "/health", "/automate/health")
-        skip = skip or path.startswith("/v1/enterprise")
         if skip:
             return await call_next(request)
 

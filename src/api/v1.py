@@ -70,6 +70,7 @@ def govern(request: GovernRequest, auth: AuthContext = Depends(require_scope("go
         results=reason, risk_score=overall, risk_level=risk_level,
         governance_action=action, policy_version=settings.policy_version,
         previous_hash=previous_hash, current_hash=current_hash,
+        org_id=getattr(auth, "org_id", None),
     )
     db.add(audit)
     db.commit()
@@ -172,13 +173,11 @@ def audit_history(system_name: str, limit: int = 50,
                   auth: AuthContext = Depends(require_scope("audit")),
                   db: Session = Depends(get_db)):
     """Retrieve governance audit history for a system."""
-    records = (
-        db.query(AuditRecord)
-        .filter(AuditRecord.system_name == system_name)
-        .order_by(AuditRecord.created_at.desc())
-        .limit(min(limit, 100))
-        .all()
-    )
+    query = db.query(AuditRecord).filter(AuditRecord.system_name == system_name)
+    # Tenant isolation: if auth context has an org_id, scope results
+    if hasattr(auth, "org_id") and auth.org_id:
+        query = query.filter(AuditRecord.org_id == auth.org_id)
+    records = query.order_by(AuditRecord.created_at.desc()).limit(min(limit, 100)).all()
     return {
         "system": system_name,
         "total": len(records),
