@@ -38,7 +38,7 @@ _JURISDICTION_MAP: Dict[str, List[str]] = {
         "NIST_CSF", "SOC_2", "CIS_CONTROLS",
     ],
     "EU": [
-        "EU_AI_ACT", "GDPR",
+        "EU_AI_ACT", "GDPR", "NIS2", "DORA", "DSA", "DMA",
     ],
     "UK": [
         "UK_AI_ACT", "GDPR",  # UK GDPR still applies post-Brexit
@@ -285,7 +285,7 @@ def evaluate_all(
 
 
 def list_frameworks() -> List[Dict[str, str]]:
-    """Return a summary list of all 25 frameworks for discovery.
+    """Return a summary list of all 29 frameworks for discovery.
 
     Returns:
         List of dicts with framework_id, name, jurisdiction, category.

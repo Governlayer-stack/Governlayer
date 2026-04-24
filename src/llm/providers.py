@@ -380,6 +380,7 @@ def get_profile(name: str) -> ModelProfile:
 def list_models(
     tier: ModelTier | None = None,
     capability: ModelCapability | None = None,
+    only_available: bool = False,
 ) -> list[ModelProfile]:
     """List available models, optionally filtered by tier or capability."""
     results = []
@@ -387,6 +388,8 @@ def list_models(
         if tier and profile.tier != tier:
             continue
         if capability and capability not in profile.capabilities:
+            continue
+        if only_available and not _provider_available(profile.provider):
             continue
         results.append(profile)
     return results

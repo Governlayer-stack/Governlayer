@@ -1,4 +1,4 @@
-"""Regulatory-to-Code Compiler — 25 regulatory framework policy templates.
+"""Regulatory-to-Code Compiler — 29 regulatory framework policy templates.
 
 Patent-compliant implementation: ingests legal mandates and converts them into
 machine-enforceable policy definitions. Each framework contains concrete,
@@ -2579,6 +2579,354 @@ UNESCO_AI: Framework = {
 
 
 # ═══════════════════════════════════════════════════════════════════════════
+# NIS2 — EU Network and Information Security Directive 2
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _eval_nis2_risk_management(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """NIS2 Art. 21 — Risk management measures."""
+    violations = []
+    if not ctx.get("has_risk_assessment"):
+        violations.append(_violation(
+            "NIS2-RISK-1", "BLOCKING",
+            "No risk management measures per NIS2 Art. 21",
+            "Implement risk management: conduct regular risk assessments and "
+            "apply appropriate security measures proportionate to the risk",
+        ))
+    if not ctx.get("has_incident_response"):
+        violations.append(_violation(
+            "NIS2-RISK-2", "CRITICAL",
+            "No incident handling procedures per NIS2 Art. 21(2)",
+            "Establish incident handling procedures including detection, "
+            "analysis, containment, and recovery processes",
+        ))
+    return violations
+
+
+def _eval_nis2_reporting(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """NIS2 Art. 23 — Incident reporting obligations."""
+    violations = []
+    if not ctx.get("has_audit_trail"):
+        violations.append(_violation(
+            "NIS2-REPORT-1", "CRITICAL",
+            "No incident reporting capability per NIS2 Art. 23",
+            "Implement audit trail and incident reporting: notify CSIRT within "
+            "24 hours of significant incidents, full report within 72 hours",
+        ))
+    return violations
+
+
+def _eval_nis2_supply_chain(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """NIS2 Art. 21(2)(d) — Supply chain security."""
+    violations = []
+    if not ctx.get("has_data_provenance"):
+        violations.append(_violation(
+            "NIS2-SUPPLY-1", "WARNING",
+            "No supply chain security measures per NIS2 Art. 21(2)(d)",
+            "Assess and manage supply chain risks: verify security practices "
+            "of direct suppliers and service providers",
+        ))
+    return violations
+
+
+NIS2: Framework = {
+    "framework_id": "NIS2",
+    "name": "EU Network and Information Security Directive 2 (NIS2)",
+    "jurisdiction": "EU",
+    "category": "security_infrastructure",
+    "version": "2022/2555",
+    "url": "https://eur-lex.europa.eu/eli/dir/2022/2555",
+    "policies": [
+        {
+            "policy_id": "NIS2-RISK-MGMT",
+            "regulation": "NIS2 Art. 21 — Cybersecurity Risk Management",
+            "severity": "BLOCKING",
+            "description": "Essential and important entities must implement risk management measures",
+            "evaluate": _eval_nis2_risk_management,
+            "remediation": "Implement comprehensive cybersecurity risk management framework",
+        },
+        {
+            "policy_id": "NIS2-INCIDENT-REPORTING",
+            "regulation": "NIS2 Art. 23 — Incident Reporting",
+            "severity": "CRITICAL",
+            "description": "Significant incidents must be reported to CSIRT within 24 hours",
+            "evaluate": _eval_nis2_reporting,
+            "remediation": "Establish incident detection, reporting, and notification procedures",
+        },
+        {
+            "policy_id": "NIS2-SUPPLY-CHAIN",
+            "regulation": "NIS2 Art. 21(2)(d) — Supply Chain Security",
+            "severity": "WARNING",
+            "description": "Supply chain and third-party security must be assessed",
+            "evaluate": _eval_nis2_supply_chain,
+            "remediation": "Assess and manage supply chain cybersecurity risks",
+        },
+    ],
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DORA — EU Digital Operational Resilience Act
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _eval_dora_ict_risk(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DORA Art. 6 — ICT risk management framework."""
+    violations = []
+    if not ctx.get("has_risk_assessment"):
+        violations.append(_violation(
+            "DORA-ICT-1", "BLOCKING",
+            "No ICT risk management framework per DORA Art. 6",
+            "Establish ICT risk management framework: identify, protect, "
+            "detect, respond to, and recover from ICT-related incidents",
+        ))
+    if not ctx.get("has_backup_recovery"):
+        violations.append(_violation(
+            "DORA-ICT-2", "CRITICAL",
+            "No business continuity / backup per DORA Art. 11",
+            "Implement ICT business continuity plans with backup and recovery "
+            "procedures, tested at least annually",
+        ))
+    return violations
+
+
+def _eval_dora_incident_management(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DORA Art. 17 — ICT-related incident management."""
+    violations = []
+    if not ctx.get("has_incident_response"):
+        violations.append(_violation(
+            "DORA-INC-1", "CRITICAL",
+            "No ICT incident management process per DORA Art. 17",
+            "Implement incident management: classify, report, and resolve "
+            "ICT-related incidents with root cause analysis",
+        ))
+    if not ctx.get("has_audit_trail"):
+        violations.append(_violation(
+            "DORA-INC-2", "CRITICAL",
+            "No incident logging per DORA Art. 17(3)",
+            "Maintain audit trail of all ICT incidents including timeline, "
+            "impact assessment, and remediation actions",
+        ))
+    return violations
+
+
+def _eval_dora_third_party(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DORA Art. 28 — Third-party ICT risk."""
+    violations = []
+    if not ctx.get("has_data_provenance"):
+        violations.append(_violation(
+            "DORA-TPP-1", "WARNING",
+            "No third-party ICT provider risk assessment per DORA Art. 28",
+            "Assess third-party ICT providers: maintain register of "
+            "outsourcing arrangements and assess concentration risk",
+        ))
+    return violations
+
+
+DORA: Framework = {
+    "framework_id": "DORA",
+    "name": "EU Digital Operational Resilience Act (DORA)",
+    "jurisdiction": "EU",
+    "category": "security_infrastructure",
+    "version": "2022/2554",
+    "url": "https://eur-lex.europa.eu/eli/reg/2022/2554",
+    "policies": [
+        {
+            "policy_id": "DORA-ICT-RISK",
+            "regulation": "DORA Art. 6 — ICT Risk Management",
+            "severity": "BLOCKING",
+            "description": "Financial entities must have ICT risk management frameworks",
+            "evaluate": _eval_dora_ict_risk,
+            "remediation": "Establish comprehensive ICT risk management framework",
+        },
+        {
+            "policy_id": "DORA-INCIDENT-MGMT",
+            "regulation": "DORA Art. 17 — Incident Management",
+            "severity": "CRITICAL",
+            "description": "ICT incidents must be classified, managed, and reported",
+            "evaluate": _eval_dora_incident_management,
+            "remediation": "Implement ICT incident management and reporting process",
+        },
+        {
+            "policy_id": "DORA-THIRD-PARTY",
+            "regulation": "DORA Art. 28 — Third-Party ICT Risk",
+            "severity": "WARNING",
+            "description": "Third-party ICT provider risks must be assessed and managed",
+            "evaluate": _eval_dora_third_party,
+            "remediation": "Maintain register and assessment of third-party ICT providers",
+        },
+    ],
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DSA — EU Digital Services Act
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _eval_dsa_transparency(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DSA Art. 27 — Transparency of recommender systems."""
+    violations = []
+    if not ctx.get("algorithmic_transparency"):
+        violations.append(_violation(
+            "DSA-TRANS-1", "BLOCKING",
+            "No algorithmic transparency per DSA Art. 27",
+            "Implement algorithmic transparency: disclose main parameters of "
+            "recommender systems and provide non-profiling alternatives",
+        ))
+    return violations
+
+
+def _eval_dsa_risk_assessment(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DSA Art. 34 — Risk assessment for very large platforms."""
+    violations = []
+    if not ctx.get("has_risk_assessment"):
+        violations.append(_violation(
+            "DSA-RISK-1", "CRITICAL",
+            "No systemic risk assessment per DSA Art. 34",
+            "Conduct risk assessment: identify systemic risks including "
+            "illegal content dissemination and fundamental rights impacts",
+        ))
+    if not ctx.get("has_impact_assessment"):
+        violations.append(_violation(
+            "DSA-RISK-2", "CRITICAL",
+            "No impact assessment per DSA Art. 34(1)(d)",
+            "Assess negative effects on civic discourse, elections, "
+            "public security, and mental health",
+        ))
+    return violations
+
+
+def _eval_dsa_audit(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DSA Art. 37 — Independent auditing."""
+    violations = []
+    if not ctx.get("has_audit_trail"):
+        violations.append(_violation(
+            "DSA-AUDIT-1", "WARNING",
+            "No independent audit mechanism per DSA Art. 37",
+            "Submit to independent annual audit of compliance with "
+            "transparency and risk management obligations",
+        ))
+    return violations
+
+
+DSA: Framework = {
+    "framework_id": "DSA",
+    "name": "EU Digital Services Act (DSA)",
+    "jurisdiction": "EU",
+    "category": "regional_regulations",
+    "version": "2022/2065",
+    "url": "https://eur-lex.europa.eu/eli/reg/2022/2065",
+    "policies": [
+        {
+            "policy_id": "DSA-TRANSPARENCY",
+            "regulation": "DSA Art. 27 — Algorithmic Transparency",
+            "severity": "BLOCKING",
+            "description": "Recommender systems must be transparent with non-profiling options",
+            "evaluate": _eval_dsa_transparency,
+            "remediation": "Disclose recommender system parameters and offer alternatives",
+        },
+        {
+            "policy_id": "DSA-SYSTEMIC-RISK",
+            "regulation": "DSA Art. 34 — Systemic Risk Assessment",
+            "severity": "CRITICAL",
+            "description": "Very large platforms must assess systemic risks",
+            "evaluate": _eval_dsa_risk_assessment,
+            "remediation": "Conduct annual systemic risk and impact assessments",
+        },
+        {
+            "policy_id": "DSA-AUDIT",
+            "regulation": "DSA Art. 37 — Independent Audit",
+            "severity": "WARNING",
+            "description": "Platforms must undergo independent compliance audits",
+            "evaluate": _eval_dsa_audit,
+            "remediation": "Engage independent auditors for annual compliance review",
+        },
+    ],
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DMA — EU Digital Markets Act
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _eval_dma_interoperability(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DMA Art. 7 — Interoperability obligations."""
+    violations = []
+    if not ctx.get("algorithmic_transparency"):
+        violations.append(_violation(
+            "DMA-INTEROP-1", "CRITICAL",
+            "No interoperability / transparency per DMA Art. 6-7",
+            "Ensure interoperability: provide transparent access to ranking, "
+            "indexing, and classification parameters used by AI systems",
+        ))
+    return violations
+
+
+def _eval_dma_data_portability(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DMA Art. 6(9) — Data portability."""
+    violations = []
+    if not ctx.get("has_access_controls"):
+        violations.append(_violation(
+            "DMA-PORT-1", "CRITICAL",
+            "No data portability mechanism per DMA Art. 6(9)",
+            "Enable effective data portability: provide tools for end users "
+            "and business users to port their data in real time",
+        ))
+    return violations
+
+
+def _eval_dma_profiling(ctx: Dict[str, Any]) -> List[Dict[str, str]]:
+    """DMA Art. 5(2) — Profiling consent."""
+    violations = []
+    if not ctx.get("has_consent_mechanism"):
+        violations.append(_violation(
+            "DMA-PROFILE-1", "BLOCKING",
+            "No profiling consent per DMA Art. 5(2)",
+            "Obtain explicit consent for profiling: do not combine personal "
+            "data from core platform services without user consent",
+        ))
+    return violations
+
+
+DMA: Framework = {
+    "framework_id": "DMA",
+    "name": "EU Digital Markets Act (DMA)",
+    "jurisdiction": "EU",
+    "category": "regional_regulations",
+    "version": "2022/1925",
+    "url": "https://eur-lex.europa.eu/eli/reg/2022/1925",
+    "policies": [
+        {
+            "policy_id": "DMA-INTEROPERABILITY",
+            "regulation": "DMA Art. 6-7 — Interoperability & Transparency",
+            "severity": "CRITICAL",
+            "description": "Gatekeepers must ensure interoperability and algorithmic transparency",
+            "evaluate": _eval_dma_interoperability,
+            "remediation": "Provide transparent access to AI system parameters",
+        },
+        {
+            "policy_id": "DMA-DATA-PORTABILITY",
+            "regulation": "DMA Art. 6(9) — Data Portability",
+            "severity": "CRITICAL",
+            "description": "End users must be able to port their data effectively",
+            "evaluate": _eval_dma_data_portability,
+            "remediation": "Implement real-time data portability tools for users",
+        },
+        {
+            "policy_id": "DMA-PROFILING-CONSENT",
+            "regulation": "DMA Art. 5(2) — Profiling Consent",
+            "severity": "BLOCKING",
+            "description": "Explicit consent required for cross-service profiling",
+            "evaluate": _eval_dma_profiling,
+            "remediation": "Obtain explicit consent before combining personal data across services",
+        },
+    ],
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
 # ALL FRAMEWORKS — Exported list
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -2595,6 +2943,8 @@ ALL_FRAMEWORKS: List[Framework] = [
     CANADA_AIDA,
     CHINA_AI_REGS,
     US_EO_14110,
+    DSA,
+    DMA,
     # Category 3 — Data Privacy
     GDPR,
     CCPA,
@@ -2605,6 +2955,8 @@ ALL_FRAMEWORKS: List[Framework] = [
     ZERO_TRUST,
     CIS_CONTROLS,
     SOC_2,
+    NIS2,
+    DORA,
     # Category 5 — IT Governance & Risk
     COBIT,
     ITIL,

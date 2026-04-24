@@ -232,10 +232,10 @@ class ContactRequest(BaseModel):
 
 FRAMEWORKS = [
     "NIST_AI_RMF", "EU_AI_ACT", "ISO_42001", "ISO_27001", "NIS2", "DORA",
-    "MITRE_ATLAS", "OWASP_AI", "SOC2", "GDPR", "CCPA", "HIPAA",
-    "IEEE_ETHICS", "OECD_AI", "NIST_CSF", "UNESCO_AI", "SINGAPORE_AI",
-    "UK_AI", "CANADA_AIDA", "CHINA_AI", "COBIT", "ITIL",
-    "ZERO_TRUST", "CIS_CONTROLS", "FAIR_RISK", "CSA_AI", "US_EO_AI",
+    "MITRE_ATLAS", "OWASP_AI_TOP_10", "SOC_2", "GDPR", "CCPA", "HIPAA",
+    "IEEE_ETHICS", "OECD_AI", "NIST_CSF", "UNESCO_AI", "SINGAPORE_AI_GOV",
+    "UK_AI_ACT", "CANADA_AIDA", "CHINA_AI_REGS", "COBIT", "ITIL",
+    "ZERO_TRUST", "CIS_CONTROLS", "FAIR_RISK", "CSA_AI", "US_EO_14110",
     "DSA", "DMA",
 ]
 
@@ -583,11 +583,11 @@ def create_app() -> FastAPI:
         services = {}
         try:
             from src.governance.framework_registry import FRAMEWORK_REGISTRY
-            services["policy_engine"] = "operational" if len(FRAMEWORK_REGISTRY) >= 25 else "degraded"
+            services["policy_engine"] = "operational" if len(FRAMEWORK_REGISTRY) >= 29 else "degraded"
         except Exception:
             services["policy_engine"] = "unavailable"
         try:
-            from src.drift.detection import detect_drift
+            from src.drift.detection import analyze_reasoning
             services["drift_detection"] = "operational"
         except Exception:
             services["drift_detection"] = "unavailable"
@@ -627,7 +627,7 @@ def create_app() -> FastAPI:
             "database": db_status,
             "redis": redis_status,
             "services": services,
-            "frameworks_loaded": 25,
+            "frameworks_loaded": len(FRAMEWORK_REGISTRY),
             "policies_active": 90,
             "patent_components": 10,
             "routes": len(app.routes),
