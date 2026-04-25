@@ -583,6 +583,24 @@ def create_app() -> FastAPI:
         finally:
             db.close()
 
+    @app.post("/admin/users/{user_id}/verify", tags=["admin"])
+    def admin_verify_user(user_id: int, key: str = ""):
+        """Force-verify a user's email. Requires admin_key."""
+        if not settings.admin_key or key != settings.admin_key:
+            raise HTTPException(status_code=403, detail="Invalid admin key")
+        from src.models.database import SessionLocal, User
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                raise HTTPException(status_code=404, detail="User not found")
+            user.email_verified = True
+            user.verification_token = None
+            db.commit()
+            return {"message": f"User {user.email} verified", "email": user.email, "email_verified": True}
+        finally:
+            db.close()
+
     @app.get("/health")
     def health_check():
         """Enterprise health check with component-level status."""
