@@ -92,6 +92,10 @@ def _get_or_create_oauth_user(
         if not user.oauth_provider:
             user.oauth_provider = provider
             user.oauth_provider_id = provider_id
+        # OAuth login proves email ownership — auto-verify
+        if not user.email_verified:
+            user.email_verified = True
+            user.verification_token = None
         _add_linked_provider(user, provider, provider_id)
         db.commit()
         return user, False
@@ -102,6 +106,7 @@ def _get_or_create_oauth_user(
         email=email,
         password_hash="OAUTH_NO_PASSWORD",
         company=company,
+        email_verified=True,  # OAuth provider already verified the email
         oauth_provider=provider,
         oauth_provider_id=provider_id,
         oauth_linked_providers=json.dumps([{
@@ -158,6 +163,55 @@ def _remove_linked_provider(user: User, provider: str) -> bool:
             user.oauth_provider = existing[0]["provider"]
             user.oauth_provider_id = existing[0]["provider_id"]
     return True
+
+
+def _auto_provision_org(db: Session, user: User) -> None:
+    """Auto-create an org for new OAuth users so they can start immediately.
+
+    Creates an org with a slug derived from their company/name, adds them as owner,
+    and generates a default API key. This eliminates manual onboarding steps.
+    """
+    import re
+    from src.models.tenant import ApiKey, OrgMembership, Organization, generate_api_key
+
+    # Build a slug from company name
+    raw_slug = re.sub(r"[^a-z0-9-]", "-", user.company.lower()).strip("-")
+    raw_slug = re.sub(r"-+", "-", raw_slug) or "my-org"
+    slug = raw_slug
+
+    # Ensure uniqueness
+    counter = 1
+    while db.query(Organization).filter(Organization.slug == slug).first():
+        slug = f"{raw_slug}-{counter}"
+        counter += 1
+
+    org = Organization(name=user.company, slug=slug, plan="free")
+    db.add(org)
+    db.flush()
+
+    membership = OrgMembership(user_email=user.email, org_id=org.id, role="owner")
+    db.add(membership)
+
+    # Auto-generate a default API key
+    full_key, prefix, key_hash = generate_api_key()
+    api_key = ApiKey(
+        org_id=org.id, name="default", key_prefix=prefix,
+        key_hash=key_hash, scopes="govern,audit,risk,scan,read",
+    )
+    db.add(api_key)
+    db.commit()
+
+    logger.info(
+        "Auto-provisioned org '%s' (slug=%s) with API key %s... for %s",
+        org.name, slug, prefix, user.email,
+    )
+
+    # Notify about the API key
+    try:
+        from src.email.service import send_api_key_created
+        send_api_key_created(user.email, prefix)
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -251,6 +305,15 @@ def callback(provider: str, body: OAuthCallbackRequest, db: Session = Depends(ge
         "OAuth login: provider=%s email=%s new_user=%s",
         provider, user.email, is_new,
     )
+
+    # For new OAuth users: auto-create org + send welcome email
+    if is_new:
+        _auto_provision_org(db, user)
+        try:
+            from src.email.service import send_welcome_email
+            send_welcome_email(user.email, user.company)
+        except Exception:
+            pass  # Don't block login if email fails
 
     return OAuthTokenResponse(
         token=jwt_token,
