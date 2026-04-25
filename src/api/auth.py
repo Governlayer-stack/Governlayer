@@ -110,6 +110,59 @@ def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
     return {"message": "Password reset successfully. Please log in."}
 
 
+@router.get("/onboarding-status")
+def onboarding_status(credentials: HTTPAuthorizationCredentials = Depends(_security), db: Session = Depends(get_db)):
+    """Check where the user is in the onboarding flow."""
+    payload = decode_token_payload(credentials.credentials)
+    email = payload.get("sub")
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    from src.models.tenant import OrgMembership, Organization, ApiKey
+    membership = db.query(OrgMembership).filter(OrgMembership.user_email == email).first()
+    org = None
+    has_api_key = False
+    if membership:
+        org = db.query(Organization).filter(Organization.id == membership.org_id).first()
+        if org:
+            has_api_key = db.query(ApiKey).filter(
+                ApiKey.org_id == org.id, ApiKey.is_active.is_(True)
+            ).count() > 0
+
+    steps = {
+        "account_created": True,
+        "email_verified": user.email_verified,
+        "org_created": org is not None,
+        "api_key_generated": has_api_key,
+        "mfa_enabled": user.mfa_enabled,
+    }
+    completed = sum(1 for v in steps.values() if v)
+    total = len(steps)
+
+    # Next action hint
+    if not user.email_verified:
+        next_step = {"action": "Verify your email", "endpoint": "POST /auth/verify-email", "hint": "Check your inbox for the verification link"}
+    elif org is None:
+        next_step = {"action": "Create your organization", "endpoint": "POST /v1/enterprise/orgs", "hint": "This isolates your data into your own tenant"}
+    elif not has_api_key:
+        next_step = {"action": "Generate an API key", "endpoint": f"POST /v1/enterprise/orgs/{org.slug}/api-keys", "hint": "Use the API key for programmatic access"}
+    elif not user.mfa_enabled:
+        next_step = {"action": "Enable MFA (recommended)", "endpoint": "POST /auth/mfa/setup", "hint": "Adds a second factor for account security"}
+    else:
+        next_step = {"action": "You're all set!", "endpoint": "GET /v1/dashboard", "hint": "Start governing your AI systems"}
+
+    return {
+        "email": email,
+        "company": user.company,
+        "progress": f"{completed}/{total}",
+        "complete": completed == total,
+        "steps": steps,
+        "next_step": next_step,
+        "org": {"name": org.name, "slug": org.slug, "plan": org.plan} if org else None,
+    }
+
+
 @router.post("/logout")
 def logout(credentials: HTTPAuthorizationCredentials = Depends(_security)):
     """Invalidate the current JWT token."""

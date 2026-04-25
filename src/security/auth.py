@@ -137,3 +137,22 @@ def decode_token_payload(token: str) -> dict:
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     return verify_token_raw(credentials.credentials)
+
+
+def verify_token_verified(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    """Verify JWT and require email to be verified. Returns email."""
+    from src.models.database import get_db, User, SessionLocal
+    email = verify_token_raw(credentials.credentials)
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.email == email).first()
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        if not user.email_verified:
+            raise HTTPException(
+                status_code=403,
+                detail="Email not verified. Check your inbox or POST /auth/resend-verification",
+            )
+        return email
+    finally:
+        db.close()

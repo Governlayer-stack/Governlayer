@@ -65,6 +65,16 @@ def verify_api_key_or_jwt(
     # JWT path
     from src.security.auth import verify_token_raw
     email = verify_token_raw(token)
+
+    # Enforce email verification for JWT users
+    from src.models.database import User
+    user = db.query(User).filter(User.email == email).first()
+    if user and not user.email_verified:
+        raise HTTPException(
+            status_code=403,
+            detail="Email not verified. Check your inbox or POST /auth/resend-verification",
+        )
+
     # Resolve org from membership
     from src.models.tenant import OrgMembership
     membership = db.query(OrgMembership).filter(OrgMembership.user_email == email).first()
@@ -79,3 +89,44 @@ def require_scope(scope: str):
             raise HTTPException(status_code=403, detail=f"Missing required scope: {scope}")
         return auth
     return checker
+
+
+PLAN_HIERARCHY = {"free": 0, "starter": 1, "pro": 2, "enterprise": 3}
+
+
+def require_plan(minimum_plan: str):
+    """Dependency that gates features behind a minimum plan tier."""
+    min_level = PLAN_HIERARCHY.get(minimum_plan, 0)
+
+    def checker(auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
+        if auth.org_id is None:
+            raise HTTPException(
+                status_code=403,
+                detail="No organization found. Create one first: POST /v1/enterprise/orgs",
+            )
+        from src.models.tenant import Organization
+        org = db.query(Organization).filter(Organization.id == auth.org_id).first()
+        if not org:
+            raise HTTPException(status_code=403, detail="Organization not found")
+        org_level = PLAN_HIERARCHY.get(org.plan, 0)
+        if org_level < min_level:
+            raise HTTPException(
+                status_code=403,
+                detail=f"This feature requires the '{minimum_plan}' plan or higher. "
+                       f"Current plan: '{org.plan}'. Upgrade at POST /billing/checkout",
+            )
+        return auth
+    return checker
+
+
+def require_org(auth: AuthContext = Depends(verify_api_key_or_jwt)) -> AuthContext:
+    """Dependency that requires the user to belong to an organization.
+
+    API key users always have an org. JWT users must create one first.
+    """
+    if auth.org_id is None:
+        raise HTTPException(
+            status_code=403,
+            detail="No organization found. Create one first: POST /v1/enterprise/orgs",
+        )
+    return auth

@@ -28,7 +28,7 @@ def client():
 
 @pytest.fixture
 def auth_token(client):
-    """Register a test user and return a valid JWT token."""
+    """Register a test user, verify their email, and return a valid JWT token."""
     import uuid
     email = f"test-{uuid.uuid4().hex[:8]}@governlayer.test"
     response = client.post("/auth/register", json={
@@ -42,7 +42,20 @@ def auth_token(client):
             "email": email,
             "password": "TestPassword123",
         })
-    return response.json()["token"]
+    token = response.json()["token"]
+
+    # Auto-verify the test user's email so endpoints don't reject them
+    from src.models.database import SessionLocal, User
+    db = SessionLocal()
+    try:
+        user = db.query(User).filter(User.email == email).first()
+        if user and not user.email_verified:
+            user.email_verified = True
+            db.commit()
+    finally:
+        db.close()
+
+    return token
 
 
 @pytest.fixture

@@ -7,7 +7,7 @@ Enterprises integrate with these stable, versioned routes.
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.api.webhooks import dispatch_event
@@ -15,7 +15,7 @@ from src.config import get_settings
 from src.drift.detection import analyze_reasoning
 from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
 from src.models.schemas import DriftRequest, GovernRequest, RiskScoreRequest
-from src.security.api_key_auth import AuthContext, require_scope
+from src.security.api_key_auth import AuthContext, require_org, require_scope
 
 settings = get_settings()
 
@@ -24,8 +24,17 @@ router = APIRouter(prefix="/v1", tags=["v1 — Enterprise API"])
 
 # --- Governance Decision ---
 
+def _require_org_and_scope(scope: str):
+    """Require both org membership and a specific scope."""
+    def checker(auth: AuthContext = Depends(require_org)):
+        if not auth.has_scope(scope):
+            raise HTTPException(status_code=403, detail=f"Missing required scope: {scope}")
+        return auth
+    return checker
+
+
 @router.post("/govern")
-def govern(request: GovernRequest, auth: AuthContext = Depends(require_scope("govern")),
+def govern(request: GovernRequest, auth: AuthContext = Depends(_require_org_and_scope("govern")),
            db: Session = Depends(get_db)):
     """Run the full governance pipeline: drift detection + risk scoring + decision + ledger entry.
 

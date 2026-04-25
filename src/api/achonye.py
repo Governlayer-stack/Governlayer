@@ -19,6 +19,7 @@ from src.llm.providers import (
     ModelTier,
     list_models,
 )
+from src.security.api_key_auth import require_plan
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/achonye", tags=["achonye"])
@@ -94,7 +95,7 @@ async def process_task(req: ProcessRequest, email: str = Depends(verify_token)):
 
 
 @router.post("/consensus", response_model=ConsensusResponse)
-async def run_consensus_endpoint(req: ConsensusRequest, email: str = Depends(verify_token)):
+async def run_consensus_endpoint(req: ConsensusRequest, _auth=Depends(require_plan("pro"))):
     """Run a specific multi-LLM consensus strategy directly.
 
     Strategies:

@@ -117,11 +117,19 @@ def test_login_invalid_credentials(client):
 
 
 def test_dashboard_json(client):
-    # Dashboard now requires authentication
+    # Dashboard now requires authentication + verified email
     import uuid
     email = f"dash-{uuid.uuid4().hex[:8]}@governlayer.test"
     reg = client.post("/auth/register", json={"email": email, "password": "TestPass1", "company": "DashCorp"})
     token = reg.json()["token"]
+    # Verify email for the test user
+    from src.models.database import SessionLocal, User
+    db = SessionLocal()
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        user.email_verified = True
+        db.commit()
+    db.close()
     headers = {"Authorization": f"Bearer {token}"}
     r = client.get("/v1/dashboard", headers=headers)
     assert r.status_code == 200

@@ -91,6 +91,13 @@ def create_api_key(slug: str, req: CreateApiKeyRequest, email: str = Depends(ver
     db.add(api_key)
     db.commit()
 
+    # Notify the user that a new API key was provisioned
+    try:
+        from src.email.service import send_api_key_created
+        send_api_key_created(email, prefix)
+    except Exception:
+        pass  # Don't block key creation if email fails
+
     return {
         "api_key": full_key,  # Only shown once!
         "prefix": prefix,
