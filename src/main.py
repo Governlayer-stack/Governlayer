@@ -602,15 +602,19 @@ def create_app() -> FastAPI:
             db.close()
 
     @app.post("/admin/send-email", tags=["admin"])
-    def admin_send_email(key: str = "", to: str = "", subject: str = "", body: str = ""):
-        """Send a custom email via Resend. Requires admin_key."""
+    def admin_send_email(payload: dict):
+        """Send a custom email via Resend. Requires admin_key in payload."""
+        key = payload.get("key", "")
         if not settings.admin_key or key != settings.admin_key:
             raise HTTPException(status_code=403, detail="Invalid admin key")
-        if not to or not subject or not body:
+        to = payload.get("to", "")
+        subj = payload.get("subject", "")
+        body = payload.get("body", "")
+        if not to or not subj or not body:
             raise HTTPException(status_code=400, detail="to, subject, and body are required")
         from src.email.service import send_email as _send
-        ok = _send(to, subject, body)
-        return {"sent": ok, "to": to, "subject": subject}
+        ok = _send(to, subj, body)
+        return {"sent": ok, "to": to, "subject": subj}
 
     @app.get("/health")
     def health_check():
