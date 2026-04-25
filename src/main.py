@@ -546,6 +546,43 @@ def create_app() -> FastAPI:
 
     _boot_time = time.time()
 
+    # --- Admin: user lookup (protected by admin_key) ---
+
+    @app.get("/admin/users", tags=["admin"])
+    def admin_list_users(
+        q: str = "",
+        key: str = "",
+        limit: int = 20,
+    ):
+        """Look up users by email or company. Requires admin_key."""
+        if not settings.admin_key or key != settings.admin_key:
+            raise HTTPException(status_code=403, detail="Invalid admin key")
+        from src.models.database import SessionLocal, User
+        db = SessionLocal()
+        try:
+            query = db.query(User)
+            if q:
+                query = query.filter(
+                    User.email.ilike(f"%{q}%") | User.company.ilike(f"%{q}%")
+                )
+            users = query.order_by(User.id.desc()).limit(min(limit, 100)).all()
+            return {
+                "total": len(users),
+                "users": [
+                    {
+                        "id": u.id,
+                        "email": u.email,
+                        "company": u.company,
+                        "email_verified": u.email_verified,
+                        "oauth_provider": u.oauth_provider,
+                        "created_at": str(u.created_at) if u.created_at else None,
+                    }
+                    for u in users
+                ],
+            }
+        finally:
+            db.close()
+
     @app.get("/health")
     def health_check():
         """Enterprise health check with component-level status."""
