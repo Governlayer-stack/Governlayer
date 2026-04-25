@@ -1,0 +1,43 @@
+import { Guides } from '@/components/Guides'
+import { Resources } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+
+export const metadata = {
+  title: 'GovernLayer API Documentation',
+  description:
+    'Complete API reference for GovernLayer. Drift detection, risk scoring, compliance auditing, and immutable audit ledgers for enterprise AI systems.',
+}
+
+export const sections = [
+  { title: 'Guides', id: 'guides' },
+  { title: 'Resources', id: 'resources' },
+]
+
+<HeroPattern />
+
+# GovernLayer API Documentation
+
+The GovernLayer API gives you programmatic access to autonomous AI governance — drift detection, risk scoring, compliance auditing, and immutable hash-chained audit ledgers. Integrate governance into your AI agent pipelines with a single API call. {{ className: 'lead' }}
+
+<div className="not-prose mt-6 mb-16 flex gap-3">
+  <Button href="/quickstart" arrow="right">
+    <>Quickstart</>
+  </Button>
+  <Button href="/govern" variant="outline">
+    <>Explore the Govern endpoint</>
+  </Button>
+</div>
+
+## Getting started {{ anchor: false }}
+
+Create an account at [app.governlayer.ai](#), then generate an API key from your organization settings. Authenticate using API keys (`X-API-Key` header) or JWT bearer tokens. The base URL for all requests is `https://api.governlayer.ai/v1`. {{ className: 'lead' }}
+
+<div className="not-prose">
+  <Button href="/authentication" variant="text" arrow="right">
+    <>Learn about authentication</>
+  </Button>
+</div>
+
+<Guides />
+
+<Resources />

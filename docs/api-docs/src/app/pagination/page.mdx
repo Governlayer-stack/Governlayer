@@ -1,0 +1,54 @@
+export const metadata = {
+  title: 'Pagination',
+  description:
+    'Learn how to work with paginated responses from the GovernLayer API using skip and limit parameters.',
+}
+
+# Pagination
+
+List endpoints in the GovernLayer API return paginated results. By default, responses include up to 50 items. Use the `skip` and `limit` query parameters to navigate through results. {{ className: 'lead' }}
+
+## Parameters
+
+<Row>
+  <Col>
+
+    <Properties>
+      <Property name="skip" type="integer">
+        Number of items to skip. Defaults to `0`.
+      </Property>
+      <Property name="limit" type="integer">
+        Maximum number of items to return. Defaults to `50`, maximum `100`.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col>
+
+    ```bash {{ title: 'Paginated request' }}
+    curl -G https://api.governlayer.ai/v1/ledger \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -d skip=50 \
+      -d limit=25
+    ```
+
+    ```json {{ title: 'Paginated response' }}
+    {
+      "total": 1847,
+      "skip": 50,
+      "limit": 25,
+      "data": [
+        {
+          "id": 51,
+          "system_name": "pricing-agent",
+          "decision": "APPROVE",
+          "ledger_hash": "sha256:e5f6a7b8...",
+          "timestamp": "2026-04-24T10:15:00Z"
+        }
+        // ... 24 more items
+      ]
+    }
+    ```
+
+  </Col>
+</Row>

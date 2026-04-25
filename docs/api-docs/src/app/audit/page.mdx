@@ -1,0 +1,152 @@
+export const metadata = {
+  title: 'Compliance Audit',
+  description:
+    'Run LLM-powered compliance audits against any framework. Get detailed findings, recommendations, and compliance scores.',
+}
+
+# Compliance Audit
+
+The compliance audit endpoint uses LLM analysis to evaluate an AI system against a specific compliance framework. Returns detailed findings, gap analysis, and actionable recommendations. {{ className: 'lead' }}
+
+---
+
+## Run compliance audit {{ tag: 'POST', label: '/v1/audit' }}
+
+<Row>
+  <Col>
+
+    Run an LLM-powered compliance audit for an AI system.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="system_name" type="string">
+        The AI system to audit.
+      </Property>
+      <Property name="framework" type="string">
+        Compliance framework to audit against.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="context" type="string">
+        Additional context about the system architecture, data flows, or deployment.
+      </Property>
+      <Property name="scope" type="string">
+        Audit scope: `full` (default), `quick`, or `deep`.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/audit">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/audit \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "system_name": "claims-processor",
+        "framework": "HIPAA",
+        "context": "Processes insurance claims with PHI data. Uses GPT-4o for summarization."
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/audit",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "system_name": "claims-processor",
+            "framework": "HIPAA",
+            "context": "Processes insurance claims with PHI data. Uses GPT-4o for summarization.",
+        },
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "system_name": "claims-processor",
+      "framework": "HIPAA",
+      "compliance_score": 72,
+      "findings": [
+        {
+          "severity": "high",
+          "control": "164.312(a)(1)",
+          "title": "Access Control",
+          "finding": "PHI data transmitted to third-party LLM without BAA in place.",
+          "recommendation": "Execute Business Associate Agreement with OpenAI or switch to self-hosted model."
+        },
+        {
+          "severity": "medium",
+          "control": "164.312(e)(1)",
+          "title": "Transmission Security",
+          "finding": "API calls to LLM provider use TLS but lack additional encryption layer.",
+          "recommendation": "Implement end-to-end encryption for PHI payloads before LLM transmission."
+        }
+      ],
+      "summary": "System has moderate HIPAA compliance. Critical gap: no BAA with LLM provider for PHI processing.",
+      "timestamp": "2026-04-25T15:00:00Z"
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Get audit history {{ tag: 'GET', label: '/v1/audit-history' }}
+
+<Row>
+  <Col>
+
+    Retrieve past compliance audit results.
+
+    ### Optional parameters
+
+    <Properties>
+      <Property name="system_name" type="string">
+        Filter by AI system name.
+      </Property>
+      <Property name="framework" type="string">
+        Filter by framework.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/audit-history">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://api.governlayer.ai/v1/audit-history \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -d system_name=claims-processor
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "data": [
+        {
+          "id": "audit_001",
+          "system_name": "claims-processor",
+          "framework": "HIPAA",
+          "compliance_score": 72,
+          "findings_count": 5,
+          "timestamp": "2026-04-25T15:00:00Z"
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>

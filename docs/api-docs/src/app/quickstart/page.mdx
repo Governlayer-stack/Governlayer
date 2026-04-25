@@ -1,0 +1,113 @@
+export const metadata = {
+  title: 'Quickstart',
+  description:
+    'Get up and running with the GovernLayer API in under 5 minutes. Make your first governance request and see real-time drift detection in action.',
+}
+
+# Quickstart
+
+This guide will get you up and running with the GovernLayer API in under 5 minutes. You will make your first governance request, see drift detection in action, and understand how the response maps to risk scoring and the audit ledger. {{ className: 'lead' }}
+
+<Note>
+  Before you can make requests to the GovernLayer API, you will need to generate
+  an API key from your organization dashboard at [app.governlayer.ai](#).
+</Note>
+
+## Step 1: Get your API key
+
+After creating your account and organization, navigate to **Settings > API Keys** and generate a new key. Your key will start with `gl_` and should be kept secret.
+
+```bash {{ title: 'Set your API key' }}
+export GOVERNLAYER_API_KEY="gl_your_api_key_here"
+```
+
+## Step 2: Make your first governance request
+
+The `/v1/govern` endpoint runs the full governance pipeline in a single call: drift detection, risk scoring, decision engine, and audit ledger.
+
+<CodeGroup tag="POST" label="/v1/govern">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://api.governlayer.ai/v1/govern \
+  -H "X-API-Key: $GOVERNLAYER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "system_name": "customer-support-agent",
+    "behavior": "Offered 50% discount without manager authorization",
+    "expected_behavior": "Follow pricing guidelines and escalate discounts above 10%",
+    "framework": "SOC2"
+  }'
+```
+
+```python
+import requests
+
+response = requests.post(
+    "https://api.governlayer.ai/v1/govern",
+    headers={"X-API-Key": "gl_your_api_key_here"},
+    json={
+        "system_name": "customer-support-agent",
+        "behavior": "Offered 50% discount without manager authorization",
+        "expected_behavior": "Follow pricing guidelines and escalate discounts above 10%",
+        "framework": "SOC2",
+    },
+)
+print(response.json())
+```
+
+```js
+const response = await fetch('https://api.governlayer.ai/v1/govern', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'gl_your_api_key_here',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    system_name: 'customer-support-agent',
+    behavior: 'Offered 50% discount without manager authorization',
+    expected_behavior: 'Follow pricing guidelines and escalate discounts above 10%',
+    framework: 'SOC2',
+  }),
+})
+const data = await response.json()
+```
+
+</CodeGroup>
+
+## Step 3: Understand the response
+
+The governance pipeline returns drift analysis, risk scoring, a decision, and a ledger hash:
+
+```json {{ title: 'Response' }}
+{
+  "system_name": "customer-support-agent",
+  "drift_score": 0.87,
+  "drift_details": "High behavioral deviation detected. Agent action contradicts expected pricing guidelines.",
+  "risk_score": {
+    "overall": 72,
+    "dimensions": {
+      "data_sensitivity": 45,
+      "autonomy_level": 80,
+      "decision_impact": 90,
+      "regulatory_exposure": 65,
+      "model_complexity": 55,
+      "deployment_scope": 68
+    }
+  },
+  "decision": "ESCALATE",
+  "reasoning": "Behavioral drift score 0.87 exceeds threshold 0.5. Risk level HIGH. Escalating to human reviewer.",
+  "ledger_hash": "sha256:a1b2c3d4e5f6...",
+  "previous_hash": "sha256:9f8e7d6c5b4a...",
+  "timestamp": "2026-04-25T14:30:00Z"
+}
+```
+
+## What's next?
+
+You have made your first governance request. Here are the next steps:
+
+- [Learn about drift detection in depth](/drift)
+- [Explore risk scoring dimensions](/risk)
+- [Set up compliance programs](/programs)
+- [Configure webhooks for real-time alerts](/webhooks)
+- [Understand error codes](/errors)

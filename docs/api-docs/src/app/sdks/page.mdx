@@ -1,0 +1,58 @@
+import { Libraries } from '@/components/Libraries'
+
+export const metadata = {
+  title: 'SDKs & Libraries',
+  description:
+    'GovernLayer offers a Python SDK and REST API. Integration examples for JavaScript, Python, and cURL.',
+}
+
+export const sections = [
+  { title: 'Official libraries', id: 'official-libraries' },
+]
+
+# SDKs & Libraries
+
+GovernLayer provides a Python SDK and comprehensive REST API. The API follows standard REST conventions, so any HTTP client works out of the box. {{ className: 'lead' }}
+
+<Libraries />
+
+<Note>
+  The GovernLayer API is a standard REST API. While we provide a Python SDK,
+  you can use any HTTP client in any language. All examples in these docs
+  show cURL, Python, and JavaScript.
+</Note>
+
+## Python SDK
+
+```bash {{ title: 'Install' }}
+pip install governlayer
+```
+
+```python {{ title: 'Usage' }}
+from governlayer import GovernLayerClient
+
+client = GovernLayerClient(api_key="gl_your_api_key_here")
+
+# Run full governance pipeline
+result = client.govern(
+    system_name="my-agent",
+    behavior="Denied access to authorized user",
+    expected_behavior="Grant access to authorized users",
+    framework="SOC2",
+)
+
+print(result.drift_score)   # 0.82
+print(result.decision)      # "ESCALATE"
+print(result.ledger_hash)   # "sha256:..."
+```
+
+## Direct REST API
+
+The REST API is available at `https://api.governlayer.ai`. All endpoints accept and return JSON.
+
+```bash {{ title: 'cURL example' }}
+curl -X POST https://api.governlayer.ai/v1/govern \
+  -H "X-API-Key: gl_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{"system_name": "my-agent", "behavior": "...", "framework": "SOC2"}'
+```

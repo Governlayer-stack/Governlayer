@@ -1,0 +1,108 @@
+export const metadata = {
+  title: 'Consensus Engine',
+  description:
+    'Three hallucination-resistance strategies: Voting, Chain-of-Verification, and Adversarial Debate for critical governance decisions.',
+}
+
+# Consensus Engine
+
+For high-stakes governance decisions, GovernLayer's consensus engine queries multiple LLMs independently and requires agreement before acting. Three strategies eliminate single-model hallucination risk. {{ className: 'lead' }}
+
+## Strategies
+
+- **Voting** — 3+ models evaluate independently; majority rules
+- **Chain-of-Verification** — Generate, question, verify, synthesize across models
+- **Adversarial Debate** — One model claims, another critiques, a third judges
+
+---
+
+## Run consensus {{ tag: 'POST', label: '/v1/achonye/consensus' }}
+
+<Row>
+  <Col>
+
+    Run a governance task through multi-model consensus.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="task" type="string">
+        The governance question or decision to evaluate.
+      </Property>
+      <Property name="strategy" type="string">
+        Consensus strategy: `voting`, `chain_of_verification`, or `adversarial_debate`.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="models" type="array">
+        Specific models to use. Defaults to the Board (Sonnet, Gemini, GPT-4o).
+      </Property>
+      <Property name="min_agreement" type="float">
+        Minimum agreement threshold for voting (default: 0.67).
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/achonye/consensus">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/achonye/consensus \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "task": "Should agent-12 be allowed to process refunds above $5000 without human approval?",
+        "strategy": "voting"
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/achonye/consensus",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "task": "Should agent-12 be allowed to process refunds above $5000 without human approval?",
+            "strategy": "voting",
+        },
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "consensus_reached": true,
+      "decision": "DENY",
+      "confidence": 1.0,
+      "strategy": "voting",
+      "votes": [
+        {
+          "model": "claude-sonnet",
+          "vote": "DENY",
+          "reasoning": "Refunds above $5000 carry significant financial risk and should require human oversight per SOC 2 CC6.1."
+        },
+        {
+          "model": "gemini-pro",
+          "vote": "DENY",
+          "reasoning": "High-value financial transactions without human approval violate separation of duties principles."
+        },
+        {
+          "model": "gpt-4o",
+          "vote": "DENY",
+          "reasoning": "Agent autonomy for transactions exceeding $5000 creates unacceptable fraud risk."
+        }
+      ],
+      "summary": "Unanimous denial (3/3). All models agree that high-value refunds require human-in-the-loop approval.",
+      "total_tokens": 2847,
+      "total_cost": "$0.038"
+    }
+    ```
+
+  </Col>
+</Row>

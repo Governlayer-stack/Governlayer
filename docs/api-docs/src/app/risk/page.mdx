@@ -1,0 +1,126 @@
+export const metadata = {
+  title: 'Risk Scoring',
+  description:
+    'Deterministic 6-dimension risk scoring for AI systems. No LLM involved — pure algorithmic assessment.',
+}
+
+# Risk Scoring
+
+GovernLayer provides deterministic, 6-dimension risk scoring. Unlike drift detection, risk scoring is purely algorithmic with no LLM involvement — ensuring consistent, reproducible results every time. {{ className: 'lead' }}
+
+## Risk dimensions
+
+<Properties>
+  <Property name="data_sensitivity" type="integer (0-100)">
+    How sensitive is the data the AI system processes?
+  </Property>
+  <Property name="autonomy_level" type="integer (0-100)">
+    How independently does the AI system operate?
+  </Property>
+  <Property name="decision_impact" type="integer (0-100)">
+    What is the potential impact of the AI system's decisions?
+  </Property>
+  <Property name="regulatory_exposure" type="integer (0-100)">
+    How exposed is the system to regulatory requirements?
+  </Property>
+  <Property name="model_complexity" type="integer (0-100)">
+    How complex is the underlying AI model?
+  </Property>
+  <Property name="deployment_scope" type="integer (0-100)">
+    How widely is the AI system deployed?
+  </Property>
+</Properties>
+
+---
+
+## Calculate risk score {{ tag: 'POST', label: '/v1/risk-score' }}
+
+<Row>
+  <Col>
+
+    Calculate a deterministic risk score based on system characteristics.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="system_name" type="string">
+        Name of the AI system being scored.
+      </Property>
+      <Property name="handles_pii" type="boolean">
+        Whether the system processes personally identifiable information.
+      </Property>
+      <Property name="autonomous_actions" type="boolean">
+        Whether the system takes actions without human approval.
+      </Property>
+      <Property name="financial_impact" type="boolean">
+        Whether the system can affect financial outcomes.
+      </Property>
+      <Property name="regulated_industry" type="boolean">
+        Whether the system operates in a regulated industry.
+      </Property>
+      <Property name="uses_llm" type="boolean">
+        Whether the system uses large language models.
+      </Property>
+      <Property name="public_facing" type="boolean">
+        Whether the system interacts directly with external users.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/risk-score">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/risk-score \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "system_name": "loan-underwriter-agent",
+        "handles_pii": true,
+        "autonomous_actions": true,
+        "financial_impact": true,
+        "regulated_industry": true,
+        "uses_llm": true,
+        "public_facing": false
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/risk-score",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "system_name": "loan-underwriter-agent",
+            "handles_pii": True,
+            "autonomous_actions": True,
+            "financial_impact": True,
+            "regulated_industry": True,
+            "uses_llm": True,
+            "public_facing": False,
+        },
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "system_name": "loan-underwriter-agent",
+      "overall_score": 85,
+      "risk_level": "HIGH",
+      "dimensions": {
+        "data_sensitivity": 90,
+        "autonomy_level": 85,
+        "decision_impact": 95,
+        "regulatory_exposure": 90,
+        "model_complexity": 80,
+        "deployment_scope": 60
+      }
+    }
+    ```
+
+  </Col>
+</Row>

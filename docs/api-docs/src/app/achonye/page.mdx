@@ -1,0 +1,142 @@
+export const metadata = {
+  title: 'Achonye (Multi-LLM Orchestration)',
+  description:
+    'The Achonye orchestrator routes governance tasks through a hierarchical multi-LLM system: Leader, Board, Validator, and Operators.',
+}
+
+# Achonye Multi-LLM Orchestration
+
+Achonye is GovernLayer's hierarchical multi-LLM orchestrator. It routes governance tasks to the optimal model based on complexity, cost, and capability — from free local models for trivial tasks to multi-model consensus for critical decisions. {{ className: 'lead' }}
+
+## Architecture
+
+The Achonye hierarchy:
+- **Leader** (Claude Opus) — Strategic decisions, complex analysis
+- **Board** (Sonnet, Gemini, GPT-4o) — Deliberation on important decisions
+- **Validator** — Consensus engine ensuring agreement across models
+- **Operators** (14 models) — Task execution across local and cloud models
+
+---
+
+## Process with Achonye {{ tag: 'POST', label: '/v1/achonye/process' }}
+
+<Row>
+  <Col>
+
+    Route a governance task through the Achonye orchestrator. The system automatically selects the optimal model(s) based on task complexity.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="task" type="string">
+        The governance task to process.
+      </Property>
+      <Property name="priority" type="string">
+        Task priority: `trivial`, `simple`, `complex`, or `critical`.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="force_consensus" type="boolean">
+        Force multi-model consensus regardless of priority (default: false).
+      </Property>
+      <Property name="preferred_model" type="string">
+        Force routing to a specific model.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/achonye/process">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/achonye/process \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "task": "Evaluate whether agent-47 pricing decisions comply with EU consumer protection law",
+        "priority": "complex"
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/achonye/process",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "task": "Evaluate whether agent-47 pricing decisions comply with EU consumer protection law",
+            "priority": "complex",
+        },
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "result": "Agent-47 pricing decisions present two compliance risks under EU Directive 2005/29/EC...",
+      "model_used": "claude-opus",
+      "routing_reason": "Complex legal analysis requires premium model capabilities",
+      "tokens_used": 1847,
+      "estimated_cost": "$0.042",
+      "latency_ms": 2340
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## View ecosystem status {{ tag: 'GET', label: '/v1/achonye/ecosystem' }}
+
+<Row>
+  <Col>
+
+    View the current status of all models in the Achonye ecosystem, including availability, latency, and cost metrics.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/achonye/ecosystem">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.governlayer.ai/v1/achonye/ecosystem \
+      -H "X-API-Key: gl_your_api_key_here"
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "total_models": 14,
+      "local_models": 5,
+      "cloud_models": 9,
+      "models": [
+        {
+          "id": "llama3:8b",
+          "provider": "ollama",
+          "tier": "local",
+          "status": "available",
+          "avg_latency_ms": 450,
+          "cost_per_1k_tokens": 0
+        },
+        {
+          "id": "claude-opus",
+          "provider": "openrouter",
+          "tier": "premium",
+          "status": "available",
+          "avg_latency_ms": 2100,
+          "cost_per_1k_tokens": 0.015
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>

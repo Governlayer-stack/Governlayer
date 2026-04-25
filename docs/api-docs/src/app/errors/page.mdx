@@ -1,0 +1,92 @@
+export const metadata = {
+  title: 'Errors',
+  description:
+    'Reference for all HTTP status codes and error types returned by the GovernLayer API.',
+}
+
+# Errors
+
+The GovernLayer API uses conventional HTTP status codes to indicate success or failure. Errors include a JSON body with `detail` explaining what went wrong. {{ className: 'lead' }}
+
+---
+
+## Status codes
+
+<Properties>
+  <Property name="200 OK">
+    Request succeeded. Response body contains the result.
+  </Property>
+  <Property name="201 Created">
+    Resource created successfully (e.g., new compliance program).
+  </Property>
+  <Property name="400 Bad Request">
+    Invalid request body or missing required fields.
+  </Property>
+  <Property name="401 Unauthorized">
+    Missing or invalid API key / JWT token.
+  </Property>
+  <Property name="403 Forbidden">
+    Valid credentials but insufficient scope for this endpoint.
+  </Property>
+  <Property name="404 Not Found">
+    The requested resource does not exist.
+  </Property>
+  <Property name="422 Validation Error">
+    Request body failed schema validation. Check the `detail` array for specifics.
+  </Property>
+  <Property name="429 Too Many Requests">
+    Rate limit exceeded. Check the `Retry-After` header.
+  </Property>
+  <Property name="500 Internal Server Error">
+    Something went wrong on our end. Contact support if this persists.
+  </Property>
+</Properties>
+
+---
+
+## Error response format
+
+<Row>
+  <Col>
+
+    All error responses follow a consistent JSON structure:
+
+    <Properties>
+      <Property name="detail" type="string | array">
+        Human-readable error message, or an array of validation errors.
+      </Property>
+      <Property name="status_code" type="integer">
+        The HTTP status code.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col>
+
+    ```json {{ title: 'Validation error (422)' }}
+    {
+      "detail": [
+        {
+          "loc": ["body", "system_name"],
+          "msg": "field required",
+          "type": "value_error.missing"
+        }
+      ]
+    }
+    ```
+
+    ```json {{ title: 'Authentication error (401)' }}
+    {
+      "detail": "Invalid or missing API key"
+    }
+    ```
+
+    ```json {{ title: 'Rate limit error (429)' }}
+    {
+      "detail": "Rate limit exceeded. 100 requests per minute allowed.",
+      "retry_after": 32
+    }
+    ```
+
+  </Col>
+</Row>

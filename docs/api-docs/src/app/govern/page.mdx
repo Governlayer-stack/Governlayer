@@ -1,0 +1,154 @@
+export const metadata = {
+  title: 'Governance Pipeline',
+  description:
+    'The /govern endpoint runs the full governance pipeline: drift detection, risk scoring, decision engine, and audit ledger in one call.',
+}
+
+# Governance Pipeline
+
+The governance pipeline is the core of GovernLayer. A single POST to `/v1/govern` runs drift detection, risk scoring, the decision engine, and logs the result to the immutable audit ledger. {{ className: 'lead' }}
+
+## The governance response model
+
+### Properties
+
+<Properties>
+  <Property name="system_name" type="string">
+    The name of the AI system being governed.
+  </Property>
+  <Property name="drift_score" type="float">
+    Behavioral drift score between 0.0 (no drift) and 1.0 (maximum drift).
+  </Property>
+  <Property name="drift_details" type="string">
+    Human-readable explanation of the drift analysis.
+  </Property>
+  <Property name="risk_score" type="object">
+    6-dimension risk assessment with overall score and individual dimensions.
+  </Property>
+  <Property name="decision" type="string">
+    Governance decision: `APPROVE`, `FLAG`, or `ESCALATE`.
+  </Property>
+  <Property name="reasoning" type="string">
+    Explanation of why this decision was made.
+  </Property>
+  <Property name="ledger_hash" type="string">
+    SHA-256 hash of this ledger entry.
+  </Property>
+  <Property name="previous_hash" type="string">
+    SHA-256 hash of the previous ledger entry (chain link).
+  </Property>
+  <Property name="timestamp" type="string">
+    ISO 8601 timestamp of the governance decision.
+  </Property>
+</Properties>
+
+---
+
+## Run governance pipeline {{ tag: 'POST', label: '/v1/govern' }}
+
+<Row>
+  <Col>
+
+    Run the full governance pipeline on an AI agent behavior. This is the primary endpoint for real-time governance.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="system_name" type="string">
+        Name of the AI system being evaluated.
+      </Property>
+      <Property name="behavior" type="string">
+        Description of the observed AI agent behavior.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="expected_behavior" type="string">
+        The expected or authorized behavior for comparison.
+      </Property>
+      <Property name="framework" type="string">
+        Compliance framework to evaluate against. One of: `SOC2`, `GDPR`, `ISO27001`, `EU_AI_ACT`, `HIPAA`, `NIST_AI_RMF`, `NIST_CSF`, `ISO42001`, `PCI_DSS`, `CCPA`, `NIS2`, `DORA`, `DSA`, `DMA`.
+      </Property>
+      <Property name="context" type="string">
+        Additional context about the AI system or deployment.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/govern">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/govern \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "system_name": "customer-support-agent",
+        "behavior": "Offered 50% discount without authorization",
+        "expected_behavior": "Follow pricing guidelines, escalate discounts above 10%",
+        "framework": "SOC2"
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/govern",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "system_name": "customer-support-agent",
+            "behavior": "Offered 50% discount without authorization",
+            "expected_behavior": "Follow pricing guidelines, escalate discounts above 10%",
+            "framework": "SOC2",
+        },
+    )
+    ```
+
+    ```js
+    const response = await fetch('https://api.governlayer.ai/v1/govern', {
+      method: 'POST',
+      headers: {
+        'X-API-Key': 'gl_your_api_key_here',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        system_name: 'customer-support-agent',
+        behavior: 'Offered 50% discount without authorization',
+        expected_behavior: 'Follow pricing guidelines, escalate discounts above 10%',
+        framework: 'SOC2',
+      }),
+    })
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "system_name": "customer-support-agent",
+      "drift_score": 0.87,
+      "drift_details": "High behavioral deviation. Agent violated pricing authorization policy.",
+      "risk_score": {
+        "overall": 72,
+        "dimensions": {
+          "data_sensitivity": 45,
+          "autonomy_level": 80,
+          "decision_impact": 90,
+          "regulatory_exposure": 65,
+          "model_complexity": 55,
+          "deployment_scope": 68
+        }
+      },
+      "decision": "ESCALATE",
+      "reasoning": "Drift score 0.87 exceeds threshold. Risk level HIGH. Escalating for human review.",
+      "ledger_hash": "sha256:a1b2c3d4e5f6...",
+      "previous_hash": "sha256:9f8e7d6c5b4a...",
+      "timestamp": "2026-04-25T14:30:00Z"
+    }
+    ```
+
+  </Col>
+</Row>

@@ -1,0 +1,150 @@
+export const metadata = {
+  title: 'Audit Ledger',
+  description:
+    'SHA-256 hash-chained immutable audit trail. Every governance decision is cryptographically linked to the previous record.',
+}
+
+# Audit Ledger
+
+The GovernLayer audit ledger is a SHA-256 hash-chained, immutable record of every governance decision. Each entry is cryptographically linked to the previous one — if any record is tampered with, the chain breaks. {{ className: 'lead' }}
+
+## The ledger entry model
+
+### Properties
+
+<Properties>
+  <Property name="id" type="integer">
+    Auto-incrementing ledger entry ID.
+  </Property>
+  <Property name="system_name" type="string">
+    The AI system this decision applies to.
+  </Property>
+  <Property name="decision" type="string">
+    The governance decision: APPROVE, FLAG, or ESCALATE.
+  </Property>
+  <Property name="drift_score" type="float">
+    The drift score at the time of the decision.
+  </Property>
+  <Property name="risk_level" type="string">
+    Risk level: LOW, MEDIUM, HIGH, or CRITICAL.
+  </Property>
+  <Property name="current_hash" type="string">
+    SHA-256 hash of this record.
+  </Property>
+  <Property name="previous_hash" type="string">
+    SHA-256 hash of the previous record (chain link).
+  </Property>
+  <Property name="timestamp" type="string">
+    ISO 8601 timestamp.
+  </Property>
+</Properties>
+
+---
+
+## List ledger entries {{ tag: 'GET', label: '/v1/ledger' }}
+
+<Row>
+  <Col>
+
+    Retrieve the audit ledger. Returns entries in reverse chronological order.
+
+    ### Optional parameters
+
+    <Properties>
+      <Property name="system_name" type="string">
+        Filter by AI system name.
+      </Property>
+      <Property name="skip" type="integer">
+        Number of entries to skip (default: 0).
+      </Property>
+      <Property name="limit" type="integer">
+        Number of entries to return (default: 50, max: 100).
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/ledger">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://api.governlayer.ai/v1/ledger \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -d limit=3
+    ```
+
+    ```python
+    import requests
+
+    response = requests.get(
+        "https://api.governlayer.ai/v1/ledger",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        params={"limit": 3},
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "total": 1847,
+      "data": [
+        {
+          "id": 1847,
+          "system_name": "support-agent",
+          "decision": "ESCALATE",
+          "drift_score": 0.87,
+          "risk_level": "HIGH",
+          "current_hash": "sha256:a1b2c3d4...",
+          "previous_hash": "sha256:e5f6a7b8...",
+          "timestamp": "2026-04-25T14:30:00Z"
+        },
+        {
+          "id": 1846,
+          "system_name": "pricing-bot",
+          "decision": "APPROVE",
+          "drift_score": 0.12,
+          "risk_level": "LOW",
+          "current_hash": "sha256:e5f6a7b8...",
+          "previous_hash": "sha256:c9d0e1f2...",
+          "timestamp": "2026-04-25T14:28:00Z"
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Verify chain integrity {{ tag: 'GET', label: '/v1/ledger/verify' }}
+
+<Row>
+  <Col>
+
+    Verify the integrity of the hash chain. Returns whether the chain is valid and the total number of entries verified.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/ledger/verify">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.governlayer.ai/v1/ledger/verify \
+      -H "X-API-Key: gl_your_api_key_here"
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "chain_valid": true,
+      "entries_verified": 1847,
+      "genesis_hash": "sha256:GOVERNLAYER_GENESIS",
+      "latest_hash": "sha256:a1b2c3d4..."
+    }
+    ```
+
+  </Col>
+</Row>

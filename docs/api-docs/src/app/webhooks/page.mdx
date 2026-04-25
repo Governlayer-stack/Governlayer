@@ -1,0 +1,141 @@
+export const metadata = {
+  title: 'Webhooks',
+  description:
+    'Register webhooks to receive real-time notifications when governance events occur in GovernLayer.',
+}
+
+# Webhooks
+
+GovernLayer webhooks notify your application in real-time when governance events occur — drift alerts, escalations, compliance status changes, and more. All webhook payloads are signed with HMAC-SHA256 for verification. {{ className: 'lead' }}
+
+## Registering webhooks
+
+Register webhooks through the Enterprise API or your organization dashboard. Provide a URL, select the events you want to receive, and GovernLayer will POST payloads to your endpoint.
+
+```bash {{ title: 'Register a webhook' }}
+curl -X POST https://api.governlayer.ai/v1/webhooks \
+  -H "X-API-Key: gl_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-app.com/webhooks/governlayer",
+    "events": ["drift.alert", "governance.escalation", "compliance.status_change"]
+  }'
+```
+
+## Webhook payload
+
+When an event occurs, GovernLayer sends a POST request to your registered URL:
+
+```json {{ title: 'Example webhook payload' }}
+{
+  "id": "wh_a1b2c3d4",
+  "type": "drift.alert",
+  "timestamp": "2026-04-25T14:30:00Z",
+  "payload": {
+    "system_name": "customer-support-agent",
+    "drift_score": 0.87,
+    "decision": "ESCALATE",
+    "ledger_hash": "sha256:a1b2c3d4e5f6..."
+  }
+}
+```
+
+---
+
+## Event types
+
+<Row>
+  <Col>
+
+    <Properties>
+      <Property name="drift.alert">
+        An AI agent's drift score exceeded the configured threshold.
+      </Property>
+      <Property name="drift.resolved">
+        A previously flagged drift has returned to normal levels.
+      </Property>
+      <Property name="governance.escalation">
+        A governance decision was escalated to human review.
+      </Property>
+      <Property name="governance.decision">
+        A governance decision was made (approve, flag, or escalate).
+      </Property>
+      <Property name="compliance.status_change">
+        A compliance program's readiness score changed significantly.
+      </Property>
+      <Property name="compliance.control_update">
+        A control status was updated (implemented, in_progress, gap).
+      </Property>
+      <Property name="audit.completed">
+        An LLM compliance audit was completed.
+      </Property>
+      <Property name="ledger.entry">
+        A new entry was added to the hash-chained audit ledger.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    ```json {{ title: 'Escalation payload' }}
+    {
+      "id": "wh_e5f6a7b8",
+      "type": "governance.escalation",
+      "timestamp": "2026-04-25T14:32:00Z",
+      "payload": {
+        "system_name": "pricing-bot",
+        "behavior": "Offered 70% discount to non-qualifying customer",
+        "drift_score": 0.91,
+        "risk_level": "CRITICAL",
+        "decision": "ESCALATE",
+        "requires_human_review": true,
+        "ledger_hash": "sha256:c9d0e1f2..."
+      }
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Verifying webhook signatures
+
+Every webhook request includes an `X-GovernLayer-Signature` header containing an HMAC-SHA256 signature. Verify it using your webhook secret:
+
+<CodeGroup title="Verifying a webhook">
+
+```python
+import hmac
+import hashlib
+
+signature = request.headers.get("X-GovernLayer-Signature")
+expected = hmac.new(
+    bytes(webhook_secret, "utf-8"),
+    bytes(request_body, "utf-8"),
+    hashlib.sha256
+).hexdigest()
+
+if hmac.compare_digest(expected, signature):
+    # Webhook is authentic
+else:
+    # Reject the request
+```
+
+```js
+const crypto = require('crypto')
+
+const signature = req.headers['x-governlayer-signature']
+const expected = crypto
+  .createHmac('sha256', webhookSecret)
+  .update(req.body)
+  .digest('hex')
+
+if (crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) {
+  // Webhook is authentic
+}
+```
+
+</CodeGroup>
+
+Always use constant-time comparison to prevent timing attacks. Never commit your webhook secret to version control.

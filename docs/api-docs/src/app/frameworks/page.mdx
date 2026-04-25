@@ -1,0 +1,79 @@
+export const metadata = {
+  title: 'Compliance Frameworks',
+  description:
+    'GovernLayer supports 14 compliance frameworks. List available frameworks and their control mappings.',
+}
+
+# Compliance Frameworks
+
+GovernLayer includes 14 compliance frameworks out of the box, each with mapped controls, evidence requirements, and automated readiness scoring. New frameworks are added quarterly. {{ className: 'lead' }}
+
+## Supported frameworks
+
+| Code | Name | Controls | Category |
+| --- | --- | --- | --- |
+| `SOC2` | SOC 2 Type II | 24 | Security |
+| `GDPR` | General Data Protection Regulation | 18 | Privacy |
+| `EU_AI_ACT` | EU AI Act | 22 | AI Governance |
+| `ISO27001` | ISO/IEC 27001:2022 | 28 | Security |
+| `HIPAA` | HIPAA | 20 | Healthcare |
+| `NIST_AI_RMF` | NIST AI Risk Management Framework | 16 | AI Governance |
+| `NIST_CSF` | NIST Cybersecurity Framework | 23 | Security |
+| `ISO42001` | ISO/IEC 42001:2023 | 19 | AI Governance |
+| `PCI_DSS` | PCI DSS v4.0 | 25 | Financial |
+| `CCPA` | California Consumer Privacy Act | 12 | Privacy |
+| `NIS2` | NIS2 Directive | 15 | Security |
+| `DORA` | Digital Operational Resilience Act | 17 | Financial |
+| `DSA` | Digital Services Act | 14 | Platform |
+| `DMA` | Digital Markets Act | 11 | Platform |
+
+---
+
+## List frameworks {{ tag: 'GET', label: '/v1/frameworks' }}
+
+<Row>
+  <Col>
+
+    Retrieve all supported compliance frameworks with their metadata.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/frameworks">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.governlayer.ai/v1/frameworks \
+      -H "X-API-Key: gl_your_api_key_here"
+    ```
+
+    </CodeGroup>
+
+  </Col>
+</Row>
+
+### Example response
+
+```json
+{
+  "data": [
+    {
+      "code": "SOC2",
+      "name": "SOC 2 Type II",
+      "controls_count": 24,
+      "category": "security"
+    },
+    {
+      "code": "GDPR",
+      "name": "General Data Protection Regulation",
+      "controls_count": 18,
+      "category": "privacy"
+    },
+    {
+      "code": "EU_AI_ACT",
+      "name": "EU AI Act",
+      "controls_count": 22,
+      "category": "ai_governance"
+    }
+  ]
+}
+```

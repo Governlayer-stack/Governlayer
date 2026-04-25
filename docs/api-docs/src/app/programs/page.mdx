@@ -1,0 +1,246 @@
+export const metadata = {
+  title: 'Compliance Programs',
+  description:
+    'Create and manage compliance programs with controls, evidence, policies, and automated readiness scoring across 14 frameworks.',
+}
+
+# Compliance Programs
+
+Compliance programs are the foundation of GovernLayer's GRC hub. Create a program, select frameworks, and GovernLayer automatically maps controls, tracks evidence, manages policies, and calculates readiness scores. {{ className: 'lead' }}
+
+## The program model
+
+### Properties
+
+<Properties>
+  <Property name="id" type="string">
+    Unique identifier for the compliance program.
+  </Property>
+  <Property name="name" type="string">
+    Program name (e.g., "SOC 2 Type II 2026").
+  </Property>
+  <Property name="frameworks" type="array">
+    List of compliance frameworks included in this program.
+  </Property>
+  <Property name="status" type="string">
+    Program status: `draft`, `active`, `audit_ready`, `completed`.
+  </Property>
+  <Property name="readiness_score" type="float">
+    Overall readiness percentage (0-100).
+  </Property>
+  <Property name="controls_total" type="integer">
+    Total number of controls mapped.
+  </Property>
+  <Property name="controls_implemented" type="integer">
+    Number of controls with status `implemented`.
+  </Property>
+  <Property name="created_at" type="string">
+    ISO 8601 timestamp.
+  </Property>
+</Properties>
+
+---
+
+## Create a program {{ tag: 'POST', label: '/v1/programs' }}
+
+<Row>
+  <Col>
+
+    Create a new compliance program. GovernLayer automatically generates the control mappings for the selected frameworks.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="name" type="string">
+        Program name.
+      </Property>
+      <Property name="frameworks" type="array">
+        List of framework codes: `SOC2`, `GDPR`, `ISO27001`, `EU_AI_ACT`, `HIPAA`, `NIST_AI_RMF`, `NIST_CSF`, `ISO42001`, `PCI_DSS`, `CCPA`, `NIS2`, `DORA`, `DSA`, `DMA`.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/programs">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/programs \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "SOC 2 + GDPR Readiness 2026",
+        "frameworks": ["SOC2", "GDPR"]
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/programs",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "name": "SOC 2 + GDPR Readiness 2026",
+            "frameworks": ["SOC2", "GDPR"],
+        },
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "id": "prog_abc123",
+      "name": "SOC 2 + GDPR Readiness 2026",
+      "frameworks": ["SOC2", "GDPR"],
+      "status": "draft",
+      "readiness_score": 0,
+      "controls_total": 47,
+      "controls_implemented": 0,
+      "created_at": "2026-04-25T14:00:00Z"
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## List programs {{ tag: 'GET', label: '/v1/programs' }}
+
+<Row>
+  <Col>
+
+    Retrieve all compliance programs for your organization.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/programs">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.governlayer.ai/v1/programs \
+      -H "X-API-Key: gl_your_api_key_here"
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "data": [
+        {
+          "id": "prog_abc123",
+          "name": "SOC 2 + GDPR Readiness 2026",
+          "frameworks": ["SOC2", "GDPR"],
+          "status": "active",
+          "readiness_score": 78.5,
+          "controls_total": 47,
+          "controls_implemented": 37
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Get program controls {{ tag: 'GET', label: '/v1/programs/:id/controls' }}
+
+<Row>
+  <Col>
+
+    Retrieve all controls for a compliance program, with optional filtering.
+
+    ### Optional parameters
+
+    <Properties>
+      <Property name="status" type="string">
+        Filter by status: `implemented`, `in_progress`, `not_started`, `gap`.
+      </Property>
+      <Property name="framework" type="string">
+        Filter by framework code.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/programs/prog_abc123/controls">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://api.governlayer.ai/v1/programs/prog_abc123/controls \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -d status=gap
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "data": [
+        {
+          "id": "ctrl_001",
+          "framework": "SOC2",
+          "control_id": "CC7.2",
+          "title": "System Monitoring",
+          "description": "The entity monitors system components for anomalies.",
+          "status": "gap",
+          "owner": null,
+          "evidence_count": 0,
+          "last_reviewed": null
+        }
+      ]
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Update control status {{ tag: 'PUT', label: '/v1/programs/:id/controls/:control_id' }}
+
+<Row>
+  <Col>
+
+    Update a control's status, owner, or review date for remediation tracking.
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="status" type="string">
+        New status: `implemented`, `in_progress`, `not_started`, `gap`.
+      </Property>
+      <Property name="owner" type="string">
+        Person responsible for this control.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="PUT" label="/v1/programs/prog_abc123/controls/ctrl_001">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X PUT https://api.governlayer.ai/v1/programs/prog_abc123/controls/ctrl_001 \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{"status": "in_progress", "owner": "security-team"}'
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "id": "ctrl_001",
+      "status": "in_progress",
+      "owner": "security-team",
+      "last_reviewed": "2026-04-25T15:00:00Z"
+    }
+    ```
+
+  </Col>
+</Row>

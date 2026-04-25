@@ -1,0 +1,107 @@
+export const metadata = {
+  title: 'Drift Detection',
+  description:
+    'Real-time behavioral drift detection for AI agents using sentence-transformer embeddings compared against safety manifolds.',
+}
+
+# Drift Detection
+
+GovernLayer uses sentence-transformer embeddings to detect when AI agents deviate from expected behavior patterns. The drift score (0.0-1.0) measures semantic distance between observed and expected behavior against safety manifolds. {{ className: 'lead' }}
+
+## The drift response model
+
+### Properties
+
+<Properties>
+  <Property name="system_name" type="string">
+    The AI system being analyzed.
+  </Property>
+  <Property name="drift_score" type="float">
+    Score from 0.0 (no drift) to 1.0 (maximum drift). Scores above 0.5 are flagged.
+  </Property>
+  <Property name="is_drifting" type="boolean">
+    Whether the drift score exceeds the configured threshold.
+  </Property>
+  <Property name="analysis" type="string">
+    Detailed explanation of the drift analysis.
+  </Property>
+  <Property name="embedding_method" type="string">
+    The embedding method used: `sentence-transformer` (full mode) or `keyword` (fallback mode).
+  </Property>
+</Properties>
+
+---
+
+## Analyze drift {{ tag: 'POST', label: '/v1/drift' }}
+
+<Row>
+  <Col>
+
+    Analyze behavioral drift for an AI agent. Compares observed behavior against expected behavior using embedding-based similarity.
+
+    ### Required attributes
+
+    <Properties>
+      <Property name="system_name" type="string">
+        Name of the AI system.
+      </Property>
+      <Property name="behavior" type="string">
+        The observed behavior to analyze.
+      </Property>
+    </Properties>
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="expected_behavior" type="string">
+        Expected behavior for comparison. If omitted, compares against system safety manifolds.
+      </Property>
+      <Property name="threshold" type="float">
+        Custom drift threshold (default: 0.5).
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="POST" label="/v1/drift">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X POST https://api.governlayer.ai/v1/drift \
+      -H "X-API-Key: gl_your_api_key_here" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "system_name": "onboarding-agent",
+        "behavior": "Collected social security number during casual conversation",
+        "expected_behavior": "Only collect authorized PII during designated form steps"
+      }'
+    ```
+
+    ```python
+    import requests
+
+    response = requests.post(
+        "https://api.governlayer.ai/v1/drift",
+        headers={"X-API-Key": "gl_your_api_key_here"},
+        json={
+            "system_name": "onboarding-agent",
+            "behavior": "Collected social security number during casual conversation",
+            "expected_behavior": "Only collect authorized PII during designated form steps",
+        },
+    )
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+    {
+      "system_name": "onboarding-agent",
+      "drift_score": 0.92,
+      "is_drifting": true,
+      "analysis": "Critical drift: Agent collected PII outside of authorized context. Semantic distance from expected behavior is 0.92, well above the 0.5 threshold.",
+      "embedding_method": "sentence-transformer"
+    }
+    ```
+
+  </Col>
+</Row>

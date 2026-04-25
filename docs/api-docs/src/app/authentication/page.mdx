@@ -1,0 +1,70 @@
+export const metadata = {
+  title: 'Authentication',
+  description:
+    'GovernLayer supports two authentication methods: API keys and JWT bearer tokens. API keys are recommended for server-to-server integrations.',
+}
+
+# Authentication
+
+You must authenticate all requests to the GovernLayer API. GovernLayer supports two authentication methods: API keys and JWT bearer tokens. API keys are the recommended approach for server-to-server integrations. {{ className: 'lead' }}
+
+## API key authentication
+
+API keys are scoped to your organization and can have granular permissions (govern, audit, risk, scan). Generate API keys from your organization dashboard. Keys start with `gl_`.
+
+```bash {{ title: 'Request with API key' }}
+curl -X POST https://api.governlayer.ai/v1/govern \
+  -H "X-API-Key: gl_your_api_key_here" \
+  -H "Content-Type: application/json" \
+  -d '{"system_name": "my-agent", "behavior": "...", "framework": "SOC2"}'
+```
+
+API keys support the following scopes:
+
+- **govern** — Access to `/v1/govern`, `/v1/drift`, `/v1/risk`
+- **audit** — Access to `/v1/audit`, `/v1/audit-history`
+- **risk** — Access to `/v1/risk-score`
+- **scan** — Access to `/v1/scan` (deterministic checks only)
+
+## JWT bearer token authentication
+
+For user-facing applications, authenticate via the `/auth/login` endpoint to receive a JWT token. Include it as a Bearer token in subsequent requests.
+
+```bash {{ title: 'Login to get a token' }}
+curl -X POST https://api.governlayer.ai/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "you@company.com", "password": "your_password"}'
+```
+
+```json {{ title: 'Login response' }}
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "bearer"
+}
+```
+
+Then use the token in subsequent requests:
+
+```bash {{ title: 'Request with bearer token' }}
+curl https://api.governlayer.ai/v1/govern \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..."
+```
+
+## Rate limits
+
+Rate limits are enforced per API key or user token, based on your plan:
+
+| Plan | Rate Limit |
+| --- | --- |
+| Free | 20 requests/min |
+| Starter | 100 requests/min |
+| Pro | 500 requests/min |
+| Enterprise | 2,000+ requests/min |
+
+When you exceed your rate limit, you will receive a `429 Too Many Requests` response with a `Retry-After` header.
+
+<div className="not-prose">
+  <Button href="/quickstart" variant="text" arrow="right">
+    <>Make your first API request</>
+  </Button>
+</div>
