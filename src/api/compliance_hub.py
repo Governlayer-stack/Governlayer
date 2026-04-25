@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 
 from src.models.compliance import ComplianceAudit, CompliancePolicy, ComplianceProgram
 from src.models.database import get_db
+from src.security.api_key_auth import AuthContext, verify_api_key_or_jwt
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/compliance", tags=["Compliance Hub"])
@@ -66,6 +67,18 @@ class CreateProgramRequest(BaseModel):
     owner: str = Field(..., min_length=2, max_length=255)
     start_date: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$")
     target_audit_date: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+
+class UpdateControlRequest(BaseModel):
+    status: Optional[ControlStatus] = Field(default=None, description="New control status")
+    owner: Optional[str] = Field(default=None, min_length=2, max_length=255, description="Control owner")
+    last_reviewed: Optional[str] = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$", description="Last reviewed date (YYYY-MM-DD)")
+
+
+class LinkEvidenceRequest(BaseModel):
+    evidence_ref: str = Field(..., min_length=1, max_length=255, description="Evidence reference identifier")
+    description: str = Field(..., min_length=1, max_length=2000, description="Description of the evidence")
+    collected_by: str = Field(..., min_length=1, max_length=255, description="Who collected this evidence")
 
 
 class ScheduleAuditRequest(BaseModel):
@@ -139,6 +152,30 @@ STANDARDS_CATALOGUE: dict[str, dict] = {
         "description": "California state law granting consumers rights regarding personal information collected by businesses.",
         "control_count": 28,
         "categories": ["Consumer Rights", "Business Obligations", "Data Handling", "Opt-Out"],
+    },
+    "NIS2": {
+        "name": "EU NIS2 Directive",
+        "description": "EU directive on network and information security requiring risk management, incident reporting, and supply chain security for essential and important entities.",
+        "control_count": 32,
+        "categories": ["Risk Management", "Incident Reporting", "Supply Chain", "Business Continuity"],
+    },
+    "DORA": {
+        "name": "EU Digital Operational Resilience Act",
+        "description": "EU regulation ensuring financial entities can withstand ICT disruptions through risk management, incident management, resilience testing, and third-party oversight.",
+        "control_count": 36,
+        "categories": ["ICT Risk Management", "Incident Management", "Resilience Testing", "Third-Party Risk"],
+    },
+    "DSA": {
+        "name": "EU Digital Services Act",
+        "description": "EU regulation for digital services requiring algorithmic transparency, systemic risk assessment, and independent auditing for online platforms.",
+        "control_count": 28,
+        "categories": ["Algorithmic Transparency", "Content Moderation", "Risk Assessment", "Auditing"],
+    },
+    "DMA": {
+        "name": "EU Digital Markets Act",
+        "description": "EU regulation for digital gatekeepers requiring interoperability, data portability, profiling consent, and fair competition practices.",
+        "control_count": 24,
+        "categories": ["Interoperability", "Data Portability", "Fair Competition", "Profiling & Consent"],
     },
 }
 
@@ -379,11 +416,21 @@ def _ensure_demo_program(db: Session) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Helper: org ownership check
+# ---------------------------------------------------------------------------
+
+def _verify_program_org(program: ComplianceProgram, auth: AuthContext) -> None:
+    """Raise 404 if the program belongs to a different org. Allow if program has no org (legacy)."""
+    if program.org_id is not None and auth.org_id is not None and program.org_id != auth.org_id:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+
+
+# ---------------------------------------------------------------------------
 # 1. POST /programs — Create a compliance program
 # ---------------------------------------------------------------------------
 
 @router.post("/programs")
-def create_program(req: CreateProgramRequest, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def create_program(req: CreateProgramRequest, auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """Create a new compliance program spanning one or more frameworks."""
     # Validate frameworks
     invalid = [f for f in req.frameworks if f not in STANDARDS_CATALOGUE]
@@ -412,6 +459,7 @@ def create_program(req: CreateProgramRequest, email: str = Depends(verify_token)
         target_audit_date=req.target_audit_date,
         created_at=created_at,
         controls=_dump_json(controls),
+        org_id=auth.org_id,
     )
     db.add(program)
     db.commit()
@@ -436,11 +484,16 @@ def create_program(req: CreateProgramRequest, email: str = Depends(verify_token)
 # ---------------------------------------------------------------------------
 
 @router.get("/programs")
-def list_programs(email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def list_programs(auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """List all compliance programs with progress summaries."""
     _ensure_demo_program(db)
 
-    rows = db.query(ComplianceProgram).all()
+    query = db.query(ComplianceProgram)
+    if auth.org_id is not None:
+        query = query.filter(
+            (ComplianceProgram.org_id == auth.org_id) | (ComplianceProgram.org_id.is_(None))
+        )
+    rows = query.all()
     results = []
     for row in rows:
         p = _program_to_dict(row)
@@ -465,13 +518,14 @@ def list_programs(email: str = Depends(verify_token), db: Session = Depends(get_
 # ---------------------------------------------------------------------------
 
 @router.get("/programs/{program_id}")
-def get_program(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def get_program(program_id: str, auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """Get detailed program status: progress, controls, evidence, gaps, timeline."""
     _ensure_demo_program(db)
 
     row = db.query(ComplianceProgram).filter_by(id=program_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
 
     program = _program_to_dict(row)
     controls = program["controls"]
@@ -525,17 +579,196 @@ def get_program(program_id: str, email: str = Depends(verify_token), db: Session
 
 
 # ---------------------------------------------------------------------------
+# 3a. GET /programs/{program_id}/controls — List controls with filtering
+# ---------------------------------------------------------------------------
+
+@router.get("/programs/{program_id}/controls")
+def list_controls(
+    program_id: str,
+    status: Optional[str] = Query(default=None, description="Filter by control status: not_started, in_progress, implemented, verified"),
+    framework: Optional[str] = Query(default=None, description="Filter by framework ID (e.g. SOC2, ISO27001)"),
+    auth: AuthContext = Depends(verify_api_key_or_jwt),
+    db: Session = Depends(get_db),
+):
+    """List all controls for a compliance program with optional filtering by status and framework."""
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
+
+    controls = _load_json(row.controls)
+
+    # Validate status filter if provided
+    if status:
+        valid_statuses = [s.value for s in ControlStatus]
+        if status not in valid_statuses:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid status filter: {status}. Valid values: {valid_statuses}",
+            )
+        controls = [c for c in controls if c["status"] == status]
+
+    # Validate framework filter if provided
+    if framework:
+        program_frameworks = _load_json(row.frameworks)
+        if framework not in program_frameworks:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Framework '{framework}' is not part of this program. Program frameworks: {program_frameworks}",
+            )
+        controls = [c for c in controls if c["framework"] == framework]
+
+    progress = _calculate_progress(controls)
+
+    return {
+        "program_id": program_id,
+        "total": len(controls),
+        "filters_applied": {
+            "status": status,
+            "framework": framework,
+        },
+        "progress": progress,
+        "controls": controls,
+    }
+
+
+# ---------------------------------------------------------------------------
+# 3b. PUT /programs/{program_id}/controls/{control_id} — Update control status
+# ---------------------------------------------------------------------------
+
+@router.put("/programs/{program_id}/controls/{control_id}")
+def update_control(
+    program_id: str,
+    control_id: str,
+    req: UpdateControlRequest,
+    auth: AuthContext = Depends(verify_api_key_or_jwt),
+    db: Session = Depends(get_db),
+):
+    """Update a control's status, owner, or last_reviewed date within a compliance program."""
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
+
+    controls = _load_json(row.controls)
+
+    # Find the target control
+    target_idx = None
+    for idx, c in enumerate(controls):
+        if c["id"] == control_id:
+            target_idx = idx
+            break
+
+    if target_idx is None:
+        raise HTTPException(status_code=404, detail=f"Control '{control_id}' not found in program '{program_id}'")
+
+    control = controls[target_idx]
+
+    # Apply updates
+    updated_fields = []
+    if req.status is not None:
+        control["status"] = req.status.value
+        updated_fields.append("status")
+    if req.owner is not None:
+        control["owner"] = req.owner
+        updated_fields.append("owner")
+    if req.last_reviewed is not None:
+        control["last_reviewed"] = req.last_reviewed
+        updated_fields.append("last_reviewed")
+
+    if not updated_fields:
+        raise HTTPException(status_code=400, detail="No fields to update. Provide at least one of: status, owner, last_reviewed")
+
+    controls[target_idx] = control
+
+    # Persist back to DB
+    row.controls = _dump_json(controls)
+    db.commit()
+
+    return {
+        "program_id": program_id,
+        "control": control,
+        "updated_fields": updated_fields,
+        "updated_by": auth.identity,
+        "updated_at": datetime.utcnow().isoformat() + "Z",
+    }
+
+
+# ---------------------------------------------------------------------------
+# 3c. POST /programs/{program_id}/controls/{control_id}/evidence — Link evidence
+# ---------------------------------------------------------------------------
+
+@router.post("/programs/{program_id}/controls/{control_id}/evidence")
+def link_evidence(
+    program_id: str,
+    control_id: str,
+    req: LinkEvidenceRequest,
+    auth: AuthContext = Depends(verify_api_key_or_jwt),
+    db: Session = Depends(get_db),
+):
+    """Link evidence to a specific control, incrementing the control's evidence count."""
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
+
+    controls = _load_json(row.controls)
+
+    # Find the target control
+    target_idx = None
+    for idx, c in enumerate(controls):
+        if c["id"] == control_id:
+            target_idx = idx
+            break
+
+    if target_idx is None:
+        raise HTTPException(status_code=404, detail=f"Control '{control_id}' not found in program '{program_id}'")
+
+    control = controls[target_idx]
+
+    # Increment evidence count
+    control["evidence_count"] = control.get("evidence_count", 0) + 1
+    controls[target_idx] = control
+
+    # Persist back to DB
+    row.controls = _dump_json(controls)
+    db.commit()
+
+    linked_at = datetime.utcnow().isoformat() + "Z"
+
+    return {
+        "program_id": program_id,
+        "control": control,
+        "evidence_linked": {
+            "evidence_ref": req.evidence_ref,
+            "description": req.description,
+            "collected_by": req.collected_by,
+            "linked_by": auth.identity,
+            "linked_at": linked_at,
+        },
+        "message": f"Evidence '{req.evidence_ref}' linked to control '{control_id}'. Evidence count is now {control['evidence_count']}.",
+    }
+
+
+# ---------------------------------------------------------------------------
 # 4. GET /programs/{program_id}/readiness — Audit readiness report
 # ---------------------------------------------------------------------------
 
 @router.get("/programs/{program_id}/readiness")
-def get_readiness(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def get_readiness(program_id: str, auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """Generate an audit readiness report with framework-by-framework breakdown."""
     _ensure_demo_program(db)
 
     row = db.query(ComplianceProgram).filter_by(id=program_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
 
     program = _program_to_dict(row)
     controls = program["controls"]
@@ -624,13 +857,14 @@ def get_readiness(program_id: str, email: str = Depends(verify_token), db: Sessi
 # ---------------------------------------------------------------------------
 
 @router.post("/programs/{program_id}/generate-policies")
-def generate_policies(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def generate_policies(program_id: str, auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """Auto-generate policy documents for the compliance program (simulated LLM generation)."""
     _ensure_demo_program(db)
 
     row = db.query(ComplianceProgram).filter_by(id=program_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
 
     program = _program_to_dict(row)
 
@@ -671,7 +905,7 @@ def generate_policies(program_id: str, email: str = Depends(verify_token), db: S
             word_count=word_count,
             generated_by="governlayer-ai",
             generated_at=generated_at,
-            last_modified_by=email,
+            last_modified_by=auth.identity,
         )
         db.add(policy)
         generated.append({
@@ -737,17 +971,114 @@ def list_policies(
 
 
 # ---------------------------------------------------------------------------
-# 7. POST /programs/{program_id}/schedule-audit — Schedule an audit
+# 7. GET /policies/{policy_id} — Policy detail
+# ---------------------------------------------------------------------------
+
+@router.get("/policies/{policy_id}")
+def get_policy(policy_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+    """Return full policy detail including sections content."""
+    row = db.query(CompliancePolicy).filter_by(id=policy_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Policy not found")
+    return _policy_to_dict(row)
+
+
+# ---------------------------------------------------------------------------
+# 8. PUT /policies/{policy_id} — Update policy status (lifecycle management)
+# ---------------------------------------------------------------------------
+
+# Valid status transitions: current_status -> set of allowed next statuses
+_VALID_TRANSITIONS: dict[str, set[str]] = {
+    "draft": {"review"},
+    "review": {"approved", "draft"},
+    "approved": {"published"},
+    "published": set(),  # terminal state
+}
+
+
+class UpdatePolicyRequest(BaseModel):
+    status: PolicyStatus
+
+
+def _increment_version(version: str) -> str:
+    """Increment the minor version component, e.g. '1.0' -> '1.1', '2.3' -> '2.4'."""
+    parts = version.split(".")
+    if len(parts) == 2:
+        try:
+            major, minor = int(parts[0]), int(parts[1])
+            return f"{major}.{minor + 1}"
+        except ValueError:
+            pass
+    return version
+
+
+@router.put("/policies/{policy_id}")
+def update_policy_status(
+    policy_id: str,
+    req: UpdatePolicyRequest,
+    email: str = Depends(verify_token),
+    db: Session = Depends(get_db),
+):
+    """Advance a policy through its lifecycle: draft -> review -> approved -> published.
+
+    Valid transitions:
+      - draft -> review
+      - review -> approved
+      - review -> draft  (sent back for revision)
+      - approved -> published
+
+    Version is incremented automatically on approval.
+    """
+    row = db.query(CompliancePolicy).filter_by(id=policy_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Policy not found")
+
+    current_status = row.status
+    new_status = req.status.value
+
+    if new_status == current_status:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Policy is already in '{current_status}' status.",
+        )
+
+    allowed = _VALID_TRANSITIONS.get(current_status, set())
+    if new_status not in allowed:
+        allowed_list = sorted(allowed) if allowed else ["none (terminal state)"]
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"Invalid status transition: '{current_status}' -> '{new_status}'. "
+                f"Allowed transitions from '{current_status}': {allowed_list}."
+            ),
+        )
+
+    # Increment version on approval
+    if new_status == "approved":
+        row.version = _increment_version(row.version)
+
+    row.status = new_status
+    row.last_modified_by = email
+
+    db.commit()
+    db.refresh(row)
+
+    return _policy_to_dict(row)
+
+
+# ---------------------------------------------------------------------------
+# 9. POST /programs/{program_id}/schedule-audit — Schedule an audit
 # ---------------------------------------------------------------------------
 
 @router.post("/programs/{program_id}/schedule-audit")
-def schedule_audit(program_id: str, req: ScheduleAuditRequest, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def schedule_audit(program_id: str, req: ScheduleAuditRequest, auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """Schedule a formal audit engagement for the compliance program."""
     _ensure_demo_program(db)
 
     row = db.query(ComplianceProgram).filter_by(id=program_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
 
     program = _program_to_dict(row)
     progress = _calculate_progress(program["controls"])
@@ -764,7 +1095,7 @@ def schedule_audit(program_id: str, req: ScheduleAuditRequest, email: str = Depe
         notes=req.notes,
         status="scheduled",
         readiness_at_scheduling=progress["overall_pct"],
-        scheduled_by=email,
+        scheduled_by=auth.identity,
         scheduled_at=scheduled_at,
     )
     db.add(audit)
@@ -791,7 +1122,147 @@ def schedule_audit(program_id: str, req: ScheduleAuditRequest, email: str = Depe
 
 
 # ---------------------------------------------------------------------------
-# 8. GET /standards — List supported compliance standards
+# 10. GET /programs/{program_id}/controls — List controls with filtering
+# ---------------------------------------------------------------------------
+
+@router.get("/programs/{program_id}/controls")
+def list_controls(
+    program_id: str,
+    status: Optional[str] = Query(default=None, description="Filter by status: not_started, in_progress, implemented, verified"),
+    framework: Optional[str] = Query(default=None, description="Filter by framework ID"),
+    category: Optional[str] = Query(default=None, description="Filter by category"),
+    auth: AuthContext = Depends(verify_api_key_or_jwt),
+    db: Session = Depends(get_db),
+):
+    """List all controls for a compliance program with optional filtering."""
+    _ensure_demo_program(db)
+
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
+
+    controls = _load_json(row.controls)
+
+    if status:
+        controls = [c for c in controls if c["status"] == status]
+    if framework:
+        controls = [c for c in controls if c["framework"] == framework]
+    if category:
+        controls = [c for c in controls if c["category"].lower() == category.lower()]
+
+    progress = _calculate_progress(controls)
+
+    return {
+        "program_id": program_id,
+        "total": len(controls),
+        "progress": progress,
+        "controls": controls,
+    }
+
+
+# ---------------------------------------------------------------------------
+# 11. PUT /programs/{program_id}/controls/{control_id} — Update control status
+# ---------------------------------------------------------------------------
+
+@router.put("/programs/{program_id}/controls/{control_id}")
+def update_control(
+    program_id: str,
+    control_id: str,
+    req: UpdateControlRequest,
+    auth: AuthContext = Depends(verify_api_key_or_jwt),
+    db: Session = Depends(get_db),
+):
+    """Update a control's status, owner, or review date for remediation tracking."""
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
+
+    controls = _load_json(row.controls)
+    target = None
+    for c in controls:
+        if c["id"] == control_id:
+            target = c
+            break
+
+    if not target:
+        raise HTTPException(status_code=404, detail=f"Control '{control_id}' not found in program")
+
+    if req.status is not None:
+        target["status"] = req.status.value
+    if req.owner is not None:
+        target["owner"] = req.owner
+    if req.last_reviewed is not None:
+        target["last_reviewed"] = req.last_reviewed
+
+    row.controls = _dump_json(controls)
+    db.commit()
+
+    return {
+        "program_id": program_id,
+        "control": target,
+        "message": f"Control '{control_id}' updated successfully.",
+    }
+
+
+# ---------------------------------------------------------------------------
+# 12. POST /programs/{program_id}/controls/{control_id}/evidence — Link evidence
+# ---------------------------------------------------------------------------
+
+@router.post("/programs/{program_id}/controls/{control_id}/evidence")
+def link_evidence(
+    program_id: str,
+    control_id: str,
+    req: LinkEvidenceRequest,
+    auth: AuthContext = Depends(verify_api_key_or_jwt),
+    db: Session = Depends(get_db),
+):
+    """Link evidence to a specific control. Increments evidence count and stores reference."""
+    row = db.query(ComplianceProgram).filter_by(id=program_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
+
+    controls = _load_json(row.controls)
+    target = None
+    for c in controls:
+        if c["id"] == control_id:
+            target = c
+            break
+
+    if not target:
+        raise HTTPException(status_code=404, detail=f"Control '{control_id}' not found in program")
+
+    if "evidence" not in target:
+        target["evidence"] = []
+    evidence_id = f"EV-{control_id}-{len(target['evidence']) + 1:02d}"
+    evidence_entry = {
+        "id": evidence_id,
+        "ref": req.evidence_ref,
+        "description": req.description,
+        "collected_by": req.collected_by,
+        "collected_at": datetime.utcnow().isoformat() + "Z",
+        "status": EvidenceStatus.COLLECTED.value,
+    }
+    target["evidence"].append(evidence_entry)
+    target["evidence_count"] = len(target["evidence"])
+
+    row.controls = _dump_json(controls)
+    db.commit()
+
+    return {
+        "program_id": program_id,
+        "control_id": control_id,
+        "evidence": evidence_entry,
+        "total_evidence": target["evidence_count"],
+        "evidence_required": target["evidence_required"],
+        "message": f"Evidence '{evidence_id}' linked to control '{control_id}'.",
+    }
+
+
+# ---------------------------------------------------------------------------
+# 13. GET /standards — List supported compliance standards
 # ---------------------------------------------------------------------------
 
 @router.get("/standards")
@@ -814,13 +1285,14 @@ def list_standards(email: str = Depends(verify_token)):
 # ---------------------------------------------------------------------------
 
 @router.get("/programs/{program_id}/export")
-def export_program(program_id: str, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def export_program(program_id: str, auth: AuthContext = Depends(verify_api_key_or_jwt), db: Session = Depends(get_db)):
     """Export the full compliance package as JSON (evidence, controls, policies, gaps)."""
     _ensure_demo_program(db)
 
     row = db.query(ComplianceProgram).filter_by(id=program_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="Compliance program not found")
+    _verify_program_org(row, auth)
 
     program = _program_to_dict(row)
     controls = program["controls"]
@@ -872,7 +1344,7 @@ def export_program(program_id: str, email: str = Depends(verify_token), db: Sess
     return {
         "export_format": "governlayer-compliance-package-v1",
         "exported_at": datetime.utcnow().isoformat() + "Z",
-        "exported_by": email,
+        "exported_by": auth.identity,
         "package_hash": package_hash,
         "program": {
             "id": program["id"],

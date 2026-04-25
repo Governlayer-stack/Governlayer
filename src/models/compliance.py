@@ -17,6 +17,7 @@ class ComplianceProgram(Base):
     target_audit_date = Column(String(10), nullable=False)
     controls = Column(Text, nullable=False)  # JSON list of control dicts
     created_at = Column(String(30), nullable=False)
+    org_id = Column(Integer, nullable=True, index=True)
 
     policies = relationship("CompliancePolicy", back_populates="program", cascade="all, delete-orphan")
     audits = relationship("ComplianceAudit", back_populates="program", cascade="all, delete-orphan")
