@@ -13,6 +13,8 @@ from sqlalchemy.orm import Session
 from src.api.webhooks import dispatch_event
 from src.config import get_settings
 from src.drift.detection import analyze_reasoning
+from src.ipi.scanner import scan_agent
+from src.ipi.framework_crosswalk import map_findings_to_frameworks
 from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
 from src.models.schemas import DriftRequest, GovernRequest, RiskScoreRequest
 from src.security.api_key_auth import AuthContext, require_org, require_scope
@@ -202,3 +204,55 @@ def audit_history(system_name: str, limit: int = 50,
             for r in records
         ],
     }
+
+
+# --- IPI Scan ---
+
+@router.post("/ipi/scan")
+def ipi_scan(
+    request: dict,
+    auth: AuthContext = Depends(_require_org_and_scope("scan")),
+):
+    """Scan an agent for Indirect Prompt Injection vulnerabilities.
+
+    Deterministic — no LLM calls, instant results. Returns findings
+    mapped to compliance framework clauses.
+    """
+    scan_id = str(uuid.uuid4())
+    result = scan_agent(
+        system_name=request.get("system_name", "unknown"),
+        scan_id=scan_id,
+        system_prompt=request.get("system_prompt", ""),
+        tools=request.get("tools", []),
+        content=request.get("content"),
+    )
+
+    framework_mappings = map_findings_to_frameworks(result.findings)
+
+    response = {
+        "scan_id": scan_id,
+        "system_name": result.system_name,
+        "score": result.score,
+        "risk_level": result.risk_level,
+        "findings_count": len(result.findings),
+        "critical_count": sum(1 for f in result.findings if f.severity.value == "CRITICAL"),
+        "high_count": sum(1 for f in result.findings if f.severity.value == "HIGH"),
+        "findings": [
+            {
+                "id": f.id,
+                "category": f.category.value,
+                "severity": f.severity.value,
+                "title": f.title,
+                "description": f.description,
+                "remediation": f.remediation,
+                "atlas_id": f.atlas_id,
+            }
+            for f in result.findings
+        ],
+        "framework_mappings": framework_mappings,
+        "summary": result.summary,
+        "scanned_at": result.scanned_at,
+    }
+
+    dispatch_event("ipi.scan", response, org_id=auth.org_id, db=None)
+    return response

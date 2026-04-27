@@ -225,6 +225,12 @@ export const navigation = [
     ],
   },
   {
+    title: 'Security',
+    links: [
+      { title: 'IPI Scanner', href: '/ipi' },
+    ],
+  },
+  {
     title: 'Orchestration',
     links: [
       { title: 'Achonye (Multi-LLM)', href: '/achonye' },
