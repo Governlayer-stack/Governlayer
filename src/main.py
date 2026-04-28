@@ -29,7 +29,7 @@ from src.api import (
     audit, auth, automation, billing, compliance_hub, controls, credentials,
     dashboard, enterprise, enterprise_features, evidence, governance, growth,
     hitl, incidents, integrations, knowledge_graph, ledger, mfa, oauth,
-    ipi, policies, rbac_views, registry, reports, risk, threats, v1, vendor_risk,
+    ipi, policies, rbac_views, registry, reports, risk, safety, threats, v1, vendor_risk,
 )
 from src.config import get_settings
 from src.models.database import create_tables, SessionLocal
@@ -317,6 +317,7 @@ def create_app() -> FastAPI:
     app.include_router(ledger.router)
     app.include_router(threats.router)
     app.include_router(ipi.router)
+    app.include_router(safety.router)
     app.include_router(achonye.router)
     app.include_router(automation.router)
     app.include_router(enterprise.router)
