@@ -3,592 +3,1580 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Governance Platform | Autonomous Compliance for SOC 2, EU AI Act, NIST | GovernLayer</title>
-<meta name="description" content="Autonomous AI governance platform. 17 services, 29 compliance frameworks, real-time drift detection, multi-LLM consensus, and tamper-proof audit trails.">
-<meta name="theme-color" content="#ffffff">
-<meta property="og:title" content="GovernLayer — Autonomous AI Compliance Platform">
-<meta property="og:description" content="17 integrated services governing every AI agent and model. Cryptographic audit proof across 29 frameworks.">
+<title>GovernLayer — The Governance Layer for the Agentic Era</title>
+<meta name="description" content="Autonomous AI governance platform. Assess compliance across 29 frameworks including SOC 2, EU AI Act, and NIST. Real-time drift detection and tamper-proof audit trails.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="GovernLayer — The Governance Layer for the Agentic Era">
+<meta property="og:description" content="Govern AI before it acts. 29 compliance frameworks, 12 patent-pending components, cryptographic audit trails.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://governlayer.ai">
+<meta property="og:image" content="https://governlayer.ai/og-image.svg">
+<meta name="twitter:image" content="https://governlayer.ai/og-image.svg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="GovernLayer — Autonomous AI Compliance Platform">
-<meta name="twitter:description" content="Govern, monitor, and secure every AI agent across your organization.">
+<meta name="twitter:title" content="GovernLayer — The Governance Layer for the Agentic Era">
+<meta name="twitter:description" content="Govern AI before it acts. 29 compliance frameworks, 12 patent-pending components, cryptographic audit trails.">
 <link rel="canonical" href="https://governlayer.ai">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
---bg:#fff;--bg2:#f9fafb;--bg3:#f3f4f6;
---border:#e5e7eb;--border2:#d1d5db;
---text:#0c1222;--text2:#4b5563;--text3:#9ca3af;
---blue:#2563eb;--blue-bg:#eff6ff;--blue-dark:#1d4ed8;
---green:#059669;--green-bg:#ecfdf5;
---red:#dc2626;--red-bg:#fef2f2;
---amber:#d97706;--amber-bg:#fffbeb;
---purple:#7c3aed;--purple-bg:#f5f3ff;
---r:16px;--rs:12px;--rx:8px;
---sh:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.06);
---sh-lg:0 4px 12px rgba(0,0,0,.04),0 20px 48px rgba(0,0,0,.08);
---t:cubic-bezier(.4,0,.2,1);
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-light:#60a5fa;--blue-bg:rgba(59,130,246,.12);--blue-dark:#60a5fa;
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.25),0 20px 44px rgba(0,0,0,.4);
+  --shadow-xl:0 12px 28px rgba(0,0,0,.3),0 32px 64px rgba(0,0,0,.5);
+  --transition:cubic-bezier(.4,0,.2,1);
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
 a{color:inherit;text-decoration:none}
-code{font-family:'JetBrains Mono',monospace;font-size:.8em;background:var(--bg2);padding:2px 8px;border-radius:4px;border:1px solid var(--border)}
-.c{max-width:1140px;margin:0 auto;padding:0 28px}
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s var(--t),transform .7s var(--t)}
-.rv.v{opacity:1;transform:translateY(0)}
-.rv2{transition-delay:.1s}.rv3{transition-delay:.2s}.rv4{transition-delay:.3s}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
 
-/* NAV */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid rgba(0,0,0,.04);transition:box-shadow .3s var(--t)}
-.nav.scrolled{box-shadow:0 1px 12px rgba(0,0,0,.06)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;max-width:1140px;margin:0 auto;padding:0 28px;height:60px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.14rem;letter-spacing:-.03em}
-.logo-m{width:28px;height:28px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;transition:transform .3s var(--t)}
-.logo:hover .logo-m{transform:rotate(90deg)}
-.logo-m svg{width:14px;height:14px}
-.nl{display:flex;gap:28px;list-style:none}
-.nl a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s;position:relative}
-.nl a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:var(--blue);transform:scaleX(0);transition:transform .25s var(--t)}
-.nl a:hover{color:var(--text)}.nl a:hover::after{transform:scaleX(1)}
-.nav-r{display:flex;gap:10px;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--rx);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--t)}
-.btn-f{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(37,99,235,.3)}
-.btn-f:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,99,235,.3)}
-.btn-g{background:transparent;color:var(--text2);border:1px solid var(--border)}
-.btn-g:hover{border-color:var(--border2);background:var(--bg2);color:var(--text)}
-.btn-l{padding:13px 30px;font-size:.95rem;border-radius:var(--rs)}
-.mt{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
+/* ============ SCROLL PROGRESS BAR ============ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));z-index:10001;transition:width .1s linear;border-radius:0 2px 2px 0}
 
-/* HERO */
-.hero{padding:140px 0 80px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(37,99,235,.04) 0%,transparent 65%);pointer-events:none}
-.hero h1{font-size:clamp(2.6rem,5.5vw,3.8rem);font-weight:900;letter-spacing:-.045em;line-height:1.08;margin-bottom:20px}
-.hero .ac{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-s{font-size:1.15rem;color:var(--text2);max-width:600px;margin:0 auto 36px;line-height:1.75}
-.hero-c{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.hero-p{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-.hero-p span{font-size:.82rem;color:var(--text3);font-weight:500;display:flex;align-items:center;gap:6px}
-.hero-p span::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
-.hero-p strong{color:var(--text);font-weight:700}
+/* ============ NOTIFICATION BAR ============ */
+.notif-bar{position:fixed;top:0;left:0;right:0;z-index:9999;height:32px;background:linear-gradient(90deg,rgba(59,130,246,.15),rgba(139,92,246,.15),rgba(59,130,246,.15));border-bottom:1px solid rgba(139,92,246,.2);display:flex;align-items:center;overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.notif-track{display:flex;white-space:nowrap;animation:marquee 30s linear infinite}
+.notif-track span{font-size:.72rem;font-weight:600;color:var(--text2);padding:0 48px;letter-spacing:.02em;display:inline-flex;align-items:center;gap:8px}
+.notif-track span::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--purple);flex-shrink:0}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* LOGO STRIP */
-.ls{padding:36px 0;border-bottom:1px solid var(--border)}
-.ls-l{text-align:center;margin-bottom:18px;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
-.ls-r{display:flex;align-items:center;justify-content:center;gap:44px;flex-wrap:wrap}
-.ls-i{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:700;color:var(--text);opacity:.4;transition:opacity .3s}
-.ls-i:hover{opacity:.75}
-.ls-i svg{width:22px;height:22px;stroke-width:1.5}
+/* ============ SMOOTH REVEAL ============ */
+.reveal{opacity:1;transform:translateY(0);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.pending{opacity:0;transform:translateY(28px)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+.reveal-delay-5{transition-delay:.5s}
 
-/* STATS */
-.ss{padding:52px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
-.ss-r{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
-.si{position:relative}
-.si:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--border)}
-.sn{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:900;letter-spacing:-.03em;color:var(--blue)}
-.sl{font-size:.82rem;color:var(--text2);margin-top:4px;font-weight:500}
+/* ============ NAV ============ */
+.nav{position:fixed;top:32px;left:0;right:0;z-index:1000;padding:0;background:rgba(10,14,26,.82);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s var(--transition)}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.5);background:rgba(10,14,26,.95)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;transition:transform .4s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo:hover .logo-mark{transform:rotate(90deg) scale(1.05)}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;background:linear-gradient(90deg,var(--blue),var(--purple));transform:scaleX(0);transform-origin:center;transition:transform .25s var(--transition)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-ctas{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-xs);font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .25s var(--transition)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:var(--text)}
+.btn-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2);animation:btnGlow 3s ease-in-out infinite alternate}
+.btn-fill:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.45),0 0 0 1px rgba(59,130,246,.3);animation:none}
+.btn-fill:active{transform:translateY(0)}
+@keyframes btnGlow{0%{box-shadow:0 2px 8px rgba(59,130,246,.3),0 0 0 1px rgba(59,130,246,.2)}100%{box-shadow:0 4px 16px rgba(99,102,241,.4),0 0 0 1px rgba(99,102,241,.25)}}
+.btn-lg{padding:14px 32px;font-size:.95rem;border-radius:var(--radius-sm)}
+.mobile-toggle{display:none;background:none;border:none;color:var(--text);padding:6px;cursor:pointer}
+.mobile-menu{display:none;position:fixed;top:96px;left:0;right:0;background:rgba(10,14,26,.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:20px 28px;z-index:999;flex-direction:column;gap:4px}
+.mobile-menu.active{display:flex}
+.mobile-menu a{display:block;padding:12px 0;font-size:1rem;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border)}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover{color:var(--text)}
+.mobile-menu-ctas{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 
-/* TRUST */
-.ts{padding:14px 0;background:var(--bg);border-bottom:1px solid var(--border)}
-.ts-r{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:center}
-.ts-r span{font-size:.74rem;color:var(--text3);font-weight:500;display:flex;align-items:center;gap:5px}
-.ts-r svg{width:13px;height:13px;stroke:var(--green);flex-shrink:0}
+/* ============ HERO ============ */
+.hero{padding:170px 0 90px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-400px;left:50%;transform:translateX(-50%);width:1400px;height:1400px;background:radial-gradient(ellipse at center,rgba(59,130,246,.18) 0%,rgba(139,92,246,.1) 20%,rgba(16,185,129,.05) 40%,transparent 60%);pointer-events:none;animation:heroGlow 8s ease-in-out infinite alternate}
+.hero::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='.6' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");pointer-events:none}
+@keyframes heroGlow{0%{transform:translateX(-50%) scale(.85);opacity:.6}100%{transform:translateX(-50%) scale(1.15);opacity:1}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;border-radius:100px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);font-size:.78rem;font-weight:600;color:var(--blue-dark);margin-bottom:28px;letter-spacing:.02em;position:relative;overflow:hidden}
+.hero-eyebrow::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);animation:eyebrowShimmer 3s ease-in-out infinite}
+@keyframes eyebrowShimmer{0%{left:-100%}100%{left:200%}}
+.hero-eyebrow .eb-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:ebPulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes ebPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{box-shadow:0 0 0 6px rgba(16,185,129,0)}}
+.hero h1{font-size:clamp(2.8rem,6.5vw,4.6rem);font-weight:900;letter-spacing:-.05em;line-height:1.05;margin-bottom:10px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--blue) 0%,#818cf8 30%,var(--purple) 60%,var(--green) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 200%;animation:gradShift 6s ease-in-out infinite alternate}
+@keyframes gradShift{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.hero-tagline{font-size:clamp(1.1rem,2.2vw,1.5rem);font-weight:600;color:var(--text);letter-spacing:-.02em;margin-bottom:24px;opacity:.9}
+.hero-sub{font-size:1.05rem;color:var(--text2);max-width:640px;margin:0 auto 40px;line-height:1.8;font-weight:400}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:36px}
+.hero-metrics{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid var(--border);font-size:.82rem;font-weight:600;color:var(--text2);backdrop-filter:blur(8px);transition:all .3s}
+.hero-pill:hover{background:rgba(255,255,255,.07);border-color:var(--border2);transform:translateY(-1px)}
+.hero-pill strong{color:var(--text);font-weight:800}
+.hero-pill .pill-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hero-trust-row{display:flex;gap:24px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:8px}
+.hero-trust{display:flex;align-items:center;gap:6px;font-size:.74rem;color:var(--text3);font-weight:500;letter-spacing:.02em;text-transform:uppercase}
+.hero-trust svg{width:14px;height:14px;stroke:var(--green);flex-shrink:0}
+.scroll-hint{display:flex;justify-content:center;margin-top:40px;animation:scrollBounce 2s ease-in-out infinite}
+.scroll-hint svg{color:var(--text3);opacity:.5}
+@keyframes scrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 
-/* SECTIONS */
-.sc{padding:96px 0}
-.sc-a{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.tag{display:inline-flex;padding:5px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
-.tag-b{background:var(--blue-bg);color:var(--blue)}
-.tag-g{background:var(--green-bg);color:var(--green)}
-.tag-p{background:var(--purple-bg);color:var(--purple)}
-.tag-a{background:var(--amber-bg);color:var(--amber)}
-.st{font-size:clamp(1.9rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-.035em;line-height:1.15;margin-bottom:14px}
-.ss2{font-size:1.02rem;color:var(--text2);max-width:560px;line-height:1.75}
+/* ============ LOGO BAR ============ */
+.logo-bar{padding:40px 0;border-bottom:1px solid var(--border);overflow:hidden;position:relative}
+.logo-bar::before,.logo-bar::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.logo-bar::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.logo-bar::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.logo-bar-label{text-align:center;margin-bottom:20px;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+.logo-scroll{display:flex;gap:0;animation:logoScroll 35s linear infinite;width:max-content}
+.logo-badge{display:flex;align-items:center;gap:8px;padding:8px 28px;font-size:.82rem;font-weight:600;color:var(--text3);white-space:nowrap;opacity:.5;transition:opacity .3s}
+.logo-badge:hover{opacity:.8}
+.logo-badge .lb-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--border);font-size:.7rem;font-weight:800;color:var(--text2)}
+@keyframes logoScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* WHY CARDS */
-.wg{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:40px}
-.wc{padding:24px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);text-align:center;transition:all .35s var(--t)}
-.wc:hover{border-color:transparent;transform:translateY(-4px);box-shadow:var(--sh-lg)}
-.wc h3{font-size:.92rem;font-weight:700;margin:12px 0 6px}
-.wc p{font-size:.82rem;color:var(--text2);line-height:1.6}
-.wc-i{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto}
-.wc-i svg{width:22px;height:22px}
+/* ============ SECTIONS ============ */
+.section{padding:100px 0}
+.section-alt{background:var(--bg2);border-top:1px solid transparent;border-bottom:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent) 1}
+.tag{display:inline-flex;padding:5px 14px;border-radius:100px;font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+.tag-purple{background:var(--purple-bg);color:var(--purple)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.sec-title{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:16px}
+.sec-title-gradient{background:linear-gradient(180deg,#ffffff 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-title-color{background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sec-sub{font-size:1.05rem;color:var(--text2);max-width:580px;line-height:1.75}
 
-/* PLATFORM CARDS */
-.pg{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:44px}
-.pc{padding:28px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);transition:all .35s var(--t);position:relative;overflow:hidden}
-.pc:hover{border-color:transparent;transform:translateY(-4px);box-shadow:var(--sh-lg)}
-.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:1}
-.pc:nth-child(1)::before{background:var(--blue)}.pc:nth-child(2)::before{background:var(--green)}
-.pc:nth-child(3)::before{background:var(--purple)}.pc:nth-child(4)::before{background:var(--amber)}
-.pc-i{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.pc-i svg{width:22px;height:22px}
-.pc h3{font-size:1rem;font-weight:700;margin-bottom:8px}
-.pc p{font-size:.86rem;color:var(--text2);line-height:1.65;margin-bottom:12px}
-.pc .ep{display:inline-block;font-size:.7rem;padding:3px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--text2);margin:2px}
+/* ============ PROBLEM SECTION ============ */
+.problem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:44px}
+.problem-card{padding:32px 24px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);text-align:center;transition:all .4s var(--transition);position:relative;overflow:hidden}
+.problem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:0;transition:opacity .4s}
+.problem-card:hover{transform:translateY(-6px);box-shadow:0 0 40px rgba(239,68,68,.06),0 12px 40px rgba(0,0,0,.5);border-color:rgba(239,68,68,.2)}
+.problem-card:hover::before{opacity:1}
+.problem-card .p-num{font-size:2.2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:8px;background:linear-gradient(135deg,var(--red),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.problem-card .p-txt{font-size:.84rem;color:var(--text2);line-height:1.6}
+.problem-card .p-src{font-size:.66rem;color:var(--text3);margin-top:10px;font-style:italic}
 
-/* EXPANDABLE SERVICES */
-.more-btn{display:flex;align-items:center;justify-content:center;gap:6px;margin:28px auto 0;padding:10px 24px;border:1px solid var(--border);border-radius:var(--rx);background:var(--bg);color:var(--text2);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s var(--t)}
-.more-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
-.more-btn svg{transition:transform .3s var(--t)}
-.more-btn.open svg{transform:rotate(180deg)}
-.more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;max-height:0;overflow:hidden;transition:max-height .5s var(--t),opacity .4s;opacity:0}
-.more-grid.open{opacity:1}
-.mg-c{padding:16px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg)}
-.mg-c h4{font-size:.86rem;font-weight:600;margin-bottom:4px}
-.mg-c p{font-size:.78rem;color:var(--text3);line-height:1.5}
+/* ============ PLATFORM MODULES ============ */
+.modules{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:48px}
+.module{padding:32px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);transition:all .5s var(--transition);position:relative;overflow:hidden}
+.module:hover{transform:translateY(-6px);border-color:rgba(59,130,246,.25);box-shadow:0 0 50px rgba(59,130,246,.06),0 16px 48px rgba(0,0,0,.5)}
+.module::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));opacity:0;transition:opacity .4s var(--transition)}
+.module:hover::before{opacity:1}
+.module::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at center,rgba(59,130,246,.04),transparent 50%);opacity:0;transition:opacity .5s var(--transition);pointer-events:none}
+.module:hover::after{opacity:1}
+.mod-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.mod-icon svg{width:22px;height:22px}
+.module h3{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.module .mod-sub{font-size:.88rem;color:var(--text2);margin-bottom:18px;line-height:1.7}
+.module ul{list-style:none}
+.module li{font-size:.82rem;color:var(--text2);padding:4px 0;display:flex;align-items:center;gap:8px}
+.module li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0;background:var(--blue)}
 
-/* STEPS */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:48px;position:relative}
-.steps::before{content:'';position:absolute;top:32px;left:calc(16.66% + 16px);right:calc(16.66% + 16px);height:2px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));border-radius:1px;opacity:.3}
+/* ============ HOW IT WORKS ============ */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:52px;position:relative}
+.steps-grid::before{content:'';position:absolute;top:36px;left:calc(16.66% + 24px);right:calc(16.66% + 24px);height:2px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));border-radius:1px;opacity:.4}
 .step{text-align:center;padding:0 16px;position:relative}
-.step-n{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-weight:800;font-size:1.05rem;border:2px solid;position:relative;background:var(--bg);z-index:1}
-.step h3{font-size:1.05rem;font-weight:700;margin-bottom:8px}
-.step p{font-size:.88rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
-.step code{padding:5px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:.72rem;font-weight:500}
+.step-num{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-weight:800;font-size:1.15rem;border:2px solid;position:relative;background:var(--bg2);z-index:1;transition:all .3s var(--transition)}
+.step:hover .step-num{transform:scale(1.1)}
+.step-icon{display:block;margin:0 auto 12px;width:32px;height:32px;color:var(--text3)}
+.step h3{font-size:1.1rem;font-weight:700;margin-bottom:10px}
+.step p{font-size:.9rem;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.step code{padding:6px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;font-size:.74rem;font-weight:500}
 
-/* MOCKUPS */
-.mk-g{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
-.mk{border:1px solid var(--border);border-radius:var(--r);background:var(--bg);overflow:hidden;transition:all .4s var(--t)}
-.mk:hover{border-color:transparent;transform:translateY(-5px);box-shadow:var(--sh-lg)}
-.mk-t{padding:11px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.mk-t .dots{display:flex;gap:5px}
-.mk-t .dots span{width:9px;height:9px;border-radius:50%}
-.mk-t .dots span:nth-child(1){background:#ff5f57}.mk-t .dots span:nth-child(2){background:#ffbd2e}.mk-t .dots span:nth-child(3){background:#28c840}
-.mk-t .tl{font-size:.7rem;font-weight:600;color:var(--text3);margin-left:6px}
-.mk-b{padding:18px}
-.mt2{width:100%;font-size:.74rem}
-.mt2 .row{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
-.mt2 .row:last-child{border-bottom:none}
-.mt2 .row.hd{font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-size:.66rem}
-.mt2 .cl{flex:1;color:var(--text2)}.mt2 .cl:first-child{font-weight:600;color:var(--text)}
-.bd{display:inline-block;padding:3px 9px;border-radius:100px;font-size:.66rem;font-weight:600}
-.bd-g{background:var(--green-bg);color:var(--green)}.bd-a{background:var(--amber-bg);color:var(--amber)}
-.mb{display:flex;flex-direction:column;gap:10px}
-.mb-r{display:flex;align-items:center;gap:10px}
-.mb-l{width:82px;font-size:.72rem;font-weight:500;color:var(--text2);text-align:right;flex-shrink:0}
-.mb-t{flex:1;height:20px;background:var(--bg2);border-radius:5px;overflow:hidden;position:relative}
-.mb-f{height:100%;border-radius:5px;transition:width .8s var(--t)}
-.mb-v{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:.64rem;font-weight:700;color:var(--text)}
-.tl2{display:flex;flex-direction:column}
-.te{padding:11px 0;border-left:2px solid var(--blue);margin-left:6px;padding-left:16px;position:relative}
-.te::before{content:'';position:absolute;left:-5px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--blue);border:2px solid var(--bg)}
-.te-t{font-size:.66rem;color:var(--text3);font-weight:500}
-.te-a{font-size:.74rem;font-weight:600;color:var(--text);margin:3px 0}
-.te-h{font-size:.64rem;color:var(--text3);font-family:'JetBrains Mono',monospace}.te-h .arr{color:var(--blue);font-weight:700}
+/* ============ ARCHITECTURE DIAGRAM ============ */
+.arch-wrapper{margin-top:52px;display:flex;justify-content:center}
+.arch-diagram{position:relative;width:600px;height:600px;max-width:100%}
+.arch-ring{position:absolute;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.arch-ring-outer{width:100%;height:100%;top:0;left:0;border-color:rgba(255,255,255,.06);animation:archPulse 6s ease-in-out infinite}
+.arch-ring-mid{width:66%;height:66%;top:17%;left:17%;border-color:rgba(59,130,246,.15);background:rgba(59,130,246,.02)}
+.arch-ring-inner{width:36%;height:36%;top:32%;left:32%;border-color:rgba(139,92,246,.2);background:rgba(139,92,246,.03)}
+.arch-center{position:absolute;width:14%;height:14%;top:43%;left:43%;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(59,130,246,.3),0 0 80px rgba(139,92,246,.15);z-index:3}
+.arch-center span{font-size:.6rem;font-weight:800;color:#fff;text-align:center;line-height:1.2;letter-spacing:.02em}
+@keyframes archPulse{0%,100%{border-color:rgba(255,255,255,.06)}50%{border-color:rgba(59,130,246,.12)}}
+.arch-label{position:absolute;font-size:.68rem;font-weight:600;color:var(--text3);white-space:nowrap;z-index:4;background:var(--bg);padding:2px 8px;border-radius:4px;border:1px solid var(--border)}
+.arch-label-highlight{color:var(--blue);border-color:rgba(59,130,246,.2)}
+.arch-mid-label{position:absolute;font-size:.62rem;font-weight:700;color:var(--blue-light);text-align:center;z-index:4;background:rgba(17,24,39,.8);padding:4px 10px;border-radius:6px;border:1px solid rgba(59,130,246,.15);letter-spacing:.02em;white-space:nowrap}
+.arch-inner-label{position:absolute;font-size:.6rem;font-weight:600;color:var(--purple);z-index:4;background:rgba(17,24,39,.8);padding:3px 8px;border-radius:4px}
 
-/* DIFF CARDS */
-.dg{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:40px}
-.dc{padding:28px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);transition:all .35s var(--t)}
-.dc:hover{box-shadow:var(--sh);border-color:transparent;transform:translateY(-2px)}
-.dc h3{font-size:.94rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.dc h3 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.d-o{font-size:.84rem;color:var(--text);line-height:1.65;margin-bottom:12px;padding:12px 16px;background:var(--blue-bg);border-radius:var(--rx);border-left:3px solid var(--blue)}
-.d-t{font-size:.84rem;color:var(--text3);line-height:1.65;padding:12px 16px;background:var(--bg2);border-radius:var(--rx);border-left:3px solid var(--border)}
+/* ============ COMPARISON TABLE ============ */
+.compare-table{margin-top:48px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg2)}
+.compare-row{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);transition:background .2s}
+.compare-row:last-child{border-bottom:none}
+.compare-row:hover{background:rgba(255,255,255,.02)}
+.compare-row.header{background:var(--bg);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+.compare-cell{padding:16px 20px;font-size:.86rem;color:var(--text2);display:flex;align-items:center;gap:8px;border-right:1px solid var(--border)}
+.compare-cell:last-child{border-right:none}
+.compare-cell.label{font-weight:600;color:var(--text)}
+.compare-cell.highlight{color:var(--text);font-weight:600;background:rgba(59,130,246,.04)}
+.c-check{color:var(--green);font-weight:700;font-size:1rem}
+.c-x{color:var(--red);font-weight:700;font-size:1rem;opacity:.6}
+.c-meh{color:var(--amber);font-weight:700;font-size:1rem}
 
-/* USE CASES */
-.ug{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
-.uc{padding:28px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);transition:all .35s var(--t)}
-.uc:hover{box-shadow:var(--sh);border-color:transparent}
-.uc-ind{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-.uc h3{font-size:1rem;font-weight:700;margin-bottom:8px}
-.uc p{font-size:.86rem;color:var(--text2);line-height:1.7}
-.uc-r{margin-top:14px;padding:12px 16px;background:var(--green-bg);border-radius:var(--rx);font-size:.82rem;color:var(--green);font-weight:600;border-left:3px solid var(--green)}
+/* ============ FRAMEWORK GRID ============ */
+.fw-cats{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;margin-bottom:24px;justify-content:center}
+.fw-cat{padding:6px 16px;border-radius:100px;font-size:.76rem;font-weight:600;border:1px solid var(--border);color:var(--text3);cursor:pointer;transition:all .25s var(--transition)}
+.fw-cat:hover,.fw-cat.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.fw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-top:20px}
+.fw{padding:16px;border:1px solid var(--border);border-radius:var(--radius-xs);background:var(--bg);text-align:center;transition:all .3s var(--transition);position:relative;overflow:hidden}
+.fw:hover{border-color:var(--blue);transform:translateY(-3px);box-shadow:0 4px 16px rgba(0,0,0,.3),0 0 20px rgba(59,130,246,.06)}
+.fw-name{font-size:.84rem;font-weight:700}
+.fw-jur{font-size:.68rem;color:var(--text3);margin-top:3px}
+.fw-cat-tag{font-size:.58rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:6px;opacity:0;transition:opacity .3s}
+.fw:hover .fw-cat-tag{opacity:1}
 
-/* FRAMEWORKS */
-.fw-g{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:32px}
-.fw{padding:8px 16px;border:1px solid var(--border);border-radius:100px;font-size:.82rem;font-weight:600;background:var(--bg);transition:all .2s}
-.fw:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+/* ============ TESTIMONIALS ============ */
+.testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.testimonial{padding:32px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,.02);backdrop-filter:blur(8px);transition:all .4s var(--transition);position:relative}
+.testimonial:hover{border-color:rgba(59,130,246,.2);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.testimonial-quote{font-size:.92rem;color:var(--text2);line-height:1.75;font-style:italic;margin-bottom:20px;position:relative;padding-left:20px;border-left:2px solid var(--blue)}
+.testimonial-author{display:flex;align-items:center;gap:12px}
+.testimonial-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:#fff;flex-shrink:0}
+.testimonial-info .t-name{font-size:.86rem;font-weight:700;color:var(--text)}
+.testimonial-info .t-role{font-size:.76rem;color:var(--text3)}
+.testimonial-stars{display:flex;gap:2px;margin-bottom:16px}
+.testimonial-stars svg{width:14px;height:14px;fill:var(--amber);stroke:none}
 
-/* FAQ */
-.fq{border-bottom:1px solid var(--border);padding:20px 0}
-.fq-q{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;font-size:.94rem;font-weight:600;color:var(--text);text-align:left;padding:0;cursor:pointer;transition:color .2s;font-family:inherit}
-.fq-q:hover{color:var(--blue)}
-.fq-q span{color:var(--text3);font-size:1.1rem;width:28px;height:28px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s var(--t)}
-.fq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--t)}
-.fq-a p{padding-top:10px;font-size:.88rem;color:var(--text2);line-height:1.75}
+/* ============ PRODUCT PREVIEW ============ */
+.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:48px}
+.preview-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);overflow:hidden;transition:all .4s var(--transition)}
+.preview-card:hover{border-color:rgba(139,92,246,.2);transform:translateY(-5px);box-shadow:0 0 30px rgba(139,92,246,.06),0 12px 40px rgba(0,0,0,.5)}
+.preview-titlebar{padding:11px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.preview-titlebar .dots{display:flex;gap:5px}
+.preview-titlebar .dots span{width:9px;height:9px;border-radius:50%;background:var(--border2)}
+.preview-titlebar .dots span:first-child{background:#ff5f57}
+.preview-titlebar .dots span:nth-child(2){background:#ffbd2e}
+.preview-titlebar .dots span:last-child{background:#28c840}
+.preview-titlebar .tab-label{font-size:.7rem;font-weight:600;color:var(--text3);margin-left:6px}
+.preview-body{padding:18px}
+.mock-table{width:100%;font-size:.74rem}
+.mock-table .row{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.mock-table .row:last-child{border-bottom:none}
+.mock-table .row.header{font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-size:.66rem}
+.mock-table .cell{flex:1;color:var(--text2)}
+.mock-table .cell:first-child{font-weight:600;color:var(--text)}
+.badge{display:inline-block;padding:3px 9px;border-radius:100px;font-size:.66rem;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.mock-bars{display:flex;flex-direction:column;gap:10px}
+.mock-bar-row{display:flex;align-items:center;gap:10px}
+.mock-bar-label{width:82px;font-size:.72rem;font-weight:500;color:var(--text2);text-align:right;flex-shrink:0}
+.mock-bar-track{flex:1;height:20px;background:var(--bg2);border-radius:5px;overflow:hidden;position:relative}
+.mock-bar-fill{height:100%;border-radius:5px;transition:width .8s var(--transition)}
+.mock-bar-val{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:.64rem;font-weight:700;color:var(--text)}
+.mock-timeline{display:flex;flex-direction:column;gap:0}
+.mock-entry{padding:11px 0;border-left:2px solid var(--blue);margin-left:6px;padding-left:16px;position:relative}
+.mock-entry::before{content:'';position:absolute;left:-5px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--blue);border:2px solid var(--bg)}
+.mock-entry .entry-time{font-size:.66rem;color:var(--text3);font-weight:500}
+.mock-entry .entry-action{font-size:.74rem;font-weight:600;color:var(--text);margin:3px 0}
+.mock-entry .entry-hash{font-size:.64rem;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:.02em}
+.mock-entry .chain-arrow{color:var(--blue);font-weight:700}
 
-/* CTA */
-.cta{padding:100px 0;text-align:center;position:relative;overflow:hidden}
-.cta::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--bg),var(--bg2))}
-.cta::after{content:'';position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.05) 0%,transparent 60%);pointer-events:none}
-.cta>*{position:relative;z-index:1}
-.cta h2{font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-.03em;margin-bottom:12px}
-.cta p{font-size:1.02rem;color:var(--text2);margin-bottom:32px}
-.cta-r{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+/* ============ FAQ ============ */
+.faq-item{border-bottom:1px solid var(--border);padding:22px 0}
+.faq-q{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;font-size:.96rem;font-weight:600;color:var(--text);text-align:left;padding:0;cursor:pointer;transition:color .2s;gap:12px}
+.faq-q:hover{color:var(--blue)}
+.faq-q .faq-icon{color:var(--text3);font-size:1.2rem;transition:transform .3s var(--transition);display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--bg2);flex-shrink:0;border:1px solid var(--border)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s var(--transition)}
+.faq-a p{padding-top:12px;font-size:.9rem;color:var(--text2);line-height:1.75}
 
-/* FOOTER */
-.ft{padding:56px 0 28px;border-top:1px solid var(--border)}
-.ft-g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
-.ft-b p{font-size:.84rem;color:var(--text3);line-height:1.65;max-width:250px;margin-top:10px}
-.ft-bd{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600;color:var(--text3);margin-top:14px}
-.fc h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
-.fc a{display:block;font-size:.84rem;color:var(--text2);padding:3px 0;transition:color .2s}
-.fc a:hover{color:var(--blue)}
-.ft-bt{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text3)}
-.ft-lk{display:flex;gap:20px}
-.ft-lk a{color:var(--text3);transition:color .2s}.ft-lk a:hover{color:var(--text2)}
+/* ============ PRICING ============ */
+.pricing{padding:100px 0}
+.section-title{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:16px;text-align:center;background:linear-gradient(180deg,#ffffff 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.section-sub{font-size:1.05rem;color:var(--text2);text-align:center;max-width:560px;margin:0 auto;line-height:1.75}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px}
+.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px 32px;position:relative;transition:all .4s var(--transition)}
+.price-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.price-card.featured{border-color:transparent;background:linear-gradient(var(--bg2),var(--bg2)) padding-box,linear-gradient(135deg,var(--blue),var(--purple)) border-box;border:2px solid transparent;box-shadow:0 0 50px rgba(59,130,246,.1),0 12px 40px rgba(0,0,0,.3)}
+.price-card.featured:hover{box-shadow:0 0 60px rgba(59,130,246,.18),0 16px 48px rgba(0,0,0,.5)}
+.price-badge{display:inline-block;padding:4px 14px;border-radius:100px;font-size:.7rem;font-weight:700;background:linear-gradient(135deg,var(--blue-bg),var(--purple-bg));color:var(--blue-light);margin-bottom:16px;border:1px solid rgba(59,130,246,.2)}
+.price-card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px}
+.price-amount{font-size:2.8rem;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:4px}
+.price-amount .price-suffix{font-size:.9rem;font-weight:500;color:var(--text3)}
+.price-sub{font-size:.86rem;color:var(--text2);margin-bottom:28px;line-height:1.6}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.price-features li{font-size:.86rem;color:var(--text2);display:flex;align-items:center;gap:8px;line-height:1.5}
+.price-features li svg{width:16px;height:16px;flex-shrink:0;stroke:var(--green)}
+.price-cta{display:block;width:100%;text-align:center;padding:14px 24px;border-radius:var(--radius-xs);font-size:.92rem;font-weight:600;cursor:pointer;transition:all .25s var(--transition);border:none;text-decoration:none}
+.price-cta-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.price-cta-ghost:hover{background:var(--bg3);border-color:var(--border2);color:var(--text)}
+.price-cta-fill{background:linear-gradient(135deg,var(--blue),#6366f1);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.price-cta-fill:hover{box-shadow:0 6px 20px rgba(59,130,246,.4)}
 
-/* RESPONSIVE */
-@media(max-width:1024px){.wg{grid-template-columns:repeat(3,1fr)}.pg,.mk-g{grid-template-columns:1fr}.dg,.ug{grid-template-columns:1fr}.ft-g{grid-template-columns:1fr 1fr}.steps::before{display:none}.more-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){.sc{padding:64px 0}.nl,.nav-r .btn-g{display:none}.mt{display:block}.wg{grid-template-columns:1fr}.ss-r{grid-template-columns:repeat(2,1fr)}.si:not(:last-child)::after{display:none}.ft-g{grid-template-columns:1fr;gap:28px}.ft-bt{flex-direction:column;gap:10px;text-align:center}.hero h1{font-size:2.2rem}.hero-p{flex-direction:column;gap:10px}.steps{grid-template-columns:1fr;gap:40px}.mk-g{grid-template-columns:1fr}.more-grid{grid-template-columns:1fr}.ls-r{gap:24px}}
-@media(max-width:480px){.ss-r{grid-template-columns:1fr}.hero-c{flex-direction:column}.hero-c a{width:100%;justify-content:center}}
+/* ============ CTA ============ */
+.cta-section{padding:120px 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);z-index:0}
+.cta-section::after{content:'';position:absolute;bottom:-200px;left:50%;transform:translateX(-50%);width:1100px;height:1100px;background:radial-gradient(ellipse at center,rgba(59,130,246,.12) 0%,rgba(139,92,246,.06) 30%,transparent 60%);pointer-events:none;animation:heroGlow 10s ease-in-out infinite alternate}
+.cta-section>*{position:relative;z-index:1}
+.cta-section h2{font-size:clamp(2rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.04em;margin-bottom:14px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cta-section p{font-size:1.08rem;color:var(--text2);margin-bottom:36px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.7}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-note{font-size:.82rem;color:var(--text3);margin-top:20px}
+
+/* ============ TRUST STRIP ============ */
+.trust-strip{padding:16px 0;background:var(--bg);border-bottom:1px solid var(--border)}
+.trust-row{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;align-items:center}
+.trust-row span{font-size:.76rem;color:var(--text3);font-weight:500;display:flex;align-items:center;gap:6px}
+.trust-row span svg{width:14px;height:14px;stroke:var(--green)}
+
+/* ============ STATS STRIP ============ */
+.stats-strip{padding:56px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stat-item{position:relative}
+.stat-item:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--border)}
+.s-label{font-size:.84rem;color:var(--text2);margin-top:6px;font-weight:500}
+
+/* ============ FOOTER ============ */
+.footer{padding:60px 0 28px;border-top:1px solid transparent;border-image:linear-gradient(90deg,transparent,rgba(59,130,246,.3),transparent) 1}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand p{font-size:.84rem;color:var(--text3);line-height:1.65;max-width:260px;margin-top:12px}
+.footer-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600;color:var(--text3);margin-top:10px}
+.fcol h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:14px}
+.fcol a{display:block;font-size:.84rem;color:var(--text2);padding:4px 0;transition:color .2s}
+.fcol a:hover{color:var(--blue)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:20px;border-top:1px solid var(--border);font-size:.76rem;color:var(--text3)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text2)}
+
+/* ============ LIVE PIPELINE ============ */
+.pipeline-container{margin-top:52px;position:relative;overflow:hidden;padding:32px 0}
+.pipeline-track{display:flex;align-items:center;gap:0;position:relative;justify-content:center}
+.pipeline-node{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:2;flex:0 0 auto;width:150px}
+.pipeline-card{width:100%;padding:18px 14px;border-radius:var(--radius-sm);background:rgba(255,255,255,.03);border:1px solid var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);text-align:center;transition:all .6s var(--transition);position:relative;overflow:hidden}
+.pipeline-card::before{content:'';position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .6s var(--transition)}
+.pipeline-node.active .pipeline-card{border-color:rgba(255,255,255,.2);box-shadow:0 0 30px var(--node-glow, rgba(59,130,246,.2)),0 8px 32px rgba(0,0,0,.4)}
+.pipeline-node.active .pipeline-card::before{opacity:1}
+.pipeline-node[data-color="blue"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(59,130,246,.1),transparent 70%)}
+.pipeline-node[data-color="purple"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(139,92,246,.1),transparent 70%)}
+.pipeline-node[data-color="green"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(16,185,129,.1),transparent 70%)}
+.pipeline-node[data-color="red"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(239,68,68,.1),transparent 70%)}
+.pipeline-node[data-color="amber"] .pipeline-card::before{background:radial-gradient(ellipse at center,rgba(245,158,11,.1),transparent 70%)}
+.pipeline-card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:1px solid var(--border);transition:all .6s var(--transition)}
+.pipeline-node.active .pipeline-card-icon{border-color:transparent}
+.pipeline-node[data-color="blue"] .pipeline-card-icon{background:var(--blue-bg);color:var(--blue)}
+.pipeline-node[data-color="purple"] .pipeline-card-icon{background:var(--purple-bg);color:var(--purple)}
+.pipeline-node[data-color="green"] .pipeline-card-icon{background:var(--green-bg);color:var(--green)}
+.pipeline-node[data-color="red"] .pipeline-card-icon{background:var(--red-bg);color:var(--red)}
+.pipeline-node[data-color="amber"] .pipeline-card-icon{background:var(--amber-bg);color:var(--amber)}
+.pipeline-card-title{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;transition:color .4s}
+.pipeline-node.active .pipeline-card-title{color:var(--text)}
+.pipeline-card-value{font-size:.78rem;font-weight:600;color:var(--text2);min-height:1.4em;opacity:0;transform:translateY(6px);transition:all .4s var(--transition)}
+.pipeline-node.active .pipeline-card-value{opacity:1;transform:translateY(0)}
+.pipeline-connector{width:36px;height:2px;position:relative;flex-shrink:0;z-index:1}
+.pipeline-connector-line{position:absolute;top:0;left:0;right:0;height:2px;background:var(--border);border-radius:1px}
+.pipeline-connector-progress{position:absolute;top:0;left:0;width:0%;height:2px;border-radius:1px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .4s var(--transition)}
+.pipeline-connector.active .pipeline-connector-progress{width:100%}
+.pipeline-connector-dot{position:absolute;top:50%;left:0%;width:8px;height:8px;border-radius:50%;background:var(--blue);transform:translate(-50%,-50%);opacity:0;box-shadow:0 0 12px var(--blue);transition:left .4s linear}
+.pipeline-connector.animating .pipeline-connector-dot{opacity:1;left:100%}
+.pipeline-badge{margin-top:40px;text-align:center;display:flex;justify-content:center}
+.pipeline-badge-inner{display:inline-flex;align-items:center;gap:10px;padding:10px 28px;border-radius:100px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green)}
+.pipeline-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pipelineBadgePulse 2s ease-in-out infinite}
+@keyframes pipelineBadgePulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.pipeline-scenario{text-align:center;margin-top:20px;min-height:24px}
+.pipeline-scenario-text{font-size:.82rem;font-weight:600;color:var(--text3);opacity:0;transition:opacity .4s var(--transition)}
+.pipeline-scenario-text.visible{opacity:1}
+.pipeline-counter{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.pipeline-dot-indicator{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s var(--transition)}
+.pipeline-dot-indicator.active{background:var(--blue);box-shadow:0 0 8px var(--blue)}
+
+/* ============ FLOATING ORBS ============ */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:.35;will-change:transform}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(59,130,246,.18),transparent 70%);top:-100px;left:-100px;animation:orbFloat1 20s ease-in-out infinite alternate}
+.orb-2{width:400px;height:400px;background:radial-gradient(circle,rgba(139,92,246,.14),transparent 70%);bottom:-50px;right:-80px;animation:orbFloat2 25s ease-in-out infinite alternate}
+.orb-3{width:300px;height:300px;background:radial-gradient(circle,rgba(16,185,129,.1),transparent 70%);top:40%;right:10%;animation:orbFloat3 18s ease-in-out infinite alternate}
+@keyframes orbFloat1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes orbFloat2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-60px,-80px) scale(1.1)}}
+@keyframes orbFloat3{0%{transform:translate(0,0) scale(.9)}100%{transform:translate(-40px,50px) scale(1.05)}}
+
+/* ============ GRAIN TEXTURE OVERLAY ============ */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
+
+/* ============ ANIMATED COUNTER ============ */
+.s-num{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:transform .3s var(--transition)}
+.stat-item:hover .s-num{transform:scale(1.08)}
+
+/* ============ ENHANCED CARD GLASS ============ */
+.problem-card,.testimonial,.price-card{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.price-card.featured{background:linear-gradient(var(--bg2),var(--bg2)) padding-box,linear-gradient(135deg,var(--blue),var(--purple),var(--green)) border-box;animation:featuredShimmer 4s ease-in-out infinite alternate}
+@keyframes featuredShimmer{0%{box-shadow:0 0 50px rgba(59,130,246,.1),0 12px 40px rgba(0,0,0,.3)}100%{box-shadow:0 0 60px rgba(139,92,246,.15),0 16px 48px rgba(0,0,0,.4)}}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1024px){
+  .modules{grid-template-columns:1fr 1fr}
+  .problem-grid{grid-template-columns:repeat(2,1fr)}
+  .testimonial-grid{grid-template-columns:1fr}
+  .preview-grid{grid-template-columns:1fr}
+  .compare-row{grid-template-columns:1.2fr 1fr 1fr 1fr;font-size:.8rem}
+  .compare-cell{padding:12px 14px;font-size:.78rem}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .steps-grid::before{display:none}
+  .pipeline-track{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 20px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .pipeline-track::-webkit-scrollbar{display:none}
+  .pipeline-node{width:130px;min-width:130px}
+  .pipeline-connector{width:24px;min-width:24px}
+  .arch-diagram{width:400px;height:400px}
+  .arch-label,.arch-mid-label,.arch-inner-label{font-size:.56rem}
+  .pricing-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .section{padding:72px 0}
+  .nav-links{display:none}
+  .nav-ctas .btn-ghost{display:none}
+  .mobile-toggle{display:block}
+  .modules,.problem-grid{grid-template-columns:1fr}
+  .pipeline-track{flex-direction:column;align-items:center;gap:0}
+  .pipeline-node{width:100%;max-width:280px;min-width:0}
+  .pipeline-connector{width:2px;height:28px;min-width:2px}
+  .pipeline-connector-line{width:2px;height:100%;top:0;left:50%;transform:translateX(-50%)}
+  .pipeline-connector-progress{width:2px!important;height:0%;left:50%;transform:translateX(-50%);transition:height .4s var(--transition)}
+  .pipeline-connector.active .pipeline-connector-progress{height:100%;width:2px!important}
+  .pipeline-connector-dot{left:50%!important;top:0%;transform:translate(-50%,-50%)}
+  .pipeline-connector.animating .pipeline-connector-dot{top:100%;left:50%!important}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .stat-item:not(:last-child)::after{display:none}
+  .fw-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+  .hero h1{font-size:2.4rem}
+  .hero{padding:150px 0 60px}
+  .hero-metrics{flex-direction:column;align-items:center;gap:8px}
+  .steps-grid{grid-template-columns:1fr;gap:40px}
+  .compare-row{grid-template-columns:1fr;gap:0}
+  .compare-cell{border-right:none;border-bottom:1px solid var(--border);padding:10px 16px}
+  .compare-cell.label{background:var(--bg);font-weight:700}
+  .compare-row.header{display:none}
+  .arch-diagram{width:300px;height:300px}
+  .arch-label,.arch-mid-label,.arch-inner-label{font-size:.5rem;padding:2px 4px}
+  .pricing-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
+  .testimonial-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr}
+  .fw-grid{grid-template-columns:1fr}
+  .hero-ctas{flex-direction:column}
+  .hero-ctas a{width:100%;justify-content:center}
+  .arch-diagram{width:260px;height:260px}
+}
+
+/* ============ SKIP TO CONTENT ============ */
+.sr-only{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:10000}
+.sr-only:focus{position:fixed;top:8px;left:8px;width:auto;height:auto;padding:12px 24px;background:var(--bg);color:var(--text);border:2px solid var(--blue);border-radius:8px;font-size:1rem;z-index:10000}
 </style>
+<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "GovernLayer",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Cloud",
+  "description": "Autonomous AI governance platform. Assess compliance across 29 frameworks including SOC 2, EU AI Act, and NIST. Real-time drift detection and tamper-proof audit trails.",
+  "url": "https://www.governlayer.ai",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Free tier — up to 3 AI models"
+  },
+  "creator": {
+    "@type": "Organization",
+    "name": "GovernLayer Inc.",
+    "url": "https://www.governlayer.ai"
+  },
+  "featureList": [
+    "SOC 2 Compliance Scanning",
+    "EU AI Act Assessment",
+    "NIST Framework Evaluation",
+    "Real-time Behavioral Drift Detection",
+    "Tamper-proof Audit Ledger",
+    "Multi-LLM Consensus Engine",
+    "Risk Scoring",
+    "Cedar-Style Runtime Agent Control",
+    "Secretless Credential Vault",
+    "Vendor Risk Management",
+    "Vendor Security Questionnaire",
+    "GitHub Actions Integration",
+    "LangChain Middleware"
+  ]
+}
+</script>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav" id="nav">
-<div class="nav-in">
-<a href="/" class="logo"><div class="logo-m"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h8M8 4v8"/></svg></div>GovernLayer</a>
-<ul class="nl">
-<li><a href="#platform">Platform</a></li>
-<li><a href="#frameworks">Frameworks</a></li>
-<li><a href="#differentiators">Why Us</a></li>
-<li><a href="/docs">Docs</a></li>
-<li><a href="#faq">FAQ</a></li>
-</ul>
-<div class="nav-r">
-<a href="/demo" class="btn btn-g">Get a Demo</a>
-<a href="/signup?plan=free" class="btn btn-f">Start Free</a>
+<a href="#main-content" class="sr-only">Skip to content</a>
+
+<!-- Floating Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Notification Bar -->
+<div class="notif-bar" aria-hidden="true">
+  <div class="notif-track">
+    <span>Patent Pending &middot; USPTO GOVERNLAYER-001</span>
+    <span>29 Compliance Frameworks &middot; 90 Policies</span>
+    <span>Hosted on SOC 2 Certified Infrastructure</span>
+    <span>EU AI Act Enforcement Begins Aug 2026</span>
+    <span>Multi-LLM Consensus Engine</span>
+    <span>SHA-256 Hash-Chained Audit Trails</span>
+    <span>Patent Pending &middot; USPTO GOVERNLAYER-001</span>
+    <span>29 Compliance Frameworks &middot; 90 Policies</span>
+    <span>Hosted on SOC 2 Certified Infrastructure</span>
+    <span>EU AI Act Enforcement Begins Aug 2026</span>
+    <span>Multi-LLM Consensus Engine</span>
+    <span>SHA-256 Hash-Chained Audit Trails</span>
+  </div>
 </div>
-<button class="mt" id="mobileToggle" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-</div>
+
+<!-- Nav -->
+<nav class="nav" id="nav" aria-label="Navigation">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" role="img" aria-label="GovernLayer logo"><path d="M4 8h8M8 4v8"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="#platform">Product</a></li>
+      <li><a href="#frameworks">Frameworks</a></li>
+      <li><a href="#comparison">Why Us</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="/trust">Trust Center</a></li>
+      <li><a href="/audit-portal" style="color:var(--green)">Audit Portal</a></li>
+      <li><a href="/blog">Blog</a></li>
+    </ul>
+    <div class="nav-ctas">
+      <a href="/login" class="btn btn-ghost">Log In</a>
+      <a href="/signup?plan=free" class="btn btn-fill">Start Free</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-<div class="c">
-<h1 class="rv">Autonomous compliance<br><span class="ac">for every AI system.</span></h1>
-<p class="hero-s rv rv2">Continuously monitor, audit, and govern AI agents across 29 regulatory frameworks — with cryptographic proof your auditor can verify.</p>
-<div class="hero-c rv rv3">
-<a href="/signup?plan=free" class="btn btn-f btn-l">Start Free — No Credit Card</a>
-<a href="/demo" class="btn btn-g btn-l">Book a Demo <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#platform">Product</a>
+  <a href="#frameworks">Frameworks</a>
+  <a href="#comparison">Why Us</a>
+  <a href="#pricing">Pricing</a>
+  <a href="/trust">Trust Center</a>
+  <a href="/audit-portal" style="color:var(--green)">Audit Portal</a>
+  <a href="/blog">Blog</a>
+  <div class="mobile-menu-ctas" style="display:flex;gap:10px;margin-top:12px">
+    <a href="/login" class="btn btn-ghost" style="flex:1;justify-content:center">Log In</a>
+    <a href="/signup?plan=free" class="btn btn-fill" style="flex:1;justify-content:center">Start Free</a>
+  </div>
 </div>
-<div class="hero-p rv rv4">
-<span><strong>Free tier</strong> — up to 3 AI models</span>
-<span><strong>29</strong> Compliance Frameworks</span>
-<span><strong>100%</strong> Audit Trail Integrity</span>
-</div>
-</div>
+
+<!-- Hero -->
+<main>
+<section class="hero" id="main-content">
+  <div class="container">
+    <div class="hero-eyebrow reveal"><span class="eb-dot"></span> EU AI Act enforcement begins August 2026 &mdash; Are you ready?</div>
+    <h1 class="reveal">Your AI agents are making<br>decisions <span class="accent">right now.</span><br>Who&rsquo;s watching?</h1>
+    <p class="hero-sub reveal reveal-delay-1">GovernLayer monitors every AI action in real time, enforces compliance across 29 regulatory frameworks, and gives auditors a tamper-proof record of every decision your AI has ever made. Deploy with confidence. Prove it to regulators.</p>
+    <div class="hero-ctas reveal reveal-delay-2">
+      <a href="/signup?plan=free" class="btn btn-fill btn-lg">Start Free <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo</a>
+    </div>
+    <div class="hero-trust-row reveal reveal-delay-3" style="margin-top:32px;">
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> SOC 2 Infrastructure</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/></svg> EU AI Act Ready</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Tamper-Proof Audit Trail</div>
+      <div class="hero-trust"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Works With Any LLM</div>
+    </div>
+    <div class="scroll-hint reveal reveal-delay-4">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+    </div>
+  </div>
 </section>
 
-<!-- LOGO STRIP -->
-<section class="ls">
-<div class="c">
-<div class="ls-l">Works with your stack</div>
-<div class="ls-r">
-<div class="ls-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub Actions</div>
-<div class="ls-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83"/></svg>LangChain</div>
-<div class="ls-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>PostgreSQL</div>
-<div class="ls-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Docker / K8s</div>
-<div class="ls-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Ollama</div>
-<div class="ls-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>OpenAPI</div>
-</div>
-</div>
+<!-- Framework Standards Bar -->
+<section class="logo-bar">
+  <div class="logo-bar-label">Compliance frameworks we enforce</div>
+  <div class="logo-scroll" id="logoScroll">
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">EU</div>EU AI Act</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#10b981,#059669);">NI</div>NIST AI RMF</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">S2</div>SOC 2 Type II</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">IS</div>ISO 42001</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">HP</div>HIPAA</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">GD</div>GDPR</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">OW</div>OWASP ML</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#14b8a6,#0d9488);">MI</div>MITRE ATLAS</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb);">EU</div>EU AI Act</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#10b981,#059669);">NI</div>NIST AI RMF</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">S2</div>SOC 2 Type II</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">IS</div>ISO 42001</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">HP</div>HIPAA</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">GD</div>GDPR</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);">OW</div>OWASP ML</div>
+    <div class="logo-badge"><div class="lb-icon" style="background:linear-gradient(135deg,#14b8a6,#0d9488);">MI</div>MITRE ATLAS</div>
+  </div>
 </section>
 
-<!-- STATS -->
-<section class="ss">
-<div class="c">
-<div class="ss-r">
-<div class="si rv"><div class="sn">17</div><div class="sl">Platform Services</div></div>
-<div class="si rv rv2"><div class="sn">&lt;60 min</div><div class="sl">To First Audit Report</div></div>
-<div class="si rv rv3"><div class="sn">29</div><div class="sl">Compliance Frameworks</div></div>
-<div class="si rv rv4"><div class="sn">SHA-256</div><div class="sl">Hash-Chained Ledger</div></div>
-</div>
-</div>
+<!-- Problem Section -->
+<section class="section" id="problem">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-red">The Problem</div>
+      <h2 class="sec-title sec-title-color">The AI Governance Gap</h2>
+      <p class="sec-sub" style="margin:0 auto">AI is moving faster than governance can keep up. Most enterprises have deployed AI agents with no audit trail, no behavioral monitoring, and no compliance documentation.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <div class="p-num" data-count="60" data-suffix="%">60%</div>
+        <div class="p-txt">of enterprises scaling AI lack a formal governance framework in place.</div>
+        <div class="p-src">MIT Sloan Management Review 2025</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="p-num">11-20hrs</div>
+        <div class="p-txt">per week spent on manual compliance reviews and documentation per team.</div>
+        <div class="p-src">Gartner AI Governance Report</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="p-num" data-count="89" data-suffix="%">89%</div>
+        <div class="p-txt">report urgent need for AI governance at scale as regulations accelerate.</div>
+        <div class="p-src">World Economic Forum 2025</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="p-num">$4.2M</div>
+        <div class="p-txt">average cost of AI compliance failure including fines, remediation, and reputation.</div>
+        <div class="p-src">IBM Cost of AI Risk Study</div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- TRUST -->
-<div class="ts">
-<div class="c">
-<div class="ts-r">
-<span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Runs on Railway (SOC 2)</span>
-<span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>PostgreSQL Encrypted</span>
-<span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>TLS 1.2+</span>
-<span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Zero PII in Logs</span>
-</div>
-</div>
-</div>
-
-<!-- WHY GOVERNLAYER -->
-<section class="sc">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-b">Why GovernLayer</div>
-<h2 class="st">Everything your auditor will ask for. Automated.</h2>
-</div>
-<div class="wg">
-<div class="wc rv">
-<div class="wc-i" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-<h3>Real-Time Governance</h3>
-<p>In the decision path, not after the fact. Veto before output reaches users.</p>
-</div>
-<div class="wc rv rv2">
-<div class="wc-i" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-<h3>Cryptographic Proof</h3>
-<p>SHA-256 hash-chained audit trail. Not PDFs. Not screenshots.</p>
-</div>
-<div class="wc rv rv3">
-<div class="wc-i" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
-<h3>Multi-LLM Consensus</h3>
-<p>14 models validate every critical decision. No single point of failure.</p>
-</div>
-<div class="wc rv rv4">
-<div class="wc-i" style="background:var(--red-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-<h3>Fail-Closed Safety</h3>
-<p>Blocks risky decisions when systems degrade. Never fails open.</p>
-</div>
-<div class="wc rv">
-<div class="wc-i" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
-<h3>Air-Gapped Ready</h3>
-<p>Self-host with Ollama. Zero external API calls. Your data never leaves.</p>
-</div>
-</div>
-</div>
+<!-- Live Pipeline Animation -->
+<section class="section section-alt" id="live-pipeline">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">See It Work</div>
+      <h2 class="sec-title sec-title-gradient">Every AI Decision. Governed in Under 3 Seconds.</h2>
+      <p class="sec-sub" style="margin:0 auto">Watch a real governance pipeline: intercept an AI action, check it against your policies, score the risk, record the decision. No humans in the loop unless you want them.</p>
+    </div>
+    <div class="pipeline-container reveal reveal-delay-1">
+      <div class="pipeline-track" id="pipelineTrack">
+        <div class="pipeline-node" data-color="blue" data-stage="0">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div class="pipeline-card-title">Intercept</div>
+            <div class="pipeline-card-value" id="pipe-val-0"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="purple" data-stage="1">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div class="pipeline-card-title">Policy Check</div>
+            <div class="pipeline-card-value" id="pipe-val-1"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="blue" data-stage="2">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div class="pipeline-card-title">Drift Scan</div>
+            <div class="pipeline-card-value" id="pipe-val-2"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="green" data-stage="3">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="pipeline-card-title">Risk Score</div>
+            <div class="pipeline-card-value" id="pipe-val-3"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="green" data-stage="4">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+            <div class="pipeline-card-title">Decision</div>
+            <div class="pipeline-card-value" id="pipe-val-4"></div>
+          </div>
+        </div>
+        <div class="pipeline-connector"><div class="pipeline-connector-line"></div><div class="pipeline-connector-progress"></div><div class="pipeline-connector-dot"></div></div>
+        <div class="pipeline-node" data-color="amber" data-stage="5">
+          <div class="pipeline-card">
+            <div class="pipeline-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <div class="pipeline-card-title">Ledger</div>
+            <div class="pipeline-card-value" id="pipe-val-5"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pipeline-scenario"><div class="pipeline-scenario-text" id="pipelineScenario"></div></div>
+      <div class="pipeline-counter" id="pipelineCounter">
+        <div class="pipeline-dot-indicator active"></div>
+        <div class="pipeline-dot-indicator"></div>
+        <div class="pipeline-dot-indicator"></div>
+      </div>
+    </div>
+    <div class="pipeline-badge reveal reveal-delay-2">
+      <div class="pipeline-badge-inner">
+        <span class="pipeline-badge-dot"></span>
+        FULLY AUTONOMOUS — ZERO HUMAN INTERVENTION REQUIRED
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- PLATFORM -->
-<section class="sc sc-a" id="platform">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-b">Platform</div>
-<h2 class="st">17 services. One API. Complete governance.</h2>
-<p class="ss2" style="margin:0 auto">Everything an enterprise needs to govern AI at scale — from discovery to audit-ready proof.</p>
-</div>
-<div class="pg">
-<div class="pc rv">
-<div class="pc-i" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-<h3>Governance Engine</h3>
-<p>Real-time governance decisions on every AI output. Drift detection, risk scoring, policy enforcement, and audit logging in one call.</p>
-<span class="ep">POST /v1/govern</span><span class="ep">POST /v1/risk</span><span class="ep">POST /v1/drift</span><span class="ep">POST /v1/scan</span>
-</div>
-<div class="pc rv rv2">
-<div class="pc-i" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8M16 17H8M10 9H8"/></svg></div>
-<h3>Compliance Hub</h3>
-<p>29 frameworks pre-built. Auto-generate policies, track readiness, schedule audits, and export audit-ready compliance packages.</p>
-<span class="ep">EU AI Act</span><span class="ep">NIST</span><span class="ep">ISO 42001</span><span class="ep">SOC 2</span><span class="ep">GDPR</span><span class="ep">+23 more</span>
-</div>
-<div class="pc rv rv3">
-<div class="pc-i" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-<h3>Model and Agent Registry</h3>
-<p>Central inventory of every AI model and agent. Governance cards, risk tiers, approval workflows, dependency mapping, and shadow AI auto-discovery.</p>
-<span class="ep">Auto-scan</span><span class="ep">Agent cards</span><span class="ep">Dependency graphs</span>
-</div>
-<div class="pc rv rv4">
-<div class="pc-i" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-<h3>Audit and Evidence</h3>
-<p>SHA-256 hash-chained tamper-proof ledger. Evidence auto-collection from GitHub, Jira, and cloud platforms. Continuous control monitoring and vendor risk.</p>
-<span class="ep">Hash chain</span><span class="ep">GitHub</span><span class="ep">Jira</span><span class="ep">Gap analysis</span>
-</div>
-</div>
-<button class="more-btn rv" id="moreBtn" onclick="toggleMore()">See all 17 services <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-<div class="more-grid" id="moreGrid">
-<div class="mg-c"><h4>Threat Intelligence</h4><p>MITRE ATLAS, OWASP AI security scans, regulatory deadlines</p></div>
-<div class="mg-c"><h4>Incident Management</h4><p>Create, track, resolve with Slack, Jira, ServiceNow</p></div>
-<div class="mg-c"><h4>Policy Engine</h4><p>Configurable rules with allow/warn/block enforcement</p></div>
-<div class="mg-c"><h4>Analytics and Reporting</h4><p>Fairness, explainability (XAI), data drift, security scans</p></div>
-<div class="mg-c"><h4>Knowledge Graph</h4><p>Regulatory mapping, gap analysis, AI-powered advisory</p></div>
-<div class="mg-c"><h4>Multi-LLM Consensus</h4><p>14 models, Voting + Chain-of-Verification + Adversarial Debate</p></div>
-<div class="mg-c"><h4>Enterprise Multi-Tenancy</h4><p>Organizations, API keys, SSO, scoped RBAC</p></div>
-<div class="mg-c"><h4>Human-in-the-Loop</h4><p>Auto-escalation, review queue, SLA tracking</p></div>
-<div class="mg-c"><h4>Continuous Monitoring</h4><p>Health checks, autonomous daemon, webhook alerts</p></div>
-<div class="mg-c"><h4>Vendor Risk Management</h4><p>Third-party AI vendor assessments, risk matrix, questionnaires</p></div>
-<div class="mg-c"><h4>Evidence Collection</h4><p>Scheduled gathering, coverage mapping, timeline view</p></div>
-<div class="mg-c"><h4>AGI Safety</h4><p>RSIM, CCV, DAD, MACM — future-ready containment</p></div>
-<div class="mg-c"><h4>Role-Based Dashboards</h4><p>Engineering, Compliance, Executive, Security, Data Science views</p></div>
-</div>
-</div>
+<!-- Platform Overview -->
+<section class="section" id="platform">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Platform</div>
+      <h2 class="sec-title sec-title-gradient">Four Pillars of AI Governance</h2>
+      <p class="sec-sub" style="margin:0 auto">Every AI decision is intercepted, evaluated, and recorded before it executes. No exceptions. No workarounds. No post-hoc liability.</p>
+    </div>
+    <div class="modules">
+      <div class="module reveal">
+        <div class="mod-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Runtime Control</h3>
+        <div class="mod-sub">No AI decision executes without explicit approval. Every agent action is intercepted and evaluated against your policies in real time. Approve, escalate to a human, or block &mdash; before harm occurs.</div>
+        <ul>
+          <li>Pre-execution gate on every action</li>
+          <li>Instant approve, escalate, or block</li>
+          <li>Human-in-the-loop with SLA deadlines</li>
+          <li>Works with any LLM or agent framework</li>
+        </ul>
+      </div>
+      <div class="module reveal reveal-delay-1">
+        <div class="mod-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3>Drift Detection</h3>
+        <div class="mod-sub">AI models change in production. GovernLayer watches for it. We compare every AI reasoning trace against your safety baselines and flag anomalies before they reach users.</div>
+        <ul>
+          <li>Continuous behavioral monitoring</li>
+          <li>Automatic veto on unsafe drift</li>
+          <li>No manual reviews needed</li>
+          <li>Catches regressions humans miss</li>
+        </ul>
+      </div>
+      <div class="module reveal reveal-delay-2">
+        <div class="mod-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Tamper-Proof Audit Trail</h3>
+        <div class="mod-sub">Every governance decision creates a permanent, cryptographically linked record. Alter one entry and the entire chain breaks. Give auditors mathematical proof of your compliance history.</div>
+        <ul>
+          <li>Permanent, unbreakable record</li>
+          <li>One-click regulator export</li>
+          <li>Chain integrity verification</li>
+          <li>Replaces quarterly spreadsheet audits</li>
+        </ul>
+      </div>
+      <div class="module reveal reveal-delay-3">
+        <div class="mod-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>Risk Scoring</h3>
+        <div class="mod-sub">Deterministic, explainable risk scores for every AI decision. Four weighted dimensions &mdash; policy compliance, confidence, impact, and vulnerable populations. No black boxes.</div>
+        <ul>
+          <li>Scores every decision automatically</li>
+          <li>Explainable to auditors and legal</li>
+          <li>Machine-readable evidence attached</li>
+          <li>Threshold-based escalation rules</li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;" class="reveal">
+      <details style="display:inline-block;text-align:left;max-width:800px;width:100%;">
+        <summary style="cursor:pointer;color:var(--blue);font-weight:600;font-size:.95rem;padding:12px 0;">See all 12 governance components &rarr;</summary>
+        <div class="modules" style="margin-top:20px;">
+          <div class="module">
+            <h3>Multi-LLM Consensus</h3>
+            <div class="mod-sub">13 AI models vote on critical decisions, protecting against single-model bias or hallucination. Three strategies: voting, chain-of-verification, and adversarial debate.</div>
+          </div>
+          <div class="module">
+            <h3>Human-in-the-Loop Routing</h3>
+            <div class="mod-sub">Intelligent escalation with SLA deadlines. HIPAA decisions to medical staff (2hr), compliance violations to officers (4hr). Full justification audit trail.</div>
+          </div>
+          <div class="module">
+            <h3>Secretless Credentials</h3>
+            <div class="mod-sub">Agents never hold persistent secrets. Just-In-Time tokens auto-expire in 60 seconds. Zero credential sprawl, zero leaked keys.</div>
+          </div>
+          <div class="module">
+            <h3>Vendor Security Questionnaire</h3>
+            <div class="mod-sub">External questionnaire for third-party vendors covering data handling, access controls, AI governance, and incident response. Auto-scored risk assessments.</div>
+          </div>
+          <div class="module">
+            <h3>Compliance Hub</h3>
+            <div class="mod-sub">29 regulatory frameworks including EU AI Act, SOC 2, NIST AI RMF, ISO 42001, HIPAA, and GDPR. Auto-generate policies mapped to your specific requirements.</div>
+          </div>
+          <div class="module">
+            <h3>Model &amp; Agent Registry</h3>
+            <div class="mod-sub">Shadow AI discovery across your organization. Track every model, every agent, every version. Know exactly what AI is running and where.</div>
+          </div>
+          <div class="module">
+            <h3>Evidence Auto-Collection</h3>
+            <div class="mod-sub">Pull compliance evidence from GitHub, Jira, and cloud providers automatically. No more chasing screenshots for audit season.</div>
+          </div>
+          <div class="module">
+            <h3>AGI Safety Extensions</h3>
+            <div class="mod-sub">Forward-looking: self-improvement monitoring, causal chain validation, and deceptive alignment detection. Built for the models of tomorrow, available today.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="sc">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-g">How It Works</div>
-<h2 class="st">Three API calls to governed AI</h2>
-</div>
-<div class="steps">
-<div class="step rv">
-<div class="step-n" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue)">1</div>
-<h3>Connect</h3>
-<p>Create your org and get an API key. One call to start governing.</p>
-<code style="color:var(--blue)">POST /v1/enterprise/orgs</code>
-</div>
-<div class="step rv rv2">
-<div class="step-n" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple)">2</div>
-<h3>Govern</h3>
-<p>Route every AI decision through GovernLayer. Drift, risk, and policy enforcement happen automatically.</p>
-<code style="color:var(--purple)">POST /v1/govern</code>
-</div>
-<div class="step rv rv3">
-<div class="step-n" style="background:var(--green-bg);color:var(--green);border-color:var(--green)">3</div>
-<h3>Prove</h3>
-<p>Generate compliance reports on demand. Auditor-ready, cryptographically verified.</p>
-<code style="color:var(--green)">GET /v1/reports</code>
-</div>
-</div>
-</div>
+<!-- How It Works -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">How It Works</div>
+      <h2 class="sec-title sec-title-gradient">Live in Under 10 Minutes</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <div class="step-num" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue)">1</div>
+        <h3>Connect Your AI</h3>
+        <p>Register your models and agents. One API call. Works with OpenAI, Anthropic, open-source &mdash; any LLM provider.</p>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num" style="background:var(--purple-bg);color:var(--purple);border-color:var(--purple)">2</div>
+        <h3>Set Your Policies</h3>
+        <p>Choose from 29 pre-built compliance frameworks or write custom rules. Default-deny means nothing slips through.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num" style="background:var(--green-bg);color:var(--green);border-color:var(--green)">3</div>
+        <h3>Sleep at Night</h3>
+        <p>Every AI decision is monitored, scored, and recorded. When the auditor calls, export your entire compliance history in one click.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- PRODUCT MOCKUPS -->
-<section class="sc sc-a">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-b">Product</div>
-<h2 class="st">See what you get on day one</h2>
-<p class="ss2" style="margin:0 auto">Real interfaces. Real data. No black boxes.</p>
-</div>
-<div class="mk-g">
-<div class="mk rv">
-<div class="mk-t"><div class="dots"><span></span><span></span><span></span></div><span class="tl">AI Model Registry</span></div>
-<div class="mk-b">
-<div class="mt2">
-<div class="row hd"><div class="cl">Model</div><div class="cl">Stage</div><div class="cl">Risk</div><div class="cl">Status</div></div>
-<div class="row"><div class="cl">GPT-4o</div><div class="cl">Production</div><div class="cl"><span class="bd bd-g">Low Risk</span></div><div class="cl"><span class="bd bd-g">Compliant</span></div></div>
-<div class="row"><div class="cl">Claude Opus</div><div class="cl">Staging</div><div class="cl"><span class="bd bd-a">Medium</span></div><div class="cl"><span class="bd bd-a">Review</span></div></div>
-<div class="row"><div class="cl">Llama 3</div><div class="cl">Development</div><div class="cl"><span class="bd bd-g">Low Risk</span></div><div class="cl"><span class="bd bd-g">Compliant</span></div></div>
-</div>
-</div>
-</div>
-<div class="mk rv rv2">
-<div class="mk-t"><div class="dots"><span></span><span></span><span></span></div><span class="tl">Risk Assessment</span></div>
-<div class="mk-b">
-<div class="mb">
-<div class="mb-r"><div class="mb-l">Privacy</div><div class="mb-t"><div class="mb-f" style="width:92%;background:var(--green)"></div><span class="mb-v">92</span></div></div>
-<div class="mb-r"><div class="mb-l">Autonomy</div><div class="mb-t"><div class="mb-f" style="width:78%;background:var(--amber)"></div><span class="mb-v">78</span></div></div>
-<div class="mb-r"><div class="mb-l">Infrastructure</div><div class="mb-t"><div class="mb-f" style="width:95%;background:var(--green)"></div><span class="mb-v">95</span></div></div>
-<div class="mb-r"><div class="mb-l">Oversight</div><div class="mb-t"><div class="mb-f" style="width:100%;background:var(--blue)"></div><span class="mb-v">100</span></div></div>
-<div class="mb-r"><div class="mb-l">Transparency</div><div class="mb-t"><div class="mb-f" style="width:85%;background:var(--green)"></div><span class="mb-v">85</span></div></div>
-<div class="mb-r"><div class="mb-l">Fairness</div><div class="mb-t"><div class="mb-f" style="width:88%;background:var(--green)"></div><span class="mb-v">88</span></div></div>
-</div>
-</div>
-</div>
-<div class="mk rv rv3">
-<div class="mk-t"><div class="dots"><span></span><span></span><span></span></div><span class="tl">Audit Trail</span></div>
-<div class="mk-b">
-<div class="tl2">
-<div class="te"><div class="te-t">2026-04-25 14:23 UTC</div><div class="te-a">GOVERN &middot; credit-scorer</div><div class="te-h">0x7a3f...2b1e <span class="arr">&rarr;</span> 0x9c1d...4f8a</div></div>
-<div class="te"><div class="te-t">2026-04-25 14:22 UTC</div><div class="te-a">RISK_SCORE &middot; fraud-detector</div><div class="te-h">0x3e8b...1c7d <span class="arr">&rarr;</span> 0x7a3f...2b1e</div></div>
-<div class="te"><div class="te-t">2026-04-25 14:20 UTC</div><div class="te-a">DRIFT_CHECK &middot; loan-approver</div><div class="te-h">0xb2a1...9e3c <span class="arr">&rarr;</span> 0x3e8b...1c7d</div></div>
-</div>
-</div>
-</div>
-</div>
-</div>
+<!-- Architecture Diagram -->
+<section class="section section-alt" id="architecture">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-purple">Architecture</div>
+      <h2 class="sec-title sec-title-gradient">Built for Enterprise Scale</h2>
+      <p class="sec-sub" style="margin:0 auto">Multi-layered orchestration with 14 LLM models, 3 consensus strategies, and local + cloud inference paths.</p>
+    </div>
+    <div class="arch-wrapper reveal reveal-delay-1">
+      <div class="arch-diagram">
+        <!-- Outer Ring: Stakeholders -->
+        <div class="arch-ring arch-ring-outer"></div>
+        <div class="arch-label" style="top:-8px;left:50%;transform:translateX(-50%)">Compliance</div>
+        <div class="arch-label" style="top:18%;right:-12px">Security</div>
+        <div class="arch-label" style="bottom:18%;right:-16px">Engineering</div>
+        <div class="arch-label" style="bottom:-8px;left:50%;transform:translateX(-50%)">Executives</div>
+        <div class="arch-label" style="bottom:18%;left:-4px">Legal</div>
+        <div class="arch-label" style="top:18%;left:-4px">Audit</div>
+
+        <!-- Middle Ring: Achonye Orchestration -->
+        <div class="arch-ring arch-ring-mid"></div>
+        <div class="arch-mid-label" style="top:19%;left:50%;transform:translateX(-50%)">Achonye Orchestration Layer</div>
+        <div class="arch-mid-label" style="bottom:19%;left:50%;transform:translateX(-50%);font-size:.55rem;color:var(--text3)">14 LLM Models / 3 Consensus Strategies / Local + Cloud</div>
+
+        <!-- Inner Ring: Core Platform -->
+        <div class="arch-ring arch-ring-inner"></div>
+        <div class="arch-inner-label" style="top:34%;left:50%;transform:translateX(-50%)">Drift</div>
+        <div class="arch-inner-label" style="top:44%;right:33%">Risk</div>
+        <div class="arch-inner-label" style="bottom:34%;right:35%">Audit</div>
+        <div class="arch-inner-label" style="bottom:34%;left:35%">Registry</div>
+        <div class="arch-inner-label" style="top:44%;left:33%">Incidents</div>
+
+        <!-- Center: GovernLayer -->
+        <div class="arch-center"><span>Govern<br>Layer</span></div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- DIFFERENTIATORS -->
-<section class="sc" id="differentiators">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-p">What Makes Us Different</div>
-<h2 class="st">We didn't bolt AI features onto a GRC tool</h2>
-<p class="ss2" style="margin:0 auto">GovernLayer was built from scratch for autonomous AI governance — not retrofitted from compliance checklists.</p>
-</div>
-<div class="dg">
-<div class="dc rv"><h3><span class="dot" style="background:var(--blue)"></span>Real-Time vs. Point-in-Time</h3><div class="d-o"><strong>GovernLayer:</strong> In-the-decision-path governance. Drift detection, risk scoring, and policy veto happen before AI output reaches users.</div><div class="d-t"><strong>Traditional tools:</strong> Retroactive audits and snapshot compliance. Problems discovered weeks or months after damage is done.</div></div>
-<div class="dc rv rv2"><h3><span class="dot" style="background:var(--green)"></span>Cryptographic Proof vs. PDF Reports</h3><div class="d-o"><strong>GovernLayer:</strong> SHA-256 hash-chained ledger. Every governance decision cryptographically linked. Auditors verify with one API call.</div><div class="d-t"><strong>Traditional tools:</strong> Generate PDF reports and screenshots. Evidence is self-reported and manually compiled.</div></div>
-<div class="dc rv rv3"><h3><span class="dot" style="background:var(--purple)"></span>Multi-LLM Consensus vs. Single Model</h3><div class="d-o"><strong>GovernLayer:</strong> 14 models with 3 consensus strategies — Voting, Chain-of-Verification, Adversarial Debate. No single point of hallucination failure.</div><div class="d-t"><strong>Competitors:</strong> Single model assessments with no cross-validation. One hallucinating model corrupts your compliance record.</div></div>
-<div class="dc rv rv4"><h3><span class="dot" style="background:var(--amber)"></span>Fail-Closed vs. Fail-Open</h3><div class="d-o"><strong>GovernLayer:</strong> When systems degrade, governance defaults to CAUTION — blocking risky decisions until full assessment is available.</div><div class="d-t"><strong>Traditional tools:</strong> When monitoring fails, AI continues ungoverned. Gaps in coverage go undetected.</div></div>
-</div>
-</div>
+<!-- Product Preview -->
+<section class="section" id="preview">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-blue">Live Preview</div>
+      <h2 class="sec-title sec-title-gradient">See what you get on day one</h2>
+      <p class="sec-sub" style="margin:0 auto">Real interfaces. Real data. No black boxes.</p>
+    </div>
+    <div class="preview-grid">
+      <!-- Card 1: AI Model Registry -->
+      <div class="preview-card reveal">
+        <div class="preview-titlebar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <span class="tab-label">AI Model Registry</span>
+        </div>
+        <div class="preview-body">
+          <div class="mock-table">
+            <div class="row header">
+              <div class="cell">Model</div>
+              <div class="cell">Stage</div>
+              <div class="cell">Risk</div>
+              <div class="cell">Status</div>
+            </div>
+            <div class="row">
+              <div class="cell">GPT-4o</div>
+              <div class="cell">Production</div>
+              <div class="cell"><span class="badge badge-green">Low Risk</span></div>
+              <div class="cell"><span class="badge badge-green">Compliant</span></div>
+            </div>
+            <div class="row">
+              <div class="cell">Claude Opus</div>
+              <div class="cell">Staging</div>
+              <div class="cell"><span class="badge badge-amber">Medium Risk</span></div>
+              <div class="cell"><span class="badge badge-amber">Review</span></div>
+            </div>
+            <div class="row">
+              <div class="cell">Llama 3</div>
+              <div class="cell">Development</div>
+              <div class="cell"><span class="badge badge-green">Low Risk</span></div>
+              <div class="cell"><span class="badge badge-green">Compliant</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Risk Assessment -->
+      <div class="preview-card reveal reveal-delay-1">
+        <div class="preview-titlebar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <span class="tab-label">Risk Assessment</span>
+        </div>
+        <div class="preview-body">
+          <div class="mock-bars">
+            <div class="mock-bar-row"><div class="mock-bar-label">Privacy</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:92%;background:var(--green)"></div><span class="mock-bar-val">92</span></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">Autonomy</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:78%;background:var(--amber)"></div><span class="mock-bar-val">78</span></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">Infrastructure</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:95%;background:var(--green)"></div><span class="mock-bar-val">95</span></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">Oversight</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:100%;background:var(--blue)"></div><span class="mock-bar-val">100</span></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">Transparency</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:85%;background:var(--green)"></div><span class="mock-bar-val">85</span></div></div>
+            <div class="mock-bar-row"><div class="mock-bar-label">Fairness</div><div class="mock-bar-track"><div class="mock-bar-fill" style="width:88%;background:var(--green)"></div><span class="mock-bar-val">88</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Audit Trail -->
+      <div class="preview-card reveal reveal-delay-2">
+        <div class="preview-titlebar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <span class="tab-label">Audit Trail</span>
+        </div>
+        <div class="preview-body">
+          <div class="mock-timeline">
+            <div class="mock-entry">
+              <div class="entry-time">2026-04-04 14:23 UTC</div>
+              <div class="entry-action">GOVERN &middot; credit-scorer</div>
+              <div class="entry-hash">0x7a3f...2b1e <span class="chain-arrow">&rarr;</span> 0x9c1d...4f8a</div>
+            </div>
+            <div class="mock-entry">
+              <div class="entry-time">2026-04-04 14:22 UTC</div>
+              <div class="entry-action">RISK_SCORE &middot; fraud-detector</div>
+              <div class="entry-hash">0x3e8b...1c7d <span class="chain-arrow">&rarr;</span> 0x7a3f...2b1e</div>
+            </div>
+            <div class="mock-entry">
+              <div class="entry-time">2026-04-04 14:20 UTC</div>
+              <div class="entry-action">DRIFT_CHECK &middot; loan-approver</div>
+              <div class="entry-hash">0xb2a1...9e3c <span class="chain-arrow">&rarr;</span> 0x3e8b...1c7d</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- USE CASES -->
-<section class="sc sc-a">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-g">Use Cases</div>
-<h2 class="st">How enterprises use GovernLayer</h2>
-</div>
-<div class="ug">
-<div class="uc rv"><div class="uc-ind" style="color:var(--blue)">Financial Services</div><h3>Governing Loan Approval AI</h3><p>A bank routes every loan decision through GovernLayer. Drift detection catches when the model starts approving riskier profiles. Every decision is hash-chained to the audit ledger.</p><div class="uc-r">OCC auditor verifies the entire governance history with a single API call. Zero manual evidence compilation.</div></div>
-<div class="uc rv rv2"><div class="uc-ind" style="color:var(--green)">Healthcare</div><h3>Clinical Decision Support Compliance</h3><p>A hospital governs clinical AI systems. Air-gapped deployment with Ollama means zero PHI leaves the network. HIPAA compliance documentation is auto-generated.</p><div class="uc-r">HIPAA audit completed in days instead of months. Continuous monitoring replaces annual point-in-time reviews.</div></div>
-<div class="uc rv rv3"><div class="uc-ind" style="color:var(--red)">HR and Recruiting</div><h3>Shadow AI Discovery in Hiring</h3><p>GovernLayer's agent discovery scan finds unregistered GPT-4 usage running resume screening. The fairness analysis flags gender disparity. Policy engine blocks biased outputs automatically.</p><div class="uc-r">NYC LL144 compliance documentation generated automatically. Shadow AI registered and compliant within one week.</div></div>
-<div class="uc rv rv4"><div class="uc-ind" style="color:var(--amber)">EU-Regulated Company</div><h3>EU AI Act Compliance</h3><p>A European company needs full EU AI Act compliance before August 2026. GovernLayer's compliance hub creates the program, auto-generates required policies, and continuously monitors all high-risk AI systems.</p><div class="uc-r">Audit-ready EU AI Act compliance package exported in one click. Continuous monitoring ensures zero gaps.</div></div>
-</div>
-</div>
+<!-- Comparison Section -->
+<section class="section section-alt" id="comparison">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-purple">Why Us</div>
+      <h2 class="sec-title sec-title-gradient">Why Teams Choose GovernLayer</h2>
+      <p class="sec-sub" style="margin:0 auto">We didn't bolt AI features onto a GRC tool. GovernLayer was built from scratch for autonomous AI governance.</p>
+    </div>
+    <div class="compare-table reveal reveal-delay-1">
+      <div class="compare-row header">
+        <div class="compare-cell label">Capability</div>
+        <div class="compare-cell highlight">GovernLayer</div>
+        <div class="compare-cell">Traditional GRC</div>
+        <div class="compare-cell">Manual Audits</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">Governance Type</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> In-decision-path</div>
+        <div class="compare-cell"><span class="c-meh">~</span> Retroactive</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> Annual / quarterly</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">Audit Proof</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> Cryptographic SHA-256</div>
+        <div class="compare-cell"><span class="c-meh">~</span> PDF Reports</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> Spreadsheets</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">Assessment Speed</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> Real-time (&lt; 3s)</div>
+        <div class="compare-cell"><span class="c-meh">~</span> Days</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> Weeks</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">AI Models Used</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> Multi-model consensus (14)</div>
+        <div class="compare-cell"><span class="c-meh">~</span> Single model</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> None</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">Frameworks</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> 25 automated</div>
+        <div class="compare-cell"><span class="c-meh">~</span> 3-5 manual</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> 1-2</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">Starting Cost</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> From $0/month</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> $50K+/year</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> $200K+/year</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">Drift Detection</div>
+        <div class="compare-cell highlight"><span class="c-check">&#10003;</span> Continuous, real-time</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> Not available</div>
+        <div class="compare-cell"><span class="c-x">&#10005;</span> Not available</div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- FRAMEWORKS -->
-<section class="sc" id="frameworks">
-<div class="c">
-<div style="text-align:center" class="rv">
-<div class="tag tag-g">Compliance</div>
-<h2 class="st">29 frameworks. Every jurisdiction.</h2>
-<p class="ss2" style="margin:0 auto">Pre-built policy packs with automated evidence generation for every major AI and data governance regulation.</p>
+<!-- Stats Strip -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item reveal"><div class="s-num" data-count="29">29</div><div class="s-label">Regulatory Frameworks</div></div>
+      <div class="stat-item reveal reveal-delay-1"><div class="s-num" data-count="247">247</div><div class="s-label">API Endpoints</div></div>
+      <div class="stat-item reveal reveal-delay-2"><div class="s-num" data-count="14">14</div><div class="s-label">LLM Models Orchestrated</div></div>
+      <div class="stat-item reveal reveal-delay-3"><div class="s-num" data-count="20">20</div><div class="s-label">Integrated Services</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Strip -->
+<div class="trust-strip">
+  <div class="container">
+    <div class="trust-row">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Runs on Railway (SOC 2)</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>PostgreSQL Encrypted</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>TLS 1.2+</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Zero PII in Logs</span>
+    </div>
+  </div>
 </div>
-<div class="fw-g rv">
-<span class="fw">EU AI Act</span><span class="fw">NIST AI RMF</span><span class="fw">ISO 42001</span><span class="fw">ISO 27001</span><span class="fw">SOC 2</span><span class="fw">GDPR</span><span class="fw">HIPAA</span><span class="fw">DSA</span><span class="fw">DMA</span><span class="fw">NIS2</span><span class="fw">DORA</span><span class="fw">PCI DSS</span><span class="fw">CCPA</span><span class="fw">NIST CSF</span><span class="fw">MITRE ATLAS</span><span class="fw">OWASP AI</span><span class="fw">OECD AI</span><span class="fw">FedRAMP</span><span class="fw">NYC LL144</span><span class="fw">Colorado SB-169</span>
-</div>
-</div>
+
+<!-- Frameworks -->
+<section class="section" id="frameworks">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-green">Compliance</div>
+      <h2 class="sec-title sec-title-gradient">29 frameworks. Every jurisdiction.</h2>
+      <p class="sec-sub" style="margin:0 auto">Pre-built policy packs with automated evidence generation for every major AI and data governance regulation.</p>
+    </div>
+    <div class="fw-cats reveal">
+      <span class="fw-cat active" data-cat="all">All</span>
+      <span class="fw-cat" data-cat="ai">AI-Specific</span>
+      <span class="fw-cat" data-cat="data">Data Protection</span>
+      <span class="fw-cat" data-cat="industry">Industry</span>
+      <span class="fw-cat" data-cat="financial">Financial</span>
+      <span class="fw-cat" data-cat="international">International</span>
+    </div>
+    <div class="fw-grid reveal">
+      <div class="fw" data-cat="ai"><div class="fw-name">EU AI Act</div><div class="fw-jur">European Union</div><div class="fw-cat-tag">AI-Specific</div></div>
+      <div class="fw" data-cat="ai"><div class="fw-name">NIST AI RMF</div><div class="fw-jur">United States</div><div class="fw-cat-tag">AI-Specific</div></div>
+      <div class="fw" data-cat="international"><div class="fw-name">ISO 42001</div><div class="fw-jur">International</div><div class="fw-cat-tag">International</div></div>
+      <div class="fw" data-cat="international"><div class="fw-name">ISO 27001</div><div class="fw-jur">International</div><div class="fw-cat-tag">International</div></div>
+      <div class="fw" data-cat="industry"><div class="fw-name">SOC 2</div><div class="fw-jur">United States</div><div class="fw-cat-tag">Industry</div></div>
+      <div class="fw" data-cat="data"><div class="fw-name">GDPR</div><div class="fw-jur">European Union</div><div class="fw-cat-tag">Data Protection</div></div>
+      <div class="fw" data-cat="industry"><div class="fw-name">HIPAA</div><div class="fw-jur">United States</div><div class="fw-cat-tag">Industry</div></div>
+      <div class="fw" data-cat="data"><div class="fw-name">DSA</div><div class="fw-jur">European Union</div><div class="fw-cat-tag">Data Protection</div></div>
+      <div class="fw" data-cat="data"><div class="fw-name">DMA</div><div class="fw-jur">European Union</div><div class="fw-cat-tag">Data Protection</div></div>
+      <div class="fw" data-cat="industry"><div class="fw-name">NIS2</div><div class="fw-jur">European Union</div><div class="fw-cat-tag">Industry</div></div>
+      <div class="fw" data-cat="financial"><div class="fw-name">DORA</div><div class="fw-jur">European Union</div><div class="fw-cat-tag">Financial</div></div>
+      <div class="fw" data-cat="financial"><div class="fw-name">PCI DSS</div><div class="fw-jur">Global</div><div class="fw-cat-tag">Financial</div></div>
+      <div class="fw" data-cat="data"><div class="fw-name">CCPA</div><div class="fw-jur">California, US</div><div class="fw-cat-tag">Data Protection</div></div>
+      <div class="fw" data-cat="industry"><div class="fw-name">NIST CSF</div><div class="fw-jur">United States</div><div class="fw-cat-tag">Industry</div></div>
+      <div class="fw" data-cat="ai"><div class="fw-name">MITRE ATLAS</div><div class="fw-jur">Global</div><div class="fw-cat-tag">AI-Specific</div></div>
+      <div class="fw" data-cat="ai"><div class="fw-name">OWASP AI</div><div class="fw-jur">Global</div><div class="fw-cat-tag">AI-Specific</div></div>
+      <div class="fw" data-cat="international"><div class="fw-name">OECD AI</div><div class="fw-jur">International</div><div class="fw-cat-tag">International</div></div>
+      <div class="fw" data-cat="industry"><div class="fw-name">FedRAMP</div><div class="fw-jur">United States</div><div class="fw-cat-tag">Industry</div></div>
+      <div class="fw" data-cat="ai"><div class="fw-name">NYC LL144</div><div class="fw-jur">New York, US</div><div class="fw-cat-tag">AI-Specific</div></div>
+      <div class="fw" data-cat="ai"><div class="fw-name">Colorado SB-169</div><div class="fw-jur">Colorado, US</div><div class="fw-cat-tag">AI-Specific</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section section-alt" id="early-access">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <div class="tag tag-amber">Early Access</div>
+      <h2 class="sec-title sec-title-gradient">Join the Founding Cohort</h2>
+      <p style="max-width:640px;margin:16px auto 0;color:var(--text2);font-size:.95rem;line-height:1.7;">We are onboarding a select group of enterprises for our founding program. Early adopters get direct access to the engineering team, priority feature requests, and locked-in pricing.</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial reveal">
+        <div style="font-size:2rem;margin-bottom:16px;">&#x1F3E2;</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;">For Enterprises</h3>
+        <div class="testimonial-quote" style="border-left-color:var(--blue);">Deploying AI at scale? Get governance infrastructure that satisfies your legal, compliance, and risk teams — before your next board meeting.</div>
+        <a href="/beta" class="btn btn-fill" style="margin-top:16px;width:100%;justify-content:center;">Apply for Enterprise Beta</a>
+      </div>
+      <div class="testimonial reveal reveal-delay-1">
+        <div style="font-size:2rem;margin-bottom:16px;">&#x1F91D;</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;">For Vendors &amp; Partners</h3>
+        <div class="testimonial-quote" style="border-left-color:var(--green);">Integrate GovernLayer into your platform to offer embedded governance. White-label compliance for your customers with our API.</div>
+        <a href="/vendor-questionnaire" class="btn btn-fill" style="margin-top:16px;width:100%;justify-content:center;background:linear-gradient(135deg,var(--green),#059669);">Become a Vendor Partner</a>
+      </div>
+      <div class="testimonial reveal reveal-delay-2">
+        <div style="font-size:2rem;margin-bottom:16px;">&#x1F4BC;</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;">For Investors</h3>
+        <div class="testimonial-quote" style="border-left-color:var(--purple);">GovernLayer is raising a seed round to capture the $2.4B AI governance market. 20 services live, patent pending, and growing.</div>
+        <a href="/pitch" class="btn btn-fill" style="margin-top:16px;width:100%;justify-content:center;background:linear-gradient(135deg,var(--purple),#7c3aed);">View Investor Deck</a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- FAQ -->
-<section class="sc sc-a" id="faq">
-<div class="c">
-<div style="text-align:center" class="rv"><h2 class="st">Frequently asked questions</h2></div>
-<div style="max-width:660px;margin:32px auto 0">
-<div class="fq rv"><button class="fq-q" onclick="toggleFaq(this)">What is AI governance and why do I need it?<span>+</span></button><div class="fq-a"><p>AI governance is the process of monitoring, auditing, and controlling how AI systems make decisions. Regulations like the EU AI Act require documentation, bias proof, and drift detection — with fines up to &euro;35M for non-compliance.</p></div></div>
-<div class="fq rv"><button class="fq-q" onclick="toggleFaq(this)">How does GovernLayer differ from Vanta or Credo AI?<span>+</span></button><div class="fq-a"><p>Vanta automates IT compliance (SOC 2, ISO) but doesn't understand AI behavior. Credo AI focuses on pre-deployment model assessments. GovernLayer sits in the decision path — governing AI agents in real time with cryptographic proof, multi-LLM consensus, and behavioral drift detection.</p></div></div>
-<div class="fq rv"><button class="fq-q" onclick="toggleFaq(this)">How does behavioral drift detection work?<span>+</span></button><div class="fq-a"><p>We use sentence-transformer embeddings to create safety manifolds for each use case. Every AI decision is compared against this manifold in real time. When behavior drifts beyond approved boundaries, GovernLayer can alert, flag for review, or automatically veto.</p></div></div>
-<div class="fq rv"><button class="fq-q" onclick="toggleFaq(this)">What makes the audit ledger tamper-proof?<span>+</span></button><div class="fq-a"><p>Every governance decision is SHA-256 hash-chained — each record contains the hash of the previous record. Altering any record breaks the chain. One API call verifies the integrity of your entire audit history.</p></div></div>
-<div class="fq rv"><button class="fq-q" onclick="toggleFaq(this)">Can I self-host GovernLayer?<span>+</span></button><div class="fq-a"><p>Yes. We support cloud (SaaS), self-hosted (Docker / Kubernetes), and air-gapped deployments with local LLM inference via Ollama — zero external API calls for classified or regulated environments.</p></div></div>
-<div class="fq rv"><button class="fq-q" onclick="toggleFaq(this)">When does the EU AI Act start enforcement?<span>+</span></button><div class="fq-a"><p>Entered into force August 2024. High-risk AI system requirements — governance documentation, risk management, human oversight — apply from August 2026. Fines reach &euro;35M or 7% of global revenue.</p></div></div>
-</div>
-</div>
+<section class="section" id="faq">
+  <div class="container">
+    <div style="text-align:center" class="reveal">
+      <h2 class="sec-title sec-title-gradient">Frequently asked questions</h2>
+    </div>
+    <div style="max-width:680px;margin:36px auto 0">
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">What is AI governance and why do I need it?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>AI governance is the process of monitoring, auditing, and controlling how AI systems make decisions. Regulations like the EU AI Act require documentation, bias proof, and drift detection — with fines up to &euro;35M for non-compliance.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">How does GovernLayer differ from Vanta or Credo AI?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Vanta automates IT compliance (SOC 2, ISO) but doesn't understand AI behavior. Credo AI focuses on pre-deployment model assessments. GovernLayer sits in the decision path — governing AI agents in real time with cryptographic proof, multi-LLM consensus, and behavioral drift detection. We're the only platform where an auditor can mathematically verify your entire governance history.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">How does behavioral drift detection work?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>We use sentence-transformer embeddings to create safety manifolds for each use case. Every AI decision is compared against this manifold in real time. When behavior drifts beyond approved boundaries, GovernLayer can alert, flag for review, or automatically veto.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">What makes the audit ledger tamper-proof?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Every governance decision is SHA-256 hash-chained — each record contains the hash of the previous record. Altering any record breaks the chain. One API call verifies the integrity of your entire audit history.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I self-host GovernLayer?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Yes. We support cloud (SaaS), self-hosted (Docker / Kubernetes), and air-gapped deployments with local LLM inference via Ollama — zero external API calls for classified or regulated environments.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">When does the EU AI Act start enforcement?<span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Entered into force August 2024. High-risk AI system requirements — governance documentation, risk management, human oversight — apply from August 2026. Fines reach &euro;35M or 7% of global revenue.</p></div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- CTA -->
-<section class="cta">
-<div class="c">
-<h2 class="rv">Ready to govern AI with confidence?</h2>
-<p class="rv rv2">See how GovernLayer discovers risks, enforces policies, and proves compliance — all from one API.</p>
-<div class="cta-r rv rv3">
-<a href="/demo" class="btn btn-f btn-l">Schedule a Demo</a>
-<a href="/signup?plan=free" class="btn btn-g btn-l">Start Free — No Credit Card</a>
-</div>
-<p class="rv rv4" style="margin-top:20px;font-size:.84rem;color:var(--text3)">No credit card required &middot; Personalized demo &middot; Talk to our team</p>
-</div>
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <h2 class="section-title reveal">Simple, transparent pricing</h2>
+    <p class="section-sub reveal reveal-delay-1">Start free. Scale as you grow. No surprises.</p>
+
+    <div class="pricing-grid reveal reveal-delay-2">
+      <!-- Free -->
+      <div class="price-card">
+        <h3>Free</h3>
+        <div class="price-amount">$0 <span class="price-suffix">/month</span></div>
+        <p class="price-sub">For developers exploring AI governance</p>
+        <ul class="price-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>3 AI models monitored</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Drift detection</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Risk scoring</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Audit ledger (30-day retention)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>20 API calls/min</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Community support</li>
+        </ul>
+        <a href="/signup?plan=free" class="price-cta price-cta-ghost">Start Free</a>
+      </div>
+
+      <!-- Pro (featured) -->
+      <div class="price-card featured">
+        <span class="price-badge">Most Popular</span>
+        <h3>Pro</h3>
+        <div class="price-amount">$149 <span class="price-suffix">/month</span></div>
+        <p class="price-sub">For teams shipping AI to production</p>
+        <ul class="price-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Everything in Free</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>25 AI models</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>500 API calls/min</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Multi-LLM consensus engine</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>29 compliance frameworks</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Model registry &amp; incidents</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Webhooks &amp; API keys</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Full audit ledger (unlimited)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Email support (48hr SLA)</li>
+        </ul>
+        <a href="/signup?plan=pro" class="price-cta price-cta-fill">Start Pro</a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <div class="price-amount">Custom</div>
+        <p class="price-sub">For regulated organizations at scale</p>
+        <ul class="price-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Everything in Pro</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Unlimited models</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>SSO/SAML + RBAC</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Air-gapped / on-premise</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>99.9% uptime SLA</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Dedicated CSM</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Custom compliance frameworks</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Priority support (4hr SLA)</li>
+        </ul>
+        <a href="mailto:founders@governlayer.ai" class="price-cta price-cta-ghost">Contact Sales</a>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="ft">
-<div class="c">
-<div class="ft-g">
-<div class="ft-b">
-<div class="logo" style="font-size:1rem"><div class="logo-m" style="width:22px;height:22px;border-radius:6px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px"><path d="M4 8h8M8 4v8"/></svg></div>GovernLayer</div>
-<p>The governance layer for agentic AI. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
-<div class="ft-bd"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>SOC 2 Compliant Infrastructure</div>
-</div>
-<div class="fc"><h4>Product</h4><a href="#platform">Platform</a><a href="/demo">Demo</a><a href="/signup">Pricing</a><a href="/docs">API Docs</a></div>
-<div class="fc"><h4>Resources</h4><a href="/redoc">API Reference</a><a href="/trust">Trust Center</a><a href="/health">System Status</a><a href="#faq">FAQ</a></div>
-<div class="fc"><h4>Company</h4><a href="mailto:founders@governlayer.ai">Contact</a><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/trust">Security</a></div>
-</div>
-<div class="ft-bt">
-<span>&copy; 2026 GovernLayer. All rights reserved.</span>
-<div class="ft-lk"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/trust">Security</a></div>
-</div>
-</div>
+<!-- Bottom CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="reveal">Start Governing Your AI Today</h2>
+    <p class="reveal reveal-delay-1">Join the teams building trustworthy AI. Free tier available — no credit card required. See how GovernLayer discovers risks, enforces policies, and proves compliance — all from one API.</p>
+    <div class="reveal reveal-delay-2" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="/signup?plan=free" class="btn btn-fill btn-lg">Start Free <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+      <a href="/demo" class="btn btn-ghost btn-lg">Book a Demo</a>
+    </div>
+    <div class="cta-note reveal reveal-delay-3">No credit card required &middot; Personalized demo &middot; Talk to our team</div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo"><div class="logo-mark" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2" style="width:12px;height:12px" aria-hidden="true"><path d="M4 8h8M8 4v8"/></svg></div> GovernLayer</div>
+        <p>The governance layer for the agentic era. Continuous monitoring, cryptographic proof, autonomous compliance.</p>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Hosted on SOC 2 Certified Infrastructure
+        </div>
+        <div class="footer-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <a href="/status" style="color:inherit;text-decoration:none">System Status: Operational</a>
+        </div>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="#platform">Platform</a>
+        <a href="/demo">Demo</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#frameworks">Frameworks</a>
+      </div>
+      <div class="fcol">
+        <h4>Resources</h4>
+        <a href="/trust">Trust Center</a>
+        <a href="/blog">Blog</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/docs">API Docs</a>
+        <a href="/status">System Status</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="mailto:founders@governlayer.ai">Contact</a>
+        <a href="/careers">Careers</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/trust">Security</a>
+        <a href="/legal/dpa">DPA</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 GovernLayer. All rights reserved.</span>
+      <div class="footer-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/trust">Security</a>
+        <a href="/status">Status</a>
+      </div>
+    </div>
+  </div>
 </footer>
 
 <script>
-const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('v');obs.unobserve(el.target)}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
-document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',function(e){const t=document.querySelector(this.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}})});
-let lY=0;window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>20)},{passive:true});
-function toggleFaq(b){const c=b.nextElementSibling,i=b.querySelector('span'),o=c.style.maxHeight&&c.style.maxHeight!=='0px';c.style.maxHeight=o?'0px':c.scrollHeight+'px';i.textContent=o?'+':'\u2212'}
-function toggleMore(){const g=document.getElementById('moreGrid'),b=document.getElementById('moreBtn');if(g.classList.contains('open')){g.style.maxHeight='0px';g.classList.remove('open');b.classList.remove('open');b.innerHTML='See all 17 services <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'}else{g.classList.add('open');g.style.maxHeight=g.scrollHeight+'px';b.classList.add('open');b.innerHTML='Show less <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'}}
-document.getElementById('mobileToggle').addEventListener('click',function(){const l=document.querySelector('.nl'),c=document.querySelector('.nav-r');if(l.style.display==='flex'){l.style.cssText='';c.style.cssText='';this.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>'}else{l.style.cssText='display:flex;position:fixed;top:60px;left:0;right:0;background:#fff;flex-direction:column;padding:20px 28px;gap:14px;border-bottom:1px solid rgba(0,0,0,.08);z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.06)';c.style.display='none';this.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'}});
-const barObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.querySelectorAll('.mb-f').forEach(b=>{const w=b.style.width;b.style.width='0%';requestAnimationFrame(()=>{requestAnimationFrame(()=>{b.style.width=w})})});barObs.unobserve(el.target)}})},{threshold:.3});
-document.querySelectorAll('.mb').forEach(el=>barObs.observe(el));
+// Smooth reveal on scroll — content visible by default, JS adds animation
+document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('pending'); });
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(el) {
+    if (el.isIntersecting) {
+      el.target.classList.remove('pending');
+      el.target.classList.add('visible');
+      obs.unobserve(el.target);
+    }
+  });
+}, { threshold: .06, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const t = document.querySelector(this.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    // Close mobile menu if open
+    document.getElementById('mobileMenu').classList.remove('active');
+  });
+});
+
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+  document.getElementById('nav').classList.toggle('scrolled', scrollTop > 20);
+}, { passive: true });
+
+// FAQ toggle
+function toggleFaq(b) {
+  const c = b.nextElementSibling;
+  const i = b.querySelector('.faq-icon');
+  const open = c.style.maxHeight && c.style.maxHeight !== '0px';
+  c.style.maxHeight = open ? '0px' : c.scrollHeight + 'px';
+  i.textContent = open ? '+' : '\u2212';
+  i.style.transform = open ? 'rotate(0deg)' : 'rotate(45deg)';
+}
+
+// Mobile menu toggle
+document.getElementById('mobileToggle').addEventListener('click', function() {
+  const menu = document.getElementById('mobileMenu');
+  const isActive = menu.classList.toggle('active');
+  this.innerHTML = isActive
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+});
+
+// Animate bar fills on scroll
+const barObs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.querySelectorAll('.mock-bar-fill').forEach(bar => {
+        const w = bar.style.width;
+        bar.style.width = '0%';
+        requestAnimationFrame(() => { requestAnimationFrame(() => { bar.style.width = w; }); });
+      });
+      barObs.unobserve(el.target);
+    }
+  });
+}, { threshold: .3 });
+document.querySelectorAll('.mock-bars').forEach(el => barObs.observe(el));
+
+// Number counter animation — numbers show real values by default, animate on scroll
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(el => {
+    if (el.isIntersecting) {
+      const target = el.target;
+      const countTo = parseInt(target.getAttribute('data-count'));
+      if (!countTo || target.dataset.counted) return;
+      target.dataset.counted = '1';
+      target.textContent = '0';
+      let current = 0;
+      const step = Math.max(1, Math.floor(countTo / 40));
+      const interval = setInterval(() => {
+        current += step;
+        if (current >= countTo) { current = countTo; clearInterval(interval); }
+        target.textContent = current;
+      }, 30);
+      counterObs.unobserve(target);
+    }
+  });
+}, { threshold: .5 });
+document.querySelectorAll('[data-count]').forEach(el => counterObs.observe(el));
+
+// Live Pipeline Animation
+(function() {
+  const scenarios = [
+    {
+      label: 'Scenario 1 of 3 — Routine Request',
+      decisionColor: 'green',
+      values: [
+        'Agent Request Captured',
+        '29 Frameworks Evaluated',
+        'D\u2099 = 0.12 \u2014 Safe',
+        'R = 0.18 \u2014 LOW',
+        'APPROVED',
+        'Hash: 7f3a\u2026c9e1'
+      ]
+    },
+    {
+      label: 'Scenario 2 of 3 — Policy Violation Detected',
+      decisionColor: 'red',
+      values: [
+        'Agent Request Captured',
+        'EU AI Act Art.14 Violation',
+        'D\u2099 = 0.67 \u2014 CRITICAL',
+        'R = 0.91 \u2014 CRITICAL',
+        'BLOCKED',
+        'Hash: 2e8b\u2026a4f7'
+      ]
+    },
+    {
+      label: 'Scenario 3 of 3 — Escalation Required',
+      decisionColor: 'amber',
+      values: [
+        'Agent Request Captured',
+        'HIPAA \u00a7164.514 Review',
+        'D\u2099 = 0.28 \u2014 Borderline',
+        'R = 0.52 \u2014 MEDIUM',
+        'ESCALATED',
+        'Hash: 9d1f\u2026b3c8'
+      ]
+    }
+  ];
+
+  let currentScenario = 0;
+  let currentStage = -1;
+  let pipelineRunning = false;
+  let pipelineVisible = false;
+
+  const nodes = document.querySelectorAll('#pipelineTrack .pipeline-node');
+  const connectors = document.querySelectorAll('#pipelineTrack .pipeline-connector');
+  const scenarioEl = document.getElementById('pipelineScenario');
+  const counterDots = document.querySelectorAll('#pipelineCounter .pipeline-dot-indicator');
+
+  function resetPipeline() {
+    nodes.forEach(function(n) {
+      n.classList.remove('active');
+      n.setAttribute('data-color', 'blue');
+    });
+    connectors.forEach(function(c) {
+      c.classList.remove('active', 'animating');
+    });
+    for (var i = 0; i < 6; i++) {
+      var el = document.getElementById('pipe-val-' + i);
+      if (el) el.textContent = '';
+    }
+    currentStage = -1;
+  }
+
+  function activateStage(stage, scenario) {
+    var node = nodes[stage];
+    if (!node) return;
+
+    // Set color for decision node
+    if (stage === 4) {
+      node.setAttribute('data-color', scenario.decisionColor);
+    } else if (stage === 3 && scenario.decisionColor === 'red') {
+      node.setAttribute('data-color', 'red');
+    }
+
+    node.classList.add('active');
+    var valEl = document.getElementById('pipe-val-' + stage);
+    if (valEl) {
+      valEl.textContent = scenario.values[stage];
+      if (stage === 4) {
+        valEl.style.color = 'var(--' + scenario.decisionColor + ')';
+        valEl.style.fontWeight = '800';
+        valEl.style.fontSize = '.88rem';
+      } else {
+        valEl.style.color = '';
+        valEl.style.fontWeight = '';
+        valEl.style.fontSize = '';
+      }
+    }
+  }
+
+  function activateConnector(index) {
+    var conn = connectors[index];
+    if (!conn) return;
+    conn.classList.add('animating');
+    setTimeout(function() {
+      conn.classList.add('active');
+      conn.classList.remove('animating');
+    }, 350);
+  }
+
+  function runScenario() {
+    if (!pipelineVisible) return;
+    var scenario = scenarios[currentScenario];
+
+    // Update counter dots
+    counterDots.forEach(function(d, i) {
+      d.classList.toggle('active', i === currentScenario);
+    });
+
+    // Show scenario label
+    scenarioEl.textContent = scenario.label;
+    scenarioEl.classList.add('visible');
+
+    resetPipeline();
+
+    var stageDelay = 600;
+    var connDelay = 350;
+
+    for (var i = 0; i < 6; i++) {
+      (function(stage) {
+        // Activate connector before this stage (except first)
+        if (stage > 0) {
+          setTimeout(function() {
+            activateConnector(stage - 1);
+          }, stage * (stageDelay + connDelay));
+        }
+        // Activate the stage node
+        setTimeout(function() {
+          activateStage(stage, scenario);
+        }, stage * (stageDelay + connDelay) + (stage > 0 ? connDelay : 0));
+      })(i);
+    }
+
+    // After all stages complete, pause then move to next scenario
+    var totalTime = 5 * (stageDelay + connDelay) + connDelay + 2200;
+    setTimeout(function() {
+      scenarioEl.classList.remove('visible');
+      setTimeout(function() {
+        currentScenario = (currentScenario + 1) % scenarios.length;
+        runScenario();
+      }, 600);
+    }, totalTime);
+  }
+
+  // Start pipeline when it scrolls into view
+  var pipelineObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !pipelineRunning) {
+        pipelineVisible = true;
+        pipelineRunning = true;
+        setTimeout(runScenario, 400);
+      }
+      if (!entry.isIntersecting) {
+        pipelineVisible = false;
+      }
+    });
+  }, { threshold: 0.2 });
+
+  var pipelineSection = document.getElementById('live-pipeline');
+  if (pipelineSection) pipelineObs.observe(pipelineSection);
+})();
+
+// Framework category filter
+document.querySelectorAll('.fw-cat').forEach(cat => {
+  cat.addEventListener('click', function() {
+    document.querySelectorAll('.fw-cat').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    const selected = this.getAttribute('data-cat');
+    document.querySelectorAll('.fw').forEach(fw => {
+      if (selected === 'all' || fw.getAttribute('data-cat') === selected) {
+        fw.style.display = '';
+      } else {
+        fw.style.display = 'none';
+      }
+    });
+  });
+});
+
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"GovernLayer","applicationCategory":"BusinessApplication","description":"Autonomous AI governance platform. 17 services, 29 compliance frameworks, real-time drift detection, multi-LLM consensus, and tamper-proof audit trails.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"creator":{"@type":"Organization","name":"GovernLayer","url":"https://governlayer.ai"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI governance?","acceptedAnswer":{"@type":"Answer","text":"AI governance monitors, audits, and controls how AI systems make decisions. Required by EU AI Act, NIST, and ISO 42001."}},{"@type":"Question","name":"How does GovernLayer differ from Vanta or Credo AI?","acceptedAnswer":{"@type":"Answer","text":"GovernLayer governs AI in real time with cryptographic proof and multi-LLM consensus."}},{"@type":"Question","name":"How does drift detection work?","acceptedAnswer":{"@type":"Answer","text":"Sentence-transformer embeddings compare AI decisions against safety manifolds in real time."}},{"@type":"Question","name":"Can I self-host?","acceptedAnswer":{"@type":"Answer","text":"Yes — cloud, Docker/K8s self-hosted, or air-gapped with Ollama."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AI governance and why do I need it?","acceptedAnswer":{"@type":"Answer","text":"AI governance monitors, audits, and controls how AI systems make decisions. Required by EU AI Act, NIST, and ISO 42001. Fines up to 35M EUR for non-compliance."}},{"@type":"Question","name":"How does GovernLayer differ from Vanta or Credo AI?","acceptedAnswer":{"@type":"Answer","text":"GovernLayer governs AI in real time with cryptographic proof and multi-LLM consensus. Vanta does IT compliance. Credo AI does pre-deployment assessments. GovernLayer is the only platform where auditors can mathematically verify your entire governance history."}},{"@type":"Question","name":"How does behavioral drift detection work?","acceptedAnswer":{"@type":"Answer","text":"Sentence-transformer embeddings compare AI decisions against safety manifolds in real time, with automatic veto capability."}},{"@type":"Question","name":"What makes the audit ledger tamper-proof?","acceptedAnswer":{"@type":"Answer","text":"Every governance decision is SHA-256 hash-chained. Each record contains the hash of the previous record. Altering any record breaks the chain."}},{"@type":"Question","name":"Can I self-host GovernLayer?","acceptedAnswer":{"@type":"Answer","text":"Yes. Cloud SaaS, Docker/K8s self-hosted, or air-gapped with local LLM inference via Ollama. Zero external API calls for classified environments."}},{"@type":"Question","name":"When does the EU AI Act start enforcement?","acceptedAnswer":{"@type":"Answer","text":"Entered into force August 2024. High-risk AI system requirements apply from August 2026. Fines reach 35M EUR or 7% of global revenue."}}]}</script>
 </body>
 </html>
