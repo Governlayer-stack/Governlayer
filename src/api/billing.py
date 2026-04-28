@@ -184,7 +184,7 @@ def billing_usage(org_slug: str, email: str = Depends(verify_token),
         by_endpoint[r.endpoint] = by_endpoint.get(r.endpoint, 0) + 1
 
     # Estimate cost based on plan
-    plan_prices = {"free": 0, "starter": 49, "pro": 199, "enterprise": 0}
+    plan_prices = {"free": 0, "starter": 49, "pro": 99, "enterprise": 999}
 
     # Monthly cap info
     from src.middleware.rate_limit import PLAN_MONTHLY_CAPS
