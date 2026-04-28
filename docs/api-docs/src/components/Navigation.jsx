@@ -228,6 +228,8 @@ export const navigation = [
     title: 'Security',
     links: [
       { title: 'IPI Scanner', href: '/ipi' },
+      { title: 'Bias Detection', href: '/bias' },
+      { title: 'AI Safety', href: '/safety' },
     ],
   },
   {
