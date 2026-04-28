@@ -10,78 +10,97 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script defer data-domain="governlayer.ai" src="https://plausible.io/js/script.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.15);
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.1);
+  --border-hover:rgba(255,255,255,.2);
   --text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;
-  --green:#10b981;--green-hover:#059669;--green-bg:rgba(16,185,129,.12);
-  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
-  --blue:#3b82f6;--blue-dark:#60a5fa;--purple:#8b5cf6;
+  --green:#10b981;--green-hover:#059669;--green-bg:rgba(16,185,129,.08);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.1);
 }
-html{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
-body{min-height:100vh;display:flex;flex-direction:column;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
-a{color:var(--green);text-decoration:none;transition:color .2s}
-a:hover{color:var(--green-hover)}
+html{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input{font-family:inherit}
 
-/* Nav */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border);background:rgba(10,14,26,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem;position:relative}
+.glow{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.06) 0%,rgba(59,130,246,.04) 40%,transparent 70%);pointer-events:none}
+
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border)}
 .nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}
+.nav-logo:hover{text-decoration:none}
 .nav-logo svg{width:28px;height:28px}
 .nav-right{font-size:.875rem;color:var(--muted)}
-.nav-right a{color:var(--green);font-weight:500;margin-left:.35rem}
+.nav-right a{font-weight:500;margin-left:.3rem}
 
-/* Main */
-.main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem;position:relative}
+.card{width:100%;max-width:420px;position:relative;z-index:1}
+.card-header{text-align:center;margin-bottom:2rem}
+.card-header h1{font-size:1.6rem;font-weight:700;margin-bottom:.4rem}
+.card-header p{color:var(--muted);font-size:.9rem}
 
-/* Glow */
-.glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.12) 0%,rgba(139,92,246,.08) 40%,transparent 70%);pointer-events:none;z-index:0}
+.sso-buttons{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.75rem}
+.sso-btn{
+  display:flex;align-items:center;justify-content:center;gap:.65rem;
+  width:100%;padding:.8rem 1rem;font-size:.9375rem;font-weight:500;
+  color:var(--text);background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;transition:all .15s;
+}
+.sso-btn:hover{background:var(--surface2);border-color:var(--border-hover)}
+.sso-btn:active{transform:scale(.985)}
+.sso-btn svg{width:20px;height:20px;flex-shrink:0}
 
-/* Card */
-.card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;position:relative;z-index:1}
-.card h1{font-size:1.5rem;font-weight:700;margin-bottom:.35rem}
-.card .subtitle{color:var(--muted);font-size:.9rem;margin-bottom:2rem}
+.divider{display:flex;align-items:center;gap:1rem;margin-bottom:1.75rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.8125rem;color:var(--dim);white-space:nowrap}
 
-/* Form */
-.field{margin-bottom:1.25rem}
-.field label{display:block;font-size:.8125rem;font-weight:500;color:var(--muted);margin-bottom:.4rem;letter-spacing:.02em}
-.field input{width:100%;padding:.7rem .85rem;font-size:.9375rem;font-family:inherit;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:10px;outline:none;transition:border-color .2s,box-shadow .2s}
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.8125rem;font-weight:500;color:var(--muted);margin-bottom:.4rem}
+.field input{
+  width:100%;padding:.7rem .85rem;font-size:.9375rem;color:var(--text);
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  outline:none;transition:border-color .15s,box-shadow .15s;
+}
 .field input::placeholder{color:var(--dim)}
-.field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
-.password-wrap{position:relative}
-.password-wrap input{padding-right:3rem}
-.toggle-pw{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim);cursor:pointer;padding:.2rem;display:flex;align-items:center;justify-content:center;transition:color .2s}
-.toggle-pw:hover{color:var(--muted)}
-.toggle-pw svg{width:20px;height:20px}
-.forgot{display:block;margin-top:.45rem;font-size:.8125rem;color:var(--dim);text-decoration:none;transition:color .2s}
-.forgot:hover{color:var(--muted)}
+.field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.12)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:3.5rem}
+.pw-toggle{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim);cursor:pointer;font-size:.8125rem;padding:.2rem .4rem;transition:color .15s}
+.pw-toggle:hover{color:var(--muted)}
+.forgot{display:block;margin-top:.4rem;font-size:.8125rem;color:var(--dim);transition:color .15s}
+.forgot:hover{color:var(--muted);text-decoration:none}
 
-/* Error */
-.error-box{background:var(--red-bg);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.875rem;color:var(--red);display:none;align-items:flex-start;gap:.5rem;line-height:1.45}
-.error-box.visible{display:flex}
-.error-box svg{flex-shrink:0;width:18px;height:18px;margin-top:1px}
-
-/* Button */
-.btn{width:100%;padding:.75rem;font-size:.9375rem;font-weight:600;font-family:inherit;color:#fff;background:var(--green);border:none;border-radius:10px;cursor:pointer;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:1.75rem}
-.btn:hover{background:var(--green-hover)}
-.btn:active{transform:scale(.985)}
-.btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
-.btn.loading .spinner{display:block}
-.btn.loading .btn-text{display:none}
+.submit-btn{
+  width:100%;padding:.8rem;font-size:.9375rem;font-weight:600;
+  color:#000;background:var(--green);border:none;border-radius:10px;
+  cursor:pointer;transition:background .15s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  margin-top:1.5rem;
+}
+.submit-btn:hover{background:var(--green-hover)}
+.submit-btn:active{transform:scale(.985)}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;display:none}
+.submit-btn.loading .spinner{display:block}
+.submit-btn.loading .btn-text{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Success */
-.success-box{background:var(--green-bg);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:.75rem 1rem;margin-top:1.25rem;font-size:.875rem;color:var(--green);display:none;align-items:center;gap:.5rem}
-.success-box.visible{display:flex}
+.error-box{background:var(--red-bg);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.875rem;color:var(--red);display:none;align-items:center;gap:.5rem}
+.error-box.show{display:flex}
+.error-box svg{flex-shrink:0;width:18px;height:18px}
+
+.success-box{background:var(--green-bg);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:.75rem 1rem;margin-top:1.25rem;font-size:.875rem;color:var(--green);display:none;align-items:center;gap:.5rem}
+.success-box.show{display:flex}
 .success-box svg{flex-shrink:0;width:18px;height:18px}
 
-/* Responsive */
+.mfa-field{display:none;margin-top:1.25rem}
+.mfa-field.show{display:block}
+
 @media(max-width:520px){
   .nav{padding:.85rem 1.25rem}
-  .card{padding:2rem 1.5rem;border-radius:12px}
-  .glow{width:350px;height:350px}
+  .card-header h1{font-size:1.35rem}
 }
 </style>
 </head>
@@ -89,48 +108,61 @@ a:hover{color:var(--green-hover)}
 
 <nav class="nav">
   <a href="/" class="nav-logo">
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="32" height="32" rx="8" fill="#10b981"/>
-      <path d="M9 17l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#10b981"/><path d="M9 17l4 4 10-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     GovernLayer
   </a>
   <div class="nav-right">Don't have an account?<a href="/signup">Sign up</a></div>
 </nav>
 
-<main class="main">
+<main class="page">
   <div class="glow"></div>
   <div class="card">
-    <h1>Welcome back</h1>
-    <p class="subtitle">Log in to your GovernLayer account</p>
+    <div class="card-header">
+      <h1>Welcome back</h1>
+      <p>Log in to your GovernLayer account</p>
+    </div>
 
     <div class="error-box" id="errorBox">
       <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-11a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0V7zm.75 7.5a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd"/></svg>
       <span id="errorMsg"></span>
     </div>
 
+    <div class="sso-buttons">
+      <button class="sso-btn" id="googleBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09a6.87 6.87 0 010-4.18V7.07H2.18a11.01 11.01 0 000 9.86l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <button class="sso-btn" id="microsoftBtn" type="button">
+        <svg viewBox="0 0 24 24"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="13" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="13" width="10" height="10" fill="#00A4EF"/><rect x="13" y="13" width="10" height="10" fill="#FFB900"/></svg>
+        Continue with Microsoft
+      </button>
+    </div>
+
+    <div class="divider"><span>or continue with email</span></div>
+
     <form id="loginForm" novalidate>
       <div class="field">
         <label for="email">Email address</label>
-        <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required>
+        <input type="email" id="email" placeholder="you@company.com" autocomplete="email" required>
       </div>
-
       <div class="field">
         <label for="password">Password</label>
-        <div class="password-wrap">
-          <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
-          <button type="button" class="toggle-pw" id="togglePw" aria-label="Show password">
-            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
+        <div class="pw-wrap">
+          <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+          <button type="button" class="pw-toggle" id="pwToggle">Show</button>
         </div>
-        <a href="#" class="forgot">Forgot password?</a>
+        <a href="/forgot-password" class="forgot">Forgot password?</a>
       </div>
 
-      <button type="submit" class="btn" id="submitBtn">
-        <span class="btn-text">Log In</span>
+      <div class="mfa-field" id="mfaField">
+        <div class="field">
+          <label for="mfaCode">Two-factor code</label>
+          <input type="text" id="mfaCode" placeholder="6-digit code" autocomplete="one-time-code" maxlength="8" inputmode="numeric">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Log in</span>
         <span class="spinner"></span>
       </button>
     </form>
@@ -144,95 +176,113 @@ a:hover{color:var(--green-hover)}
 
 <script>
 (function(){
-  const form=document.getElementById('loginForm');
-  const emailInput=document.getElementById('email');
-  const pwInput=document.getElementById('password');
-  const errorBox=document.getElementById('errorBox');
-  const errorMsg=document.getElementById('errorMsg');
-  const successBox=document.getElementById('successBox');
-  const submitBtn=document.getElementById('submitBtn');
-  const togglePw=document.getElementById('togglePw');
-  const eyeIcon=document.getElementById('eyeIcon');
+  'use strict';
 
-  // Show/hide password
-  let pwVisible=false;
-  togglePw.addEventListener('click',()=>{
-    pwVisible=!pwVisible;
-    pwInput.type=pwVisible?'text':'password';
-    eyeIcon.innerHTML=pwVisible
-      ?'<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
-      :'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-    togglePw.setAttribute('aria-label',pwVisible?'Hide password':'Show password');
+  const API = window.location.origin;
+  const form = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const pwInput = document.getElementById('password');
+  const mfaField = document.getElementById('mfaField');
+  const mfaInput = document.getElementById('mfaCode');
+  const errorBox = document.getElementById('errorBox');
+  const errorMsg = document.getElementById('errorMsg');
+  const successBox = document.getElementById('successBox');
+  const submitBtn = document.getElementById('submitBtn');
+  const pwToggle = document.getElementById('pwToggle');
+
+  // Password toggle
+  pwToggle.addEventListener('click', () => {
+    const hidden = pwInput.type === 'password';
+    pwInput.type = hidden ? 'text' : 'password';
+    pwToggle.textContent = hidden ? 'Hide' : 'Show';
   });
 
-  function showError(msg){
-    errorMsg.textContent=msg;
-    errorBox.classList.add('visible');
-  }
-  function hideError(){
-    errorBox.classList.remove('visible');
-  }
+  function showError(msg) { errorMsg.textContent = msg; errorBox.classList.add('show'); }
+  function hideError() { errorBox.classList.remove('show'); }
+  function setLoading(on) { submitBtn.disabled = on; submitBtn.classList.toggle('loading', on); }
 
-  function setLoading(on){
-    submitBtn.disabled=on;
-    submitBtn.classList.toggle('loading',on);
-  }
+  // Google SSO
+  document.getElementById('googleBtn').addEventListener('click', async () => {
+    hideError();
+    try {
+      const res = await fetch(API + '/auth/oauth/google/authorize');
+      const data = await res.json();
+      if (!res.ok) { showError(data.detail || 'Google sign-in not available.'); return; }
+      localStorage.setItem('gl_oauth_state', data.state);
+      window.location.href = data.authorize_url;
+    } catch { showError('Google sign-in not available right now.'); }
+  });
 
-  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Microsoft SSO
+  document.getElementById('microsoftBtn').addEventListener('click', async () => {
+    hideError();
+    try {
+      const res = await fetch(API + '/auth/oauth/microsoft/authorize');
+      const data = await res.json();
+      if (!res.ok) { showError(data.detail || 'Microsoft sign-in not available.'); return; }
+      localStorage.setItem('gl_oauth_state', data.state);
+      window.location.href = data.authorize_url;
+    } catch { showError('Microsoft sign-in not available right now.'); }
+  });
 
-  form.addEventListener('submit',async(e)=>{
+  // Email login
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideError();
 
-    const email=emailInput.value.trim();
-    const password=pwInput.value;
+    const email = emailInput.value.trim();
+    const password = pwInput.value;
+    const mfa_code = mfaInput.value.trim() || undefined;
 
-    // Client-side validation
-    if(!email||!emailRe.test(email)){
-      showError('Please enter a valid email address.');
-      emailInput.focus();
-      return;
-    }
-    if(!password){
-      showError('Please enter your password.');
-      pwInput.focus();
-      return;
-    }
+    if (!email || !emailRe.test(email)) { showError('Enter a valid email address.'); emailInput.focus(); return; }
+    if (!password) { showError('Enter your password.'); pwInput.focus(); return; }
 
     setLoading(true);
 
-    try{
-      const res=await fetch('/auth/login',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({email,password})
+    try {
+      const body = { email, password };
+      if (mfa_code) body.mfa_code = mfa_code;
+
+      const res = await fetch(API + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
       });
+      const data = await res.json().catch(() => null);
 
-      const data=await res.json().catch(()=>null);
-
-      if(!res.ok){
-        const msg=data?.detail||data?.message||'Login failed. Please check your credentials and try again.';
-        showError(typeof msg==='string'?msg:JSON.stringify(msg));
+      if (!res.ok) {
+        showError(data?.detail || 'Invalid email or password.');
         setLoading(false);
         return;
       }
 
-      // Store auth
-      const token=data.access_token||data.token||'';
-      if(token)localStorage.setItem('gl_token',token);
-      localStorage.setItem('gl_email',email);
+      // MFA required
+      if (data.mfa_required) {
+        mfaField.classList.add('show');
+        mfaInput.focus();
+        submitBtn.querySelector('.btn-text').textContent = 'Verify & log in';
+        setLoading(false);
+        return;
+      }
 
-      // Success state
-      form.style.display='none';
-      successBox.classList.add('visible');
+      // Success
+      const token = data.access_token || data.token || '';
+      if (token) localStorage.setItem('gl_token', token);
+      localStorage.setItem('gl_email', email);
+
+      form.style.display = 'none';
+      successBox.classList.add('show');
       setLoading(false);
 
-      setTimeout(()=>{window.location.href='/workspace';},1000);
-    }catch(err){
-      showError('Network error. Please check your connection and try again.');
+      setTimeout(() => { window.location.href = '/workspace'; }, 1000);
+    } catch {
+      showError('Network error. Please try again.');
       setLoading(false);
     }
   });
+
 })();
 </script>
 </body>
