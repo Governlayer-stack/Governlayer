@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ekene Uwaezuoke — Founder, GovernLayer | AI Governance Leader</title>
+<meta name="description" content="Ekene Uwaezuoke is the founder of GovernLayer and AI LAX Summit. Senior Engineering Program Manager at Google building AI governance for Gemini, DeepMind, Waymo, and Vertex AI.">
+<meta name="theme-color" content="#0a0e1a">
+<meta property="og:title" content="Ekene Uwaezuoke — Building Governance Infrastructure for the AI Era">
+<meta property="og:description" content="Founder of GovernLayer and AI LAX Summit. Senior EPM at Google leading AI compliance across Gemini, DeepMind, Waymo, and Vertex AI.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://governlayer.ai/founder">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ekene Uwaezuoke — AI Governance Leader">
+<meta name="twitter:description" content="Founder of GovernLayer and AI LAX Summit. Building governance infrastructure for the agentic AI era.">
+<link rel="canonical" href="https://governlayer.ai/founder">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1e293b;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-light:#60a5fa;--blue-bg:rgba(59,130,246,.12);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,.12);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2),0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:0 4px 6px rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.25),0 20px 44px rgba(0,0,0,.4);
+  --transition:cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+a{color:inherit;text-decoration:none}
+code{font-family:'JetBrains Mono',monospace}
+.container{max-width:900px;margin:0 auto;padding:0 28px}
+
+/* ============ SCROLL PROGRESS ============ */
+.scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));z-index:10001;transition:width .1s linear;border-radius:0 2px 2px 0}
+
+/* ============ REVEAL ============ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--transition),transform .8s var(--transition)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,14,26,.82);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s var(--transition)}
+.nav.scrolled{box-shadow:0 1px 20px rgba(0,0,0,.5);background:rgba(10,14,26,.95)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;padding:0 28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.03em}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;transition:transform .4s var(--transition);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.logo:hover .logo-mark{transform:rotate(90deg) scale(1.05)}
+.logo-mark svg{width:14px;height:14px}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--text2);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+@media(max-width:640px){.nav-links{display:none}}
+
+/* ============ HERO ============ */
+.hero{padding:160px 0 80px;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:100px;background:var(--blue-bg);border:1px solid rgba(59,130,246,.2);font-size:.8rem;font-weight:600;color:var(--blue-light);margin-bottom:28px;letter-spacing:.02em}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:20px}
+.hero h1 .gradient{background:linear-gradient(135deg,var(--blue-light),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.15rem;color:var(--text2);max-width:640px;margin:0 auto 36px;line-height:1.7}
+.hero-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero-links a{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:100px;font-size:.9rem;font-weight:600;transition:all .25s var(--transition)}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 2px 12px rgba(59,130,246,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,.4)}
+.btn-ghost{border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--text);background:var(--blue-bg)}
+
+/* ============ SECTION ============ */
+.section{padding:80px 0}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-light);margin-bottom:16px}
+.section-label::before{content:'';width:20px;height:1.5px;background:var(--blue)}
+.section h2{font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.2;margin-bottom:20px}
+.section p.lead{font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:24px}
+
+/* ============ TIMELINE ============ */
+.timeline{position:relative;padding-left:32px;margin:40px 0}
+.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--blue),var(--purple),var(--green));border-radius:2px}
+.tl-item{position:relative;margin-bottom:48px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-29px;top:6px;width:16px;height:16px;border-radius:50%;border:3px solid var(--bg);box-shadow:0 0 0 2px var(--blue);background:var(--blue)}
+.tl-item:nth-child(2) .tl-dot{background:var(--purple);box-shadow:0 0 0 2px var(--purple)}
+.tl-item:nth-child(3) .tl-dot{background:var(--green);box-shadow:0 0 0 2px var(--green)}
+.tl-item:nth-child(4) .tl-dot{background:var(--amber);box-shadow:0 0 0 2px var(--amber)}
+.tl-date{font-size:.78rem;font-weight:700;color:var(--blue-light);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.tl-item:nth-child(2) .tl-date{color:var(--purple)}
+.tl-item:nth-child(3) .tl-date{color:var(--green)}
+.tl-item:nth-child(4) .tl-date{color:var(--amber)}
+.tl-title{font-size:1.2rem;font-weight:700;margin-bottom:4px;letter-spacing:-.02em}
+.tl-org{font-size:.9rem;color:var(--text2);margin-bottom:10px;font-weight:500}
+.tl-bullets{list-style:none;padding:0}
+.tl-bullets li{position:relative;padding-left:18px;margin-bottom:8px;font-size:.92rem;color:var(--text2);line-height:1.65}
+.tl-bullets li::before{content:'';position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--text3)}
+
+/* ============ CARDS GRID ============ */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin:32px 0}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .3s var(--transition)}
+.card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.card-icon{width:44px;height:44px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:16px}
+.card h3{font-size:1.05rem;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+.card p{font-size:.88rem;color:var(--text2);line-height:1.65}
+
+/* ============ STATS ============ */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin:40px 0}
+.stat{text-align:center;padding:24px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.stat-num{font-size:1.8rem;font-weight:900;letter-spacing:-.04em;background:linear-gradient(135deg,var(--blue-light),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:.78rem;color:var(--text3);margin-top:4px;font-weight:500}
+
+/* ============ CERTS ============ */
+.certs{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+.cert{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);font-size:.8rem;font-weight:600;color:var(--text2);transition:all .25s var(--transition)}
+.cert:hover{border-color:var(--blue);color:var(--blue-light);background:var(--blue-bg)}
+.cert::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green)}
+
+/* ============ QUOTE ============ */
+.quote-block{position:relative;padding:32px 36px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:var(--radius-sm);margin:32px 0}
+.quote-block p{font-size:1rem;color:var(--text);line-height:1.75;font-style:italic}
+.quote-block cite{display:block;margin-top:16px;font-size:.85rem;color:var(--text3);font-style:normal;font-weight:600}
+
+/* ============ VENTURES ============ */
+.venture{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px;margin-bottom:24px;transition:all .3s var(--transition)}
+.venture:hover{border-color:var(--border2);box-shadow:var(--shadow-md)}
+.venture-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.venture-logo{width:48px;height:48px;border-radius:var(--radius-xs);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900}
+.venture h3{font-size:1.25rem;font-weight:800;letter-spacing:-.02em}
+.venture h3 span{display:block;font-size:.82rem;font-weight:500;color:var(--text3);margin-top:2px;letter-spacing:0}
+.venture p{font-size:.95rem;color:var(--text2);line-height:1.75;margin-bottom:16px}
+.venture-stats{display:flex;gap:24px;flex-wrap:wrap}
+.venture-stat{font-size:.82rem;color:var(--text3);font-weight:600}
+.venture-stat strong{color:var(--text);font-size:1rem}
+
+/* ============ CTA ============ */
+.cta-section{text-align:center;padding:100px 0 120px}
+.cta-section h2{font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;letter-spacing:-.04em;margin-bottom:16px}
+.cta-section p{color:var(--text2);font-size:1.05rem;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ============ FOOTER ============ */
+.footer{padding:32px 0;border-top:1px solid var(--border);text-align:center}
+.footer p{font-size:.82rem;color:var(--text3)}
+.footer a{color:var(--blue-light);transition:color .2s}
+.footer a:hover{color:var(--blue)}
+
+/* ============ DIVIDER ============ */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:0}
+
+@media(max-width:640px){
+  .hero{padding:120px 0 60px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .venture-header{flex-direction:column;align-items:flex-start}
+  .timeline{padding-left:28px}
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      GovernLayer
+    </a>
+    <ul class="nav-links">
+      <li><a href="/">Platform</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="mailto:founders@governlayer.ai">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <div class="reveal">
+      <div class="hero-badge">Founder &amp; CEO</div>
+      <h1>Ekene <span class="gradient">Uwaezuoke</span></h1>
+      <p class="hero-sub">
+        Building the governance infrastructure for the agentic AI era. Senior Engineering Program Manager at Google. Founder of GovernLayer and AI LAX Summit. Patent holder in AI governance architecture.
+      </p>
+      <div class="hero-links">
+        <a href="https://linkedin.com/in/ekeneuwaezuoke" class="btn-primary" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:founders@governlayer.ai" class="btn-ghost">founders@governlayer.ai</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- The Story -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Story</div>
+      <h2>I saw the governance gap before it became a crisis</h2>
+      <p class="lead">
+        In 2022, I joined Google to lead security, risk, and compliance programs across the most consequential AI products in the world — Gemini, DeepMind, Waymo, Vertex AI, and Google Cloud. What I found was a familiar pattern: mature compliance infrastructure built for traditional software, but nothing designed for the unique risks of AI systems.
+      </p>
+      <p class="lead">
+        There was no framework for behavioral drift. No standard for training data provenance. No certification process for generative AI products. The EU AI Act was coming, ISO 42001 had just been published, and the industry was about to ship autonomous AI agents with no governance rails.
+      </p>
+      <p class="lead">
+        So I built it. At Google, I designed the company's first AI Management System. Outside of Google, I founded GovernLayer to make that infrastructure available to every organization deploying AI. And I started AI LAX Summit to bring the ecosystem together — founders, enterprise leaders, and policymakers — because governance isn't a solo effort.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Google -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Google</div>
+      <h2>Building AI governance at scale</h2>
+      <p class="lead">
+        Senior Engineering Program Manager in Risk, Compliance &amp; Integrity, leading compliance programs across Google's highest-profile AI products.
+      </p>
+    </div>
+
+    <div class="stats reveal reveal-delay-1">
+      <div class="stat">
+        <div class="stat-num">58</div>
+        <div class="stat-label">ISO Certificates</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">29</div>
+        <div class="stat-label">SOC Reports</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">200+</div>
+        <div class="stat-label">In-Scope Products</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">11</div>
+        <div class="stat-label">Country Frameworks</div>
+      </div>
+    </div>
+
+    <div class="timeline reveal reveal-delay-2">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2023 &ndash; Present</div>
+        <div class="tl-title">AI Management System &amp; Risk Management Lead</div>
+        <div class="tl-org">DeepMind, DSPA, Core &amp; Cloud Product</div>
+        <ul class="tl-bullets">
+          <li>Conceived and led development of Google's first enterprise-wide AI Management System (AIMS) grounded in ISO 42001</li>
+          <li>Designed the AI risk management framework aligned to EU AI Act principles across Google's AI product portfolio</li>
+          <li>Facilitated cross-functional workshops with PA leadership and engineering to map control requirements and drive alignment on compliance strategy</li>
+          <li>Established foundational compliance infrastructure for responsible AI development that became the organizational standard</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">Jan 2023 &ndash; Present</div>
+        <div class="tl-title">Product Compliance Partner &mdash; DeepMind (Gemini)</div>
+        <div class="tl-org">Gemini, Workspace, Cloud</div>
+        <ul class="tl-bullets">
+          <li>Drove the first-ever cybersecurity certification for a generative AI product at Google (Gemini Web &amp; Mobile)</li>
+          <li>Coordinated with EY (external auditors), Legal, Product, and Engineering to validate vendor controls and achieve certification</li>
+          <li>Enabled competitive positioning by making compliance reports distributable to customers and partners</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">Aug 2023 &ndash; Present</div>
+        <div class="tl-title">Product Compliance Partner &mdash; Payments, GFiber &amp; Waymo</div>
+        <div class="tl-org">Google Bets Compliance</div>
+        <ul class="tl-bullets">
+          <li>Built compliance roadmaps for Waymo, GFiber, and DeepMind Bets — establishing consensus on security certifications for AI-driven products</li>
+          <li>Created comprehensive ISMS documentation for GFiber, forming the foundation for ISO 27001 certification</li>
+          <li>Collaborated with senior leadership across multiple Bets to achieve independent SOC attestations from EY</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">Oct 2023 &ndash; Present</div>
+        <div class="tl-title">Domain SME &mdash; Mega Audit</div>
+        <div class="tl-org">Network Security, Prod Infra, Logs, Storage &bull; Alphabet-wide</div>
+        <ul class="tl-bullets">
+          <li>Domain subject matter expert within Mega Audit covering 58 ISO certificates, 29 SOC reports, and 11 country-specific framework reports</li>
+          <li>Completed ~250 evidence requests per cycle, leveraged by 200+ in-scope products across Alphabet</li>
+          <li>Led auditor walkthroughs and coordinated remediation across highly technical security domains</li>
+          <li>Designed automated user access review process to replace a legacy system with multiple audit findings</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="quote-block reveal reveal-delay-2">
+      <p>"His contributions further included participating in the creation of the Artificial Intelligence Management System (AIMS) and the associated risk assessment for ISO 42001. Ekene subsequently assisted with the transition of the AIMS to DeepMind."</p>
+      <cite>&mdash; Manager review, Google GRAD cycle</cite>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Before Google -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Before Google</div>
+      <h2>From consulting to cloud security to building</h2>
+    </div>
+
+    <div class="timeline reveal reveal-delay-1">
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">Jul 2019 &ndash; Sep 2022</div>
+        <div class="tl-title">Advisory Senior Consultant &mdash; Cloud Security &amp; Third-Party Risk</div>
+        <div class="tl-org">Deloitte &amp; Touche LLP</div>
+        <ul class="tl-bullets">
+          <li>Led end-to-end ISMS assessments aligned to ISO 27001, 27017, 27018, 27701, FedRAMP, NIST 800, and GDPR for major cloud providers</li>
+          <li>Designed and deployed a global Cloud Security compliance service for a Fortune 500 firm across multi-cloud environments</li>
+          <li>Architected Central Privacy Incident Management (CPIM) requirements for major public cloud service providers</li>
+          <li>Conducted GITC and SOX control risk assessments globally — reducing control gaps by 40%</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">Oct 2017 &ndash; Jul 2019</div>
+        <div class="tl-title">IT Security Engineer</div>
+        <div class="tl-org">Vivint Smart Home</div>
+        <ul class="tl-bullets">
+          <li>Managed General IT Controls assessments for SOX, ISO, SOC 1 &amp; 2, PCI-DSS, and HIPAA/HITRUST compliance</li>
+          <li>Embedded security into Agile/SAFe product development, integrating vendor and third-party reviews into sprint workflows</li>
+          <li>Partnered with DevOps to drive process improvements that reduced network security issues by 50%</li>
+        </ul>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">Mar 2016 &ndash; Oct 2017</div>
+        <div class="tl-title">Security Analyst</div>
+        <div class="tl-org">Allied Universal</div>
+        <ul class="tl-bullets">
+          <li>Tested IT controls across SAP, UNIX, Oracle, SQL, and AS400 environments under SOX and multi-framework compliance</li>
+          <li>Led production risk reviews, monitoring, and disaster recovery planning</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Ventures -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Ventures</div>
+      <h2>What I'm building</h2>
+    </div>
+
+    <div class="venture reveal reveal-delay-1">
+      <div class="venture-header">
+        <div class="venture-logo" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;">G</div>
+        <h3>GovernLayer<span>Autonomous AI Governance Platform</span></h3>
+      </div>
+      <p>
+        GovernLayer provides real-time compliance, security, and risk management infrastructure for enterprises deploying AI agents. The platform continuously monitors AI systems for behavioral drift, policy violations, bias, and security vulnerabilities — enforcing governance decisions through an immutable, hash-chained audit ledger.
+      </p>
+      <p>
+        Built for the agentic AI era, where autonomous systems make decisions at machine speed and traditional compliance frameworks can't keep up. The platform covers 9 compliance frameworks, runs bias detection and prompt injection scanning, orchestrates 14 LLM models for hallucination-resistant analysis, and generates audit-ready evidence automatically.
+      </p>
+      <div class="venture-stats">
+        <div class="venture-stat"><strong>100+</strong> API endpoints</div>
+        <div class="venture-stat"><strong>14</strong> LLM models</div>
+        <div class="venture-stat"><strong>9</strong> compliance frameworks</div>
+        <div class="venture-stat"><strong>30</strong> patent claims</div>
+      </div>
+    </div>
+
+    <div class="venture reveal reveal-delay-2">
+      <div class="venture-header">
+        <div class="venture-logo" style="background:linear-gradient(135deg,var(--amber),var(--red));color:#fff;">A</div>
+        <h3>AI LAX Summit<span>AI Governance Ecosystem Convening</span></h3>
+      </div>
+      <p>
+        AI LAX Summit is a Los Angeles-based convening organization bringing together AI founders, enterprise leaders, and policymakers to advance responsible AI deployment. The summit creates space for the conversations that matter most — how we govern AI systems that are becoming autonomous, how we ensure fairness at scale, and how we build trust between the humans deploying AI and the communities affected by it.
+      </p>
+    </div>
+
+    <div class="venture reveal reveal-delay-3">
+      <div class="venture-header">
+        <div class="venture-logo" style="background:linear-gradient(135deg,var(--green),var(--blue));color:#fff;">P</div>
+        <h3>USPTO Provisional Patent<span>64/001,213 &mdash; Agentic AI Governance Architecture</span></h3>
+      </div>
+      <p>
+        Six-component architecture covering autonomous policy enforcement, behavioral drift detection, multi-dimensional risk scoring, multi-LLM consensus verification, immutable audit ledgers, and human-in-the-loop escalation. 30 claims including an AGI governance addendum.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Expertise -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Expertise</div>
+      <h2>Where I operate</h2>
+    </div>
+
+    <div class="cards reveal reveal-delay-1">
+      <div class="card">
+        <div class="card-icon" style="background:var(--blue-bg);color:var(--blue-light);">&#9881;</div>
+        <h3>AI Governance</h3>
+        <p>AI Management Systems (ISO 42001), AI risk frameworks, behavioral drift detection, model safety evaluation, responsible AI operationalization</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:var(--purple-bg);color:var(--purple);">&#128737;</div>
+        <h3>Security &amp; Compliance</h3>
+        <p>ISO 27001/27017/27018, SOC 1 &amp; 2, FedRAMP, PCI-DSS, HIPAA/HITRUST, GDPR, EU AI Act, NIST 800-53, NIST AI RMF</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:var(--green-bg);color:var(--green);">&#128279;</div>
+        <h3>Third-Party &amp; Vendor Risk</h3>
+        <p>End-to-end TPRM program design, vendor security assessments, supply chain risk for AI models, contractual security requirements, continuous monitoring</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:var(--amber-bg);color:var(--amber);">&#9879;</div>
+        <h3>Product Certification</h3>
+        <p>Cybersecurity certification for AI products, audit coordination (EY, Big 4), evidence management, compliance roadmapping, sales enablement</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:var(--red-bg);color:var(--red);">&#128640;</div>
+        <h3>AI Safety &amp; Fairness</h3>
+        <p>Bias detection, disparate impact analysis (EEOC four-fifths rule), prompt injection defense, toxicity scanning, training data integrity verification</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="background:var(--blue-bg);color:var(--blue-light);">&#127760;</div>
+        <h3>Regulatory Strategy</h3>
+        <p>EU AI Act implementation, NIST AI RMF operationalization, ISO 42001 certification readiness, cross-jurisdictional compliance, regulatory translation into actionable controls</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Credentials -->
+<section class="section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Credentials</div>
+      <h2>Certifications &amp; Education</h2>
+    </div>
+
+    <div class="reveal reveal-delay-1">
+      <h3 style="font-size:.95rem;color:var(--text2);font-weight:600;margin-bottom:16px;">Professional Certifications</h3>
+      <div class="certs">
+        <span class="cert">ISO 42001 AI Lead Implementer</span>
+        <span class="cert">ISO 27001 Lead Implementer</span>
+        <span class="cert">CISA</span>
+        <span class="cert">CISM</span>
+        <span class="cert">CDPSE</span>
+        <span class="cert">PMP</span>
+        <span class="cert">AWS Cloud Practitioner</span>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-2" style="margin-top:36px;">
+      <h3 style="font-size:.95rem;color:var(--text2);font-weight:600;margin-bottom:16px;">Education</h3>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+        <div class="card">
+          <h3 style="font-size:.95rem;">MIT + CSAIL</h3>
+          <p>Artificial Intelligence: Implications for Business Strategy — Executive Training, 2024</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:.95rem;">California University of Management &amp; Science</h3>
+          <p>M.Sc. Computer Information Systems — Specialization: Information Systems, Project Management</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:.95rem;">Abia State University</h3>
+          <p>B.Sc. (Hons.) Computer Information Science — Specialization: Information Systems &amp; Communication</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container reveal">
+    <h2>Let's build the future of AI governance</h2>
+    <p>Whether you're an enterprise deploying AI agents, an investor in the GRC space, or a policymaker shaping regulation — I'd love to connect.</p>
+    <div class="cta-links">
+      <a href="mailto:founders@governlayer.ai" class="btn-primary">Get in Touch</a>
+      <a href="https://linkedin.com/in/ekeneuwaezuoke" class="btn-ghost" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="/" class="btn-ghost">GovernLayer Platform</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2026 Ekene Uwaezuoke. Founder, <a href="/">GovernLayer</a> &amp; <a href="#">AI LAX Summit</a>.</p>
+  </div>
+</footer>
+
+<script>
+// Scroll progress
+const sp=document.getElementById('scrollProgress');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  sp.style.width=(window.scrollY/h*100)+'%';
+});
+
+// Nav scroll effect
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>40);
+});
+
+// Reveal on scroll
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
+},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

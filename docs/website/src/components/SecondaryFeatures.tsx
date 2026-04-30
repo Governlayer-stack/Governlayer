@@ -80,15 +80,14 @@ function Feature({
 }) {
   return (
     <div
-      className={clsx(className, !isActive && 'opacity-75 hover:opacity-100')}
+      className={clsx(
+        className,
+        'bg-white/[0.03] border rounded-2xl p-8 transition',
+        isActive ? 'border-white/10' : 'border-white/5 opacity-75 hover:opacity-100 hover:border-white/10',
+      )}
       {...props}
     >
-      <div
-        className={clsx(
-          'w-9 rounded-lg',
-          isActive ? 'bg-emerald-600' : 'bg-slate-500',
-        )}
-      >
+      <div className="bg-emerald-500/10 rounded-xl p-3 w-fit">
         <svg aria-hidden="true" className="h-9 w-9" fill="none">
           <feature.icon />
         </svg>
@@ -96,15 +95,15 @@ function Feature({
       <h3
         className={clsx(
           'mt-6 text-sm font-medium',
-          isActive ? 'text-emerald-600' : 'text-slate-600',
+          isActive ? 'text-emerald-400' : 'text-emerald-400/70',
         )}
       >
         {feature.name}
       </h3>
-      <p className="mt-2 font-display text-xl text-slate-900">
+      <p className="mt-2 font-display text-xl text-white">
         {feature.summary}
       </p>
-      <p className="mt-4 text-sm text-slate-600">{feature.description}</p>
+      <p className="mt-4 text-sm text-zinc-500">{feature.description}</p>
     </div>
   )
 }
@@ -144,7 +143,7 @@ function FeaturesDesktop() {
               />
             ))}
           </TabList>
-          <TabPanels className="relative mt-20 overflow-hidden rounded-4xl bg-slate-100 px-14 py-16 xl:px-16">
+          <TabPanels className="relative mt-20 overflow-hidden rounded-2xl bg-white/[0.03] border border-white/10 px-14 py-16 xl:px-16">
             <div className="-mx-5 flex">
               {features.map((feature, featureIndex) => (
                 <TabPanel
@@ -157,22 +156,22 @@ function FeaturesDesktop() {
                   style={{ transform: `translateX(-${selectedIndex * 100}%)` }}
                   aria-hidden={featureIndex !== selectedIndex}
                 >
-                  <div className="w-full overflow-hidden rounded-xl bg-white p-8 shadow-lg ring-1 shadow-slate-900/5 ring-slate-500/10">
+                  <div className="w-full overflow-hidden rounded-xl bg-white/5 p-8 border border-white/10">
                     {featureIndex === 0 && (
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
                           <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                          <span className="text-sm font-medium text-slate-900">Consensus Engine — Voting Mode</span>
+                          <span className="text-sm font-medium text-white">Consensus Engine — Voting Mode</span>
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                           {['Claude Opus', 'GPT-4o', 'Gemini Pro'].map((model) => (
-                            <div key={model} className="rounded-lg bg-slate-50 p-4 text-center">
-                              <div className="text-xs text-slate-500">{model}</div>
-                              <div className="mt-2 text-lg font-bold text-emerald-600">APPROVE</div>
+                            <div key={model} className="rounded-lg bg-white/5 border border-white/10 p-4 text-center">
+                              <div className="text-xs text-zinc-400">{model}</div>
+                              <div className="mt-2 text-lg font-bold text-emerald-400">APPROVE</div>
                             </div>
                           ))}
                         </div>
-                        <div className="rounded-lg bg-emerald-50 p-3 text-center text-sm font-medium text-emerald-700">
+                        <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-center text-sm font-medium text-emerald-400">
                           Consensus: 3/3 models agree — APPROVED with high confidence
                         </div>
                       </div>
@@ -181,7 +180,7 @@ function FeaturesDesktop() {
                       <div className="space-y-4">
                         <div className="flex items-center gap-3">
                           <div className="h-3 w-3 animate-pulse rounded-full bg-amber-500" />
-                          <span className="text-sm font-medium text-slate-900">Escalation Pipeline</span>
+                          <span className="text-sm font-medium text-white">Escalation Pipeline</span>
                         </div>
                         <div className="flex items-center justify-between gap-2">
                           {['Drift Detected', 'Risk Scored', 'Threshold Exceeded', 'Human Review'].map((step, i) => (
@@ -192,19 +191,19 @@ function FeaturesDesktop() {
                               )}>
                                 {i < 3 ? '\u2713' : '!'}
                               </div>
-                              <span className="text-xs text-slate-600">{step}</span>
-                              {i < 3 && <span className="text-slate-300">&rarr;</span>}
+                              <span className="text-xs text-zinc-400">{step}</span>
+                              {i < 3 && <span className="text-zinc-600">&rarr;</span>}
                             </div>
                           ))}
                         </div>
-                        <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-sm text-amber-400">
                           <strong>Awaiting review:</strong> Agent &quot;pricing-bot&quot; offered unauthorized 70% discount. Drift score: 0.91.
                         </div>
                       </div>
                     )}
                     {featureIndex === 2 && (
                       <div className="space-y-3">
-                        <div className="text-sm font-medium text-slate-900">Framework Coverage</div>
+                        <div className="text-sm font-medium text-white">Framework Coverage</div>
                         <div className="grid grid-cols-2 gap-2">
                           {[
                             { fw: 'SOC 2 Type II', pct: 92 },
@@ -214,12 +213,12 @@ function FeaturesDesktop() {
                             { fw: 'HIPAA', pct: 82 },
                             { fw: 'NIST AI RMF', pct: 71 },
                           ].map((f) => (
-                            <div key={f.fw} className="rounded-lg bg-slate-50 p-3">
+                            <div key={f.fw} className="rounded-lg bg-white/5 border border-white/10 p-3">
                               <div className="flex justify-between text-xs">
-                                <span className="font-medium text-slate-700">{f.fw}</span>
-                                <span className="text-emerald-600">{f.pct}%</span>
+                                <span className="font-medium text-zinc-300">{f.fw}</span>
+                                <span className="text-emerald-400">{f.pct}%</span>
                               </div>
-                              <div className="mt-2 h-1.5 rounded-full bg-slate-200">
+                              <div className="mt-2 h-1.5 rounded-full bg-white/10">
                                 <div className="h-1.5 rounded-full bg-emerald-500" style={{ width: `${f.pct}%` }} />
                               </div>
                             </div>
@@ -231,7 +230,7 @@ function FeaturesDesktop() {
                 </TabPanel>
               ))}
             </div>
-            <div className="pointer-events-none absolute inset-0 rounded-4xl ring-1 ring-slate-900/10 ring-inset" />
+            <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/10 ring-inset" />
           </TabPanels>
         </>
       )}
@@ -244,14 +243,14 @@ export function SecondaryFeatures() {
     <section
       id="solutions"
       aria-label="Advanced governance capabilities"
-      className="pt-20 pb-14 sm:pt-32 sm:pb-20 lg:pb-32"
+      className="bg-[#0A0A0F] pt-20 pb-14 sm:pt-32 sm:pb-20 lg:pb-32"
     >
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
-          <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             Advanced capabilities for enterprise AI teams.
           </h2>
-          <p className="mt-4 text-lg tracking-tight text-slate-700">
+          <p className="mt-4 text-lg tracking-tight text-zinc-400">
             Multi-LLM consensus, human-in-the-loop escalation, and the
             industry&apos;s most comprehensive framework library.
           </p>

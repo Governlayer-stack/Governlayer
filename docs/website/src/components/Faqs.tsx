@@ -59,19 +59,22 @@ export function Faqs() {
     <section
       id="faq"
       aria-labelledby="faq-title"
-      className="relative overflow-hidden bg-slate-50 py-20 sm:py-32"
+      className="relative overflow-hidden bg-[#0A0A0F] border-t border-white/5 py-20 sm:py-32"
     >
       <Container className="relative">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2
             id="faq-title"
-            className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl"
+            className="font-display text-3xl tracking-tight text-white sm:text-4xl"
           >
             Frequently asked questions
           </h2>
-          <p className="mt-4 text-lg tracking-tight text-slate-700">
+          <p className="mt-4 text-lg tracking-tight text-zinc-400">
             Can&apos;t find what you&apos;re looking for? Email us at{' '}
-            <a href="mailto:support@governlayer.ai" className="text-emerald-600 underline">
+            <a
+              href="mailto:support@governlayer.ai"
+              className="text-emerald-400 hover:text-emerald-300 transition"
+            >
               support@governlayer.ai
             </a>{' '}
             and we&apos;ll get back to you within 24 hours.
@@ -83,13 +86,16 @@ export function Faqs() {
         >
           {faqs.map((column, columnIndex) => (
             <li key={columnIndex}>
-              <ul role="list" className="flex flex-col gap-y-8">
+              <ul role="list" className="flex flex-col gap-y-0">
                 {column.map((faq, faqIndex) => (
-                  <li key={faqIndex}>
-                    <h3 className="font-display text-lg/7 text-slate-900">
+                  <li
+                    key={faqIndex}
+                    className="border-b border-white/5 pb-6 pt-6 first:pt-0"
+                  >
+                    <h3 className="font-display text-lg font-medium text-white">
                       {faq.question}
                     </h3>
-                    <p className="mt-4 text-sm text-slate-700">{faq.answer}</p>
+                    <p className="mt-4 text-sm text-zinc-500">{faq.answer}</p>
                   </li>
                 ))}
               </ul>

@@ -70,14 +70,14 @@ export function Testimonials() {
     <section
       id="testimonials"
       aria-label="What our customers are saying"
-      className="bg-slate-50 py-20 sm:py-32"
+      className="bg-[#0A0A0F] border-t border-white/5 py-20 sm:py-32"
     >
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
-          <h2 className="font-display text-3xl tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             Trusted by enterprise AI teams worldwide.
           </h2>
-          <p className="mt-4 text-lg tracking-tight text-slate-700">
+          <p className="mt-4 text-lg tracking-tight text-zinc-400">
             From startups deploying their first agent to enterprises managing
             thousands — GovernLayer provides the governance backbone.
           </p>
@@ -91,24 +91,24 @@ export function Testimonials() {
               <ul role="list" className="flex flex-col gap-y-6 sm:gap-y-8">
                 {column.map((testimonial, testimonialIndex) => (
                   <li key={testimonialIndex}>
-                    <figure className="relative rounded-2xl bg-white p-6 shadow-xl shadow-slate-900/10">
-                      <QuoteIcon className="absolute top-6 left-6 fill-slate-100" />
+                    <figure className="relative rounded-2xl bg-white/[0.03] border border-white/10 p-8">
+                      <QuoteIcon className="absolute top-6 left-6 fill-white/5" />
                       <blockquote className="relative">
-                        <p className="text-lg tracking-tight text-slate-900">
+                        <p className="text-base tracking-tight text-zinc-300">
                           {testimonial.content}
                         </p>
                       </blockquote>
-                      <figcaption className="relative mt-6 flex items-center justify-between border-t border-slate-100 pt-6">
+                      <figcaption className="relative mt-6 flex items-center justify-between border-t border-white/5 pt-6">
                         <div>
-                          <div className="font-display text-base text-slate-900">
+                          <div className="font-display text-base font-medium text-white">
                             {testimonial.author.name}
                           </div>
-                          <div className="mt-1 text-sm text-slate-500">
+                          <div className="mt-1 text-sm text-zinc-500">
                             {testimonial.author.role}
                           </div>
                         </div>
-                        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-emerald-50">
-                          <span className="text-lg font-bold text-emerald-600">
+                        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500">
+                          <span className="text-lg font-bold text-white">
                             {testimonial.author.name.split(' ').map(n => n[0]).join('')}
                           </span>
                         </div>
