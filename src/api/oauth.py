@@ -249,6 +249,71 @@ def authorize(provider: str):
     return OAuthAuthorizeResponse(authorize_url=url, state=state, provider=provider)
 
 
+@router.get("/{provider}/callback")
+def callback_get(provider: str, code: str = "", state: str = "", error: str = "", db: Session = Depends(get_db)):
+    """Handle the browser redirect from the OAuth provider (GET).
+
+    Google/Microsoft/GitHub redirect here with ?code=...&state=... as a GET.
+    We exchange the code, create/link the user, and redirect to /workspace with the JWT.
+    """
+    from fastapi.responses import RedirectResponse
+
+    if error:
+        return RedirectResponse(url=f"/login?error=oauth_{error}")
+
+    if not code:
+        return RedirectResponse(url="/login?error=oauth_no_code")
+
+    provider_cls = get_provider(provider)
+    if not provider_cls:
+        return RedirectResponse(url=f"/login?error=unknown_provider")
+    if not provider_cls.is_configured():
+        return RedirectResponse(url=f"/login?error=provider_not_configured")
+
+    redirect_uri = _get_redirect_uri(provider)
+
+    # Exchange code for tokens
+    try:
+        token_data = provider_cls.exchange_code(code, redirect_uri)
+    except OAuthError as exc:
+        logger.warning("OAuth GET callback token exchange failed for %s: %s", provider, exc)
+        return RedirectResponse(url=f"/login?error=token_exchange_failed")
+
+    access_token = token_data.get("access_token")
+    if not access_token:
+        return RedirectResponse(url=f"/login?error=no_access_token")
+
+    # Fetch user info
+    try:
+        user_info = provider_cls.get_user_info(access_token)
+    except OAuthError as exc:
+        logger.warning("OAuth GET callback user info failed for %s: %s", provider, exc)
+        return RedirectResponse(url=f"/login?error=user_info_failed")
+
+    if not user_info.email:
+        return RedirectResponse(url=f"/login?error=no_email")
+
+    # Create or link user
+    user, is_new = _get_or_create_oauth_user(
+        db, user_info.email, user_info.name, user_info.provider, user_info.provider_id
+    )
+
+    jwt_token = create_token(user.email)
+    logger.info("OAuth GET callback: provider=%s email=%s new_user=%s", provider, user.email, is_new)
+
+    # For new users: auto-create org
+    if is_new:
+        _auto_provision_org(db, user)
+        try:
+            from src.email.service import send_welcome_email
+            send_welcome_email(user.email, user.company)
+        except Exception:
+            pass
+
+    # Redirect to workspace with token in fragment (not query param for security)
+    return RedirectResponse(url=f"/workspace?token={jwt_token}&provider={provider}&new={1 if is_new else 0}")
+
+
 @router.post("/{provider}/callback", response_model=OAuthTokenResponse)
 def callback(provider: str, body: OAuthCallbackRequest, db: Session = Depends(get_db)):
     """Exchange an authorization code for a JWT token.
