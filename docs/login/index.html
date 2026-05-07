@@ -271,6 +271,7 @@ button,input{font-family:inherit}
       const token = data.access_token || data.token || '';
       if (token) localStorage.setItem('gl_token', token);
       localStorage.setItem('gl_email', email);
+      localStorage.setItem('gl_api_url', API);
 
       form.style.display = 'none';
       successBox.classList.add('show');

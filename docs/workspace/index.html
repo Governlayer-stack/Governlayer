@@ -1356,6 +1356,29 @@ function getFrameworks() {
 }
 function getToken() { return localStorage.getItem('gl_token'); }
 
+// ========== AUTH FROM URL ==========
+(function captureAuthFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (token) {
+    localStorage.setItem('gl_token', token);
+    localStorage.setItem('gl_api_url', window.location.origin);
+    // Decode JWT to get email
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.sub) localStorage.setItem('gl_email', payload.sub);
+    } catch(e) {}
+    if (params.get('provider')) localStorage.setItem('gl_provider', params.get('provider'));
+    // Clean URL
+    window.history.replaceState({}, '', '/workspace');
+  }
+  // Redirect to login if no token at all
+  if (!localStorage.getItem('gl_token')) {
+    window.location.href = '/login';
+    return;
+  }
+})();
+
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', () => {
   initSidebar();
