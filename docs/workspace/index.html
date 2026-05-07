@@ -1395,6 +1395,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initLedgerTab();
   initSettingsTab();
   tryLiveData();
+
+  // Show framework selector on first login (no frameworks chosen yet)
+  if (!localStorage.getItem('gl_frameworks')) {
+    setTimeout(() => {
+      document.getElementById('frameworkModal').classList.add('open');
+    }, 500);
+  }
 });
 
 function initSidebar() {
