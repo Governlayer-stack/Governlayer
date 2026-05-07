@@ -1348,7 +1348,7 @@ let isLive = false;
 
 function saveState() { localStorage.setItem('gl_workspace_state', JSON.stringify(state)); }
 
-function getEmail() { return localStorage.getItem('gl_email') || 'demo@example.com'; }
+function getEmail() { return localStorage.getItem('gl_email') || ''; }
 function getPlan() { return localStorage.getItem('gl_plan') || 'free'; }
 function getFrameworks() {
   try { return JSON.parse(localStorage.getItem('gl_frameworks')) || ['SOC2']; }
@@ -2290,46 +2290,106 @@ function logout() {
 // ========== API INTEGRATION ==========
 async function tryLiveData() {
   const token = getToken();
-  const baseUrl = localStorage.getItem('gl_api_url');
-  if (!token || !baseUrl) return;
+  const baseUrl = localStorage.getItem('gl_api_url') || window.location.origin;
+  if (!token) return;
 
   const headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
 
-  // Try readiness endpoint
+  // Fetch onboarding status — real user data
   try {
-    const res = await fetch(baseUrl + '/v1/compliance/readiness', { headers });
-    if (res.ok) {
-      isLive = true;
-      // Would update UI with real data here
-    }
-  } catch (e) { /* fallback to demo data */ }
-
-  // Try risk score
-  try {
-    const res = await fetch(baseUrl + '/risk-score', {
-      method: 'POST', headers,
-      body: JSON.stringify({ system_name: 'workspace', has_pii: true, has_ai: true, has_third_party: true, is_public: true, has_encryption: true, has_audit_logging: false })
-    });
+    const res = await fetch(baseUrl + '/auth/onboarding-status', { headers });
     if (res.ok) {
       const data = await res.json();
       isLive = true;
+      // Update sidebar with real user info
+      document.getElementById('sidebarEmail').textContent = data.email || '';
+      const badge = document.getElementById('sidebarPlan');
+      const plan = data.org ? data.org.plan : 'free';
+      badge.textContent = plan.toUpperCase();
+      badge.className = 'plan-badge plan-' + plan;
+      localStorage.setItem('gl_email', data.email);
+      localStorage.setItem('gl_plan', plan);
+      const name = data.email ? data.email.split('@')[0] : '';
+      document.getElementById('topbarGreeting').innerHTML = 'Welcome back, <span style="color:var(--blue)">' + name + '</span>';
+
+      // Show onboarding progress banner if incomplete
+      if (!data.complete) {
+        const steps = data.steps || {};
+        const todos = [];
+        if (!steps.email_verified) todos.push('<a href="#" onclick="resendVerification()">Verify your email</a>');
+        if (!steps.org_created) todos.push('<a href="/docs">Create your organization</a>');
+        if (!steps.api_key_generated) todos.push('Generate an API key in Settings');
+        if (todos.length > 0) {
+          const banner = document.createElement('div');
+          banner.style.cssText = 'background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text)';
+          banner.innerHTML = '<strong>Getting Started (' + data.progress + ')</strong><br><span style="color:var(--muted)">' + todos.join(' &middot; ') + '</span>';
+          const overview = document.getElementById('tab-overview');
+          if (overview) overview.insertBefore(banner, overview.firstChild);
+        }
+      }
     }
   } catch (e) { /* fallback */ }
 
-  // Try ledger
+  // Fetch real ledger data
   try {
     const res = await fetch(baseUrl + '/ledger', { headers });
     if (res.ok) {
       const data = await res.json();
-      if (data.entries && data.entries.length > 0) {
+      const items = data.items || data.entries || [];
+      if (items.length > 0) {
         isLive = true;
+        // Update audit ledger tab with real data
+        const ledgerBody = document.getElementById('auditLedgerBody');
+        if (ledgerBody) {
+          ledgerBody.innerHTML = items.slice(0, 20).map(item => `
+            <tr>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${(item.current_hash || '').substring(0,16)}...</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:11px">${(item.previous_hash || '').substring(0,16)}...</td>
+              <td><span class="status-badge ${item.governance_action === 'APPROVE' ? 'status-pass' : item.governance_action === 'BLOCK' ? 'status-fail' : 'status-warn'}">${item.governance_action || ''}</span></td>
+              <td>${new Date(item.created_at).toLocaleString()}</td>
+              <td>${item.system_name || ''}</td>
+            </tr>
+          `).join('');
+        }
+        // Update timeline
+        const timelineEl = document.getElementById('timelineList');
+        if (timelineEl) {
+          timelineEl.innerHTML = items.slice(0, 8).map(item => `
+            <div class="timeline-item">
+              <div class="timeline-dot ${item.governance_action === 'APPROVE' ? 'dot-pass' : 'dot-fail'}"></div>
+              <div class="timeline-content">
+                <div class="timeline-title">${item.governance_action} — ${item.system_name}</div>
+                <div class="timeline-time">${new Date(item.created_at).toLocaleString()}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+        // Update last scan time
+        const lastItem = items[items.length - 1];
+        if (lastItem) {
+          document.getElementById('lastScan').textContent = 'Last scan: ' + new Date(lastItem.created_at).toLocaleString();
+          state.lastScan = lastItem.created_at;
+          saveState();
+        }
       }
     }
   } catch (e) { /* fallback */ }
 
   if (isLive) {
-    document.getElementById('topbarGreeting').innerHTML += '<span class="live-badge">LIVE</span>';
+    document.getElementById('topbarGreeting').innerHTML += ' <span class="live-badge">LIVE</span>';
   }
+}
+
+async function resendVerification() {
+  const token = getToken();
+  const baseUrl = localStorage.getItem('gl_api_url') || window.location.origin;
+  try {
+    await fetch(baseUrl + '/auth/resend-verification', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    alert('Verification email sent! Check your inbox.');
+  } catch(e) { alert('Failed to send verification email.'); }
 }
 
 async function runFullScan() {
