@@ -200,8 +200,9 @@ def send_weekly_digest(data: DigestRequest, email: str = Depends(verify_token), 
 
 # ─── Evidence Upload ──────────────────────────────────────────────────
 
-# Store evidence files in memory for MVP (production: S3/GCS)
-_evidence_store: dict = {}
+# In-memory evidence metadata index. Keyed by evidence_id.
+# Production deployments should back this with a database table.
+_evidence_index: list[dict] = []
 
 
 @router.post("/evidence/upload")
@@ -211,27 +212,46 @@ async def upload_evidence(
     framework: str = "SOC_2",
     email: str = Depends(verify_token),
 ):
-    """Upload an evidence file (screenshot, CSV, PDF, etc.)."""
+    """Upload an evidence file (screenshot, CSV, PDF, etc.) to persistent storage."""
+    from src.storage import upload_file
+
     contents = await file.read()
     if len(contents) > 10 * 1024 * 1024:
         raise HTTPException(status_code=413, detail="File too large (max 10MB)")
 
     evidence_id = f"ev_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{file.filename}"
-    _evidence_store[evidence_id] = {
+
+    result = await upload_file(
+        file_bytes=contents,
+        filename=file.filename or "untitled",
+        content_type=file.content_type or "application/octet-stream",
+        metadata={
+            "evidence_id": evidence_id,
+            "control_id": control_id,
+            "framework": framework,
+            "uploaded_by": email,
+        },
+    )
+
+    record = {
         "id": evidence_id,
         "filename": file.filename,
         "content_type": file.content_type,
-        "size": len(contents),
+        "size": result["size"],
+        "storage_key": result["key"],
+        "storage_url": result["url"],
+        "storage_backend": result["storage_backend"],
         "control_id": control_id,
         "framework": framework,
         "uploaded_by": email,
         "uploaded_at": datetime.now(timezone.utc).isoformat(),
     }
+    _evidence_index.append(record)
 
     return {
         "id": evidence_id,
         "filename": file.filename,
-        "size": len(contents),
+        "size": result["size"],
         "control_id": control_id,
         "framework": framework,
     }
@@ -241,8 +261,8 @@ async def upload_evidence(
 def list_evidence(email: str = Depends(verify_token)):
     """List all uploaded evidence files."""
     return {
-        "total": len(_evidence_store),
-        "evidence": list(_evidence_store.values()),
+        "total": len(_evidence_index),
+        "evidence": _evidence_index,
     }
 
 
