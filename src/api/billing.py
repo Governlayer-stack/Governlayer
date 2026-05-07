@@ -45,8 +45,8 @@ def _get_price_id(plan: str) -> str:
 class CheckoutRequest(BaseModel):
     org_slug: str = Field(..., min_length=2)
     plan: str = Field(..., pattern=r"^(starter|pro|enterprise)$")
-    success_url: str = Field(default="https://governlayer.ai/billing/success")
-    cancel_url: str = Field(default="https://governlayer.ai/billing/cancel")
+    success_url: str = Field(default="https://www.governlayer.ai/billing/success")
+    cancel_url: str = Field(default="https://www.governlayer.ai/billing/cancel")
 
 
 # --- Endpoints ---
@@ -156,7 +156,7 @@ def customer_portal(org_slug: str, email: str = Depends(verify_token),
 
     session = s.billing_portal.Session.create(
         customer=org.stripe_customer_id,
-        return_url=f"https://governlayer.ai/orgs/{org_slug}",
+        return_url=f"https://www.governlayer.ai/orgs/{org_slug}",
     )
     return {"portal_url": session.url}
 

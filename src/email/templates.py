@@ -53,9 +53,9 @@ _FOOTER = """\
 </p>
 <p style="color:#475569;font-size:11px;line-height:1.6;margin:8px 0 0">
 You received this because your email is associated with a GovernLayer account.<br>
-<a href="https://governlayer.ai/settings/notifications" style="color:#3b82f6;text-decoration:none">Manage notification preferences</a>
+<a href="https://www.governlayer.ai/settings/notifications" style="color:#3b82f6;text-decoration:none">Manage notification preferences</a>
 &nbsp;&middot;&nbsp;
-<a href="https://governlayer.ai/unsubscribe" style="color:#3b82f6;text-decoration:none">Unsubscribe</a>
+<a href="https://www.governlayer.ai/unsubscribe" style="color:#3b82f6;text-decoration:none">Unsubscribe</a>
 </p>
 </td></tr>
 </table>
@@ -219,7 +219,7 @@ Questions? Reply to this email or reach out to
 def password_reset(email: str, reset_token: str) -> tuple[str, str]:
     """Password reset email. Returns (subject, html)."""
     subject = "GovernLayer -- Password Reset"
-    reset_url = f"https://governlayer.ai/reset?token={reset_token}"
+    reset_url = f"https://www.governlayer.ai/reset?token={reset_token}"
     content = _card(f"""\
 <h2 style="color:#e2e8f0;margin:0 0 12px;font-size:20px">Password Reset</h2>
 <p style="color:#94a3b8;line-height:1.7;margin:0 0 16px">
@@ -252,7 +252,7 @@ Key prefix: {_code_block(key_prefix + "...")}
 <p style="color:#64748b;font-size:13px;margin:0">
 Store your full key securely -- it will not be shown again.
 If you did not create this key, revoke it immediately in your
-<a href="https://governlayer.ai/settings/api-keys" style="color:#3b82f6;text-decoration:none">dashboard</a>.
+<a href="https://www.governlayer.ai/settings/api-keys" style="color:#3b82f6;text-decoration:none">dashboard</a>.
 </p>
 """)
     return subject, _wrap(subject, content)
@@ -300,7 +300,7 @@ and requires your attention before the SLA deadline.
 </tr>
 </table>
 </div>
-{_button("https://governlayer.ai/dashboard#escalations", "Review Now", color="#f97316")}
+{_button("https://www.governlayer.ai/dashboard#escalations", "Review Now", color="#f97316")}
 """,
         border_left_color=color,
     )
@@ -331,7 +331,7 @@ Thank you for your payment. Here is your receipt.
 </tr>
 </table>
 </div>
-{_button("https://governlayer.ai/billing", "View Billing Portal", color="#3b82f6", text_color="#ffffff")}
+{_button("https://www.governlayer.ai/billing", "View Billing Portal", color="#3b82f6", text_color="#ffffff")}
 <p style="color:#64748b;font-size:12px;margin:8px 0 0">
 Questions about billing? Contact <a href="mailto:billing@governlayer.ai" style="color:#3b82f6;text-decoration:none">billing@governlayer.ai</a>.
 </p>

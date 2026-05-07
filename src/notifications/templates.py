@@ -22,7 +22,7 @@ def password_reset_email(token: str, email: str) -> tuple[str, str]:
     """Returns (subject, html_body) for password reset."""
     subject = "GovernLayer — Password Reset"
     # In production, this would be a real URL like https://app.governlayer.ai/reset?token=xxx
-    reset_url = f"https://governlayer.ai/reset?token={token}"
+    reset_url = f"https://www.governlayer.ai/reset?token={token}"
     html = BRAND_HEADER + f"""
 <div style="background:#111;border:1px solid #222;border-radius:8px;padding:24px">
 <h2 style="color:#fff;margin:0 0 12px;font-size:18px">Password Reset Request</h2>
@@ -54,7 +54,7 @@ def incident_alert_email(incident_title: str, severity: str, incident_id: int) -
 </div>
 <h2 style="color:#fff;margin:0 0 16px;font-size:18px">{incident_title}</h2>
 <div style="text-align:center;margin:20px 0">
-<a href="https://governlayer.ai/dashboard#incidents" style="display:inline-block;background:#222;color:#00ff88;padding:10px 24px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;border:1px solid #333">View in Dashboard</a>
+<a href="https://www.governlayer.ai/dashboard#incidents" style="display:inline-block;background:#222;color:#00ff88;padding:10px 24px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;border:1px solid #333">View in Dashboard</a>
 </div>
 </div>
 """ + BRAND_FOOTER
@@ -79,7 +79,7 @@ Your account <strong style="color:#fff">{email}</strong> for <strong style="colo
 </ol>
 </div>
 <div style="text-align:center;margin:20px 0">
-<a href="https://governlayer.ai/docs" style="display:inline-block;background:#00ff88;color:#000;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px">Read the Docs</a>
+<a href="https://www.governlayer.ai/docs" style="display:inline-block;background:#00ff88;color:#000;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px">Read the Docs</a>
 </div>
 </div>
 """ + BRAND_FOOTER
