@@ -1,4 +1,4 @@
-"""GRC Integrations API — connect GovernLayer to ServiceNow, Jira, Slack."""
+"""GRC Integrations API — connect GovernLayer to ServiceNow, Jira, Slack, GitHub, AWS, GCP."""
 
 from typing import Any, Dict, List, Optional
 
@@ -6,6 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from src.integrations.connectors import SlackConnector, JiraConnector, ServiceNowConnector
+from src.integrations.github import GitHubConnector
+from src.integrations.aws import AWSConnector
+from src.integrations.gcp import GCPConnector
 from src.security.auth import verify_token
 
 router = APIRouter(prefix="/v1/integrations", tags=["Integrations"])
@@ -112,6 +115,30 @@ def list_available_integrations(current_user: str = Depends(verify_token)):
     return {
         "integrations": [
             {
+                "id": "github",
+                "name": "GitHub",
+                "type": "evidence_collection",
+                "description": "Automated compliance evidence from GitHub repos — branch protection, PR reviews, secret scanning, Dependabot, CI/CD",
+                "auth": "personal_access_token",
+                "capabilities": ["branch_protection", "pr_reviews", "secret_scanning", "dependabot", "actions", "access"],
+            },
+            {
+                "id": "aws",
+                "name": "Amazon Web Services",
+                "type": "evidence_collection",
+                "description": "Automated compliance evidence from AWS — IAM, S3 encryption, CloudTrail, GuardDuty, security groups",
+                "auth": "access_key_id + secret_access_key",
+                "capabilities": ["iam_mfa", "iam_policies", "s3_encryption", "cloudtrail", "guardduty"],
+            },
+            {
+                "id": "gcp",
+                "name": "Google Cloud Platform",
+                "type": "evidence_collection",
+                "description": "Automated compliance evidence from GCP — IAM, audit logging, storage encryption, firewall rules, KMS",
+                "auth": "access_token + project_id",
+                "capabilities": ["iam_audit", "audit_logging", "storage_encryption", "firewall_rules", "kms"],
+            },
+            {
                 "id": "slack",
                 "name": "Slack",
                 "type": "alerting",
@@ -145,3 +172,111 @@ def list_available_integrations(current_user: str = Depends(verify_token)):
             },
         ],
     }
+
+
+# ─── GitHub Integration ──────────────────────────────────────────────
+
+
+class GitHubConfig(BaseModel):
+    token: str = Field(..., description="GitHub Personal Access Token or App token")
+
+
+class GitHubScanConfig(BaseModel):
+    token: str
+    repo: str = Field(..., description="Full repo name, e.g. 'owner/repo'")
+
+
+@router.post("/github/test")
+def test_github_connection(data: GitHubConfig, current_user: str = Depends(verify_token)):
+    """Test GitHub token validity."""
+    connector = GitHubConnector(token=data.token)
+    try:
+        return connector.test_connection()
+    finally:
+        connector.close()
+
+
+@router.post("/github/repos")
+def list_github_repos(data: GitHubConfig, org: str = "", current_user: str = Depends(verify_token)):
+    """List repositories accessible with the token."""
+    connector = GitHubConnector(token=data.token)
+    try:
+        repos = connector.list_repos(org=org)
+        return {"repos": repos, "count": len(repos)}
+    finally:
+        connector.close()
+
+
+@router.post("/github/scan")
+def scan_github_repo(data: GitHubScanConfig, current_user: str = Depends(verify_token)):
+    """Collect compliance evidence from a GitHub repository."""
+    connector = GitHubConnector(token=data.token)
+    try:
+        return connector.collect_evidence(repo=data.repo)
+    finally:
+        connector.close()
+
+
+# ─── AWS Integration ─────────────────────────────────────────────────
+
+
+class AWSConfig(BaseModel):
+    access_key_id: str
+    secret_access_key: str
+    region: str = "us-east-1"
+
+
+@router.post("/aws/test")
+def test_aws_connection(data: AWSConfig, current_user: str = Depends(verify_token)):
+    """Test AWS credentials via STS GetCallerIdentity."""
+    connector = AWSConnector(
+        access_key_id=data.access_key_id,
+        secret_access_key=data.secret_access_key,
+        region=data.region,
+    )
+    try:
+        return connector.test_connection()
+    finally:
+        connector.close()
+
+
+@router.post("/aws/scan")
+def scan_aws_account(data: AWSConfig, current_user: str = Depends(verify_token)):
+    """Collect compliance evidence from an AWS account."""
+    connector = AWSConnector(
+        access_key_id=data.access_key_id,
+        secret_access_key=data.secret_access_key,
+        region=data.region,
+    )
+    try:
+        return connector.collect_evidence()
+    finally:
+        connector.close()
+
+
+# ─── GCP Integration ─────────────────────────────────────────────────
+
+
+class GCPConfig(BaseModel):
+    project_id: str
+    access_token: str = Field(..., description="OAuth2 access token for GCP APIs")
+
+
+@router.post("/gcp/test")
+def test_gcp_connection(data: GCPConfig, current_user: str = Depends(verify_token)):
+    """Test GCP credentials by fetching project info."""
+    connector = GCPConnector(project_id=data.project_id, access_token=data.access_token)
+    try:
+        return connector.test_connection()
+    finally:
+        connector.close()
+
+
+@router.post("/gcp/scan")
+def scan_gcp_project(data: GCPConfig, current_user: str = Depends(verify_token)):
+    """Collect compliance evidence from a GCP project."""
+    connector = GCPConnector(project_id=data.project_id, access_token=data.access_token)
+    try:
+        return connector.collect_evidence()
+    finally:
+        connector.close()

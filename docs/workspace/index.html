@@ -1307,15 +1307,15 @@ const DEMO_REMEDIATIONS = [
 ];
 
 const CONNECTORS = [
-  { id: 'aws', name: 'AWS', letter: 'A', icon: '\u2601\ufe0f', connected: true, lastSync: '2 hrs ago', desc: 'CloudTrail logs, IAM policies, S3 configs, KMS encryption status' },
-  { id: 'github', name: 'GitHub', letter: 'G', icon: '\ud83d\udc19', connected: true, lastSync: '30 min ago', desc: 'Branch protection, PR reviews, CI/CD pipelines, dependency alerts' },
-  { id: 'postgres', name: 'PostgreSQL', letter: 'P', icon: '\ud83d\uddc4\ufe0f', connected: false, lastSync: null, desc: 'Access controls, encryption config, audit logs, backup schedules' },
-  { id: 'docker', name: 'Docker', letter: 'D', icon: '\ud83d\udc33', connected: false, lastSync: null, desc: 'Image scanning, container configs, registry access, runtime policies' },
-  { id: 'k8s', name: 'Kubernetes', letter: 'K', icon: '\u2638\ufe0f', connected: false, lastSync: null, desc: 'RBAC policies, network policies, pod security, secrets management' },
+  { id: 'github', name: 'GitHub', letter: 'G', icon: '\ud83d\udc19', connected: false, lastSync: null, desc: 'Branch protection, PR reviews, secret scanning, Dependabot, CI/CD', apiEndpoint: '/v1/integrations/github', authFields: ['token'] },
+  { id: 'aws', name: 'AWS', letter: 'A', icon: '\u2601\ufe0f', connected: false, lastSync: null, desc: 'IAM & MFA, S3 encryption, CloudTrail, GuardDuty, security groups', apiEndpoint: '/v1/integrations/aws', authFields: ['access_key_id','secret_access_key','region'] },
+  { id: 'gcp', name: 'Google Cloud', letter: 'C', icon: '\u2601\ufe0f', connected: false, lastSync: null, desc: 'IAM audit, audit logging, storage encryption, firewall rules, KMS', apiEndpoint: '/v1/integrations/gcp', authFields: ['project_id','access_token'] },
+  { id: 'slack', name: 'Slack', letter: 'S', icon: '\ud83d\udcac', connected: false, lastSync: null, desc: 'Send governance alerts and incident notifications to channels', apiEndpoint: '/v1/integrations/slack', authFields: ['webhook_url'] },
+  { id: 'jira', name: 'Jira', letter: 'J', icon: '\ud83d\udcdd', connected: false, lastSync: null, desc: 'Create tickets for governance findings and remediation tasks', apiEndpoint: '/v1/integrations/jira', authFields: ['base_url','email','api_token','project_key'] },
+  { id: 'servicenow', name: 'ServiceNow', letter: 'N', icon: '\ud83d\udee0\ufe0f', connected: false, lastSync: null, desc: 'Create incidents and change requests for governance findings', apiEndpoint: '/v1/integrations/servicenow', authFields: ['instance_url','username','password'] },
   { id: 'okta', name: 'Okta', letter: 'O', icon: '\ud83d\udd10', connected: false, lastSync: null, desc: 'SSO configuration, MFA enrollment, user provisioning, access reviews' },
-  { id: 'google', name: 'Google Workspace', letter: 'W', icon: '\ud83c\udf10', connected: false, lastSync: null, desc: 'Drive sharing policies, admin audit logs, 2FA status, device management' },
-  { id: 'slack', name: 'Slack', letter: 'S', icon: '\ud83d\udcac', connected: false, lastSync: null, desc: 'DLP policies, retention settings, external sharing, audit logs' },
-  { id: 'datadog', name: 'Datadog', letter: 'D', icon: '\ud83d\udcca', connected: true, lastSync: '1 hr ago', desc: 'Monitoring dashboards, alert configs, SLO tracking, log pipelines' },
+  { id: 'k8s', name: 'Kubernetes', letter: 'K', icon: '\u2638\ufe0f', connected: false, lastSync: null, desc: 'RBAC policies, network policies, pod security, secrets management' },
+  { id: 'datadog', name: 'Datadog', letter: 'D', icon: '\ud83d\udcca', connected: false, lastSync: null, desc: 'Monitoring dashboards, alert configs, SLO tracking, log pipelines' },
 ];
 
 const POLICIES = [
@@ -1822,11 +1822,201 @@ function getEffectiveConnectors() {
 function toggleConnector(id) {
   const connectors = getEffectiveConnectors();
   const c = connectors.find(x => x.id === id);
-  const newState = !c.connected;
-  setConnectorState(id, newState);
-  initEvidenceTab();
-  renderConnectors('connectorGrid');
-  updateOverviewConnectorCount();
+  if (c.connected) {
+    // Disconnect
+    setConnectorState(id, false);
+    localStorage.removeItem('gl_creds_' + id);
+    initEvidenceTab();
+    renderConnectors('connectorGrid');
+    updateOverviewConnectorCount();
+    return;
+  }
+  // Show connection modal
+  showConnectModal(c);
+}
+
+function showConnectModal(connector) {
+  const FIELD_LABELS = {
+    token: 'Personal Access Token',
+    access_key_id: 'Access Key ID',
+    secret_access_key: 'Secret Access Key',
+    region: 'Region',
+    project_id: 'Project ID',
+    access_token: 'Access Token',
+    webhook_url: 'Webhook URL',
+    base_url: 'Base URL',
+    email: 'Email',
+    api_token: 'API Token',
+    project_key: 'Project Key',
+    instance_url: 'Instance URL',
+    username: 'Username',
+    password: 'Password',
+  };
+  const FIELD_PLACEHOLDERS = {
+    token: 'ghp_xxxxxxxxxxxxxxxxxxxx',
+    access_key_id: 'AKIAIOSFODNN7EXAMPLE',
+    secret_access_key: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLE',
+    region: 'us-east-1',
+    project_id: 'my-gcp-project-123',
+    access_token: 'ya29.xxxxxxxxxxxxxxxxxxxx',
+    webhook_url: 'https://hooks.slack.com/services/...',
+    base_url: 'https://yourcompany.atlassian.net',
+    email: 'user@company.com',
+    api_token: 'ATATT3xxxxxxxxxxx',
+    project_key: 'GOV',
+    instance_url: 'https://yourcompany.service-now.com',
+    username: 'admin',
+    password: '',
+  };
+
+  const fields = connector.authFields || [];
+  if (!fields.length) {
+    alert(connector.name + ' integration coming soon.');
+    return;
+  }
+
+  const fieldsHtml = fields.map(f => `
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--fg)">${FIELD_LABELS[f] || f}</label>
+      <input id="conn_${f}" type="${f.includes('secret') || f.includes('password') || f.includes('token') ? 'password' : 'text'}"
+        placeholder="${FIELD_PLACEHOLDERS[f] || ''}"
+        style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;font-family:inherit;"
+        ${f === 'region' ? 'value="us-east-1"' : ''}>
+    </div>
+  `).join('');
+
+  let modal = document.getElementById('connectModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'connectModal';
+    document.body.appendChild(modal);
+  }
+  modal.className = 'modal-overlay open';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:440px;">
+      <div class="modal-header">
+        <h3>Connect ${connector.name}</h3>
+        <button class="modal-close" onclick="document.getElementById('connectModal').classList.remove('open')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">${connector.desc}</p>
+        ${fieldsHtml}
+        <div id="connModalError" style="display:none;color:var(--red);font-size:12px;margin-bottom:8px;"></div>
+        <div id="connModalSuccess" style="display:none;color:var(--green);font-size:12px;margin-bottom:8px;"></div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="document.getElementById('connectModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-primary" id="connTestBtn" onclick="testAndConnect('${connector.id}')">Test & Connect</button>
+      </div>
+    </div>
+  `;
+}
+
+async function testAndConnect(connectorId) {
+  const connector = CONNECTORS.find(c => c.id === connectorId);
+  const fields = connector.authFields || [];
+  const creds = {};
+  for (const f of fields) {
+    const el = document.getElementById('conn_' + f);
+    if (!el || !el.value.trim()) {
+      document.getElementById('connModalError').style.display = 'block';
+      document.getElementById('connModalError').textContent = 'Please fill in all fields.';
+      return;
+    }
+    creds[f] = el.value.trim();
+  }
+
+  const btn = document.getElementById('connTestBtn');
+  btn.disabled = true;
+  btn.textContent = 'Testing...';
+  document.getElementById('connModalError').style.display = 'none';
+  document.getElementById('connModalSuccess').style.display = 'none';
+
+  const apiBase = localStorage.getItem('gl_api_url') || '';
+  const token = localStorage.getItem('gl_token');
+  try {
+    const resp = await fetch(apiBase + connector.apiEndpoint + '/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(creds),
+    });
+    const data = await resp.json();
+    if (data.connected) {
+      document.getElementById('connModalSuccess').style.display = 'block';
+      document.getElementById('connModalSuccess').textContent = 'Connected successfully!';
+      // Save credentials locally (encrypted in production — localStorage for MVP)
+      localStorage.setItem('gl_creds_' + connectorId, JSON.stringify(creds));
+      setConnectorState(connectorId, true);
+      setTimeout(() => {
+        document.getElementById('connectModal').classList.remove('open');
+        initEvidenceTab();
+        renderConnectors('connectorGrid');
+        updateOverviewConnectorCount();
+      }, 800);
+    } else {
+      document.getElementById('connModalError').style.display = 'block';
+      document.getElementById('connModalError').textContent = data.error || 'Connection failed. Check your credentials.';
+      btn.disabled = false;
+      btn.textContent = 'Test & Connect';
+    }
+  } catch (e) {
+    document.getElementById('connModalError').style.display = 'block';
+    document.getElementById('connModalError').textContent = 'Network error: ' + e.message;
+    btn.disabled = false;
+    btn.textContent = 'Test & Connect';
+  }
+}
+
+async function scanConnector(connectorId) {
+  const connector = CONNECTORS.find(c => c.id === connectorId);
+  const creds = JSON.parse(localStorage.getItem('gl_creds_' + connectorId) || '{}');
+  if (!Object.keys(creds).length) {
+    alert('Please connect ' + connector.name + ' first.');
+    return;
+  }
+
+  const apiBase = localStorage.getItem('gl_api_url') || '';
+  const token = localStorage.getItem('gl_token');
+  try {
+    const resp = await fetch(apiBase + connector.apiEndpoint + '/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(creds),
+    });
+    return await resp.json();
+  } catch (e) {
+    console.error('Scan error:', e);
+    return null;
+  }
+}
+
+async function runScanUI(connectorId) {
+  const connector = CONNECTORS.find(c => c.id === connectorId);
+  const creds = JSON.parse(localStorage.getItem('gl_creds_' + connectorId) || '{}');
+  if (!Object.keys(creds).length) {
+    alert('Please reconnect ' + connector.name + ' first.');
+    return;
+  }
+  // For GitHub scan, prompt for repo if needed
+  if (connectorId === 'github' && !creds.repo) {
+    const repo = prompt('Enter repo to scan (e.g. owner/repo):');
+    if (!repo) return;
+    creds.repo = repo;
+  }
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Scanning...';
+  const result = await scanConnector(connectorId);
+  btn.disabled = false;
+  btn.textContent = 'Scan Now';
+  if (result && result.summary) {
+    setConnectorState(connectorId, true);
+    initEvidenceTab();
+    renderConnectors('connectorGrid');
+    alert(`${connector.name} Scan Complete\n\nScore: ${result.summary.score}%\nPassing: ${result.summary.passing}/${result.summary.total}\nFailing: ${result.summary.failing}`);
+  } else {
+    alert('Scan failed. Check console for details.');
+  }
 }
 
 function updateOverviewConnectorCount() {
@@ -1933,7 +2123,10 @@ function renderEvidenceConnectors(connectors) {
       </div>
       <div class="ev-card-footer">
         ${syncLine}
-        <button class="btn-connect ${btnClass}" onclick="toggleConnector('${c.id}')">${btnLabel}</button>
+        <div style="display:flex;gap:6px;">
+          ${isConn && c.apiEndpoint ? '<button class="btn-connect connect" style="background:var(--green);" onclick="runScanUI(\'' + c.id + '\')">Scan Now</button>' : ''}
+          <button class="btn-connect ${btnClass}" onclick="toggleConnector('${c.id}')">${btnLabel}</button>
+        </div>
       </div>
     </div>`;
   }).join('');
