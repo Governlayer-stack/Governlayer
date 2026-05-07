@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Agent Registry — GovernLayer</title>
+<meta name="description" content="Register, monitor, and govern all AI agents in your organization from a single registry.">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--blue:#3b82f6;--blue-bg:rgba(59,130,246,.1);--green:#10b981;--green-bg:rgba(16,185,129,.1);--amber:#f59e0b;--amber-bg:rgba(245,158,11,.1);--red:#ef4444;--red-bg:rgba(239,68,68,.1);--purple:#8b5cf6;--purple-bg:rgba(139,92,246,.1);--radius:12px}
+html{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}
+.nav-logo:hover{text-decoration:none}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem}
+.nav-links a{color:var(--muted);font-weight:500}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.hero{text-align:center;padding:4rem 2rem 3rem}
+.hero h1{font-size:2.2rem;font-weight:800;margin-bottom:.75rem;letter-spacing:-.03em}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 2rem}
+.hero .btn{display:inline-flex;padding:.75rem 1.75rem;background:var(--blue);color:#fff;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none}
+.hero .btn:hover{opacity:.9;text-decoration:none}
+.container{max-width:900px;margin:0 auto;padding:0 2rem 4rem}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;margin-bottom:3rem}
+.feature{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.feature-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:.75rem}
+.feature h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.feature p{color:var(--muted);font-size:.8rem;line-height:1.6}
+.table-section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem}
+.table-section p{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem}
+.registry-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.registry-table th{text-align:left;padding:.75rem 1rem;background:var(--surface);border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.registry-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border)}
+.status-badge{font-size:.7rem;font-weight:600;padding:3px 8px;border-radius:20px}
+.status-active{background:var(--green-bg);color:var(--green)}
+.status-warning{background:var(--amber-bg);color:var(--amber)}
+.status-critical{background:var(--red-bg);color:var(--red)}
+.risk-score{font-weight:700}
+.risk-low{color:var(--green)}
+.risk-med{color:var(--amber)}
+.risk-high{color:var(--red)}
+.empty-state{text-align:center;padding:3rem;color:var(--muted)}
+.empty-state p{margin-bottom:1rem}
+.footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--dim);border-top:1px solid var(--border);margin-top:auto}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    GovernLayer
+  </a>
+  <div class="nav-links">
+    <a href="/workspace">Dashboard</a>
+    <a href="/docs">API Docs</a>
+    <a href="/login">Log in</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>AI Agent Registry</h1>
+  <p>Every AI system in your org — registered, monitored, and governed. Full visibility into model risk, drift, and compliance status.</p>
+  <a href="/signup" class="btn">Register Your First Agent</a>
+</div>
+
+<div class="container">
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--blue-bg)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <h3>Centralized Inventory</h3>
+      <p>Register all AI systems — chatbots, ML models, autonomous agents — in one searchable registry.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--green-bg)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Continuous Monitoring</h3>
+      <p>Real-time drift detection and behavioral analysis. Get alerted before compliance violations occur.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--amber-bg)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h3>Risk Classification</h3>
+      <p>Auto-classify agents by risk tier: low, medium, high, critical. EU AI Act risk categories built-in.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--purple-bg)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Shadow AI Detection</h3>
+      <p>Discover unregistered AI tools in your org. Catch unauthorized model deployments automatically.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--red-bg)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3>Incident Linking</h3>
+      <p>When an AI incident occurs, trace it back to the registered agent with full audit history.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--blue-bg)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3>Model Cards</h3>
+      <p>Auto-generated model cards with performance metrics, data lineage, and compliance certifications.</p>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <h2>Example Registry View</h2>
+    <p>Here's what your registry looks like when populated:</p>
+    <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)">
+      <table class="registry-table">
+        <thead>
+          <tr><th>Agent Name</th><th>Type</th><th>Status</th><th>Risk</th><th>Framework</th><th>Last Scan</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>customer-support-bot</td><td>Chatbot</td><td><span class="status-badge status-active">Active</span></td><td><span class="risk-score risk-low">Low (23)</span></td><td>SOC 2</td><td>2 min ago</td></tr>
+          <tr><td>fraud-detector-v2</td><td>ML Model</td><td><span class="status-badge status-warning">Drifting</span></td><td><span class="risk-score risk-med">Medium (58)</span></td><td>PCI DSS</td><td>15 min ago</td></tr>
+          <tr><td>hiring-screener</td><td>Autonomous</td><td><span class="status-badge status-critical">Non-compliant</span></td><td><span class="risk-score risk-high">High (82)</span></td><td>EU AI Act</td><td>1 hr ago</td></tr>
+          <tr><td>code-review-assistant</td><td>Copilot</td><td><span class="status-badge status-active">Active</span></td><td><span class="risk-score risk-low">Low (15)</span></td><td>ISO 27001</td><td>5 min ago</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">&copy; 2026 GovernLayer. All rights reserved.</footer>
+</body>
+</html>

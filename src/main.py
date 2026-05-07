@@ -437,6 +437,12 @@ def create_app() -> FastAPI:
     )
 
     @app.get("/docs", include_in_schema=False)
+    def docs_page():
+        if _api_docs_html:
+            return HTMLResponse(_api_docs_html)
+        raise StarletteHTTPException(status_code=404, detail="Not Found")
+
+    @app.get("/docs/swagger", include_in_schema=False)
     def custom_swagger_ui():
         if not settings.debug and os.getenv("ENABLE_DOCS", "").lower() not in ("true", "1"):
             raise StarletteHTTPException(status_code=404, detail="Not Found")
@@ -1112,6 +1118,10 @@ def create_app() -> FastAPI:
     _forgot_password_html = _load_page("forgot-password")
     _reset_html = _load_page("reset")
     _founder_html = _load_page("founder")
+    _api_docs_html = _load_page("api-docs")
+    _pricing_html = _load_page("pricing")
+    _registry_html = _load_page("registry")
+    _incidents_html = _load_page("incidents")
     _dpa_html = None
     for _dpa_base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
         _dpa_path = os.path.join(_dpa_base, "docs", "legal", "dpa.html")
@@ -1739,6 +1749,24 @@ def create_app() -> FastAPI:
         if _founder_html:
             return HTMLResponse(_founder_html)
         return {"error": "Founder page not found"}
+
+    @app.get("/pricing")
+    def pricing_page():
+        if _pricing_html:
+            return HTMLResponse(_pricing_html)
+        return {"error": "Pricing page not found"}
+
+    @app.get("/registry")
+    def registry_page():
+        if _registry_html:
+            return HTMLResponse(_registry_html)
+        return {"error": "Registry page not found"}
+
+    @app.get("/incidents")
+    def incidents_page():
+        if _incidents_html:
+            return HTMLResponse(_incidents_html)
+        return {"error": "Incidents page not found"}
 
     @app.get("/vendor-questionnaire")
     def vendor_questionnaire_page():

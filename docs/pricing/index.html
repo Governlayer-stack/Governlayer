@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pricing — GovernLayer</title>
+<meta name="description" content="GovernLayer pricing plans. Start free, scale with your compliance needs.">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--blue:#3b82f6;--blue-bg:rgba(59,130,246,.1);--green:#10b981;--green-bg:rgba(16,185,129,.1);--purple:#8b5cf6;--radius:12px}
+html{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}
+.nav-logo:hover{text-decoration:none}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem}
+.nav-links a{color:var(--muted);font-weight:500}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.hero{text-align:center;padding:4rem 2rem 3rem}
+.hero h1{font-size:2.2rem;font-weight:800;margin-bottom:.75rem;letter-spacing:-.03em}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:550px;margin:0 auto}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto;padding:0 2rem 4rem}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;position:relative;transition:border-color .2s}
+.plan:hover{border-color:var(--border2)}
+.plan.featured{border-color:var(--blue);box-shadow:0 0 30px rgba(59,130,246,.1)}
+.plan-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:.7rem;font-weight:700;padding:3px 12px;border-radius:20px;text-transform:uppercase}
+.plan-name{font-size:1rem;font-weight:700;margin-bottom:.25rem}
+.plan-price{font-size:2.5rem;font-weight:800;margin-bottom:.25rem;letter-spacing:-.03em}
+.plan-price span{font-size:.9rem;font-weight:400;color:var(--muted)}
+.plan-desc{color:var(--muted);font-size:.8rem;margin-bottom:1.5rem}
+.plan-features{list-style:none;margin-bottom:2rem}
+.plan-features li{font-size:.85rem;color:var(--muted);padding:.4rem 0;padding-left:1.5rem;position:relative}
+.plan-features li::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:16px;height:16px;background:var(--green-bg);border-radius:50%}
+.plan-features li::after{content:"";position:absolute;left:4px;top:50%;transform:translateY(-50%) rotate(45deg);width:4px;height:8px;border:solid var(--green);border-width:0 2px 2px 0}
+.plan-btn{display:block;width:100%;text-align:center;padding:.75rem;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none;transition:all .2s}
+.plan-btn-primary{background:var(--blue);color:#fff}
+.plan-btn-primary:hover{opacity:.9;text-decoration:none}
+.plan-btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text)}
+.plan-btn-outline:hover{border-color:var(--blue);color:var(--blue);text-decoration:none}
+.faq{max-width:700px;margin:0 auto;padding:2rem 2rem 4rem}
+.faq h2{font-size:1.4rem;font-weight:700;text-align:center;margin-bottom:2rem}
+.faq-item{border-bottom:1px solid var(--border);padding:1.25rem 0}
+.faq-item summary{font-size:.9rem;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-item summary::after{content:"+";font-size:1.2rem;color:var(--dim)}
+.faq-item[open] summary::after{content:"-"}
+.faq-item p{color:var(--muted);font-size:.85rem;margin-top:.75rem;line-height:1.7}
+.footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--dim);border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    GovernLayer
+  </a>
+  <div class="nav-links">
+    <a href="/docs">Docs</a>
+    <a href="/signup">Get Started</a>
+    <a href="/login">Log in</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Simple, transparent pricing</h1>
+  <p>Start free. Scale as your AI governance needs grow. No hidden fees.</p>
+</div>
+
+<div class="plans">
+  <div class="plan">
+    <div class="plan-name">Free</div>
+    <div class="plan-price">$0<span>/mo</span></div>
+    <div class="plan-desc">For individuals exploring AI governance</div>
+    <ul class="plan-features">
+      <li>20 API calls/minute</li>
+      <li>1 AI system monitored</li>
+      <li>Basic risk scoring</li>
+      <li>Community support</li>
+      <li>SOC 2 framework</li>
+    </ul>
+    <a href="/signup" class="plan-btn plan-btn-outline">Get Started Free</a>
+  </div>
+
+  <div class="plan featured">
+    <div class="plan-badge">Most Popular</div>
+    <div class="plan-name">Starter</div>
+    <div class="plan-price">$49<span>/mo</span></div>
+    <div class="plan-desc">For teams building compliant AI products</div>
+    <ul class="plan-features">
+      <li>100 API calls/minute</li>
+      <li>10 AI systems monitored</li>
+      <li>Full drift detection</li>
+      <li>9 compliance frameworks</li>
+      <li>Audit ledger (30-day retention)</li>
+      <li>Email support</li>
+      <li>Webhook alerts</li>
+    </ul>
+    <a href="/signup" class="plan-btn plan-btn-primary">Start Free Trial</a>
+  </div>
+
+  <div class="plan">
+    <div class="plan-name">Pro</div>
+    <div class="plan-price">$199<span>/mo</span></div>
+    <div class="plan-desc">For companies scaling AI responsibly</div>
+    <ul class="plan-features">
+      <li>500 API calls/minute</li>
+      <li>Unlimited AI systems</li>
+      <li>Multi-LLM consensus</li>
+      <li>Vendor risk management</li>
+      <li>Audit ledger (unlimited)</li>
+      <li>Priority support</li>
+      <li>Custom policies</li>
+      <li>SSO (Google, Microsoft)</li>
+    </ul>
+    <a href="/signup" class="plan-btn plan-btn-outline">Start Free Trial</a>
+  </div>
+
+  <div class="plan">
+    <div class="plan-name">Enterprise</div>
+    <div class="plan-price">Custom</div>
+    <div class="plan-desc">For regulated industries and large orgs</div>
+    <ul class="plan-features">
+      <li>2,000+ API calls/minute</li>
+      <li>Dedicated infrastructure</li>
+      <li>On-premise deployment</li>
+      <li>Custom frameworks</li>
+      <li>SLA guarantee (99.99%)</li>
+      <li>Dedicated CSM</li>
+      <li>Audit-ready reports</li>
+      <li>BAA / DPA available</li>
+    </ul>
+    <a href="/contact" class="plan-btn plan-btn-outline">Contact Sales</a>
+  </div>
+</div>
+
+<div class="faq">
+  <h2>Frequently Asked Questions</h2>
+  <details class="faq-item">
+    <summary>Can I change plans later?</summary>
+    <p>Yes. Upgrade or downgrade anytime. Changes take effect immediately, and we prorate the difference.</p>
+  </details>
+  <details class="faq-item">
+    <summary>What happens if I exceed my rate limit?</summary>
+    <p>Requests over your limit return a 429 status. We never charge overage fees — upgrade when ready.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Do you offer annual billing?</summary>
+    <p>Yes. Annual plans get 2 months free. Contact us for enterprise annual agreements.</p>
+  </details>
+  <details class="faq-item">
+    <summary>Is there a free trial for paid plans?</summary>
+    <p>All paid plans include a 14-day free trial. No credit card required to start.</p>
+  </details>
+  <details class="faq-item">
+    <summary>What compliance frameworks are supported?</summary>
+    <p>SOC 2, ISO 27001, GDPR, HIPAA, NIST AI RMF, EU AI Act, FedRAMP, PCI DSS, and CCPA. Custom frameworks available on Pro and Enterprise.</p>
+  </details>
+</div>
+
+<footer class="footer">&copy; 2026 GovernLayer. All rights reserved.</footer>
+</body>
+</html>

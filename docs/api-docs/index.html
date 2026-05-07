@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API Documentation — GovernLayer</title>
+<meta name="description" content="GovernLayer API documentation. Integrate AI governance, compliance auditing, drift detection, and risk scoring into your systems.">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--blue:#3b82f6;--blue-bg:rgba(59,130,246,.1);--green:#10b981;--green-bg:rgba(16,185,129,.1);--purple:#8b5cf6;--purple-bg:rgba(139,92,246,.1);--amber:#f59e0b;--amber-bg:rgba(245,158,11,.1);--red:#ef4444;--radius:12px}
+html{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:var(--surface2);padding:2px 6px;border-radius:4px}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}
+.nav-logo:hover{text-decoration:none}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem}
+.nav-links a{color:var(--muted);font-weight:500}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.hero{text-align:center;padding:4rem 2rem 3rem}
+.hero h1{font-size:2.2rem;font-weight:800;margin-bottom:.75rem;letter-spacing:-.03em}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+.container{max-width:1000px;margin:0 auto;padding:0 2rem 4rem}
+.section{margin-bottom:3rem}
+.section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem;letter-spacing:-.02em}
+.section p{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1rem}
+.endpoints{display:grid;gap:1rem}
+.endpoint{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;transition:border-color .2s}
+.endpoint:hover{border-color:var(--border2)}
+.endpoint-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+.method{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase}
+.method-get{background:var(--green-bg);color:var(--green)}
+.method-post{background:var(--blue-bg);color:var(--blue)}
+.method-delete{background:rgba(239,68,68,.1);color:var(--red)}
+.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.875rem;color:var(--text)}
+.endpoint-desc{color:var(--muted);font-size:.8rem;margin-top:.25rem}
+.auth-badge{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;color:var(--amber);background:var(--amber-bg);padding:2px 8px;border-radius:4px;margin-left:auto}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.8;color:var(--muted);margin:1rem 0}
+.code-block .key{color:var(--blue)}
+.code-block .str{color:var(--green)}
+.code-block .comment{color:var(--dim)}
+.cta{text-align:center;padding:3rem 2rem;background:var(--surface);border-top:1px solid var(--border);margin-top:2rem}
+.cta h3{font-size:1.2rem;margin-bottom:.5rem}
+.cta p{color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+.btn{display:inline-flex;padding:.7rem 1.5rem;background:var(--blue);color:#fff;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none}
+.btn:hover{text-decoration:none;opacity:.9}
+.footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--dim);border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    GovernLayer
+  </a>
+  <div class="nav-links">
+    <a href="/signup">Get Started</a>
+    <a href="/workspace">Dashboard</a>
+    <a href="/about">About</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>API Documentation</h1>
+  <p>Integrate AI governance, compliance auditing, drift detection, and risk scoring into your systems with a single API.</p>
+</div>
+
+<div class="container">
+  <div class="section">
+    <h2>Authentication</h2>
+    <p>All API requests require authentication via either a <strong>JWT Bearer token</strong> (from login) or an <strong>API Key</strong> (header: <code>X-API-Key: gl_xxx...</code>). API keys are scoped per-organization with fine-grained permissions.</p>
+    <div class="code-block">
+<span class="comment"># Bearer token</span>
+curl -H <span class="str">"Authorization: Bearer YOUR_JWT_TOKEN"</span> \
+  https://www.governlayer.ai/v1/scan
+
+<span class="comment"># API Key</span>
+curl -H <span class="str">"X-API-Key: gl_your_api_key_here"</span> \
+  https://www.governlayer.ai/v1/scan
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Core Endpoints</h2>
+    <div class="endpoints">
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/govern</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">Run full governance pipeline: drift detection + risk scoring + compliance decision + audit ledger entry</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/scan</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">Quick deterministic scan — instant risk assessment without LLM calls</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/risk</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">6-dimension risk score: data sensitivity, model risk, compliance gap, operational, reputational, third-party</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/drift</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">Behavioral drift detection using sentence-transformer embeddings vs safety manifolds</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/audit</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">LLM-powered compliance audit against 9 regulatory frameworks</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/v1/ledger</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">Immutable hash-chained audit trail — tamper-proof governance record</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Auth &amp; Account</h2>
+    <div class="endpoints">
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/auth/register</span>
+        </div>
+        <div class="endpoint-desc">Create a new account. Returns JWT token.</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/auth/login</span>
+        </div>
+        <div class="endpoint-desc">Authenticate with email/password. Supports MFA.</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/auth/oauth/{provider}/authorize</span>
+        </div>
+        <div class="endpoint-desc">Get OAuth authorization URL (google, microsoft, github)</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/auth/forgot-password</span>
+        </div>
+        <div class="endpoint-desc">Send password reset email</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Enterprise</h2>
+    <div class="endpoints">
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/enterprise/orgs</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">Create an organization (multi-tenant isolation)</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-path">/v1/enterprise/orgs/{slug}/api-keys</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">Generate scoped API keys for programmatic access</div>
+      </div>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-path">/v1/enterprise/orgs/{slug}/usage</span>
+          <span class="auth-badge">Auth required</span>
+        </div>
+        <div class="endpoint-desc">View API usage stats and rate limit status</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Example: Run a Governance Scan</h2>
+    <div class="code-block">
+curl -X POST https://www.governlayer.ai/v1/govern \
+  -H <span class="str">"X-API-Key: gl_your_key"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d '{
+    <span class="key">"system_name"</span>: <span class="str">"customer-support-bot"</span>,
+    <span class="key">"trace"</span>: <span class="str">"User asked about refund policy. Bot recommended full refund without manager approval."</span>,
+    <span class="key">"context"</span>: <span class="str">"Production chatbot handling financial decisions"</span>,
+    <span class="key">"has_pii"</span>: true,
+    <span class="key">"has_ai"</span>: true,
+    <span class="key">"framework"</span>: <span class="str">"SOC2"</span>
+  }'
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Rate Limits</h2>
+    <p>Rate limits are per-organization based on your plan:</p>
+    <div class="code-block">
+Free:       20 requests/minute
+Starter:   100 requests/minute
+Pro:       500 requests/minute
+Enterprise: 2,000 requests/minute
+    </div>
+  </div>
+</div>
+
+<div class="cta">
+  <h3>Ready to integrate?</h3>
+  <p>Create an account to get your API key and start governing AI in minutes.</p>
+  <a href="/signup" class="btn">Get API Key</a>
+</div>
+
+<footer class="footer">&copy; 2026 GovernLayer. All rights reserved.</footer>
+</body>
+</html>

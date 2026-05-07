@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Incident Response — GovernLayer</title>
+<meta name="description" content="AI incident response and management. Detect, respond, and learn from AI system failures.">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--surface:#111827;--surface2:#1e293b;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);--text:#f1f5f9;--muted:#94a3b8;--dim:#64748b;--blue:#3b82f6;--blue-bg:rgba(59,130,246,.1);--green:#10b981;--green-bg:rgba(16,185,129,.1);--amber:#f59e0b;--amber-bg:rgba(245,158,11,.1);--red:#ef4444;--red-bg:rgba(239,68,68,.1);--radius:12px}
+html{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none}
+.nav-logo:hover{text-decoration:none}
+.nav-logo svg{width:28px;height:28px}
+.nav-links{display:flex;gap:1.5rem;font-size:.875rem}
+.nav-links a{color:var(--muted);font-weight:500}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.hero{text-align:center;padding:4rem 2rem 3rem}
+.hero h1{font-size:2.2rem;font-weight:800;margin-bottom:.75rem;letter-spacing:-.03em}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto 2rem}
+.hero .btn{display:inline-flex;padding:.75rem 1.75rem;background:var(--blue);color:#fff;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none}
+.hero .btn:hover{opacity:.9;text-decoration:none}
+.container{max-width:900px;margin:0 auto;padding:0 2rem 4rem}
+.section{margin-bottom:3rem}
+.section h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem}
+.section p{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:1rem}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border2)}
+.timeline-item{position:relative;margin-bottom:2rem;padding-left:1.5rem}
+.timeline-item::before{content:"";position:absolute;left:-2rem;top:6px;width:16px;height:16px;border-radius:50%;border:2px solid var(--blue);background:var(--bg)}
+.timeline-item h3{font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+.timeline-item p{color:var(--muted);font-size:.8rem;line-height:1.6}
+.timeline-item .time{font-size:.7rem;color:var(--dim);margin-bottom:.4rem}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.25rem;margin-bottom:3rem}
+.feature{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.feature h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.feature p{color:var(--muted);font-size:.8rem;line-height:1.6}
+.severity{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;padding:4px 10px;border-radius:20px}
+.sev-critical{background:var(--red-bg);color:var(--red)}
+.sev-high{background:var(--amber-bg);color:var(--amber)}
+.sev-medium{background:var(--blue-bg);color:var(--blue)}
+.sev-low{background:var(--green-bg);color:var(--green)}
+.incident-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
+.incident-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.incident-title{font-size:.9rem;font-weight:700}
+.incident-meta{color:var(--dim);font-size:.75rem;margin-top:.25rem}
+.incident-desc{color:var(--muted);font-size:.8rem;line-height:1.6}
+.footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--dim);border-top:1px solid var(--border);margin-top:auto}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    GovernLayer
+  </a>
+  <div class="nav-links">
+    <a href="/workspace">Dashboard</a>
+    <a href="/registry">Registry</a>
+    <a href="/login">Log in</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>AI Incident Response</h1>
+  <p>Detect, triage, and resolve AI system failures with automated playbooks. Turn incidents into governance improvements.</p>
+  <a href="/signup" class="btn">Get Started</a>
+</div>
+
+<div class="container">
+  <div class="features">
+    <div class="feature">
+      <h3>Automated Detection</h3>
+      <p>Drift detection triggers incident alerts before users notice. Catch hallucinations, bias drift, and policy violations in real-time.</p>
+    </div>
+    <div class="feature">
+      <h3>Severity Classification</h3>
+      <p>Auto-classify incidents by impact: critical (data breach), high (compliance violation), medium (drift), low (performance degradation).</p>
+    </div>
+    <div class="feature">
+      <h3>Response Playbooks</h3>
+      <p>Pre-built playbooks for common AI failures: model rollback, circuit breaker activation, human-in-the-loop escalation.</p>
+    </div>
+    <div class="feature">
+      <h3>Root Cause Analysis</h3>
+      <p>Multi-LLM analysis traces incidents to root cause: training data shift, prompt injection, configuration drift, or upstream dependency failure.</p>
+    </div>
+    <div class="feature">
+      <h3>Regulatory Reporting</h3>
+      <p>Auto-generate incident reports for GDPR (72-hr breach notification), EU AI Act, and SOC 2 audit requirements.</p>
+    </div>
+    <div class="feature">
+      <h3>Post-Incident Learning</h3>
+      <p>Incidents feed back into governance policies. Each failure strengthens your AI safety manifolds automatically.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>How It Works</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">T+0s</div>
+        <h3>Detection</h3>
+        <p>Drift detection or monitoring alert triggers an incident. System auto-classifies severity and assigns to appropriate responder.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">T+30s</div>
+        <h3>Containment</h3>
+        <p>Automated circuit breaker activates if severity is critical. Affected AI agent is isolated. Fallback behavior engaged.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">T+5min</div>
+        <h3>Analysis</h3>
+        <p>Multi-LLM consensus engine performs root cause analysis. Compares current behavior against safety manifolds and historical baselines.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">T+15min</div>
+        <h3>Resolution</h3>
+        <p>Recommended fix applied: model rollback, policy update, or configuration change. Verification scan confirms resolution.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">T+1hr</div>
+        <h3>Post-Mortem</h3>
+        <p>Incident report auto-generated. Governance policies updated. Audit ledger entry created with full chain of evidence.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Recent Industry Incidents</h2>
+    <p>Real AI failures that GovernLayer helps prevent:</p>
+
+    <div class="incident-card">
+      <div class="incident-header">
+        <span class="incident-title">Replit Agent Deletes Production Database</span>
+        <span class="severity sev-critical">Critical</span>
+      </div>
+      <div class="incident-desc">AI coding agent autonomously dropped production tables during a routine deployment, causing hours of downtime.</div>
+      <div class="incident-meta">Prevention: Drift detection + human-in-the-loop escalation on destructive operations</div>
+    </div>
+
+    <div class="incident-card">
+      <div class="incident-header">
+        <span class="incident-title">Air Canada Chatbot Promises Unauthorized Refund</span>
+        <span class="severity sev-high">High</span>
+      </div>
+      <div class="incident-desc">Customer support bot made binding refund promises outside its authorized policy scope, resulting in legal liability.</div>
+      <div class="incident-meta">Prevention: Policy boundary enforcement + behavioral drift detection</div>
+    </div>
+
+    <div class="incident-card">
+      <div class="incident-header">
+        <span class="incident-title">Bias Drift in Hiring Screening Model</span>
+        <span class="severity sev-high">High</span>
+      </div>
+      <div class="incident-desc">ML model gradually developed gender bias after training data distribution shifted over 6 months.</div>
+      <div class="incident-meta">Prevention: Continuous drift monitoring + automated fairness audits</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">&copy; 2026 GovernLayer. All rights reserved.</footer>
+</body>
+</html>
