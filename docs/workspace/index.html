@@ -634,6 +634,14 @@ input, select { font-family: inherit; }
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
       Audit Ledger
     </div>
+    <div class="nav-item" data-tab="vendors" onclick="switchTab('vendors', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Vendor Risk
+    </div>
+    <div class="nav-item" data-tab="reports" onclick="switchTab('reports', this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path d="M11 11h5m-5 4h5m-5-8h2"/></svg>
+      Reports
+    </div>
     <div class="nav-item" data-tab="settings" onclick="switchTab('settings', this)">
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
       Settings
@@ -916,6 +924,89 @@ input, select { font-family: inherit; }
           <button class="btn btn-secondary btn-sm" onclick="verifyChain()">Verify Chain</button>
         </div>
         <div id="ledgerEntries"></div>
+      </div>
+    </div>
+
+    <!-- ==================== VENDOR RISK TAB ==================== -->
+    <div class="tab-content" id="tab-vendors">
+      <div class="metrics-row" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="metric-card">
+          <div class="label">Total Vendors</div>
+          <div class="value" id="vendorTotal">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">High/Critical Risk</div>
+          <div class="value" style="color:var(--red);" id="vendorHighRisk">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Assessed</div>
+          <div class="value" style="color:var(--green);" id="vendorAssessed">0</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Expiring (30d)</div>
+          <div class="value" style="color:var(--amber);" id="vendorExpiring">0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Vendor Registry</h3>
+          <button class="btn btn-primary btn-sm" onclick="openAddVendorModal()">+ Add Vendor</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="full-table" id="vendorTable">
+            <thead><tr><th>Name</th><th>Category</th><th>Data Shared</th><th>Certifications</th><th>Risk Score</th><th>Risk Level</th><th>Actions</th></tr></thead>
+            <tbody id="vendorTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== REPORTS TAB ==================== -->
+    <div class="tab-content" id="tab-reports">
+      <div class="card">
+        <div class="card-header">
+          <h3>Compliance Reports</h3>
+          <span class="subtitle">Generate regulatory compliance reports across 18 frameworks</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">System Name</label>
+            <input type="text" id="reportSystemName" placeholder="e.g. my-ai-system" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Framework</label>
+            <select id="reportFramework" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+              <option value="soc2">SOC 2 Type II</option>
+              <option value="gdpr">GDPR</option>
+              <option value="hipaa">HIPAA</option>
+              <option value="iso_27001">ISO/IEC 27001</option>
+              <option value="iso_42001">ISO 42001 (AI)</option>
+              <option value="eu_ai_act">EU AI Act</option>
+              <option value="nist_ai_rmf">NIST AI RMF</option>
+              <option value="nist_csf">NIST CSF 2.0</option>
+              <option value="ccpa">CCPA/CPRA</option>
+              <option value="pci_dss">PCI DSS</option>
+              <option value="dora">DORA</option>
+              <option value="nis2">NIS2</option>
+              <option value="hitrust">HITRUST</option>
+              <option value="mitre_atlas">MITRE ATLAS</option>
+              <option value="owasp_ai">OWASP AI Top 10</option>
+              <option value="oecd_ai">OECD AI Principles</option>
+              <option value="ieee_ethics">IEEE Ethics</option>
+              <option value="nyc_ll144">NYC Local Law 144</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="generateReportBtn" onclick="generateReport()" style="width:100%;">Generate Report</button>
+      </div>
+      <div class="card" id="reportResultPanel" style="display:none;margin-top:16px;">
+        <div class="card-header"><h3>Report Results</h3></div>
+        <div id="reportResultContent"></div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header"><h3>Compliance Summary</h3></div>
+        <div id="complianceSummaryChart" style="min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;">Click "Load Summary" to fetch scores across key frameworks</div>
+        <button class="btn btn-secondary btn-sm" onclick="loadComplianceSummary()" style="margin-top:8px;">Load Summary</button>
       </div>
     </div>
 
@@ -2212,7 +2303,29 @@ function getPolicyStatusBadge(status) {
   return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;background:var(--red-bg);color:var(--red);"><span style="width:6px;height:6px;border-radius:50%;background:var(--red);"></span>Not Started</span>`;
 }
 
-function initPoliciesTab() {
+async function initPoliciesTab() {
+  // Try loading real policies from API
+  const data = await api('/v1/policies?active_only=false');
+  if (data && data.policies && data.policies.length > 0) {
+    // Merge real policies into POLICIES array (replace if matched by name, or prepend)
+    const realPolicies = data.policies.map(p => ({
+      name: p.name,
+      frameworks: [], // API policies don't have framework tags yet
+      status: p.is_active ? 'Published' : 'Draft',
+      updated: p.created_at ? p.created_at.split('T')[0] : null,
+      desc: p.description || 'Custom governance policy',
+      id: p.id,
+      rules_count: p.rules_count || 0,
+      _fromApi: true,
+    }));
+    // Prepend real policies that don't exist in demo list
+    const existingNames = POLICIES.map(p => p.name.toLowerCase());
+    realPolicies.forEach(rp => {
+      if (!existingNames.includes(rp.name.toLowerCase())) {
+        POLICIES.unshift(rp);
+      }
+    });
+  }
   renderPolicies();
   updatePolicyMetrics();
 }
@@ -2357,7 +2470,17 @@ async function generateAllPolicies() {
 }
 
 // ========== RISK TAB ==========
-function initRiskTab() {
+async function initRiskTab() {
+  // Try to fetch real compliance summary for the radar chart
+  const summary = await api('/v1/reports/compliance-summary?system_name=' + encodeURIComponent(getEmail() || 'organization'));
+  if (summary && summary.frameworks) {
+    // Map compliance scores to radar dims (invert: compliance score = readiness)
+    const dims = summary.frameworks.map(f => ({ label: f.name, value: Math.min(1, f.pct / 100) }));
+    if (dims.length >= 3) {
+      RISK_DIMS.length = 0;
+      dims.forEach(d => RISK_DIMS.push(d));
+    }
+  }
   renderRadar();
   renderTrendChart();
   renderDriftStatus();
@@ -2454,25 +2577,56 @@ function renderDriftStatus() {
 }
 
 // ========== LEDGER TAB ==========
-function initLedgerTab() {
+async function initLedgerTab() {
   const el = document.getElementById('ledgerEntries');
-  el.innerHTML = [...LEDGER_ENTRIES].reverse().map(e => {
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">Loading ledger...</div>';
+
+  const data = await api('/ledger');
+  let entries = [];
+  if (data && data.items && data.items.length > 0) {
+    entries = data.items.map(r => ({
+      hash: (r.current_hash || '').substring(0, 12) + '...',
+      prev: r.previous_hash ? r.previous_hash.substring(0, 12) + '...' : 'GENESIS',
+      action: r.governance_action || 'AUDIT',
+      ts: r.created_at,
+      details: `${r.system_name || 'System'} — Risk: ${r.risk_level || 'N/A'} (${r.risk_score || 0})`,
+      system: r.system_name,
+      risk_level: r.risk_level,
+      decision_id: r.decision_id,
+    }));
+  } else {
+    entries = LEDGER_ENTRIES;
+  }
+
+  el.innerHTML = [...entries].reverse().map(e => {
+    const riskColor = e.risk_level === 'HIGH' ? 'var(--red)' : e.risk_level === 'MEDIUM' ? 'var(--amber)' : 'var(--green)';
     return `<div class="ledger-entry">
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
         <span class="action">${e.action}</span>
-        <span class="ts">${new Date(e.ts).toLocaleString()}</span>
+        <span class="ts">${e.ts ? new Date(e.ts).toLocaleString() : ''}</span>
       </div>
       <div style="margin-bottom:4px;">${e.details}</div>
       <div class="hash">Hash: ${e.hash} &larr; ${e.prev}</div>
     </div>`;
   }).join('');
+
+  if (entries.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No ledger entries yet. Run a scan or governance check to create your first entry.</div>';
+  }
 }
 
-function verifyChain() {
-  document.getElementById('chainStatus').innerHTML = '<span class="chain-ok">Chain Verified (9 entries)</span>';
-  setTimeout(() => {
-    document.getElementById('chainStatus').innerHTML = '<span class="chain-ok">Chain Verified (9 entries)</span>';
-  }, 500);
+async function verifyChain() {
+  document.getElementById('chainStatus').innerHTML = '<span style="color:var(--muted);font-size:11px;">Verifying...</span>';
+  const result = await api('/ledger/verify');
+  if (result) {
+    if (result.valid) {
+      document.getElementById('chainStatus').innerHTML = `<span class="chain-ok">Chain Verified (${result.records_checked} entries)</span>`;
+    } else {
+      document.getElementById('chainStatus').innerHTML = `<span style="color:var(--red);font-size:11px;font-weight:600;">Chain Broken at ${result.first_broken_at}</span>`;
+    }
+  } else {
+    document.getElementById('chainStatus').innerHTML = '<span class="chain-ok">Chain Verified (demo)</span>';
+  }
 }
 
 // ========== SETTINGS TAB ==========
@@ -2695,9 +2849,23 @@ const DEMO_MODELS = [
 async function initModelsTab() {
   const loading = document.getElementById('modelsLoading');
   loading.style.display = 'flex';
-  const data = await api('/v1/models');
+  // Try agent registry first, then model registry
+  let data = await api('/v1/agents');
+  if (!data) data = await api('/v1/models');
   loading.style.display = 'none';
-  if (data && Array.isArray(data)) {
+  if (data && data.items && data.items.length > 0) {
+    modelsData = data.items.map(a => ({
+      id: a.id, name: a.name, version: a.version || '1.0',
+      provider: a.model_provider || a.provider || '--',
+      model_type: a.agent_type || a.model_type || '--',
+      risk_tier: a.risk_tier || 'medium',
+      lifecycle: a.lifecycle || (a.status === 'approved' ? 'production' : 'development'),
+      governance_status: a.governance_status || a.status || 'pending',
+      owner: a.owner || a.team || '--',
+      description: a.description || a.purpose || '',
+      tags: a.tags || [], created_at: a.created_at
+    }));
+  } else if (data && Array.isArray(data) && data.length > 0) {
     modelsData = data;
   } else {
     modelsData = DEMO_MODELS;
@@ -2812,7 +2980,16 @@ async function initIncidentsTab() {
   loading.style.display = 'flex';
   const data = await api('/v1/incidents');
   loading.style.display = 'none';
-  if (data && Array.isArray(data)) {
+  if (data && data.items && data.items.length > 0) {
+    // Map API response to local format
+    incidentsData = data.items.map(i => ({
+      id: i.id, title: i.title, severity: i.severity || 'medium',
+      category: i.category || 'general', status: i.status || 'open',
+      reporter: i.reporter || '', description: i.description || '',
+      assignee: i.assignee || '', resolution_notes: i.resolution || '',
+      created_at: i.created_at, timeline: i.timeline || []
+    }));
+  } else if (data && Array.isArray(data)) {
     incidentsData = data;
   } else {
     incidentsData = DEMO_INCIDENTS;
@@ -3196,6 +3373,216 @@ function renderRecentScans() {
   }).join('');
 }
 
+// ========== VENDOR RISK TAB ==========
+let vendorsData = [];
+
+async function initVendorsTab() {
+  // Load vendor summary
+  const summary = await api('/v1/vendors/summary');
+  if (summary) {
+    document.getElementById('vendorTotal').textContent = summary.total_vendors || 0;
+    document.getElementById('vendorHighRisk').textContent = (summary.high_risk_count || 0) + (summary.critical_risk_count || 0);
+    document.getElementById('vendorAssessed').textContent = summary.assessed_vendors || 0;
+    document.getElementById('vendorExpiring').textContent = summary.contracts_expiring_30d || 0;
+  }
+
+  // Load vendor list
+  const data = await api('/v1/vendors');
+  if (data && data.vendors) {
+    vendorsData = data.vendors;
+  }
+  renderVendorTable();
+}
+
+function renderVendorTable() {
+  const tbody = document.getElementById('vendorTableBody');
+  if (!vendorsData.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px;">No vendors registered yet. Click "+ Add Vendor" to get started.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = vendorsData.map(v => {
+    const riskColor = v.risk_level === 'CRITICAL' ? 'var(--red)' : v.risk_level === 'HIGH' ? 'var(--red)' : v.risk_level === 'MEDIUM' ? 'var(--amber)' : 'var(--green)';
+    const certs = (v.compliance_certifications || []).slice(0, 3).map(c => '<span class="badge-pill">' + c + '</span>').join(' ');
+    const dataShared = (v.data_shared || []).slice(0, 2).join(', ');
+    return `<tr>
+      <td style="font-weight:600;">${v.name}</td>
+      <td>${v.category || '--'}</td>
+      <td style="font-size:11px;">${dataShared || '--'}</td>
+      <td>${certs || '<span style="color:var(--muted);font-size:11px;">None</span>'}</td>
+      <td>${v.overall_risk_score != null ? v.overall_risk_score : '--'}</td>
+      <td><span style="color:${riskColor};font-weight:600;font-size:11px;">${v.risk_level || 'Not assessed'}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="assessVendor('${v.id}')" style="font-size:10px;">Assess</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function assessVendor(id) {
+  const result = await api('/v1/vendors/' + id + '/assess', { method: 'POST' });
+  if (result) {
+    showToast('Vendor assessed: ' + result.risk_level + ' risk (' + result.overall_risk_score + ')', 'success');
+    initVendorsTab(); // Refresh
+  }
+}
+
+function openAddVendorModal() {
+  let modal = document.getElementById('addVendorModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'addVendorModal';
+    document.body.appendChild(modal);
+  }
+  modal.className = 'modal-overlay open';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:500px;">
+      <div class="modal-header">
+        <h3>Add Vendor</h3>
+        <button class="modal-close" onclick="document.getElementById('addVendorModal').classList.remove('open')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Vendor Name *</label>
+          <input id="vendorName" type="text" placeholder="e.g. OpenAI" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Category</label>
+          <select id="vendorCategory" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+            <option value="ai_platform">AI Platform</option>
+            <option value="data_provider">Data Provider</option>
+            <option value="cloud_infrastructure">Cloud Infrastructure</option>
+            <option value="saas_application">SaaS Application</option>
+            <option value="consulting">Consulting</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Data Shared (comma-separated)</label>
+          <input id="vendorDataShared" type="text" placeholder="pii, behavioral, anonymized" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">AI Usage</label>
+          <input id="vendorAiUsage" type="text" placeholder="e.g. Core AI inference for customer support" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Certifications (comma-separated)</label>
+          <input id="vendorCerts" type="text" placeholder="soc2, iso27001, hipaa" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Services (comma-separated)</label>
+          <input id="vendorServices" type="text" placeholder="LLM API, embeddings, fine-tuning" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="document.getElementById('addVendorModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAddVendor()">Add Vendor</button>
+      </div>
+    </div>`;
+}
+
+async function submitAddVendor() {
+  const name = document.getElementById('vendorName').value.trim();
+  if (!name) { showToast('Vendor name is required', 'error'); return; }
+
+  const payload = {
+    name,
+    category: document.getElementById('vendorCategory').value,
+    data_shared: document.getElementById('vendorDataShared').value.split(',').map(s => s.trim()).filter(Boolean),
+    ai_usage: document.getElementById('vendorAiUsage').value.trim(),
+    compliance_certifications: document.getElementById('vendorCerts').value.split(',').map(s => s.trim()).filter(Boolean),
+    services: document.getElementById('vendorServices').value.split(',').map(s => s.trim()).filter(Boolean),
+  };
+
+  const result = await api('/v1/vendors', { method: 'POST', body: JSON.stringify(payload) });
+  if (result) {
+    showToast('Vendor added: ' + name, 'success');
+    document.getElementById('addVendorModal').classList.remove('open');
+    initVendorsTab();
+  } else {
+    showToast('Failed to add vendor', 'error');
+  }
+}
+
+// ========== REPORTS TAB ==========
+async function generateReport() {
+  const systemName = document.getElementById('reportSystemName').value.trim() || 'organization';
+  const framework = document.getElementById('reportFramework').value;
+  const btn = document.getElementById('generateReportBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+
+  const result = await api('/v1/reports', {
+    method: 'POST',
+    body: JSON.stringify({ system_name: systemName, framework, risk_tier: 'high', context: {} })
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Generate Report';
+
+  const panel = document.getElementById('reportResultPanel');
+  const content = document.getElementById('reportResultContent');
+
+  if (result && !result.error) {
+    panel.style.display = 'block';
+    const score = result.compliance_score || result.overall_score || 0;
+    const scoreColor = score >= 80 ? 'var(--green)' : score >= 50 ? 'var(--amber)' : 'var(--red)';
+    const sections = result.sections || result.controls || result.findings || [];
+
+    let sectionsHtml = '';
+    if (Array.isArray(sections)) {
+      sectionsHtml = sections.slice(0, 10).map(s => {
+        const sName = s.name || s.section || s.control || s.title || 'Section';
+        const sStatus = s.status || s.compliant ? 'Compliant' : 'Non-Compliant';
+        const sColor = sStatus === 'Compliant' || s.compliant ? 'var(--green)' : 'var(--red)';
+        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span>${sName}</span>
+          <span style="color:${sColor};font-weight:600;">${sStatus}</span>
+        </div>`;
+      }).join('');
+    }
+
+    content.innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="font-size:36px;font-weight:700;color:${scoreColor};">${score}%</div>
+        <div>
+          <div style="font-weight:600;">${result.framework_name || framework.toUpperCase()}</div>
+          <div style="font-size:12px;color:var(--muted);">${result.system_name || systemName}</div>
+          <div style="font-size:11px;color:var(--muted);">Generated: ${new Date().toLocaleString()}</div>
+        </div>
+      </div>
+      ${result.summary ? '<div style="font-size:13px;margin-bottom:16px;line-height:1.5;color:var(--fg);">' + result.summary + '</div>' : ''}
+      ${sectionsHtml ? '<h4 style="font-size:13px;margin-bottom:8px;">Sections</h4>' + sectionsHtml : ''}
+      ${result.recommendations ? '<h4 style="font-size:13px;margin-top:16px;margin-bottom:8px;">Recommendations</h4><ul style="font-size:12px;color:var(--muted);padding-left:18px;">' + (Array.isArray(result.recommendations) ? result.recommendations.map(r => '<li style="margin-bottom:4px;">' + r + '</li>').join('') : '<li>' + result.recommendations + '</li>') + '</ul>' : ''}
+    `;
+  } else {
+    panel.style.display = 'block';
+    content.innerHTML = '<div style="color:var(--red);font-size:13px;">Report generation failed. ' + (result?.error || 'Check your connection.') + '</div>';
+  }
+}
+
+async function loadComplianceSummary() {
+  const el = document.getElementById('complianceSummaryChart');
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+
+  const data = await api('/v1/reports/compliance-summary');
+  if (data && data.frameworks) {
+    el.innerHTML = `
+      <div style="width:100%;">
+        <div style="text-align:center;margin-bottom:12px;font-size:24px;font-weight:700;color:${data.average >= 70 ? 'var(--green)' : data.average >= 40 ? 'var(--amber)' : 'var(--red)'};">${data.average}% Average</div>
+        ${data.frameworks.map(f => {
+          const color = f.pct >= 70 ? 'var(--green)' : f.pct >= 40 ? 'var(--amber)' : 'var(--red)';
+          return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;">
+            <span style="width:100px;font-weight:600;">${f.name}</span>
+            <div style="flex:1;"><div class="progress-bar"><div class="progress-fill" style="width:${f.pct}%;background:${color};"></div></div></div>
+            <span style="width:40px;text-align:right;font-weight:600;color:${color};">${f.pct}%</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  } else {
+    el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Could not load compliance summary. Run some scans first.</div>';
+  }
+}
+
 // ========== AUDIT LEDGER TAB (Enhanced) ==========
 let auditLedgerData = [];
 
@@ -3342,6 +3729,8 @@ switchTab = function(tab, el) {
   if (tab === 'incidents' && incidentsData.length === 0) initIncidentsTab();
   if (tab === 'scanner') renderRecentScans();
   if (tab === 'audit-ledger' && auditLedgerData.length === 0) initAuditLedgerTab();
+  if (tab === 'vendors' && vendorsData.length === 0) initVendorsTab();
+  if (tab === 'reports') { /* init on demand */ }
 };
 </script>
 </body>
