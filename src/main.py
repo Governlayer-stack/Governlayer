@@ -1109,6 +1109,9 @@ def create_app() -> FastAPI:
     _beta_sign_html = _load_page("beta-sign")
     _vendor_html = _load_page("vendor")
     _vendor_questionnaire_html = _load_page("vendor-questionnaire")
+    _forgot_password_html = _load_page("forgot-password")
+    _reset_html = _load_page("reset")
+    _founder_html = _load_page("founder")
     _dpa_html = None
     for _dpa_base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
         _dpa_path = os.path.join(_dpa_base, "docs", "legal", "dpa.html")
@@ -1718,6 +1721,24 @@ def create_app() -> FastAPI:
         if _vendor_html:
             return HTMLResponse(_vendor_html)
         return {"error": "Vendor dashboard not found"}
+
+    @app.get("/forgot-password")
+    def forgot_password_page():
+        if _forgot_password_html:
+            return HTMLResponse(_forgot_password_html)
+        return {"error": "Forgot password page not found"}
+
+    @app.get("/reset")
+    def reset_password_page():
+        if _reset_html:
+            return HTMLResponse(_reset_html)
+        return {"error": "Reset password page not found"}
+
+    @app.get("/founder")
+    def founder_page():
+        if _founder_html:
+            return HTMLResponse(_founder_html)
+        return {"error": "Founder page not found"}
 
     @app.get("/vendor-questionnaire")
     def vendor_questionnaire_page():
