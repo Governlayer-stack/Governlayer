@@ -1,9 +1,13 @@
-"""Regulatory Report Generation API — 18 frameworks."""
+"""Regulatory Report Generation API — 18 frameworks with PDF export."""
 
+from datetime import datetime
 from typing import Any, Dict
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
+
+from src.security.auth import verify_token
 
 from src.reports.generator import (
     generate_eu_ai_act_report,
@@ -116,3 +120,106 @@ def list_report_frameworks():
             {"id": "gdpr", "name": "GDPR", "jurisdiction": "European Union", "description": "Data protection and automated decision-making rights"},
         ],
     }
+
+
+@router.post("/export-html")
+def export_report_html(data: ReportRequest, email: str = Depends(verify_token)):
+    """Generate a printable HTML compliance report (save as PDF from browser)."""
+    generators = {
+        "eu_ai_act": lambda: generate_eu_ai_act_report(system_name=data.system_name, risk_tier=data.risk_tier, context=data.context),
+        "nist_ai_rmf": lambda: generate_nist_ai_rmf_report(system_name=data.system_name, context=data.context),
+        "iso_42001": lambda: generate_iso_42001_report(system_name=data.system_name, context=data.context),
+        "iso_27001": lambda: generate_iso_27001_report(system_name=data.system_name, context=data.context),
+        "soc2": lambda: generate_soc2_report(system_name=data.system_name, context=data.context),
+        "gdpr": lambda: generate_gdpr_report(system_name=data.system_name, context=data.context),
+        "hipaa": lambda: generate_hipaa_report(system_name=data.system_name, context=data.context),
+        "nist_csf": lambda: generate_nist_csf_report(system_name=data.system_name, context=data.context),
+        "ccpa": lambda: generate_ccpa_report(system_name=data.system_name, context=data.context),
+        "dora": lambda: generate_dora_report(system_name=data.system_name, context=data.context),
+        "nis2": lambda: generate_nis2_report(system_name=data.system_name, context=data.context),
+        "hitrust": lambda: generate_hitrust_report(system_name=data.system_name, context=data.context),
+        "mitre_atlas": lambda: generate_mitre_atlas_report(system_name=data.system_name, context=data.context),
+        "owasp_ai": lambda: generate_owasp_ai_report(system_name=data.system_name, context=data.context),
+        "oecd_ai": lambda: generate_oecd_ai_report(system_name=data.system_name, context=data.context),
+        "ieee_ethics": lambda: generate_ieee_ethics_report(system_name=data.system_name, context=data.context),
+        "nyc_ll144": lambda: generate_nyc_ll144_report(system_name=data.system_name, context=data.context),
+        "colorado_sb169": lambda: generate_colorado_sb169_report(system_name=data.system_name, context=data.context),
+    }
+    gen = generators.get(data.framework)
+    if not gen:
+        return HTMLResponse("<h1>Unknown framework</h1>", status_code=400)
+
+    report = gen()
+    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    score = report.get("compliance_score", 0)
+    fw_name = report.get("framework_name", data.framework.replace("_", " ").upper())
+    score_color = "#10b981" if score >= 70 else "#f59e0b" if score >= 40 else "#ef4444"
+
+    # Build sections HTML
+    sections = report.get("sections", report.get("requirements", report.get("controls", {})))
+    sections_html = ""
+    if isinstance(sections, dict):
+        for key, sec in sections.items():
+            status = sec.get("status", "unknown")
+            s_color = "#10b981" if status == "compliant" else "#ef4444" if status == "non_compliant" else "#f59e0b"
+            sections_html += f"""<tr>
+                <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">{sec.get('description', key)}</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+                    <span style="color:{s_color};font-weight:600;">{status.replace('_', ' ').title()}</span>
+                </td>
+                <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">{sec.get('evidence', '')}</td>
+            </tr>"""
+    elif isinstance(sections, list):
+        for sec in sections:
+            name = sec.get("name", sec.get("section", ""))
+            status = sec.get("status", "compliant" if sec.get("compliant") else "non_compliant")
+            s_color = "#10b981" if "compliant" in status else "#ef4444"
+            sections_html += f"""<tr>
+                <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">{name}</td>
+                <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+                    <span style="color:{s_color};font-weight:600;">{status.replace('_', ' ').title()}</span>
+                </td>
+                <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">{sec.get('evidence', sec.get('description', ''))}</td>
+            </tr>"""
+
+    recs = report.get("recommendations", [])
+    recs_html = ""
+    if recs:
+        items = recs if isinstance(recs, list) else [recs]
+        recs_html = "<h2 style='margin-top:32px;font-size:18px;'>Recommendations</h2><ul style='line-height:1.8;'>"
+        for r in items:
+            recs_html += f"<li>{r}</li>"
+        recs_html += "</ul>"
+
+    html = f"""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>{fw_name} Compliance Report — {data.system_name}</title>
+<style>
+    @media print {{ @page {{ margin: 1in; }} body {{ font-size: 11pt; }} }}
+    body {{ font-family: -apple-system, system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px 20px; color: #111827; }}
+    .header {{ border-bottom: 3px solid #10b981; padding-bottom: 20px; margin-bottom: 30px; }}
+    .score-box {{ display: inline-block; background: {score_color}; color: white; padding: 12px 24px; border-radius: 8px; font-size: 28px; font-weight: 700; }}
+    table {{ width: 100%; border-collapse: collapse; margin-top: 16px; }}
+    th {{ background: #f9fafb; padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 2px solid #e5e7eb; }}
+    .footer {{ margin-top: 40px; padding-top: 16px; border-top: 2px solid #e5e7eb; font-size: 12px; color: #9ca3af; }}
+</style></head><body>
+<div class="header">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><h1 style="margin:0;color:#10b981;">GovernLayer</h1><p style="margin:4px 0 0;color:#6b7280;">Compliance Report</p></div>
+        <div class="score-box">{score}%</div>
+    </div>
+</div>
+<h2 style="margin-top:0;">{fw_name} — {data.system_name}</h2>
+<p style="color:#6b7280;">Generated: {now} | By: {email} | Risk Tier: {data.risk_tier}</p>
+{f'<p style="line-height:1.6;">{report.get("summary", "")}</p>' if report.get("summary") else ''}
+<table>
+<thead><tr><th>Requirement</th><th style="text-align:center;">Status</th><th>Evidence</th></tr></thead>
+<tbody>{sections_html}</tbody>
+</table>
+{recs_html}
+<div class="footer">
+    <p>This report was generated by GovernLayer (governlayer.ai). Hash-chained audit trail ensures tamper-proof records.</p>
+    <p>Report ID: {data.framework}-{data.system_name}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')} | Confidential</p>
+</div>
+<script>window.onload=function(){{window.print();}}</script>
+</body></html>"""
+    return HTMLResponse(html)

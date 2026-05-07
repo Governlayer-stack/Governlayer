@@ -687,6 +687,26 @@ input, select { font-family: inherit; }
     <!-- ==================== OVERVIEW TAB ==================== -->
     <div class="tab-content active" id="tab-overview">
 
+      <!-- Onboarding Wizard -->
+      <div id="onboardingWizard" style="display:none;background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(59,130,246,.1));border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;font-size:15px;">Setup Wizard</h3>
+          <span id="onboardingPct" style="font-weight:700;color:var(--green);font-size:14px;">0%</span>
+        </div>
+        <div class="progress-bar" style="margin-bottom:14px;"><div class="progress-fill" id="onboardingBar" style="width:0%;background:var(--green);transition:width .5s;"></div></div>
+        <div id="onboardingSteps" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;"></div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('onboardingWizard').style.display='none';localStorage.setItem('gl_hide_wizard','1')" style="margin-top:10px;font-size:11px;">Dismiss</button>
+      </div>
+
+      <!-- Gap Analysis Banner -->
+      <div id="gapAnalysisBanner" style="display:none;background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="margin:0;font-size:14px;">Compliance Gap Analysis</h3>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('gapAnalysisBanner').style.display='none'">Hide</button>
+        </div>
+        <div id="gapAnalysisContent" style="font-size:12px;"></div>
+      </div>
+
       <!-- Metrics Row -->
       <div class="metrics-row" id="metricsRow">
         <div class="metric-card">
@@ -997,7 +1017,10 @@ input, select { font-family: inherit; }
             </select>
           </div>
         </div>
-        <button class="btn btn-primary" id="generateReportBtn" onclick="generateReport()" style="width:100%;">Generate Report</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" id="generateReportBtn" onclick="generateReport()" style="flex:1;">Generate Report</button>
+          <button class="btn btn-secondary" onclick="downloadReportPDF()" title="Opens printable report — save as PDF">Download PDF</button>
+        </div>
       </div>
       <div class="card" id="reportResultPanel" style="display:none;margin-top:16px;">
         <div class="card-header"><h3>Report Results</h3></div>
@@ -1012,7 +1035,67 @@ input, select { font-family: inherit; }
 
     <!-- ==================== SETTINGS TAB ==================== -->
     <div class="tab-content" id="tab-settings">
+      <!-- Team Management -->
       <div class="card">
+        <div class="card-header">
+          <h3>Team Members</h3>
+          <button class="btn btn-primary btn-sm" onclick="openInviteModal()">+ Invite Member</button>
+        </div>
+        <div id="teamList" style="min-height:40px;"></div>
+      </div>
+
+      <!-- Activity Log -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header">
+          <h3>Activity Log</h3>
+          <button class="btn btn-secondary btn-sm" onclick="loadActivityLog()">Refresh</button>
+        </div>
+        <div id="activityLog" style="max-height:300px;overflow-y:auto;"></div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header"><h3>Notifications</h3></div>
+        <div style="max-width:500px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-weight:600;font-size:13px;">Weekly Compliance Digest</div>
+              <div style="font-size:11px;color:var(--muted);">Email summary of compliance scores every Monday</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="sendDigest()">Send Now</button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-weight:600;font-size:13px;">Incident Alerts</div>
+              <div style="font-size:11px;color:var(--muted);">Email on high/critical incidents</div>
+            </div>
+            <span style="color:var(--green);font-size:12px;font-weight:600;">Active</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;">
+            <div>
+              <div style="font-weight:600;font-size:13px;">Control Failures</div>
+              <div style="font-size:11px;color:var(--muted);">Alert when a control drops to failing</div>
+            </div>
+            <span style="color:var(--green);font-size:12px;font-weight:600;">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence Upload -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header"><h3>Evidence Upload</h3></div>
+        <div style="max-width:500px;">
+          <div id="evidenceDropzone" style="border:2px dashed var(--border);border-radius:8px;padding:32px;text-align:center;cursor:pointer;margin-bottom:12px;" onclick="document.getElementById('evidenceFileInput').click()">
+            <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Drop files here or click to upload</div>
+            <div style="font-size:11px;color:var(--dim);">Screenshots, CSVs, PDFs — max 10MB</div>
+          </div>
+          <input type="file" id="evidenceFileInput" style="display:none;" onchange="uploadEvidence(this.files[0])">
+          <div id="uploadedEvidenceList"></div>
+        </div>
+      </div>
+
+      <!-- Workspace Settings -->
+      <div class="card" style="margin-top:16px;">
         <div class="card-header"><h3>Workspace Settings</h3></div>
         <div style="max-width:500px;">
           <div style="margin-bottom:16px;">
@@ -1510,6 +1593,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initLedgerTab();
   initSettingsTab();
   tryLiveData();
+  loadOnboardingWizard();
+  renderGapAnalysis();
 
   // Show framework selector on first login (no frameworks chosen yet)
   if (!localStorage.getItem('gl_frameworks')) {
@@ -2630,7 +2715,7 @@ async function verifyChain() {
 }
 
 // ========== SETTINGS TAB ==========
-function initSettingsTab() {
+async function initSettingsTab() {
   document.getElementById('settingsEmail').value = getEmail();
   document.getElementById('settingsApiUrl').value = localStorage.getItem('gl_api_url') || '';
   document.getElementById('settingsPlan').innerHTML = '<span class="plan-badge plan-' + getPlan() + '">' + getPlan().toUpperCase() + '</span>';
@@ -2639,6 +2724,220 @@ function initSettingsTab() {
     const info = ALL_FRAMEWORKS.find(x => x.id === f);
     return '<span class="badge-pill" style="margin:2px;">' + (info ? info.name : f) + '</span>';
   }).join(' ');
+  loadTeam();
+  loadActivityLog();
+  loadUploadedEvidence();
+}
+
+// ========== TEAM MANAGEMENT ==========
+async function loadTeam() {
+  const el = document.getElementById('teamList');
+  const data = await api('/v1/workspace/team');
+  if (data && data.members && data.members.length > 0) {
+    el.innerHTML = data.members.map(m => {
+      const isMe = m.email === getEmail();
+      const roleBadge = m.role === 'owner' ? 'background:var(--green);color:#000' : m.role === 'admin' ? 'background:var(--blue);color:#fff' : 'background:var(--elevated);color:var(--muted)';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--elevated);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);">${m.email.charAt(0).toUpperCase()}</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;">${m.email}${isMe ? ' <span style="color:var(--muted);font-size:11px;">(you)</span>' : ''}</div>
+            <div style="font-size:11px;color:var(--dim);">Joined ${m.joined ? new Date(m.joined).toLocaleDateString() : 'recently'}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;${roleBadge}">${m.role}</span>
+          ${!isMe ? '<button class="btn btn-ghost btn-sm" style="font-size:10px;color:var(--red);" onclick="removeMember(\'' + m.email + '\')">Remove</button>' : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px;">No team members yet. Invite your team to collaborate.</div>';
+  }
+}
+
+function openInviteModal() {
+  let modal = document.getElementById('inviteModal');
+  if (!modal) { modal = document.createElement('div'); modal.id = 'inviteModal'; document.body.appendChild(modal); }
+  modal.className = 'modal-overlay open';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:400px;">
+      <div class="modal-header"><h3>Invite Team Member</h3><button class="modal-close" onclick="document.getElementById('inviteModal').classList.remove('open')">&times;</button></div>
+      <div class="modal-body">
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Email</label>
+          <input id="inviteEmail" type="email" placeholder="colleague@company.com" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Role</label>
+          <select id="inviteRole" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--elevated);color:var(--fg);font-size:13px;">
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+            <option value="viewer">Viewer</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex;gap:8px;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="document.getElementById('inviteModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitInvite()">Send Invite</button>
+      </div>
+    </div>`;
+}
+
+async function submitInvite() {
+  const email = document.getElementById('inviteEmail').value.trim();
+  const role = document.getElementById('inviteRole').value;
+  if (!email) { showToast('Email is required', 'error'); return; }
+  const result = await api('/v1/workspace/team/invite', { method: 'POST', body: JSON.stringify({ email, role }) });
+  if (result) {
+    showToast('Invite sent to ' + email, 'success');
+    document.getElementById('inviteModal').classList.remove('open');
+    loadTeam();
+  }
+}
+
+async function removeMember(memberEmail) {
+  if (!confirm('Remove ' + memberEmail + ' from the team?')) return;
+  const result = await api('/v1/workspace/team/' + encodeURIComponent(memberEmail), { method: 'DELETE' });
+  if (result) { showToast('Member removed', 'success'); loadTeam(); }
+}
+
+// ========== ACTIVITY LOG ==========
+async function loadActivityLog() {
+  const el = document.getElementById('activityLog');
+  el.innerHTML = '<div style="padding:12px;text-align:center;color:var(--muted);font-size:12px;">Loading...</div>';
+  const data = await api('/v1/workspace/activity?limit=30');
+  if (data && data.entries && data.entries.length > 0) {
+    el.innerHTML = data.entries.map(e => {
+      const actionColor = e.action === 'create' ? 'var(--green)' : e.action === 'delete' ? 'var(--red)' : 'var(--blue)';
+      return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+        <span style="color:${actionColor};font-weight:600;width:50px;flex-shrink:0;">${e.action}</span>
+        <span style="flex:1;">${e.resource_type}${e.resource_id ? ' #' + e.resource_id : ''} ${e.details ? '— ' + e.details : ''}</span>
+        <span style="color:var(--dim);flex-shrink:0;width:80px;text-align:right;">${e.created_at ? new Date(e.created_at).toLocaleDateString() : ''}</span>
+      </div>`;
+    }).join('');
+  } else {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px;">No activity yet. Actions like scans, incidents, and policy changes will appear here.</div>';
+  }
+}
+
+// ========== NOTIFICATIONS ==========
+async function sendDigest() {
+  const result = await api('/v1/workspace/send-digest', { method: 'POST', body: JSON.stringify({}) });
+  if (result && result.sent) showToast('Digest sent to ' + result.to, 'success');
+  else showToast('Could not send digest (check email config)', 'info');
+}
+
+// ========== EVIDENCE UPLOAD ==========
+async function uploadEvidence(file) {
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('File too large (max 10MB)', 'error'); return; }
+  const formData = new FormData();
+  formData.append('file', file);
+  const token = localStorage.getItem('gl_token');
+  const baseUrl = localStorage.getItem('gl_api_url') || window.location.origin;
+  try {
+    const res = await fetch(baseUrl + '/v1/workspace/evidence/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData,
+    });
+    const data = await res.json();
+    if (data.id) { showToast('Evidence uploaded: ' + data.filename, 'success'); loadUploadedEvidence(); }
+    else showToast('Upload failed', 'error');
+  } catch (e) { showToast('Upload error: ' + e.message, 'error'); }
+}
+
+async function loadUploadedEvidence() {
+  const el = document.getElementById('uploadedEvidenceList');
+  if (!el) return;
+  const data = await api('/v1/workspace/evidence');
+  if (data && data.evidence && data.evidence.length > 0) {
+    el.innerHTML = data.evidence.map(e => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;">
+      <span>${e.filename}</span>
+      <span style="color:var(--muted);">${(e.size / 1024).toFixed(1)}KB — ${e.framework}</span>
+    </div>`).join('');
+  }
+}
+
+// ========== PDF EXPORT ==========
+async function downloadReportPDF() {
+  const systemName = document.getElementById('reportSystemName').value.trim() || 'organization';
+  const framework = document.getElementById('reportFramework').value;
+  const token = localStorage.getItem('gl_token');
+  const baseUrl = localStorage.getItem('gl_api_url') || window.location.origin;
+  const url = baseUrl + '/v1/reports/export-html';
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ system_name: systemName, framework, risk_tier: 'high', context: {} }),
+    });
+    const html = await res.text();
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+  } catch (e) { showToast('PDF export failed: ' + e.message, 'error'); }
+}
+
+// ========== ONBOARDING WIZARD ==========
+async function loadOnboardingWizard() {
+  if (localStorage.getItem('gl_hide_wizard') === '1') return;
+  const data = await api('/v1/workspace/onboarding');
+  if (!data || data.pct >= 100) return;
+
+  const wizard = document.getElementById('onboardingWizard');
+  wizard.style.display = 'block';
+  document.getElementById('onboardingPct').textContent = data.pct + '%';
+  document.getElementById('onboardingBar').style.width = data.pct + '%';
+
+  const stepActions = {
+    account: null,
+    org: () => switchTab('settings', document.querySelector('[data-tab=settings]')),
+    frameworks: () => openFrameworkModal(),
+    integration: () => switchTab('evidence', document.querySelector('[data-tab=evidence]')),
+    scan: () => switchTab('scanner', document.querySelector('[data-tab=scanner]')),
+    team: () => { switchTab('settings', document.querySelector('[data-tab=settings]')); setTimeout(openInviteModal, 300); },
+  };
+
+  document.getElementById('onboardingSteps').innerHTML = data.steps.map(s => {
+    const icon = s.done ? '<span style="color:var(--green);">&#10003;</span>' : '<span style="color:var(--dim);">&#9675;</span>';
+    const action = !s.done && stepActions[s.key] ? `onclick="(${stepActions[s.key].toString()})()"` : '';
+    const cursor = !s.done && stepActions[s.key] ? 'cursor:pointer;' : '';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--elevated);border-radius:6px;border:1px solid var(--border);font-size:12px;${cursor}" ${action}>
+      ${icon} <span style="${s.done ? 'text-decoration:line-through;color:var(--dim);' : 'font-weight:500;'}">${s.label}</span>
+    </div>`;
+  }).join('');
+}
+
+// ========== GAP ANALYSIS ==========
+function renderGapAnalysis() {
+  const fws = getFrameworks();
+  const controls = DEMO_CONTROLS.filter(c => c.frameworks.some(f => fws.includes(f)));
+  const failing = controls.filter(c => c.status === 'failing');
+  const warning = controls.filter(c => c.status === 'warning');
+
+  if (failing.length === 0 && warning.length === 0) return;
+
+  const banner = document.getElementById('gapAnalysisBanner');
+  banner.style.display = 'block';
+
+  const items = [...failing.slice(0, 5), ...warning.slice(0, 3)];
+  document.getElementById('gapAnalysisContent').innerHTML = `
+    <div style="margin-bottom:8px;font-weight:600;">${failing.length} failing controls, ${warning.length} warnings across ${fws.length} frameworks</div>
+    ${items.map(c => {
+      const color = c.status === 'failing' ? 'var(--red)' : 'var(--amber)';
+      const remedy = c.remediation || 'Review and remediate this control';
+      return `<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="color:${color};font-weight:700;font-size:11px;flex-shrink:0;">${c.id}</span>
+        <div>
+          <div style="font-weight:500;">${c.name}</div>
+          <div style="color:var(--muted);font-size:11px;">Fix: ${remedy}</div>
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="margin-top:8px;"><button class="btn btn-primary btn-sm" onclick="switchTab('controls', document.querySelector('[data-tab=controls]'))">View All Controls</button></div>
+  `;
 }
 
 function saveSettings() {
@@ -2661,6 +2960,7 @@ function logout() {
     localStorage.removeItem('gl_workspace_state');
     localStorage.removeItem('gl_frameworks');
     localStorage.removeItem('gl_api_url');
+    localStorage.removeItem('gl_hide_wizard');
     window.location.href = '/';
   }
 }

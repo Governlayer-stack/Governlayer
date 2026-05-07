@@ -30,6 +30,7 @@ from src.api import (
     dashboard, enterprise, enterprise_features, evidence, governance, growth,
     hitl, incidents, integrations, knowledge_graph, ledger, mfa, oauth,
     ipi, policies, rbac_views, registry, reports, risk, safety, threats, v1, vendor_risk,
+    workspace,
 )
 from src.config import get_settings
 from src.models.database import create_tables, SessionLocal
@@ -337,6 +338,7 @@ def create_app() -> FastAPI:
     app.include_router(enterprise_features.router)
     app.include_router(growth.router)
     app.include_router(vendor_risk.router)
+    app.include_router(workspace.router)
     app.include_router(agent_governance.router)
     app.include_router(controls.router)
     app.include_router(evidence.router)
