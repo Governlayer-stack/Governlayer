@@ -184,7 +184,7 @@ def _seed_demo_data():
 
 
 class LowercasePathMiddleware(BaseHTTPMiddleware):
-    """Normalize URL paths to lowercase so /Pitch, /PITCH, /pitch all work."""
+    """Normalize URL paths to lowercase so /Workspace, /WORKSPACE, /workspace all work."""
     async def dispatch(self, request: Request, call_next):
         path = request.scope["path"]
         if path != path.lower() and not path.startswith("/api/"):
@@ -1101,7 +1101,6 @@ def create_app() -> FastAPI:
                     return f.read()
         return None
 
-    _pitch_html = _load_page("pitch")
     _demo_html = _load_page("demo")
     _soc2_html = _load_page("soc2")
     _competitive_html = _load_page("competitive")
@@ -1223,12 +1222,6 @@ def create_app() -> FastAPI:
         if _beta_html:
             return HTMLResponse(_beta_html)
         return {"error": "Beta program page not found"}
-
-    @app.get("/pitch")
-    def pitch_page():
-        if _pitch_html:
-            return HTMLResponse(_pitch_html)
-        return {"error": "Pitch deck not found"}
 
     @app.get("/demo")
     def demo_page():
