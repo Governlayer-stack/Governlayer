@@ -1778,7 +1778,7 @@ function contactSales() {
 async function manageBilling() {
   const slug = localStorage.getItem('gl_org_slug');
   if (!slug) { showToast('No organization found.', 'error'); return; }
-  const res = await api('/billing/portal/' + slug, { method: 'POST' });
+  const res = await api('/billing/portal/' + slug);
   if (res && res.portal_url) window.location.href = res.portal_url;
 }
 
