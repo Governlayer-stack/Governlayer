@@ -71,6 +71,30 @@ def get_org(slug: str, email: str = Depends(verify_token), db: Session = Depends
     }
 
 
+@router.get("/me/orgs")
+def list_my_orgs(email: str = Depends(verify_token), db: Session = Depends(get_db)):
+    """List organizations the authenticated user is a member of."""
+    rows = (
+        db.query(Organization, OrgMembership.role)
+        .join(OrgMembership, OrgMembership.org_id == Organization.id)
+        .filter(OrgMembership.user_email == email)
+        .filter(Organization.is_active.is_(True))
+        .order_by(Organization.created_at.asc())
+        .all()
+    )
+    return [
+        {
+            "id": org.id,
+            "slug": org.slug,
+            "name": org.name,
+            "plan": org.plan,
+            "role": role,
+            "created_at": org.created_at.isoformat() if org.created_at else None,
+        }
+        for org, role in rows
+    ]
+
+
 # --- API Key Management ---
 
 @router.post("/orgs/{slug}/api-keys")

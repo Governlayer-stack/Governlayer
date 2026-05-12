@@ -73,9 +73,47 @@ input, select { font-family: inherit; }
 .upgrade-btn {
   width: 100%; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 600;
   background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff;
-  text-align: center;
+  text-align: center; border: none; cursor: pointer; display: block;
 }
 .upgrade-btn:hover { opacity: .9; }
+
+/* Upgrade plan picker modal */
+.upgrade-plans-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 8px;
+}
+.upgrade-plan-card {
+  background: var(--elevated); border: 1px solid var(--border); border-radius: 10px;
+  padding: 18px; display: flex; flex-direction: column; gap: 10px; position: relative;
+}
+.upgrade-plan-card.featured {
+  border-color: var(--purple);
+  background: linear-gradient(180deg, var(--purple-bg), var(--elevated));
+}
+.upgrade-plan-card .plan-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.upgrade-plan-card .plan-price { font-size: 20px; font-weight: 700; color: var(--text); }
+.upgrade-plan-card .plan-price small { font-size: 11px; font-weight: 500; color: var(--muted); }
+.upgrade-plan-card ul { list-style: none; padding: 0; margin: 0; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+.upgrade-plan-card ul li::before { content: '\2713'; color: var(--blue); margin-right: 6px; font-weight: 700; }
+.upgrade-plan-card.featured ul li::before { color: var(--purple); }
+.upgrade-plan-card .featured-tag {
+  position: absolute; top: -10px; right: 12px; background: var(--purple); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: .5px;
+}
+.upgrade-plan-card .plan-cta {
+  margin-top: auto; padding: 9px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  border: none; cursor: pointer; background: var(--blue); color: #fff;
+}
+.upgrade-plan-card.featured .plan-cta { background: linear-gradient(135deg, var(--blue), var(--purple)); }
+.upgrade-plan-card.enterprise .plan-cta { background: var(--elevated); color: var(--text); border: 1px solid var(--border); }
+.upgrade-plan-card .plan-cta:hover { opacity: .9; }
+.modal-close-x {
+  background: transparent; border: none; color: var(--muted); font-size: 20px;
+  cursor: pointer; padding: 0 6px; line-height: 1;
+}
+.modal-close-x:hover { color: var(--text); }
+@media (max-width: 768px) {
+  .upgrade-plans-grid { grid-template-columns: 1fr; }
+}
 
 /* Hamburger */
 .hamburger {
@@ -1392,6 +1430,55 @@ input, select { font-family: inherit; }
   </div>
 </div>
 
+<!-- Upgrade Plan Modal -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal" style="max-width: 880px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div>
+        <h3 style="margin-bottom:4px;">Choose your plan</h3>
+        <p style="color:var(--muted);font-size:12px;margin:0 0 16px;">Upgrade to unlock more audits, frameworks, and support.</p>
+      </div>
+      <button type="button" class="modal-close-x" onclick="closeUpgradeModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="upgrade-plans-grid">
+      <div class="upgrade-plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$499<small>/mo</small></div>
+        <ul>
+          <li>5,000 audits / month</li>
+          <li>10 compliance frameworks</li>
+          <li>Email support</li>
+          <li>Standard rate limits</li>
+        </ul>
+        <button type="button" class="plan-cta" onclick="upgradeToPlan('starter')">Upgrade to Starter</button>
+      </div>
+      <div class="upgrade-plan-card featured">
+        <span class="featured-tag">MOST POPULAR</span>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$1,499<small>/mo</small></div>
+        <ul>
+          <li>50,000 audits / month</li>
+          <li>All 29 frameworks</li>
+          <li>SSO &amp; team accounts</li>
+          <li>Priority support</li>
+        </ul>
+        <button type="button" class="plan-cta" onclick="upgradeToPlan('pro')">Upgrade to Pro</button>
+      </div>
+      <div class="upgrade-plan-card enterprise">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">Custom</div>
+        <ul>
+          <li>Unlimited audits</li>
+          <li>SLA &amp; on-prem option</li>
+          <li>Dedicated CSM</li>
+          <li>Custom integrations</li>
+        </ul>
+        <button type="button" class="plan-cta" onclick="contactSales()">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== CONFIG & STATE ==========
 const API_BASE = localStorage.getItem('gl_api_url') || '';
@@ -1579,6 +1666,14 @@ function getToken() { return localStorage.getItem('gl_token'); }
 
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', () => {
+  const upgradedParam = new URLSearchParams(window.location.search).get('upgraded');
+  if (upgradedParam) {
+    showToast('Welcome to ' + upgradedParam.charAt(0).toUpperCase() + upgradedParam.slice(1) + '! Your plan is being activated.', 'success');
+    // Force re-fetch of org/plan from backend
+    loadOrg().then(() => { window.history.replaceState({}, '', '/workspace'); location.reload(); });
+  } else {
+    loadOrg();
+  }
   initSidebar();
   initOverview();
   initControls();
@@ -1615,11 +1710,76 @@ function initSidebar() {
 
   const bottom = document.getElementById('sidebarBottom');
   if (plan === 'free') {
-    bottom.innerHTML = '<a href="/signup#pricing" class="upgrade-btn">Upgrade Plan</a>';
+    bottom.innerHTML = '<button type="button" class="upgrade-btn" onclick="openUpgradeModal()">Upgrade Plan</button>';
+  } else {
+    bottom.innerHTML = '<button type="button" class="upgrade-btn" style="background:linear-gradient(135deg,var(--blue),#1d4ed8);" onclick="manageBilling()">Manage Billing</button>';
   }
 
   const lastScan = state.lastScan || null;
   document.getElementById('lastScan').textContent = lastScan ? 'Last scan: ' + new Date(lastScan).toLocaleString() : 'Last scan: Never';
+}
+
+// ========== ORG + UPGRADE FLOW ==========
+async function loadOrg() {
+  try {
+    const orgs = await api('/v1/enterprise/me/orgs');
+    if (orgs && orgs.length > 0) {
+      localStorage.setItem('gl_org_slug', orgs[0].slug);
+      localStorage.setItem('gl_org_name', orgs[0].name);
+      localStorage.setItem('gl_plan', orgs[0].plan);
+    }
+  } catch(e) { /* org might not exist yet — that's OK */ }
+}
+
+function openUpgradeModal() {
+  const slug = localStorage.getItem('gl_org_slug');
+  if (!slug) {
+    showToast('No organization found. Please create one from settings first.', 'error');
+    return;
+  }
+  document.getElementById('upgradeModal').classList.add('open');
+}
+
+function closeUpgradeModal() {
+  document.getElementById('upgradeModal').classList.remove('open');
+}
+
+async function upgradeToPlan(plan) {
+  const slug = localStorage.getItem('gl_org_slug');
+  if (!slug) { showToast('No organization found.', 'error'); return; }
+  showToast('Redirecting to checkout...', 'info');
+  const res = await api('/billing/checkout', {
+    method: 'POST',
+    body: JSON.stringify({
+      org_slug: slug,
+      plan: plan,
+      success_url: window.location.origin + '/workspace?upgraded=' + plan,
+      cancel_url: window.location.origin + '/workspace'
+    })
+  });
+  if (res && res.checkout_url) {
+    window.location.href = res.checkout_url;
+  }
+}
+
+function contactSales() {
+  const email = getEmail();
+  const subject = encodeURIComponent('Enterprise plan inquiry — GovernLayer');
+  const body = encodeURIComponent(
+    'Hi,\n\nI\'d like to learn more about the GovernLayer Enterprise plan.\n\n' +
+    'Account email: ' + email + '\n' +
+    'Organization: ' + (localStorage.getItem('gl_org_name') || '(not set)') + '\n\n' +
+    'Specific needs / questions:\n[describe here]\n\nThanks.'
+  );
+  window.location.href = 'mailto:founders@governlayer.ai?subject=' + subject + '&body=' + body;
+  closeUpgradeModal();
+}
+
+async function manageBilling() {
+  const slug = localStorage.getItem('gl_org_slug');
+  if (!slug) { showToast('No organization found.', 'error'); return; }
+  const res = await api('/billing/portal/' + slug, { method: 'POST' });
+  if (res && res.portal_url) window.location.href = res.portal_url;
 }
 
 function switchTab(tab, el) {
