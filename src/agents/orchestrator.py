@@ -33,6 +33,7 @@ class GovernanceState(TypedDict):
     messages: Annotated[list, add]
     requires_human: bool
     audit_hash: str
+    framework_results: list[dict]
 
 
 settings = get_settings()
@@ -78,7 +79,7 @@ def risk_scoring_node(state: GovernanceState) -> dict:
 
 
 def decision_node(state: GovernanceState) -> dict:
-    """Make the governance decision based on drift + risk."""
+    """Make the governance decision based on drift + risk + framework rules."""
     drift = state.get("drift_result", {})
     risk_level = state.get("risk_level", "MEDIUM")
 
@@ -99,11 +100,62 @@ def decision_node(state: GovernanceState) -> dict:
         reason = f"APPROVED: Risk level {risk_level}, drift within bounds."
         requires_human = False
 
+    # Framework rules engine — wraps the autonomous daemon's decisions too.
+    # Wrapped in try/except: a framework code bug must NEVER break governance.
+    framework_results: list[dict] = []
+    try:
+        from src.frameworks.registry import evaluate_use_case, get_framework
+
+        raw_results = evaluate_use_case(
+            state.get("use_case", "") or "",
+            state.get("reasoning_trace", "") or "",
+        )
+        for r in raw_results:
+            framework_id = r.rule_id.split(".")[0] if "." in r.rule_id else ""
+            fw = get_framework(framework_id) if framework_id else None
+            rule = fw.get_rule(r.rule_id) if fw else None
+            framework_results.append({
+                "rule_id": r.rule_id,
+                "framework": framework_id,
+                "passed": r.passed,
+                "severity": r.severity,
+                "finding": r.finding,
+                "citations": list(rule.citations) if rule else [],
+                "evidence": r.evidence,
+            })
+
+        failed = [r for r in framework_results if not r["passed"]]
+        critical = [r for r in failed if r["severity"] == "CRITICAL"]
+        high = [r for r in failed if r["severity"] == "HIGH"]
+
+        if critical:
+            finding_str = "; ".join(f"{r['rule_id']} ({r['finding']})" for r in critical)
+            if action != "BLOCK":
+                action = "BLOCK"
+                reason = f"BLOCKED: framework rule failed: {finding_str}"
+                requires_human = False
+            else:
+                reason = f"{reason} | framework rule failed: {finding_str}"
+        elif high:
+            finding_str = "; ".join(f"{r['rule_id']} ({r['finding']})" for r in high)
+            if action == "APPROVE":
+                action = "ESCALATE_HUMAN"
+                reason = f"ESCALATED: framework rule failed: {finding_str}"
+                requires_human = True
+            else:
+                reason = f"{reason} | framework rule failed: {finding_str}"
+    except Exception as e:  # noqa: BLE001 — never break governance for framework bugs
+        logger.warning("Orchestrator framework evaluation failed; falling through. err=%s", e)
+
     return {
         "governance_action": action,
         "reason": reason,
         "requires_human": requires_human,
-        "messages": [f"Decision: {action} — {reason}"],
+        "framework_results": framework_results,
+        "messages": [
+            f"Decision: {action} — {reason} "
+            f"(framework_failures={sum(1 for r in framework_results if not r['passed'])})"
+        ],
     }
 
 

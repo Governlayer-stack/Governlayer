@@ -619,9 +619,43 @@ input, select { font-family: inherit; }
   width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--blue);
   border-radius: 50%; animation: spin .8s linear infinite;
 }
+
+/* ========== Empty State ========== */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 40px 24px; gap: 10px;
+  background: var(--surface); border: 1px dashed var(--border); border-radius: 10px;
+}
+.empty-state .empty-icon { font-size: 32px; line-height: 1; }
+.empty-state h4 { font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0; }
+.empty-state p { font-size: 12px; color: var(--muted); max-width: 380px; margin: 0 0 12px; }
+.empty-state .empty-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.empty-state .empty-secondary { font-size: 11px; color: var(--muted); text-decoration: underline; }
+.empty-state .empty-secondary:hover { color: var(--text); }
+
+/* ========== Demo Banner ========== */
+.demo-banner {
+  background: linear-gradient(90deg, rgba(245,158,11,.18), rgba(59,130,246,.12));
+  border: 1px solid rgba(245,158,11,.35); color: var(--text);
+  padding: 8px 14px; font-size: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.demo-banner strong { color: #f59e0b; margin-right: 6px; }
+.demo-banner a { color: var(--blue); text-decoration: underline; font-weight: 600; }
+.demo-banner .demo-close { background: transparent; border: 0; color: var(--muted); cursor: pointer; font-size: 16px; padding: 0 4px; }
+.demo-banner .demo-close:hover { color: var(--text); }
 </style>
 </head>
 <body>
+
+<!-- Demo Mode Banner (hidden unless ?demo=1) -->
+<div class="demo-banner" id="demoBanner" style="display:none;">
+  <div><strong>Demo mode</strong> &mdash; illustrative data. This is not your real governance posture.</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a href="/workspace">Exit demo</a>
+    <button type="button" class="demo-close" onclick="document.getElementById('demoBanner').style.display='none'" aria-label="Dismiss">&times;</button>
+  </div>
+</div>
 
 <!-- Hamburger -->
 <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
@@ -1664,8 +1698,47 @@ function getToken() { return localStorage.getItem('gl_token'); }
   }
 })();
 
+// ========== DEMO MODE ==========
+// Real customers should NEVER see hardcoded demo data unless they explicitly
+// opt in via ?demo=1. This flag gates every render path that historically
+// read from DEMO_* arrays. Without it, those views fetch from the real API
+// and fall back to an empty-state CTA when no data exists yet.
+function isDemoMode() { return window._glDemoMode === true; }
+
+function renderEmptyState(containerId, opts) {
+  // opts: { icon, title, body, ctaLabel, ctaHref, ctaOnclick, asTableRow, colspan }
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const cta = opts.ctaOnclick
+    ? `<button type="button" class="btn btn-primary" onclick="${opts.ctaOnclick}">${opts.ctaLabel || 'Get Started'}</button>`
+    : `<a class="btn btn-primary" href="${opts.ctaHref || '#'}">${opts.ctaLabel || 'Get Started'}</a>`;
+  const html = `
+    <div class="empty-state">
+      <div class="empty-icon">${opts.icon || '✨'}</div>
+      <h4>${opts.title}</h4>
+      <p>${opts.body}</p>
+      <div class="empty-actions">
+        ${cta}
+        <a class="empty-secondary" href="?demo=1">View demo data</a>
+      </div>
+    </div>`;
+  if (opts.asTableRow) {
+    el.innerHTML = `<tr><td colspan="${opts.colspan || 1}" style="padding:0;border:0;background:transparent;">${html}</td></tr>`;
+  } else {
+    el.innerHTML = html;
+  }
+}
+
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', () => {
+  const demoMode = new URLSearchParams(window.location.search).get('demo') === '1';
+  window._glDemoMode = demoMode;
+  if (demoMode) {
+    console.log('[GovernLayer] Demo mode active — showing illustrative data');
+    const banner = document.getElementById('demoBanner');
+    if (banner) banner.style.display = 'flex';
+  }
+
   const upgradedParam = new URLSearchParams(window.location.search).get('upgraded');
   if (upgradedParam) {
     showToast('Welcome to ' + upgradedParam.charAt(0).toUpperCase() + upgradedParam.slice(1) + '! Your plan is being activated.', 'success');
@@ -1799,6 +1872,23 @@ function toggleSidebar() {
 
 // ========== OVERVIEW ==========
 function initOverview() {
+  // Real-customer mode: show zeroed overview tiles until live data populates them.
+  // tryLiveData() will overwrite these from the API when it succeeds.
+  if (!isDemoMode()) {
+    renderGauge(0);
+    document.getElementById('readinessLabel').textContent = 'Not Started';
+    document.getElementById('controlsValue').innerHTML = '0<span style="font-size:16px;color:var(--muted)">/0</span>';
+    document.getElementById('controlsBar').style.width = '0%';
+    document.getElementById('controlsSub').textContent = 'Connect an integration to begin';
+    document.getElementById('evidenceValue').textContent = '0%';
+    document.getElementById('evidenceBar').style.width = '0%';
+    document.getElementById('evidenceSub').textContent = '0 evidence items collected';
+    document.getElementById('remedValue').textContent = '0';
+    document.getElementById('remedSub').innerHTML = '<span style="color:var(--muted)">No findings yet — run a scan to populate</span>';
+    renderFrameworkReadiness();
+    return;
+  }
+
   const controls = DEMO_CONTROLS;
   const passing = controls.filter(c => c.status === 'passing').length;
   const warning = controls.filter(c => c.status === 'warning').length;
@@ -1876,6 +1966,19 @@ function initControls() { renderControlTable(); }
 
 function renderControlTable() {
   const tbody = document.getElementById('controlTableBody');
+  if (!isDemoMode()) {
+    // Real customers: no scan has been run yet → show empty-state CTA.
+    // Once the /v1/controls or /v1/reports API returns rows this branch will be replaced by tryLiveData().
+    renderEmptyState('controlTableBody', {
+      icon: '🛡️',
+      title: 'No control findings yet',
+      body: 'Connect your first AI system to start seeing governance data here. Each connector contributes evidence and control coverage automatically.',
+      ctaLabel: 'Connect an integration',
+      ctaOnclick: "switchTab('settings', document.querySelector('[data-tab=settings]'))",
+      asTableRow: true, colspan: 4,
+    });
+    return;
+  }
   const filtered = controlFilter === 'all' ? DEMO_CONTROLS : DEMO_CONTROLS.filter(c => c.status === controlFilter);
   tbody.innerHTML = filtered.map((c, i) => {
     const dotClass = 'status-' + c.status;
@@ -1916,6 +2019,18 @@ function initRemediation() { renderRemediation(); }
 function renderRemediation() {
   if (!state.remed) state.remed = {};
   const list = document.getElementById('remedList');
+  if (!isDemoMode()) {
+    // Real customers see no remediations until a scan produces findings.
+    renderEmptyState('remedList', {
+      icon: '🧰',
+      title: 'No remediations yet',
+      body: 'Remediation tasks appear automatically when a scan finds failing or warning controls. Run your first scan to generate prioritized fixes.',
+      ctaLabel: 'Run first scan',
+      ctaOnclick: 'runFullScan()',
+    });
+    document.getElementById('remedCount').textContent = '0 items';
+    return;
+  }
   const sevOrder = { critical: 0, high: 1, medium: 2, low: 3 };
   const sorted = [...DEMO_REMEDIATIONS].sort((a, b) => sevOrder[a.severity] - sevOrder[b.severity]);
   const now = Date.now();
@@ -2036,6 +2151,17 @@ function initFrameworksTab() {
   const readinessMap = { SOC2: 62, ISO27001: 70, GDPR: 55, HIPAA: 30, PCI_DSS: 45, NIST_CSF: 58, NIST_AI_RMF: 40, EU_AI_ACT: 50, FedRAMP: 25, CCPA: 48 };
   const el = document.getElementById('frameworkDetail');
 
+  if (!isDemoMode()) {
+    renderEmptyState('frameworkDetail', {
+      icon: '📜',
+      title: 'No framework data yet',
+      body: 'Select the compliance frameworks you are working toward and we will load their control catalogs and readiness scoring.',
+      ctaLabel: 'Choose frameworks',
+      ctaOnclick: "document.getElementById('frameworkModal').classList.add('open')",
+    });
+    return;
+  }
+
   el.innerHTML = fws.map(fw => {
     const info = ALL_FRAMEWORKS.find(f => f.id === fw) || { name: fw, desc: '' };
     const controls = DEMO_CONTROLS.filter(c => c.frameworks.includes(fw));
@@ -2067,6 +2193,17 @@ function initFullControlsTab() { renderFullControls('all'); }
 
 function renderFullControls(filter) {
   const tbody = document.getElementById('fullControlBody');
+  if (!isDemoMode()) {
+    renderEmptyState('fullControlBody', {
+      icon: '📋',
+      title: 'No controls loaded yet',
+      body: 'Pick the frameworks you need to comply with (SOC 2, ISO 27001, GDPR, etc.) and we will load the relevant controls and evidence requirements.',
+      ctaLabel: 'Pick frameworks',
+      ctaOnclick: "document.getElementById('frameworkModal').classList.add('open')",
+      asTableRow: true, colspan: 7,
+    });
+    return;
+  }
   const filtered = filter === 'all' ? DEMO_CONTROLS : DEMO_CONTROLS.filter(c => c.status === filter);
   tbody.innerHTML = filtered.map((c, i) => {
     const dotClass = 'status-' + c.status;
@@ -2378,6 +2515,16 @@ function initEvidenceTab() {
 function renderEvidenceCoverage() {
   const el = document.getElementById('evCoverageSection');
   if (!el) return;
+  if (!isDemoMode()) {
+    renderEmptyState('evCoverageSection', {
+      icon: '📂',
+      title: 'No evidence collected yet',
+      body: 'Connect AWS, GitHub, GCP, or other integrations to automatically collect compliance evidence. Manual uploads are also supported.',
+      ctaLabel: 'Connect a source',
+      ctaOnclick: "switchTab('settings', document.querySelector('[data-tab=settings]'))",
+    });
+    return;
+  }
   const total = DEMO_CONTROLS.length;
   const controlsWithEvidence = new Set();
   EVIDENCE_MAPPINGS.forEach(m => {
@@ -2471,6 +2618,7 @@ function renderEvidenceConnectors(connectors) {
 function renderEvidenceMapping(filter) {
   const tbody = document.getElementById('evMappingBody');
   if (!tbody) return;
+  if (!isDemoMode()) { tbody.innerHTML = ''; return; }
   let items = [...EVIDENCE_MAPPINGS];
   if (filter === 'covered') items = items.filter(m => m.collected);
   if (filter === 'missing') items = items.filter(m => !m.collected);
@@ -2510,6 +2658,7 @@ function filterEvMapping(filter, btnEl) {
 function renderCategoryBreakdown() {
   const el = document.getElementById('evCategoryBreakdown');
   if (!el) return;
+  if (!isDemoMode()) { el.innerHTML = ''; return; }
   const categories = [...new Set(DEMO_CONTROLS.map(c => c.category))];
 
   const controlsWithEvidence = {};
@@ -3072,6 +3221,13 @@ async function loadOnboardingWizard() {
 
 // ========== GAP ANALYSIS ==========
 function renderGapAnalysis() {
+  // Gap-analysis banner is built off DEMO_CONTROLS — never show it to real customers
+  // because the failing/warning items shown aren't actually theirs.
+  if (!isDemoMode()) {
+    const banner = document.getElementById('gapAnalysisBanner');
+    if (banner) banner.style.display = 'none';
+    return;
+  }
   const fws = getFrameworks();
   const controls = DEMO_CONTROLS.filter(c => c.frameworks.some(f => fws.includes(f)));
   const failing = controls.filter(c => c.status === 'failing');
@@ -3327,14 +3483,28 @@ async function initModelsTab() {
     }));
   } else if (data && Array.isArray(data) && data.length > 0) {
     modelsData = data;
-  } else {
+  } else if (isDemoMode()) {
     modelsData = DEMO_MODELS;
+  } else {
+    modelsData = [];
   }
   renderModelsTable();
 }
 
 function renderModelsTable() {
   const tbody = document.getElementById('modelsTableBody');
+  if (!isDemoMode() && (!modelsData || modelsData.length === 0)) {
+    // Real customers: /v1/agents and /v1/models both returned empty → empty-state CTA.
+    renderEmptyState('modelsTableBody', {
+      icon: '🤖',
+      title: 'No models registered yet',
+      body: 'Register your first AI model or agent to start tracking risk tier, lifecycle, and governance status. Each model gets a versioned audit trail.',
+      ctaLabel: 'Register a model',
+      ctaOnclick: 'openRegisterModelModal()',
+      asTableRow: true, colspan: 7,
+    });
+    return;
+  }
   tbody.innerHTML = modelsData.map((m, i) => {
     const created = m.created_at ? new Date(m.created_at).toLocaleDateString() : '--';
     const risk = m.risk_tier || 'medium';
@@ -3451,14 +3621,31 @@ async function initIncidentsTab() {
     }));
   } else if (data && Array.isArray(data)) {
     incidentsData = data;
-  } else {
+  } else if (isDemoMode()) {
     incidentsData = DEMO_INCIDENTS;
+  } else {
+    incidentsData = [];
   }
   renderIncidentBoard();
 }
 
 function renderIncidentBoard() {
   const statuses = ['open', 'investigating', 'mitigated', 'resolved'];
+  if (!isDemoMode() && (!incidentsData || incidentsData.length === 0)) {
+    // Empty incident board → render a single empty-state into the "open" column.
+    statuses.forEach(status => {
+      document.getElementById('kanban-count-' + status).textContent = 0;
+      document.getElementById('kanban-cards-' + status).innerHTML = '';
+    });
+    renderEmptyState('kanban-cards-open', {
+      icon: '🚨',
+      title: 'No incidents reported',
+      body: 'Incidents created via the API, Slack alerts, or governance bots will appear on this board. Connect Slack or Jira to auto-route alerts here.',
+      ctaLabel: 'Set up alerting',
+      ctaOnclick: "switchTab('settings', document.querySelector('[data-tab=settings]'))",
+    });
+    return;
+  }
   statuses.forEach(status => {
     const cards = incidentsData.filter(inc => inc.status === status);
     document.getElementById('kanban-count-' + status).textContent = cards.length;

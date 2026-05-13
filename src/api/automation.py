@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from src.config import get_settings
 from src.drift.detection import analyze_reasoning
 from src.models.database import AuditRecord, compute_hash, get_db, get_last_hash
+from src.security.api_key_auth import AuthContext, require_scope
 from src.security.auth import create_token, hash_password, verify_password, verify_token
 
 router = APIRouter(prefix="/automate", tags=["automation"])
@@ -88,7 +89,12 @@ def register_bot(req: BotRegisterRequest, admin_email: str = Depends(verify_toke
 
 
 @router.post("/full-pipeline")
-def full_pipeline(req: FullPipelineRequest, email: str = Depends(verify_token), db: Session = Depends(get_db)):
+def full_pipeline(
+    req: FullPipelineRequest,
+    auth: AuthContext = Depends(require_scope("govern")),
+    db: Session = Depends(get_db),
+):
+    email = auth.identity
     """Run the complete governance pipeline in a single call.
 
     Steps: drift detection -> risk scoring -> governance decision -> compliance audit -> ledger entry
@@ -219,7 +225,7 @@ def full_pipeline(req: FullPipelineRequest, email: str = Depends(verify_token), 
 
 
 @router.post("/scan")
-def quick_scan(req: QuickScanRequest, email: str = Depends(verify_token)):
+def quick_scan(req: QuickScanRequest, auth: AuthContext = Depends(require_scope("scan"))):
     """Quick deterministic scan — drift + risk only. No LLM calls, instant results."""
     drift_result = analyze_reasoning(
         reasoning_trace=req.reasoning_trace,
@@ -249,7 +255,7 @@ def quick_scan(req: QuickScanRequest, email: str = Depends(verify_token)):
 
 
 @router.get("/health")
-def system_health(email: str = Depends(verify_token)):
+def system_health(auth: AuthContext = Depends(require_scope("read"))):
     """Full system health check — all services. Requires authentication."""
     import socket
     health = {"timestamp": datetime.now(timezone.utc).isoformat(), "services": {}}
