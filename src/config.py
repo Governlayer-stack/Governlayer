@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     achonye_consensus_critical: bool = True # Multi-LLM validation on critical tasks
     achonye_leader_model: str = "claude-opus"
 
+    # Private pitch deck — served at /pitch/{slug} when slug matches.
+    # PRIVATE_PITCH_HTML_GZ holds the gzip+base64 of the deck HTML.
+    # Both env vars set in Railway only; never committed to the repo.
+    private_pitch_slug: str = ""
+    private_pitch_html_gz: str = ""
+
     # Stripe billing
     stripe_api_key: str = ""
     stripe_webhook_secret: str = ""

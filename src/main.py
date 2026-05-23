@@ -1224,6 +1224,24 @@ def create_app() -> FastAPI:
             return HTMLResponse(_beta_html)
         return {"error": "Beta program page not found"}
 
+    @app.get("/pitch/{slug}")
+    def private_pitch(slug: str):
+        # Private investor deck — only served when slug matches the env-var token.
+        # Deck content lives only in Railway env vars (PRIVATE_PITCH_HTML_GZ),
+        # never in this repo. Wrong slug returns 404 indistinguishably.
+        import base64
+        import gzip
+        s = get_settings()
+        if not s.private_pitch_slug or not s.private_pitch_html_gz:
+            return Response(status_code=404)
+        if slug != s.private_pitch_slug:
+            return Response(status_code=404)
+        try:
+            html = gzip.decompress(base64.b64decode(s.private_pitch_html_gz)).decode("utf-8")
+        except Exception:
+            return Response(status_code=404)
+        return HTMLResponse(html, headers={"X-Robots-Tag": "noindex, nofollow"})
+
     @app.get("/demo")
     def demo_page():
         if _demo_html:
