@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer — Executive Briefing for Google</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     CSS RESET + BASE
+     ============================================================ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:         #0a0e1a;
+    --bg-card:    #111827;
+    --bg-card-alt:#0f1629;
+    --border:     #1e293b;
+    --border-glow:#2563eb22;
+    --text:       #e2e8f0;
+    --text-dim:   #94a3b8;
+    --text-bright:#f8fafc;
+    --accent:     #3b82f6;
+    --accent-dim: #1d4ed8;
+    --green:      #22c55e;
+    --red:        #ef4444;
+    --amber:      #f59e0b;
+    --purple:     #a855f7;
+    --cyan:       #06b6d4;
+    --google-blue:#4285f4;
+    --google-red: #ea4335;
+    --google-yellow:#fbbc04;
+    --google-green:#34a853;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ============================================================
+     LAYOUT
+     ============================================================ */
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  section {
+    padding: 4.5rem 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  section:last-of-type { border-bottom: none; }
+
+  /* Subtle glow line between sections */
+  section::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent) 70%, transparent);
+    opacity: 0.15;
+  }
+  section:last-of-type::after { display: none; }
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+  h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--text-bright);
+  }
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-bright);
+    margin-bottom: 1.25rem;
+  }
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+  p { color: var(--text); margin-bottom: 0.75rem; }
+  .dim { color: var(--text-dim); }
+  .accent { color: var(--accent); }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+  .amber { color: var(--amber); }
+
+  .label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  /* ============================================================
+     COVER
+     ============================================================ */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Radial glow behind cover */
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .logo-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 40px rgba(59,130,246,0.25);
+  }
+  .logo-icon svg { width: 30px; height: 30px; }
+  .logo-text {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+  }
+  .logo-text span { color: var(--accent); }
+
+  .cover h1 {
+    font-size: 3.25rem;
+    max-width: 700px;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--text-bright) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cover-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 2.5rem;
+  }
+  .cover-meta .confidential {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 0.75rem;
+  }
+  .cover-meta p { font-size: 0.95rem; color: var(--text-dim); margin-bottom: 0.25rem; }
+
+  .prepared-for {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .prepared-for span {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .google-wordmark {
+    display: flex;
+    align-items: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .google-wordmark .g1 { color: var(--google-blue); }
+  .google-wordmark .g2 { color: var(--google-red); }
+  .google-wordmark .g3 { color: var(--google-yellow); }
+  .google-wordmark .g4 { color: var(--google-blue); }
+  .google-wordmark .g5 { color: var(--google-green); }
+  .google-wordmark .g6 { color: var(--google-red); }
+
+  /* ============================================================
+     STAT CARDS
+     ============================================================ */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .stat-card.red-top::before    { background: linear-gradient(90deg, var(--red), var(--amber)); }
+  .stat-card.amber-top::before  { background: linear-gradient(90deg, var(--amber), var(--red)); }
+  .stat-card.purple-top::before { background: linear-gradient(90deg, var(--purple), var(--red)); }
+
+  .stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ============================================================
+     COMPONENT BADGES
+     ============================================================ */
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  .badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 100px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    white-space: nowrap;
+    transition: border-color 0.2s;
+  }
+  .badge:hover { border-color: var(--accent); }
+  .badge .num {
+    color: var(--accent);
+    margin-right: 0.25rem;
+    font-weight: 700;
+  }
+
+  /* ============================================================
+     ARCHITECTURE DIAGRAM (CSS-only)
+     ============================================================ */
+  .arch-diagram {
+    margin: 2rem 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .arch-block {
+    padding: 1rem 1.75rem;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    position: relative;
+  }
+  .arch-block.agents {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .arch-block.gl {
+    background: linear-gradient(135deg, var(--accent-dim), var(--purple));
+    color: #fff;
+    padding: 1.25rem 2rem;
+    font-size: 0.95rem;
+    box-shadow: 0 0 50px rgba(59,130,246,0.2);
+    z-index: 1;
+  }
+  .arch-block.apps {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .arch-arrow {
+    font-size: 1.5rem;
+    color: var(--accent);
+    padding: 0 0.75rem;
+    opacity: 0.6;
+  }
+
+  /* ============================================================
+     TABLES
+     ============================================================ */
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  thead th {
+    background: var(--bg-card-alt);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th:first-child { border-radius: 16px 0 0 0; }
+  thead th:last-child  { border-radius: 0 16px 0 0; }
+  tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(59,130,246,0.03); }
+  td.feature { font-weight: 500; color: var(--text-bright); white-space: nowrap; }
+  td .yes { color: var(--green); font-weight: 600; }
+  td .no  { color: var(--text-dim); }
+  td .partial { color: var(--amber); font-weight: 500; }
+  td .gl-highlight { color: var(--accent); font-weight: 600; }
+
+  /* Use-case table */
+  .usecase-table td:first-child {
+    font-weight: 600;
+    color: var(--text-bright);
+    white-space: nowrap;
+  }
+
+  /* ============================================================
+     ASK CARDS
+     ============================================================ */
+  .ask-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .ask-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .ask-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(59,130,246,0.08);
+  }
+  .ask-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+  .ask-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+  .ask-card:nth-child(2)::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+  .ask-card:nth-child(3)::before { background: linear-gradient(90deg, var(--purple), var(--accent)); }
+
+  .ask-number {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.75rem;
+  }
+  .ask-card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+  .ask-card p { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 0; line-height: 1.55; }
+
+  /* ============================================================
+     TRACTION GRID
+     ============================================================ */
+  .traction-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .traction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .traction-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+  }
+  .traction-icon.blue   { background: rgba(59,130,246,0.12); color: var(--accent); }
+  .traction-icon.green  { background: rgba(34,197,94,0.12);  color: var(--green); }
+  .traction-icon.purple { background: rgba(168,85,247,0.12); color: var(--purple); }
+  .traction-icon.amber  { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .traction-icon.cyan   { background: rgba(6,182,212,0.12);  color: var(--cyan); }
+  .traction-icon.red    { background: rgba(239,68,68,0.12);  color: var(--red); }
+
+  .traction-content .traction-value {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .traction-content .traction-label {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 0.15rem;
+  }
+
+  .patent-callout {
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(59,130,246,0.08));
+    border: 1px solid rgba(168,85,247,0.2);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .patent-callout p {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-bright);
+    margin: 0;
+  }
+
+  /* ============================================================
+     PROBLEM HIGHLIGHT
+     ============================================================ */
+  .deadline-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(245,158,11,0.08));
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .deadline-banner .countdown {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--red);
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+  }
+  .deadline-banner .countdown-text {
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .deadline-banner .countdown-text strong {
+    color: var(--text-bright);
+  }
+
+  .problem-list {
+    list-style: none;
+    margin-top: 1rem;
+  }
+  .problem-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .problem-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer {
+    padding: 3rem 0;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  footer p {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin: 0;
+  }
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* ============================================================
+     PRINT STYLES
+     ============================================================ */
+  @media print {
+    :root {
+      --bg:         #ffffff;
+      --bg-card:    #f8fafc;
+      --bg-card-alt:#f1f5f9;
+      --border:     #e2e8f0;
+      --text:       #1e293b;
+      --text-dim:   #64748b;
+      --text-bright:#0f172a;
+    }
+
+    body {
+      background: #fff;
+      color: #1e293b;
+      font-size: 11pt;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page { max-width: 100%; padding: 0 1.5cm; }
+
+    .cover {
+      min-height: auto;
+      padding: 3cm 0 2cm;
+      page-break-after: always;
+    }
+    .cover::before { display: none; }
+    .cover h1 {
+      font-size: 28pt;
+      background: none;
+      -webkit-text-fill-color: #0f172a;
+      color: #0f172a;
+    }
+
+    section {
+      padding: 1.5cm 0;
+      page-break-inside: avoid;
+    }
+
+    .stat-card, .ask-card, .traction-item {
+      border: 1px solid #e2e8f0;
+      box-shadow: none;
+    }
+
+    .logo-icon {
+      box-shadow: none;
+    }
+    .arch-block.gl {
+      box-shadow: none;
+      background: var(--accent);
+    }
+    .ask-card:hover, .badge:hover {
+      border-color: #e2e8f0;
+      box-shadow: none;
+    }
+
+    .deadline-banner {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+    .patent-callout {
+      background: #f5f3ff;
+      border-color: #ddd6fe;
+    }
+
+    footer { page-break-before: avoid; }
+
+    @page {
+      size: A4;
+      margin: 1.5cm;
+    }
+  }
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width: 768px) {
+    .stats, .ask-cards { grid-template-columns: 1fr; }
+    .traction-grid { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 2.25rem; }
+    .arch-diagram { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ========================================================
+       SECTION 1: COVER
+       ======================================================== -->
+  <div class="cover">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <div class="logo-text">Govern<span>Layer</span></div>
+    </div>
+
+    <h1>Runtime AI Governance for the Agentic Era</h1>
+    <p style="max-width:640px; margin-top:0.5rem; color:var(--text-dim); font-size:1.05rem;">Continuous monitoring &middot; Multi-LLM consensus &middot; Cryptographic audit trails</p>
+
+    <div class="cover-meta">
+      <div class="confidential">Executive Briefing &mdash; Confidential</div>
+      <p>May 2026</p>
+      <div class="prepared-for">
+        <span>Prepared for</span>
+        <div class="google-wordmark">
+          <span class="g1">G</span><span class="g2">o</span><span class="g3">o</span><span class="g4">g</span><span class="g5">l</span><span class="g6">e</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       SECTION 2: THE PROBLEM
+       ======================================================== -->
+  <section>
+    <span class="label">The Problem</span>
+    <h2>AI Governance Is a Ticking Clock</h2>
+
+    <div class="deadline-banner">
+      <div class="countdown">The August 2026 Cliff</div>
+      <div class="countdown-text">
+        <strong>EU AI Act high-risk enforcement begins August 2, 2026.</strong><br>
+        Every high-risk AI system operating in the EU must demonstrate runtime compliance or face existential fines.
+      </div>
+    </div>
+
+    <ul class="problem-list">
+      <li>Fines up to <strong>&euro;35M or 7% of global annual revenue</strong> &mdash; whichever is greater</li>
+      <li>Current approach: post-hoc logging, manual reviews, no synchronous enforcement</li>
+      <li>AI agents are taking real-world actions &mdash; approving loans, making hiring decisions, diagnosing patients &mdash; with zero governance middleware</li>
+      <li>No existing solution intercepts decisions <em>before</em> they execute</li>
+    </ul>
+
+    <div class="stats">
+      <div class="stat-card red-top">
+        <div class="stat-value red">&euro;35M</div>
+        <div class="stat-label">Maximum fine per violation<br>under the EU AI Act</div>
+      </div>
+      <div class="stat-card amber-top">
+        <div class="stat-value amber">87%</div>
+        <div class="stat-label">Of enterprises have no<br>AI governance framework</div>
+      </div>
+      <div class="stat-card purple-top">
+        <div class="stat-value" style="color:var(--purple)">$4.2M</div>
+        <div class="stat-label">Average cost of an<br>AI compliance failure</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION 3: THE SOLUTION
+       ======================================================== -->
+  <section>
+    <span class="label">The Solution</span>
+    <h2>GovernLayer: Runtime AI Governance</h2>
+    <p>GovernLayer sits between AI agents and enterprise applications, continuously monitoring every decision with replayable evidence. <strong>Not point-in-time audit (Vanta). Not just guardrails (Lakera). Runtime governance with cryptographic audit trails.</strong></p>
+
+    <div class="arch-diagram">
+      <div class="arch-block agents">
+        AI Agents<br><span class="dim" style="font-size:0.75rem">Gemini, GPT, Claude, Custom</span>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-block gl">
+        GovernLayer<br><span style="font-size:0.72rem;opacity:0.85">Intercept &bull; Evaluate &bull; Enforce</span>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-block apps">
+        Enterprise Apps<br><span class="dim" style="font-size:0.75rem">APIs, Databases, Actions</span>
+      </div>
+    </div>
+
+    <h3 style="margin-top:2rem;">Core Components</h3>
+    <div class="badges">
+      <div class="badge"><span class="num">1</span> Policy Engine (25 frameworks)</div>
+      <div class="badge"><span class="num">2</span> Behavioral Drift Detection</div>
+      <div class="badge"><span class="num">3</span> Risk Scoring (R = min(&Sigma;(w<sub>i</sub> &times; c<sub>i</sub>), 1.0))</div>
+      <div class="badge"><span class="num">4</span> Decision Controller (APPROVE / ESCALATE / BLOCK)</div>
+      <div class="badge"><span class="num">5</span> HITL Orchestrator (SLA deadlines)</div>
+      <div class="badge"><span class="num">6</span> Immutable Audit Ledger (SHA-256)</div>
+      <div class="badge"><span class="num">7</span> Achonye Multi-LLM Router (70% lower inference cost)</div>
+    </div>
+    <p style="margin-top:1.25rem; font-size:0.88rem; color:var(--text-dim);">Achonye orchestrates multiple LLMs (Gemini, GPT, Claude, local Ollama) to reduce inference cost and surface hallucinations via voting consensus &mdash; engineering optimization, not proprietary IP. Provisional patent filed (GOVERNLAYER-001), non-provisional conversion planned Q4 2026.</p>
+  </section>
+
+  <!-- ========================================================
+       SECTION 4: WHY GOOGLE
+       ======================================================== -->
+  <section>
+    <span class="label">Strategic Fit</span>
+    <h2>Why Google</h2>
+    <p>Google is building the most ambitious AI ecosystem in the world. Every layer of that ecosystem &mdash; from Vertex AI to Gemini agents to DeepMind research &mdash; needs runtime governance that scales at Google speed. Our founder leads AI governance, risk, and compliance programs for global enterprises and has spent the last decade inside the regulated-AI buying motion.</p>
+
+    <div class="table-wrap" style="margin-top:1.75rem;">
+      <table class="usecase-table">
+        <thead>
+          <tr>
+            <th>Use Case</th>
+            <th>Google Surface</th>
+            <th>GovernLayer Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Vertex AI Governance</td>
+            <td>Vertex AI Platform</td>
+            <td>Runtime policy monitoring for every model endpoint &mdash; EU AI Act compliant with replayable evidence</td>
+          </tr>
+          <tr>
+            <td>Gemini Agent Oversight</td>
+            <td>Gemini, Agentic APIs</td>
+            <td>Continuous monitoring of autonomous agent behavior with multi-LLM consensus and cryptographic audit trails</td>
+          </tr>
+          <tr>
+            <td>Cloud Marketplace</td>
+            <td>Google Cloud Marketplace</td>
+            <td>Managed runtime governance for GCP enterprise customers; new revenue stream</td>
+          </tr>
+          <tr>
+            <td>Internal Compliance</td>
+            <td>Search, Ads, Hiring, Health AI</td>
+            <td>Unified runtime governance across 25 regulatory frameworks, cryptographic audit trail</td>
+          </tr>
+          <tr>
+            <td>DeepMind Frontier Models</td>
+            <td>Frontier Models, Safety Research</td>
+            <td>Runtime monitoring substrate for frontier-model deployments &mdash; behavioral drift detection plus replayable evidence</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION 5: COMPETITIVE LANDSCAPE
+       ======================================================== -->
+  <section>
+    <span class="label">Competitive Landscape</span>
+    <h2>Not Point-in-Time. Not Just Guardrails.</h2>
+    <p class="dim">Vanta does point-in-time audit. Lakera does prompt-layer guardrails. GovernLayer does runtime governance with replayable evidence &mdash; continuous, provider-agnostic, cryptographically verifiable.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th style="color:var(--accent)">GovernLayer</th>
+            <th>AWS Bedrock Guardrails</th>
+            <th>OneTrust / Collibra</th>
+            <th>Credo AI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature">Governance Type</td>
+            <td><span class="gl-highlight">Runtime (continuous)</span></td>
+            <td><span class="partial">Guardrails, vendor-locked</span></td>
+            <td><span class="no">Point-in-time</span></td>
+            <td><span class="no">Documentation only</span></td>
+          </tr>
+          <tr>
+            <td class="feature">AI Provider Support</td>
+            <td><span class="gl-highlight">Any (agnostic)</span></td>
+            <td><span class="no">AWS only</span></td>
+            <td><span class="no">N/A</span></td>
+            <td><span class="no">N/A</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Regulatory Frameworks</td>
+            <td><span class="gl-highlight">25 automated</span></td>
+            <td><span class="no">0</span></td>
+            <td><span class="partial">3&ndash;5 manual</span></td>
+            <td><span class="no">Manual</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Cryptographic Proof</td>
+            <td><span class="yes">SHA-256 hash chain</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Multi-LLM Consensus</td>
+            <td><span class="gl-highlight">Voting + verification</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Patent Status</td>
+            <td><span class="yes">Provisional filed</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td class="feature">Starting Price</td>
+            <td><span class="gl-highlight">$0 (free tier)</span></td>
+            <td><span class="no">Enterprise only</span></td>
+            <td><span class="no">$50K+/yr</span></td>
+            <td><span class="no">Enterprise only</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION 6: TRACTION & IP
+       ======================================================== -->
+  <section>
+    <span class="label">Traction &amp; Intellectual Property</span>
+    <h2>Built, Filed, and Deployed</h2>
+
+    <div class="traction-grid">
+      <div class="traction-item">
+        <div class="traction-icon purple">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="traction-content">
+          <div class="traction-value">Provisional Filed</div>
+          <div class="traction-label">GOVERNLAYER-001 &mdash; non-provisional conversion planned Q4 2026</div>
+        </div>
+      </div>
+      <div class="traction-item">
+        <div class="traction-icon blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="traction-content">
+          <div class="traction-value">221 API Routes</div>
+          <div class="traction-label">Production-deployed, live infrastructure</div>
+        </div>
+      </div>
+      <div class="traction-item">
+        <div class="traction-icon green">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="traction-content">
+          <div class="traction-value">25 Frameworks</div>
+          <div class="traction-label">90 enforceable policies, automated</div>
+        </div>
+      </div>
+      <div class="traction-item">
+        <div class="traction-icon cyan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="traction-content">
+          <div class="traction-value">governlayer.ai</div>
+          <div class="traction-label">Live platform &mdash; API, dashboard, docs</div>
+        </div>
+      </div>
+      <div class="traction-item">
+        <div class="traction-icon amber">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="traction-content">
+          <div class="traction-value">Achonye Multi-LLM</div>
+          <div class="traction-label">Cost-optimized router across Gemini, GPT, Claude, Ollama &mdash; 70% lower inference cost</div>
+        </div>
+      </div>
+      <div class="traction-item">
+        <div class="traction-icon red">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="traction-content">
+          <div class="traction-value">Early Mover</div>
+          <div class="traction-label">Provisional filing covers runtime AI governance architecture</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="patent-callout">
+      <p>Provisional patent filed (GOVERNLAYER-001) covers the runtime governance engine &mdash; Policy, Drift, Risk, Decision, HITL, and Audit Ledger. Non-provisional conversion planned Q4 2026.</p>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECTION 7: THE ASK
+       ======================================================== -->
+  <section>
+    <span class="label">The Ask</span>
+    <h2>Three Paths Forward</h2>
+    <p class="dim">Each option accelerates AI governance for Google's ecosystem while leveraging GovernLayer's runtime architecture and provisional IP filing.</p>
+
+    <div class="ask-cards">
+      <div class="ask-card">
+        <div class="ask-number">Option 1</div>
+        <h3>Strategic Partnership</h3>
+        <p>Embed GovernLayer into Vertex AI as the default governance layer. Joint go-to-market for enterprise customers needing EU AI Act compliance before August 2026.</p>
+      </div>
+      <div class="ask-card">
+        <div class="ask-number">Option 2</div>
+        <h3>Google Cloud Marketplace</h3>
+        <p>List GovernLayer as a managed service on GCP Marketplace. Revenue share model with Google handling billing and distribution to 150,000+ enterprise accounts.</p>
+      </div>
+      <div class="ask-card">
+        <div class="ask-number">Option 3</div>
+        <h3>Investment / Acquisition</h3>
+        <p>Runtime AI governance targeting a $1B+ market by 2030 (Gartner) at 25&ndash;35% CAGR. Bottom-up: ~5,000 US regulated enterprises &times; $50K&ndash;$250K ACV = $500M&ndash;$1.25B SAM. Provisional patent filed, production-deployed platform, strategic alignment with Google's AI future.</p>
+      </div>
+    </div>
+
+    <div class="patent-callout" style="margin-top:2.5rem;">
+      <p style="font-size:1.05rem;"><strong style="color:var(--text-bright);">Building the Vanta for AI Governance.</strong></p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ========================================================
+     FOOTER
+     ======================================================== -->
+<footer>
+  <div class="page">
+    <p style="margin-bottom:0.35rem;"><strong style="color:var(--text-bright);">GovernLayer.AI</strong> &nbsp;&bull;&nbsp; Provisional Patent Filed (GOVERNLAYER-001) &nbsp;&bull;&nbsp; <a href="mailto:founders@governlayer.ai">founders@governlayer.ai</a> &nbsp;&bull;&nbsp; <a href="https://www.governlayer.ai">www.governlayer.ai</a></p>
+    <p style="font-size:0.7rem; margin-top:0.5rem;">This document contains confidential and proprietary information. Distribution without written consent is prohibited.</p>
+  </div>
+</footer>
+
+</body>
+</html>

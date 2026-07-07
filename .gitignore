@@ -49,3 +49,11 @@ htmlcov/
 .claude/
 .claude-flow/
 .mcp.json
+
+# Private founder / interview prep — never commit
+docs/openai_interview_script_comply.md
+docs/**/interview*.md
+docs/**/*private*.md
+
+# Large binary pitch assets (keep in Drive / cloud storage, not git)
+docs/pitch/*.pdf

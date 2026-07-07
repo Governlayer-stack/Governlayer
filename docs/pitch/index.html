@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GovernLayer — The Governance Layer for Agentic AI</title>
-<meta name="description" content="Autonomous AI governance platform. 29 compliance frameworks, real-time behavioral drift detection, multi-LLM consensus, and cryptographic audit trails.">
+<meta name="description" content="Runtime AI governance for regulated enterprises. Tamper-evident audit ledger, continuous behavioral drift detection, multi-LLM consensus. Depth in NYC LL144, OMB M-24-10, Colorado SB 205.">
 <meta property="og:title" content="GovernLayer — The Governance Layer for Agentic AI">
-<meta property="og:description" content="The first fully autonomous AI governance platform. 17 integrated services, 100+ API endpoints, 29 compliance frameworks.">
+<meta property="og:description" content="Runtime AI governance for regulated enterprises. Tamper-evident provenance, behavioral drift detection, multi-LLM consensus. Depth in the live US regulatory regimes.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://governlayer.ai/pitch">
 <meta name="twitter:card" content="summary_large_image">
@@ -380,6 +380,46 @@
     .hier-fan { flex-direction: column; align-items: stretch; }
     .hier-fan .hier-level { min-width: 0; width: 100%; }
   }
+  /* Print / PDF export — one slide per page, 16:10.8 landscape with breathing room */
+  @media print {
+    @page { size: 13.33in 9.4in; margin: 0; }
+    html, body { background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide {
+      min-height: 0;
+      height: 9.4in;
+      width: 13.33in;
+      padding: 56px 72px;
+      page-break-after: always;
+      page-break-inside: avoid;
+      scroll-snap-align: none;
+    }
+    .slide:last-of-type { page-break-after: avoid; }
+    .slide::before { display: none; }
+    .slide-inner { max-width: 100%; }
+    .slide-inner > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .nav, .slide-counter, .key-hint { display: none !important; }
+    .glow { display: none !important; }
+    /* Near-screen typography — slides have room to breathe now */
+    h1 { font-size: 3.2rem; }
+    h2 { font-size: 2.4rem; }
+    h3 { font-size: 1.25rem; }
+    .subtitle { font-size: 1.2rem; }
+    .card { padding: 24px; }
+    .stat-value { font-size: 2.9rem; }
+    .card-grid { margin-top: 28px; gap: 18px; }
+    .timeline { margin-top: 26px; }
+    .timeline-item { margin-bottom: 22px; }
+    /* Competition table can still be compact since it has 9 rows */
+    .table th, .table td { padding: 9px 13px; font-size: 0.85rem; }
+    /* Pricing cards on slide 8 */
+    .price-card { padding: 22px 18px; }
+    .price-card .price { font-size: 2rem; }
+    /* Mock dashboard on slide 5 */
+    .mock-body { padding: 18px; }
+    .dash-metric { padding: 12px; }
+    .dash-metric .dm-value { font-size: 1.3rem; }
+  }
+
   @media (max-width: 600px) {
     .slide { padding: 24px 16px; min-height: auto; padding-top: 40px; padding-bottom: 40px; scroll-snap-align: none; }
     .slide-inner { max-width: 100%; }
@@ -414,7 +454,7 @@
 
 <!-- Navigation dots -->
 <nav class="nav" id="nav"></nav>
-<div class="slide-counter" id="counter">1 / 17</div>
+<div class="slide-counter" id="counter">1 / 12</div>
 <div class="key-hint"><kbd>&uarr;</kbd> <kbd>&darr;</kbd> or <kbd>&larr;</kbd> <kbd>&rarr;</kbd> to navigate</div>
 
 <!-- ========== SLIDE 1: TITLE ========== -->
@@ -426,699 +466,473 @@
       <div class="logo-icon">GL</div>
       <span class="logo-text">GovernLayer</span>
     </div>
-    <h1 style="margin-top:16px;">The Governance Layer<br>for <span class="accent">Agentic AI</span></h1>
-    <p class="subtitle" style="max-width:640px;margin:16px auto 0;">
-      Autonomous compliance for enterprises deploying AI agents. Continuous monitoring, behavioral drift detection, multi-LLM consensus, and a cryptographic audit ledger &mdash; running 24/7 without human intervention.
+    <h1 style="margin-top:16px;">Runtime AI Governance<br>for the <span class="accent">Agentic Era</span></h1>
+    <p class="subtitle" style="max-width:680px;margin:18px auto 0;">
+      Continuous monitoring &middot; Multi-LLM consensus &middot; Cryptographic audit trails.
     </p>
     <div style="margin-top:32px;">
-      <span class="pill pill-green">Pre-Seed</span>
-      <span class="pill pill-blue">The Vanta for AI Governance</span>
-      <span class="pill pill-purple">Production Live</span>
+      <span class="pill pill-green">Pre-Seed 2026</span>
+      <span class="pill pill-blue">$1M Round</span>
+      <span class="pill pill-purple">Live Product</span>
     </div>
-    <p style="margin-top:48px;font-size:0.85rem;color:var(--text-muted);">Confidential &middot; May 2026</p>
+    <p style="margin-top:56px;font-size:0.85rem;color:var(--text-muted);">
+      Ekene Wilfred Uwaezuoke &middot; founders@governlayer.ai &middot; governlayer.ai
+    </p>
   </div>
 </section>
 
 <!-- ========== SLIDE 2: PROBLEM ========== -->
 <section class="slide" id="s2">
-  <div class="glow glow-green" style="width:400px;height:400px;top:10%;left:-5%;"></div>
+  <div class="glow glow-green" style="width:420px;height:420px;top:-80px;left:-5%;"></div>
   <div class="slide-inner">
     <span class="label">The Problem</span>
-    <h2>AI Adoption Is Exploding.<br>Governance Is <span style="color:var(--danger);">Non-Existent.</span></h2>
-    <p class="subtitle" style="max-width:700px;">Every enterprise is deploying AI agents &mdash; but compliance is still spreadsheets, screenshots, and six-figure consulting engagements. The EU AI Act enforcement deadline is <strong style="color:var(--danger);">90 days away</strong>.</p>
+    <h2>Every Enterprise Deploying AI<br>Has <span style="color:var(--danger);">Lost Visibility.</span></h2>
+    <p class="subtitle" style="max-width:780px;">Banks, hospitals, and federal contractors run AI agents in production. None can prove how those agents made any given decision.</p>
+
     <div class="card-grid grid-3">
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#9888;</span>
-        <h3>EU AI Act: Aug 2026</h3>
-        <p class="dim" style="font-size:0.9rem;">Full enforcement begins in <strong>3 months</strong>. Non-compliance penalties: <strong>&euro;35M or 7% of global revenue</strong> for prohibited practices. Most enterprises have not started preparing.</p>
+      <div class="card stat">
+        <div class="stat-value" style="color:var(--danger);">73%</div>
+        <div class="stat-label">of enterprises have no automated AI governance <span class="muted">(Gartner)</span></div>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--warn);">&#9881;</span>
-        <h3>AI Agents Drift Unpredictably</h3>
-        <p class="dim" style="font-size:0.9rem;">Models evolve in production, deviating from safety manifolds without detection. By the time human auditors notice behavioral drift, regulatory damage is done. Quarterly reviews cannot govern real-time systems.</p>
+      <div class="card stat">
+        <div class="stat-value" style="color:var(--danger);">$7.1B+</div>
+        <div class="stat-label">in GDPR-style fines issued since 2018</div>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--blue);">&#9878;</span>
-        <h3>500+ AI Regulations Incoming</h3>
-        <p class="dim" style="font-size:0.9rem;"><strong>500+ AI regulations</strong> in development globally <span style="font-size:0.75rem;color:var(--text-dim);">(OECD AI Policy Observatory)</span>. EU AI Act, NIST AI RMF, Colorado SB 205, state-level mandates &mdash; the compliance surface is expanding faster than any team can track manually.</p>
+      <div class="card stat">
+        <div class="stat-value" style="color:var(--danger);">&euro;35M</div>
+        <div class="stat-label">max EU AI Act penalty per violation, or 7% of global revenue</div>
       </div>
     </div>
-    <p style="margin-top:28px;font-size:1.1rem;text-align:center;font-weight:600;color:var(--danger);">
-      73% of enterprises have no automated AI governance solution in place. <span style="font-size:0.8rem;font-weight:400;color:var(--text-dim);">&mdash; Gartner, 2025</span>
+
+    <p style="margin-top:32px;font-size:1.1rem;text-align:center;font-weight:600;color:var(--text);">
+      When your AI agent denies a claim, fires a candidate, or wipes a production database &mdash; <span style="color:var(--danger);">can you prove what happened?</span>
     </p>
+
+    <div class="card-grid grid-3" style="margin-top:24px;">
+      <div class="card">
+        <h3 style="font-size:1rem;">Replit Agent</h3>
+        <p class="dim" style="font-size:0.85rem;">Wiped a production database during a code-freeze, then fabricated a cover story to hide it.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:1rem;">Anthropic / Bartz</h3>
+        <p class="dim" style="font-size:0.85rem;">$1.5B copyright settlement &mdash; largest AI training-data case to date (Sep 2025).</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:1rem;">NYC Local Law 144</h3>
+        <p class="dim" style="font-size:0.85rem;">17 of 32 audited companies found non-compliant on automated hiring tool disclosures.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 3: WHO IS AFFECTED ========== -->
+<!-- ========== SLIDE 3: WHY NOW ========== -->
 <section class="slide" id="s3">
-  <div class="glow glow-green" style="width:450px;height:450px;top:-100px;right:-5%;"></div>
-  <div class="glow glow-blue" style="width:350px;height:350px;bottom:5%;left:-5%;"></div>
+  <div class="glow glow-blue" style="width:480px;height:480px;top:-120px;right:-5%;"></div>
+  <div class="glow glow-green" style="width:360px;height:360px;bottom:-80px;left:-5%;"></div>
   <div class="slide-inner">
-    <span class="label">Who Is Affected</span>
-    <h2>Every Enterprise Running AI<br>Is <span style="color:var(--danger);">Flying Blind.</span></h2>
-    <p class="subtitle" style="max-width:720px;">From Wall Street to Washington, the people accountable for AI risk are armed with spreadsheets against a regulatory tsunami.</p>
-    <div class="card-grid grid-3">
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#127970;</span>
-        <h3>CISOs at Regulated Banks</h3>
-        <p style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px;">Top-50 US &amp; EU Banks</p>
-        <p class="dim" style="font-size:0.88rem;font-style:italic;">"I can't prove to OCC/FinCEN that our fraud-detection model is compliant. One drift event and we're facing $50M+ fines."</p>
+    <span class="label">Why Now</span>
+    <h2>US Enforcement Is <span class="accent">Live Today.</span><br>EU Buying Window Just Got <span class="accent">Longer.</span></h2>
+    <p class="subtitle" style="max-width:820px;">The Digital Omnibus (May 2026) deferred EU AI Act high-risk obligations to Dec 2027 / Aug 2028. The US enforcement clock is already running. Multi-year procurement cycles mean serious buyers start now.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">Live Today</div>
+        <div class="timeline-title">NYC LL144 enforcing &middot; Colorado SB 205 effective Feb 2026</div>
+        <div class="timeline-desc">Automated employment decision tools require independent bias audits. 17 of 32 audited companies found non-compliant. Colorado AI Act extends to housing, lending, insurance, education.</div>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#10013;</span>
-        <h3>GRC Leaders in Healthcare</h3>
-        <p style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px;">Hospital Systems &amp; Payers</p>
-        <p class="dim" style="font-size:0.88rem;font-style:italic;">"HIPAA + FDA SaMD + state AI laws. My team of 8 auditors spends 60% of their time on evidence collection, not risk."</p>
+      <div class="timeline-item">
+        <div class="timeline-date">Live Today</div>
+        <div class="timeline-title">OMB M-24-10 mandates federal AI governance</div>
+        <div class="timeline-desc">Federal contractors must inventory, risk-assess, and continuously monitor every AI use case. EU AI Act prohibited practices already in force since Feb 2025.</div>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--warn);">&#9881;</span>
-        <h3>CTOs at AI-Native Startups</h3>
-        <p style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px;">Series A&ndash;C Agent Builders</p>
-        <p class="dim" style="font-size:0.88rem;font-style:italic;">"We shipped 14 agents last quarter. We have zero visibility into what they're doing in production. SOC 2 auditors are asking questions I can't answer."</p>
+      <div class="timeline-item">
+        <div class="timeline-date">2026 &mdash; 2027</div>
+        <div class="timeline-title">ISO 42001 becomes the procurement gate</div>
+        <div class="timeline-desc">Regardless of Brussels timing, ISO 42001 certification is being written into RFPs by Fortune 500 buyers and insurers. Procurement cycles are 6&ndash;18 months &mdash; readiness work starts now.</div>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--blue);">&#128200;</span>
-        <h3>Chief Risk Officers at Insurers</h3>
-        <p style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px;">P&amp;C, Life, &amp; Reinsurance</p>
-        <p class="dim" style="font-size:0.88rem;font-style:italic;">"NAIC Model Bulletin requires explainability for every pricing algorithm. We're hand-writing model cards in Word documents."</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--accent);">&#127919;</span>
-        <h3>Heads of AI at Fortune 500</h3>
-        <p style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px;">Global 2000 Enterprises</p>
-        <p class="dim" style="font-size:0.88rem;font-style:italic;">"Board wants ISO 42001 certification in 90 days. Legal wants EU AI Act Article 9 sign-off. I have 3 governance engineers."</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--blue);">&#127963;</span>
-        <h3>Public Sector CIOs</h3>
-        <p style="font-size:0.8rem;color:var(--accent);font-weight:700;margin-bottom:6px;">Federal, State &amp; Defense</p>
-        <p class="dim" style="font-size:0.88rem;font-style:italic;">"OMB M-24-10 requires continuous impact assessments for every federal AI use case. We have 200+ systems and spreadsheets don't scale."</p>
+      <div class="timeline-item">
+        <div class="timeline-date">Dec 2027 &middot; Aug 2028</div>
+        <div class="timeline-title">EU AI Act high-risk obligations &mdash; deferred, not repealed</div>
+        <div class="timeline-desc">Annex III stand-alone high-risk systems: Dec 2, 2027. Annex I product-embedded: Aug 2, 2028. Outside counsel is advising regulated buyers to keep preparing &mdash; you do not stand up governance across thousands of agents in a quarter.</div>
       </div>
     </div>
-    <p style="margin-top:28px;font-size:1.1rem;text-align:center;font-weight:600;color:var(--danger);">
-      Combined, they manage $4.2 trillion in regulated AI workloads &mdash; with zero automated governance.
+
+    <p style="margin-top:28px;font-size:1.1rem;text-align:center;font-weight:600;">
+      The deck most founders shipped headlines a deadline that moved. <span class="accent">We track this in real time</span> &mdash; and the demand math still works.
     </p>
   </div>
 </section>
 
-<!-- ========== SLIDE 4: THE RECEIPTS ========== -->
+<!-- ========== SLIDE 4: SOLUTION ========== -->
 <section class="slide" id="s4">
-  <div class="glow glow-green" style="width:400px;height:400px;top:-80px;left:-5%;"></div>
-  <div class="glow glow-blue" style="width:400px;height:400px;bottom:-80px;right:-5%;"></div>
+  <div class="glow glow-green" style="width:460px;height:460px;top:-100px;right:-5%;"></div>
   <div class="slide-inner">
-    <span class="label">The Receipts</span>
-    <h2>AI Lawsuits Are <span style="color:var(--danger);">Piling Up.</span></h2>
-    <p class="subtitle">Real enforcement. Real damages. Real companies that had no governance.</p>
-    <div class="card-grid grid-4">
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#128176;</span>
-        <h3>Anthropic / Bartz</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">$1.5B settlement</p>
-        <p class="dim" style="font-size:0.82rem;">Largest AI copyright settlement ever. Trained on millions of pirated works without governance.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Sep 2025</p>
+    <span class="label">Solution</span>
+    <h2>Runtime Governance,<br><span class="accent">Replayable Evidence.</span></h2>
+    <p class="subtitle" style="max-width:820px;">GovernLayer sits in the decision path of every AI agent in your organization &mdash; monitoring, validating, and recording every action to a regulator-replayable ledger.</p>
+
+    <div class="card-grid grid-3">
+      <div class="card card-accent">
+        <span class="icon" style="color:var(--accent);">&#9889;</span>
+        <h3>Continuous Drift Detection</h3>
+        <p class="dim" style="font-size:0.9rem;">Behavioral baselines plus embedding-distance scoring. Real-time alerts when an agent's behavior moves outside its safety manifold &mdash; before regulators or customers notice.</p>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#127916;</span>
-        <h3>TikTok GDPR</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">&euro;530M fine</p>
-        <p class="dim" style="font-size:0.82rem;">Largest GDPR fine of 2025. Unlawful EU-China data transfers with no governance trail.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">2025</p>
+      <div class="card card-accent">
+        <span class="icon" style="color:var(--accent);">&#9881;</span>
+        <h3>Achonye Multi-LLM Engine</h3>
+        <p class="dim" style="font-size:0.9rem;">Routes trivial decisions to local Ollama (zero inference cost). Escalates critical decisions to multi-model consensus. <strong>70% lower inference cost</strong> than single-frontier-model approaches; hallucination rates reduced via voting and chain-of-verification.</p>
       </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#128214;</span>
-        <h3>Meta / Turow</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">Class action filed</p>
-        <p class="dim" style="font-size:0.82rem;">Publishers + authors suing Meta for training Llama on pirated books from LibGen.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">May 2026</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#128240;</span>
-        <h3>OpenAI MDL</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">12+ cases consolidated</p>
-        <p class="dim" style="font-size:0.82rem;">NYT, Authors Guild, and others. Potential multi-billion outcome. Settlement talks underway.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">2025&ndash;2026</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#127925;</span>
-        <h3>Warner v. Suno</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">Settlement &mdash; models retired</p>
-        <p class="dim" style="font-size:0.82rem;">Music AI trained on unlicensed catalog. Suno forced to retire current models entirely.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Nov 2025</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#128188;</span>
-        <h3>NYC LL144 Crackdown</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">17 of 32 companies non-compliant</p>
-        <p class="dim" style="font-size:0.82rem;">Comptroller audit exposed mass non-compliance in AI hiring tools. Enforcement ramping up.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Dec 2025</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--danger);">&#128187;</span>
-        <h3>Replit Agent</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">Wiped production DB</p>
-        <p class="dim" style="font-size:0.82rem;">AI agent ignored code freeze, deleted live database, then fabricated data to cover it.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">2025</p>
-      </div>
-      <div class="card">
-        <span class="icon" style="color:var(--warn);">&#9878;</span>
-        <h3>EU AI Act Live</h3>
-        <p style="font-size:0.8rem;color:var(--danger);font-weight:700;">Up to &euro;35M / 7% revenue</p>
-        <p class="dim" style="font-size:0.82rem;">Prohibited practices enforcement live since Feb 2025. First fines expected any day now.</p>
-        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Feb 2025 &rarr;</p>
+      <div class="card card-accent">
+        <span class="icon" style="color:var(--accent);">&#128274;</span>
+        <h3>Tamper-Evident Audit Ledger</h3>
+        <p class="dim" style="font-size:0.9rem;">SHA-256 hash-chained from genesis. Every decision binds inputs, policy version, model and version, and output to an immutable record. <strong>Regulator-inspectable provenance</strong> &mdash; the audit artifact financial regulators already accept, applied to AI.</p>
       </div>
     </div>
-    <p style="margin-top:28px;font-size:1.1rem;text-align:center;font-weight:600;color:var(--danger);">
-      $7.1B in GDPR fines issued. AI Act adds &euro;35M per violation. This is just the beginning.
+
+    <p style="margin-top:32px;font-size:1.1rem;text-align:center;font-weight:600;">
+      Not point-in-time audit (Vanta). Not just guardrails (Lakera). <span class="accent">Runtime governance with replayable evidence.</span>
     </p>
   </div>
 </section>
 
-<!-- ========== SLIDE 5: SOLUTION ========== -->
-<section class="slide" id="s5">
-  <div class="glow glow-blue" style="width:450px;height:450px;bottom:0;right:5%;"></div>
+<!-- ========== SLIDE 4B: ARCHITECTURE LIFECYCLE ========== -->
+<section class="slide" id="s4b">
+  <div class="glow glow-green" style="width:480px;height:480px;top:-120px;left:-5%;"></div>
+  <div class="glow glow-blue" style="width:380px;height:380px;bottom:-100px;right:-5%;"></div>
   <div class="slide-inner">
-    <span class="label">The Solution</span>
-    <h2>Governance That Runs <span class="accent">Itself</span></h2>
-    <p class="subtitle" style="max-width:700px;">GovernLayer is the first fully autonomous AI governance platform &mdash; continuously monitoring, auditing, and enforcing compliance across 29 frameworks without human intervention.</p>
-    <p style="margin-top:28px;text-align:center;font-size:1rem;color:var(--accent);font-weight:700;">17 Integrated Services &mdash; One API</p>
-    <div class="card-grid grid-3" style="margin-top:20px;">
+    <span class="label">Architecture</span>
+    <h2>The <span class="accent">Governance Lifecycle</span></h2>
+    <p class="subtitle" style="max-width:880px;">
+      Every AI decision flows through GovernLayer. We check it against policy <span class="accent">before</span>,
+      monitor drift and sensitive data <span class="accent">during</span>, and record it to a tamper-evident ledger
+      <span class="accent">after</span> &mdash; mapped to every framework the regulator asks about.
+    </p>
+
+    <div class="card-grid grid-3" style="margin-top:32px;">
       <div class="card card-accent">
-        <h3 class="accent">1. AI Governance Engine</h3>
-        <p class="dim" style="font-size:0.85rem;">Real-time governance on every AI output. Drift detection, risk scoring, policy enforcement, and audit logging via POST /v1/govern, /risk, /drift, /scan.</p>
+        <p class="label" style="margin-bottom:10px;color:var(--accent);">BEFORE</p>
+        <h3 style="font-size:1.1rem;margin-bottom:10px;">Setup &middot; Policy</h3>
+        <ul style="list-style:none;font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+          <li>&middot; Model + agent inventory <span class="muted">(lineage)</span></li>
+          <li>&middot; Cedar-style policy authoring <span class="muted">(agent_governance)</span></li>
+          <li>&middot; Framework mapping <span class="muted">(controls)</span></li>
+          <li>&middot; Residency rules <span class="muted">(residency)</span></li>
+          <li>&middot; Drift baselines <span class="muted">(drift)</span></li>
+        </ul>
       </div>
       <div class="card card-accent">
-        <h3 class="accent">2. Model &amp; Agent Registry</h3>
-        <p class="dim" style="font-size:0.85rem;">Central inventory of every AI model and agent. Shadow AI auto-discovery, governance cards, risk tiers, approval workflows, and dependency graphs.</p>
+        <p class="label" style="margin-bottom:10px;color:var(--blue);">DURING</p>
+        <h3 style="font-size:1.1rem;margin-bottom:10px;">Runtime &middot; <code style="font-size:0.85rem;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;">POST /govern</code></h3>
+        <ul style="list-style:none;font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+          <li>&middot; PII / PHI / PCI / secrets scan</li>
+          <li>&middot; Policy evaluation &amp; gating</li>
+          <li>&middot; Embedding-distance drift check</li>
+          <li>&middot; 6-dim deterministic risk score</li>
+          <li>&middot; Permit / block / HITL escalate</li>
+        </ul>
       </div>
       <div class="card card-accent">
-        <h3 class="accent">3. Compliance Hub (29 Frameworks)</h3>
-        <p class="dim" style="font-size:0.85rem;">Auto-generate policies, track readiness scores, schedule audits, and export audit-ready packages. EU AI Act, NIST, ISO 42001, HIPAA, SOC 2, and 24 more.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">4. Evidence Auto-Collection</h3>
-        <p class="dim" style="font-size:0.85rem;">Connect to GitHub, Jira, cloud platforms. Scheduled evidence gathering with coverage mapping shows auditors exactly what is documented and what is missing.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">5. Tamper-Proof Audit Ledger</h3>
-        <p class="dim" style="font-size:0.85rem;">SHA-256 hash-chained audit trail. Every governance decision cryptographically linked. Auditors verify the entire chain with one API call.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">6. Multi-LLM Consensus (Achonye)</h3>
-        <p class="dim" style="font-size:0.85rem;">14 models, 3 hallucination-resistance strategies: Voting, Chain-of-Verification, Adversarial Debate. Zero single points of failure.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">7. Continuous Control Monitoring</h3>
-        <p class="dim" style="font-size:0.85rem;">Map controls to regulatory requirements. Automated gap analysis, framework-specific views, and real-time alerts on control failures.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">8. Policy Engine</h3>
-        <p class="dim" style="font-size:0.85rem;">Configurable rules with allow/warn/block enforcement actions. Default-deny posture with full enforcement audit trail on every decision.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">9. 6-Dimension Risk Scoring</h3>
-        <p class="dim" style="font-size:0.85rem;">Deterministic scoring: privacy, autonomy, infrastructure, oversight, transparency, fairness. No LLM hallucinations &mdash; pure calculation.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">10. Threat Intelligence</h3>
-        <p class="dim" style="font-size:0.85rem;">MITRE ATLAS threat analysis, OWASP AI security scans, incident response playbooks, and jurisdiction-specific regulatory deadline tracking.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">11. Vendor Risk Management</h3>
-        <p class="dim" style="font-size:0.85rem;">Assess third-party AI vendors. Risk matrix, automated questionnaires, and continuous provider monitoring across your entire AI supply chain.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">12. Incident Management</h3>
-        <p class="dim" style="font-size:0.85rem;">Create, track, and resolve AI-related incidents. Severity-based triage with Slack, Jira, and ServiceNow integrations.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">13. Analytics &amp; Reporting</h3>
-        <p class="dim" style="font-size:0.85rem;">Fairness analysis, explainability (XAI), data drift detection, security scanning, and custom compliance reports for any framework.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">14. Knowledge Graph</h3>
-        <p class="dim" style="font-size:0.85rem;">Regulatory relationship mapping. Control-to-regulation links, gap analysis intelligence, and AI-powered regulatory advisory.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">15. Enterprise Multi-Tenancy</h3>
-        <p class="dim" style="font-size:0.85rem;">Organizations, API keys, SSO, RBAC, and role-based dashboards for 5 personas: Engineering, Compliance, Executive, Security, Data Science.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">16. Human-in-the-Loop Escalation</h3>
-        <p class="dim" style="font-size:0.85rem;">Auto-escalation when AI decisions exceed risk thresholds. Review queue with SLA tracking and resolution workflows.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">17. AGI Safety Controls</h3>
-        <p class="dim" style="font-size:0.85rem;">Recursive self-improvement monitoring (RSIM), capability containment (CCV), deceptive alignment detection (DAD), and multi-agent coordination safety (MACM). Future-ready.</p>
+        <p class="label" style="margin-bottom:10px;color:var(--purple);">AFTER</p>
+        <h3 style="font-size:1.1rem;margin-bottom:10px;">Evidence &middot; Audit</h3>
+        <ul style="list-style:none;font-size:0.82rem;color:var(--text-dim);line-height:1.7;">
+          <li>&middot; SHA-256 hash-chained ledger entry</li>
+          <li>&middot; Decision&rarr;model&rarr;dataset lineage</li>
+          <li>&middot; EU AI Act Annex IV export</li>
+          <li>&middot; Continuous control monitoring</li>
+          <li>&middot; Red-team regression on schedule</li>
+        </ul>
       </div>
     </div>
+
+    <div class="arch-flow" style="margin-top:32px;">
+      <div class="arch-node">
+        <div class="node-label">Agent</div>
+        <div class="node-value">Decision</div>
+      </div>
+      <span class="arch-arrow">&rarr;</span>
+      <div class="arch-node highlight">
+        <div class="node-label">GovernLayer</div>
+        <div class="node-value">/govern</div>
+      </div>
+      <span class="arch-arrow">&rarr;</span>
+      <div class="arch-node">
+        <div class="node-label">Tamper-Evident</div>
+        <div class="node-value">Ledger</div>
+      </div>
+      <span class="arch-arrow">&rarr;</span>
+      <div class="arch-node">
+        <div class="node-label">Regulator</div>
+        <div class="node-value">Evidence</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px;font-size:1.05rem;text-align:center;font-weight:600;">
+      The audited evidence base <span class="accent">compounds every day you run.</span> That is the moat.
+    </p>
   </div>
 </section>
 
-<!-- ========== SLIDE 6: PRODUCT ========== -->
-<section class="slide" id="s6">
+<!-- ========== SLIDE 5: PRODUCT ========== -->
+<section class="slide" id="s5">
+  <div class="glow glow-blue" style="width:440px;height:440px;top:-80px;left:-5%;"></div>
   <div class="slide-inner">
     <span class="label">Product</span>
-    <h2>The Compliance <span class="accent">Workspace</span></h2>
-    <p class="subtitle">Readiness scores, controls, evidence coverage, and framework badges &mdash; all in one view.</p>
+    <h2>What Customers See</h2>
+    <p class="subtitle" style="max-width:780px;">Live at <span class="accent">governlayer.ai/workspace</span>. Audited depth in <span class="accent">NYC LL144</span> and <span class="accent">OMB M-24-10</span>. Production-ready support across 29 frameworks.</p>
+
     <div class="mock-screen" style="margin-top:28px;">
       <div class="mock-titlebar">
-        <div class="mock-dot r"></div>
-        <div class="mock-dot y"></div>
-        <div class="mock-dot g"></div>
-        <div class="mock-url">governlayer.ai/workspace</div>
+        <span class="mock-dot r"></span>
+        <span class="mock-dot y"></span>
+        <span class="mock-dot g"></span>
+        <span class="mock-url">governlayer.ai/workspace</span>
       </div>
       <div class="mock-body">
         <div class="dash-row">
           <div class="dash-metric">
-            <div class="dm-label">Readiness Score</div>
-            <div class="dm-value accent">94.2%</div>
-            <div class="dm-change dm-up">+2.1% vs last week</div>
-          </div>
-          <div class="dash-metric">
-            <div class="dm-label">Controls Passing</div>
-            <div class="dm-value accent">218 / 237</div>
-            <div class="dm-change dm-up">92% pass rate</div>
-          </div>
-          <div class="dash-metric">
-            <div class="dm-label">Evidence Coverage</div>
-            <div class="dm-value" style="color:var(--blue);">89%</div>
-            <div class="dm-change dm-up">+5% this month</div>
+            <div class="dm-label">Active Agents</div>
+            <div class="dm-value">47</div>
+            <div class="dm-change dm-up">&#9650; 12% MoM</div>
           </div>
           <div class="dash-metric">
             <div class="dm-label">Drift Alerts</div>
-            <div class="dm-value" style="color:var(--warn);">3</div>
-            <div class="dm-change dm-warn">2 new today</div>
+            <div class="dm-value">3</div>
+            <div class="dm-change dm-warn">warn</div>
+          </div>
+          <div class="dash-metric">
+            <div class="dm-label">Audit Records</div>
+            <div class="dm-value">1.2M</div>
+            <div class="dm-change dm-up">today</div>
           </div>
         </div>
         <div class="dash-row">
-          <div class="dash-chart" style="flex:2;">
-            <div class="dc-title">Framework Badges</div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
-              <span class="pill pill-green">SOC 2 - Ready</span>
-              <span class="pill pill-green">EU AI Act - Ready</span>
-              <span class="pill pill-green">NIST AI RMF - Ready</span>
-              <span class="pill pill-blue">ISO 42001 - 91%</span>
-              <span class="pill pill-blue">HIPAA - 88%</span>
-              <span class="pill pill-blue">GDPR - 85%</span>
-              <span class="pill pill-purple">PCI DSS - 72%</span>
-              <span class="pill pill-purple">FedRAMP - 68%</span>
-            </div>
-          </div>
           <div class="dash-chart">
-            <div class="dc-title">Risk Score (7 days)</div>
+            <div class="dc-title">Drift Score &mdash; Last 24h</div>
             <div class="mini-bars">
               <div class="mini-bar" style="height:30%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:25%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:35%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:28%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:55%;background:var(--warn);"></div>
-              <div class="mini-bar" style="height:62%;background:var(--warn);"></div>
-              <div class="mini-bar" style="height:40%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:32%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:20%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:22%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:45%;background:var(--warn);"></div>
+              <div class="mini-bar" style="height:45%;background:var(--accent);"></div>
               <div class="mini-bar" style="height:38%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:18%;background:var(--accent);"></div>
-              <div class="mini-bar" style="height:15%;background:var(--accent);"></div>
+              <div class="mini-bar" style="height:62%;background:var(--warn);"></div>
+              <div class="mini-bar" style="height:50%;background:var(--accent);"></div>
+              <div class="mini-bar" style="height:42%;background:var(--accent);"></div>
+              <div class="mini-bar" style="height:78%;background:var(--warn);"></div>
+              <div class="mini-bar" style="height:55%;background:var(--accent);"></div>
+              <div class="mini-bar" style="height:48%;background:var(--accent);"></div>
+              <div class="mini-bar" style="height:70%;background:var(--warn);"></div>
+              <div class="mini-bar" style="height:60%;background:var(--accent);"></div>
+              <div class="mini-bar" style="height:52%;background:var(--accent);"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ========== SLIDE 7: TECHNOLOGY (ACHONYE) ========== -->
-<section class="slide" id="s7">
-  <div class="glow glow-green" style="width:500px;height:500px;top:10%;right:10%;"></div>
-  <div class="slide-inner">
-    <span class="label">Technology</span>
-    <h2>Achonye: Multi-LLM<br><span class="accent">Orchestration Engine</span></h2>
-    <p class="subtitle" style="max-width:640px;">No single model can be trusted for governance decisions. Achonye orchestrates 14 models across a hierarchical chain of command to eliminate hallucination and bias.</p>
-    <div class="hierarchy">
-      <div class="hier-level hier-l1">Leader (Claude Opus) &mdash; Strategic Routing</div>
-      <div class="hier-connector"></div>
-      <div class="hier-fan">
-        <div class="hier-level hier-l2">Board: Sonnet</div>
-        <div class="hier-level hier-l2">Board: Gemini</div>
-        <div class="hier-level hier-l2">Board: GPT-4o</div>
-      </div>
-      <div class="hier-connector"></div>
-      <div class="hier-level hier-l3" style="min-width:280px;">Validators &mdash; Consensus Engine</div>
-      <div class="hier-connector"></div>
-      <div class="hier-fan">
-        <div class="hier-level hier-l4">Llama 3</div>
-        <div class="hier-level hier-l4">Mistral</div>
-        <div class="hier-level hier-l4">DeepSeek</div>
-        <div class="hier-level hier-l4">Qwen</div>
-        <div class="hier-level hier-l4">Phi-3</div>
-        <div class="hier-level hier-l4">Groq</div>
-      </div>
-    </div>
-    <div class="card-grid grid-3" style="margin-top:28px;">
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--accent);font-size:1rem;">Voting</h3>
-        <p class="dim" style="font-size:0.8rem;">3+ models must agree on governance decisions</p>
-      </div>
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--blue);font-size:1rem;">Chain-of-Verification</h3>
-        <p class="dim" style="font-size:0.8rem;">Generate, question, verify, synthesize</p>
-      </div>
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--purple);font-size:1rem;">Adversarial Debate</h3>
-        <p class="dim" style="font-size:0.8rem;">Claim, critique, independent judge</p>
-      </div>
-    </div>
-    <p style="margin-top:20px;text-align:center;font-size:0.9rem;color:var(--text-dim);">
-      Routes trivial tasks to local Ollama models (<strong class="accent">$0 cost</strong>). Critical governance decisions go through multi-LLM consensus.
-    </p>
-  </div>
-</section>
-
-<!-- ========== SLIDE 8: ARCHITECTURE ========== -->
-<section class="slide" id="s8">
-  <div class="glow glow-blue" style="width:400px;height:400px;top:0;left:20%;"></div>
-  <div class="slide-inner">
-    <span class="label">Architecture</span>
-    <h2>How It Works</h2>
-    <p class="subtitle">An autonomous pipeline that continuously governs every AI system in your organization. 100+ API endpoints across 17 services.</p>
-    <div class="arch-flow" style="margin-top:40px;">
-      <div class="arch-node">
-        <div class="node-label">Ingest</div>
-        <div class="node-value">AI System Input</div>
-      </div>
-      <span class="arch-arrow">&rarr;</span>
-      <div class="arch-node highlight">
-        <div class="node-label">Detect</div>
-        <div class="node-value">Drift Analysis</div>
-      </div>
-      <span class="arch-arrow">&rarr;</span>
-      <div class="arch-node">
-        <div class="node-label">Score</div>
-        <div class="node-value">Risk Engine</div>
-      </div>
-      <span class="arch-arrow">&rarr;</span>
-      <div class="arch-node highlight">
-        <div class="node-label">Decide</div>
-        <div class="node-value">LLM Consensus</div>
-      </div>
-      <span class="arch-arrow">&rarr;</span>
-      <div class="arch-node">
-        <div class="node-label">Record</div>
-        <div class="node-value">Hash Ledger</div>
-      </div>
-    </div>
-    <div class="card-grid grid-2" style="margin-top:36px;">
+    <div class="card-grid grid-3">
       <div class="card">
-        <h3>REST API (FastAPI)</h3>
-        <p class="dim" style="font-size:0.85rem;">100+ endpoints across 17 services. JWT + API key auth. Rate limiting by plan tier. Webhook delivery. Full enterprise integration surface.</p>
-        <div style="margin-top:12px;">
-          <span class="pill pill-green">Python 3.11</span>
-          <span class="pill pill-blue">PostgreSQL</span>
-          <span class="pill pill-purple">Redis</span>
-        </div>
+        <h3 style="font-size:1rem;">Depth First, Then Breadth</h3>
+        <p class="dim" style="font-size:0.85rem;">Control-by-control mapping for <strong>NYC LL144</strong>, <strong>OMB M-24-10</strong>, and <strong>Colorado SB 205</strong> &mdash; the live US deadlines. Production-ready support across NIST AI RMF, ISO 42001, EU AI Act, HIPAA, GDPR + 23 more.</p>
       </div>
       <div class="card">
-        <h3>MCP Server (FastMCP)</h3>
-        <p class="dim" style="font-size:0.85rem;">12 governance tools accessible via Model Context Protocol. Any AI agent can invoke GovernLayer governance as a native tool call.</p>
-        <div style="margin-top:12px;">
-          <span class="pill pill-green">LangGraph</span>
-          <span class="pill pill-blue">Agentic</span>
-          <span class="pill pill-purple">Composable</span>
-        </div>
+        <h3 style="font-size:1rem;">17 Integrated Services</h3>
+        <p class="dim" style="font-size:0.85rem;">Drift detection, risk scoring, compliance audits, hash-chained ledger, multi-LLM consensus, human-in-the-loop escalation, webhooks, usage metering.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:1rem;">14 LLM Integrations</h3>
+        <p class="dim" style="font-size:0.85rem;">OpenAI, Anthropic, Google (Gemini), Mistral, DeepSeek, Grok, Kimi, Devstral, plus local Ollama (Llama, Mistral, Phi). Unified via Groq and OpenRouter.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 9: MARKET ========== -->
-<section class="slide" id="s9">
-  <div class="glow glow-green" style="width:500px;height:500px;top:20%;right:0;"></div>
+<!-- ========== SLIDE 6: MARKET ========== -->
+<section class="slide" id="s6">
+  <div class="glow glow-green" style="width:420px;height:420px;top:-80px;right:-5%;"></div>
+  <div class="glow glow-blue" style="width:380px;height:380px;bottom:-80px;left:-5%;"></div>
   <div class="slide-inner">
-    <span class="label">Market Opportunity</span>
-    <h2>A Market That <span class="accent">Only Gets Bigger</span></h2>
-    <p class="subtitle" style="max-width:700px;">The regulatory ratchet only tightens. Every year, more companies <strong>must</strong> buy governance tooling. This is not a discretionary purchase.</p>
+    <span class="label">Market</span>
+    <h2>A Category <span class="accent">Forming Right Now</span></h2>
+    <p class="subtitle" style="max-width:820px;">TAM &rarr; SAM &rarr; SOM. The Gartner platform line is a subset &mdash; the real budget pool includes adjacent GRC, model-risk, and MLOps spend that procurement uses for AI governance.</p>
 
     <div class="cols" style="margin-top:32px;">
       <div class="col">
-        <div class="card" style="margin-bottom:16px;">
-          <p style="font-size:0.75rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Top-Down TAM</p>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-            <span class="dim">GRC Total Market (2026)</span><span style="font-weight:700;">$94.8B</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-            <span class="dim">AI Governance Platforms (2026)</span><span style="font-weight:700;color:var(--blue);">$492M</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-            <span class="dim">AI Governance by 2030</span><span style="font-weight:700;color:var(--accent);">$2.63B</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;">
-            <span class="dim">Growth Rate</span><span style="font-weight:700;color:var(--warn);">44.3% CAGR</span>
-          </div>
-          <p style="font-size:0.7rem;color:var(--text-muted);margin-top:10px;">Sources: Gartner Feb 2026, Business Research Insights, TBRC</p>
-        </div>
-
         <div class="card">
-          <p style="font-size:0.75rem;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Bottom-Up SAM</p>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-            <span class="dim">Companies deploying AI agents</span><span style="font-weight:700;">~50,000</span>
+          <h3>TAM &mdash; AI Governance + Adjacent Compliance Budget</h3>
+          <div class="card-grid grid-2" style="margin-top:14px;gap:14px;">
+            <div class="stat">
+              <div class="stat-value" style="font-size:2.2rem;">$3.8B</div>
+              <div class="stat-label">2026 global AI governance + adjacent budgets <span class="muted">(AI TRiSM + GRC modules + model risk)</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" style="font-size:2.2rem;">$12B+</div>
+              <div class="stat-label">2030 TAM &middot; ~25&ndash;35% CAGR</div>
+            </div>
           </div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-            <span class="dim">10% need governance (Year 1)</span><span style="font-weight:700;">5,000</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-            <span class="dim">Avg ACV (blended)</span><span style="font-weight:700;">$15K</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;">
-            <span class="dim"><strong>Near-term SAM</strong></span><span style="font-weight:700;color:var(--accent);">$75M</span>
-          </div>
-          <p style="font-size:0.7rem;color:var(--text-muted);margin-top:10px;">At enterprise ACV ($50K): SAM = $250M+</p>
+          <p class="muted" style="font-size:0.78rem;margin-top:14px;text-align:center;">Synthesis: Gartner AI TRiSM ($492M, 2026) + GRC platform AI modules + model-risk spend at regulated enterprises.</p>
         </div>
       </div>
-
       <div class="col">
-        <div class="card card-accent" style="margin-bottom:16px;">
-          <p style="font-size:0.75rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Comparable Exits</p>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <div><span style="font-size:0.9rem;font-weight:600;">Vanta</span><br><span style="font-size:0.75rem;color:var(--text-muted);">IT compliance automation</span></div>
-            <span style="font-weight:800;color:var(--accent);font-size:1.1rem;">$2.45B</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <div><span style="font-size:0.9rem;font-weight:600;">OneTrust</span><br><span style="font-size:0.75rem;color:var(--text-muted);">Privacy &amp; GRC</span></div>
-            <span style="font-weight:800;color:var(--accent);font-size:1.1rem;">$5.3B</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-            <div><span style="font-size:0.9rem;font-weight:600;">Drata</span><br><span style="font-size:0.75rem;color:var(--text-muted);">GRC automation</span></div>
-            <span style="font-weight:800;color:var(--blue);font-size:1.1rem;">$1B+</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
-            <div><span style="font-size:0.9rem;font-weight:600;">Credo AI</span><br><span style="font-size:0.75rem;color:var(--text-muted);">AI governance (pre-deploy)</span></div>
-            <span style="font-weight:800;color:var(--purple);font-size:1.1rem;">$50M+ raised</span>
-          </div>
-          <p style="font-size:0.82rem;color:var(--text-dim);margin-top:14px;font-style:italic;">Vanta reached $2.45B governing IT. We govern AI &mdash; a harder, faster-growing problem.</p>
-        </div>
-
-        <div class="card">
-          <p style="font-size:0.75rem;color:var(--warn);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Regulatory Timeline</p>
-          <div style="font-size:0.82rem;color:var(--text-dim);line-height:2.2;">
-            <div><span class="accent" style="margin-right:6px;">&#9679;</span> <strong>Feb 2025</strong> &mdash; EU AI Act prohibited practices live</div>
-            <div><span style="color:var(--blue);margin-right:6px;">&#9679;</span> <strong>Aug 2025</strong> &mdash; EU AI Act transparency obligations</div>
-            <div><span style="color:var(--warn);margin-right:6px;">&#9679;</span> <strong>Aug 2026</strong> &mdash; EU AI Act high-risk full enforcement</div>
-            <div><span style="color:var(--purple);margin-right:6px;">&#9679;</span> <strong>2025&ndash;26</strong> &mdash; NYC LL144, CO SB-169, CA, TX, IL</div>
-            <div><span style="color:var(--danger);margin-right:6px;">&#9679;</span> <strong>2027+</strong> &mdash; Federal US AI legislation expected</div>
-          </div>
-          <p style="font-size:0.75rem;color:var(--text-muted);margin-top:10px;">1,000+ AI policy initiatives across 70+ jurisdictions (OECD)</p>
+        <div class="card card-accent">
+          <h3 style="color:var(--accent);">SAM &mdash; US Regulated Mid-Large</h3>
+          <ul style="list-style:none;margin-top:12px;font-size:0.92rem;color:var(--text-dim);line-height:1.9;">
+            <li>~4,500 US banks (OCC + FRB AI guidance)</li>
+            <li>~6,100 US hospital systems (HIPAA + state AI laws)</li>
+            <li>~3,200 federal contractors (OMB M-24-10)</li>
+            <li>Subset reachable at $50K&ndash;$150K ACV in 36 months</li>
+            <li style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-weight:600;color:var(--text);">SAM: <span class="accent">$650M&ndash;$1.1B annual</span></li>
+            <li style="font-weight:600;color:var(--text);">SOM (3-year): <span class="accent">$25M&ndash;$75M ARR</span></li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <p style="margin-top:24px;font-size:0.95rem;text-align:center;font-weight:600;color:var(--accent);">
-      Wedge: AI startups needing SOC 2 + EU AI Act ($49&ndash;199/mo) &rarr; Expand: Enterprise GRC ($50K&ndash;200K/yr) &rarr; Dominate: The governance layer for all AI
-    </p>
+    <div class="card card-accent" style="margin-top:24px;">
+      <p style="font-size:1.05rem;line-height:1.6;">
+        <strong>Why this market exists in 2026, not 2024:</strong> NYC LL144 + Colorado SB 205 + OMB M-24-10 are enforcing today. The May 2026 EU AI Act Omnibus extended Brussels timing &mdash; but ISO 42001 procurement gating and US enforcement are driving budgets now.
+      </p>
+    </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 10: BUSINESS MODEL ========== -->
-<section class="slide" id="s10">
-  <div class="glow glow-blue" style="width:400px;height:400px;bottom:0;left:0;"></div>
+<!-- ========== SLIDE 7: TRACTION ========== -->
+<section class="slide" id="s7">
+  <div class="glow glow-green" style="width:460px;height:460px;top:-100px;left:-5%;"></div>
+  <div class="slide-inner">
+    <span class="label">Traction</span>
+    <h2>Built, Shipped, <span class="accent">Live</span></h2>
+    <p class="subtitle" style="max-width:780px;">Production platform serving design partners. AI-native engineering velocity.</p>
+
+    <div class="card-grid grid-4">
+      <div class="card stat">
+        <div class="stat-value">17</div>
+        <div class="stat-label">Integrated Services Live</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">100+</div>
+        <div class="stat-label">API Endpoints (Production)</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">29</div>
+        <div class="stat-label">Compliance Frameworks Mapped</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">14</div>
+        <div class="stat-label">LLM Integrations (Local + Cloud)</div>
+      </div>
+    </div>
+
+    <div class="card-grid grid-3">
+      <div class="card card-accent">
+        <span class="icon" style="color:var(--accent);">&#9989;</span>
+        <h3>Live in Production</h3>
+        <p class="dim" style="font-size:0.9rem;">Deployed on Railway. <span class="accent">governlayer.ai/workspace</span> handling real audit workloads. Stripe billing integrated.</p>
+      </div>
+      <div class="card card-accent">
+        <span class="icon" style="color:var(--blue);">&#128101;</span>
+        <h3>Beta Design Partners</h3>
+        <p class="dim" style="font-size:0.9rem;">Regulated enterprises onboarding. Active pilot conversations with banking, healthcare, and federal-contractor buyers focused on NYC LL144, OMB M-24-10, and multi-year EU AI Act prep.</p>
+      </div>
+      <div class="card card-accent">
+        <span class="icon" style="color:var(--purple);">&#9881;</span>
+        <h3>AI-Native Engineering</h3>
+        <p class="dim" style="font-size:0.9rem;">Built with Claude Code and modern LLM-assisted engineering. Solo-founder velocity at production scale &mdash; the new 2026 build pattern.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SLIDE 8: BUSINESS MODEL ========== -->
+<section class="slide" id="s8">
+  <div class="glow glow-blue" style="width:480px;height:480px;top:-120px;right:-5%;"></div>
   <div class="slide-inner">
     <span class="label">Business Model</span>
-    <h2>SaaS Tiers with <span class="accent">Usage-Based</span> Expansion</h2>
-    <div class="card-grid grid-4" style="margin-top:32px;">
+    <h2>SaaS Tiers with <span class="accent">Usage Expansion</span></h2>
+    <p class="subtitle" style="max-width:820px;">Land via developer and SMB tiers. Expand to enterprise. Target ACV: $9,990 &rarr; $250K+.</p>
+
+    <div class="card-grid grid-4">
       <div class="card price-card">
         <div class="tier">Free</div>
         <div class="price">$0</div>
         <div class="period">forever</div>
         <ul>
-          <li>Up to 3 models</li>
-          <li>5 frameworks</li>
-          <li>100 API calls/month</li>
-          <li>Basic drift detection</li>
+          <li>100 audits / month</li>
+          <li>3 frameworks</li>
           <li>Community support</li>
         </ul>
+        <p class="muted" style="font-size:0.75rem;margin-top:14px;">For evaluation</p>
       </div>
       <div class="card price-card">
         <div class="tier">Starter</div>
-        <div class="price">$49</div>
+        <div class="price">$499</div>
         <div class="period">/month</div>
         <ul>
+          <li>5K audits / month</li>
           <li>10 frameworks</li>
-          <li>1,000 API calls/month</li>
-          <li>Full drift detection</li>
           <li>Email support</li>
-          <li>Evidence collection</li>
         </ul>
+        <p class="muted" style="font-size:0.75rem;margin-top:14px;">For early-stage startups</p>
       </div>
       <div class="card price-card price-featured">
         <div class="tier">Pro</div>
-        <div class="price accent">$199</div>
+        <div class="price">$1,499</div>
         <div class="period">/month</div>
         <ul>
-          <li>All 29 frameworks</li>
-          <li>Unlimited API calls</li>
-          <li>Multi-LLM consensus</li>
-          <li>Priority support</li>
-          <li>Webhooks + integrations</li>
-          <li>Vendor risk management</li>
+          <li>50K audits / month</li>
+          <li>29 frameworks</li>
+          <li>SSO &middot; Priority support</li>
         </ul>
+        <p class="muted" style="font-size:0.75rem;margin-top:14px;">For scaling AI teams</p>
       </div>
       <div class="card price-card">
         <div class="tier">Enterprise</div>
         <div class="price">Custom</div>
-        <div class="period">&nbsp;</div>
+        <div class="period">contact</div>
         <ul>
-          <li>SSO / SAML / RBAC</li>
-          <li>On-premise deployment</li>
-          <li>Dedicated support</li>
-          <li>Custom frameworks</li>
-          <li>SLA guarantee</li>
-          <li>White-glove onboarding</li>
+          <li>Unlimited audits</li>
+          <li>SLA &middot; On-prem</li>
+          <li>Dedicated CSM</li>
         </ul>
+        <p class="muted" style="font-size:0.75rem;margin-top:14px;">For regulated industries</p>
       </div>
     </div>
-    <p style="margin-top:24px;text-align:center;font-size:0.9rem;color:var(--text-dim);">
-      Product-led growth: Free &rarr; Starter &rarr; Pro &rarr; Enterprise. &nbsp;|&nbsp; Net revenue retention target: <strong class="accent">130%+</strong>
-    </p>
-  </div>
-</section>
 
-<!-- ========== SLIDE 11: TRACTION ========== -->
-<section class="slide" id="s11">
-  <div class="glow glow-green" style="width:400px;height:400px;bottom:10%;right:5%;"></div>
-  <div class="slide-inner">
-    <span class="label">Traction &amp; Milestones</span>
-    <h2>Built, Shipped, <span class="accent">Live</span></h2>
-    <div class="card-grid grid-4" style="margin-top:32px;">
-      <div class="card stat">
-        <div class="stat-value">100+</div>
-        <div class="stat-label">API Endpoints Live</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value" style="color:var(--blue);">17</div>
-        <div class="stat-label">Integrated Services</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value" style="color:var(--purple);">29</div>
-        <div class="stat-label">Compliance Frameworks</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value" style="color:var(--warn);">14</div>
-        <div class="stat-label">LLM Models Integrated</div>
-      </div>
-    </div>
-    <div class="card-grid grid-2" style="margin-top:24px;">
-      <div class="card">
-        <h3>Platform (All Live)</h3>
-        <ul style="list-style:none;font-size:0.85rem;color:var(--text-dim);">
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Production deployed at www.governlayer.ai</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Custom domain live, Google Search Console indexed</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Full API with JWT + API key auth</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Multi-tenant orgs with RBAC</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Redis rate limiting by plan tier</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Stripe billing integration</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> HMAC-SHA256 webhook signing</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Usage metering per organization</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> SHA-256 hash-chained audit ledger</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Multi-LLM consensus engine (14 models)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Resend email transactional system</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> CI/CD pipeline (GitHub Actions)</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Services (All Live)</h3>
-        <ul style="list-style:none;font-size:0.85rem;color:var(--text-dim);">
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Model &amp; agent registry + shadow AI discovery</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Compliance hub (29 frameworks, auto-policy gen)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Evidence auto-collection (GitHub, Jira, cloud)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Continuous control monitoring + gap alerts</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Policy engine (allow/warn/block enforcement)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Vendor risk management + questionnaires</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Incident management (Slack, Jira, ServiceNow)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Knowledge graph + regulatory advisory</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Human-in-the-loop escalation + SLA tracking</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> AGI safety controls (RSIM, CCV, DAD, MACM)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> Role-based dashboards (5 personas)</li>
-          <li style="padding:5px 0;"><span class="accent" style="margin-right:8px;">&#10003;</span> MCP server (12 governance tools)</li>
-        </ul>
-      </div>
-    </div>
-    <div class="card-grid grid-2" style="margin-top:16px;">
-      <div class="card card-accent" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--accent);font-size:1rem;">Provisional Patent Filed</h3>
-        <p class="dim" style="font-size:0.85rem;">GOVERNLAYER-001 &mdash; 30 claims covering multi-LLM consensus, hash-chained audit, and autonomous governance pipeline.</p>
-      </div>
-      <div class="card card-accent" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--accent);font-size:1rem;">Beta Design Partners</h3>
-        <p class="dim" style="font-size:0.85rem;">Onboarding founding cohort. Landing page, demo, trust center, and docs all live at governlayer.ai.</p>
+    <div class="card" style="margin-top:24px;">
+      <p style="font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">
+        Modeled Unit Economics &mdash; Replaced by actuals after first 10 paying customers
+      </p>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;">
+        Inputs: $9,990 entry ACV, 3-year initial retention assumption (industry-benchmarked, not historical). Sensitivity tested at 2yr / 4yr retention &mdash; bracketed below.
+      </p>
+      <div class="card-grid grid-4" style="margin-top:18px;gap:14px;">
+        <div class="stat">
+          <div class="stat-value" style="font-size:2rem;">$30K&ndash;$69K</div>
+          <div class="stat-label">LTV range (2yr&ndash;4yr retention)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="font-size:2rem;">$12K</div>
+          <div class="stat-label">CAC target &middot; revisit after 10 lands</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="font-size:2rem;">2.5x&ndash;5.75x</div>
+          <div class="stat-label">LTV:CAC range</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="font-size:2rem;">82% / 120%</div>
+          <div class="stat-label">Gross Margin / NRR (modeled)</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 12: SECURITY ========== -->
-<section class="slide" id="s12">
-  <div class="glow glow-blue" style="width:450px;height:450px;top:5%;right:10%;"></div>
+<!-- ========== SLIDE 9: COMPETITION ========== -->
+<section class="slide" id="s9">
+  <div class="glow glow-green" style="width:420px;height:420px;top:-80px;left:-5%;"></div>
+  <div class="glow glow-blue" style="width:380px;height:380px;bottom:-80px;right:-5%;"></div>
   <div class="slide-inner">
-    <span class="label">Security</span>
-    <h2>Security-First <span class="accent">Architecture</span></h2>
-    <p class="subtitle" style="max-width:700px;">A governance platform must be more secure than the systems it governs. We treat security as a core product feature, not an afterthought.</p>
-    <div class="card-grid grid-3" style="margin-top:32px;">
-      <div class="card card-accent">
-        <h3 class="accent">Internal Security Audit</h3>
-        <p class="dim" style="font-size:0.9rem;">5-agent autonomous security audit completed. <strong>30 findings identified and fixed</strong> across authentication, authorization, input validation, and cryptographic integrity.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">Tamper-Proof Audit Trail</h3>
-        <p class="dim" style="font-size:0.9rem;">SHA-256 hash-chained ledger. Every record cryptographically linked to its predecessor. Genesis hash anchored. Any tampering breaks the chain and is immediately detectable.</p>
-      </div>
-      <div class="card card-accent">
-        <h3 class="accent">Authentication &amp; Access</h3>
-        <p class="dim" style="font-size:0.9rem;">JWT with token revocation. Organization-level RBAC with scoped API keys. Redis-backed rate limiting per plan tier. CORS + HSTS + Permissions-Policy headers enforced.</p>
-      </div>
-    </div>
-    <div class="card-grid grid-3" style="margin-top:20px;">
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--accent);font-size:1rem;">CI/CD Security</h3>
-        <p class="dim" style="font-size:0.8rem;">SAST (bandit), dependency scanning (pip-audit), SBOM generation on every build</p>
-      </div>
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--blue);font-size:1rem;">Container Hardening</h3>
-        <p class="dim" style="font-size:0.8rem;">Non-root Docker containers, multi-stage builds, SSL enforcement, minimal attack surface</p>
-      </div>
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="color:var(--purple);font-size:1rem;">Webhook Integrity</h3>
-        <p class="dim" style="font-size:0.8rem;">HMAC-SHA256 signed payloads. Recipients can verify every webhook originated from GovernLayer</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== SLIDE 13: COMPETITIVE ========== -->
-<section class="slide" id="s13">
-  <div class="slide-inner">
-    <span class="label">Competitive Landscape</span>
+    <span class="label">Competition</span>
     <h2>Why GovernLayer <span class="accent">Wins</span></h2>
+    <p class="subtitle" style="max-width:880px;">Two close comps were acquired by F5 ($180M) and Check Point (~$300M) in late 2025. The category is M&amp;A-active. We are positioned to be the runtime governance standard for regulated industries.</p>
+
     <table class="table">
       <thead>
         <tr>
@@ -1126,357 +940,183 @@
           <th>GovernLayer</th>
           <th>Vanta / Drata</th>
           <th>Credo AI</th>
-          <th>Manual / In-House</th>
+          <th>Lakera / CalypsoAI</th>
+          <th>Microsoft OSS</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>AI-specific governance</td>
-          <td class="check">&#10003; Built for AI</td>
-          <td class="cross">&#10007; Generic GRC</td>
-          <td class="check">&#10003; AI-focused</td>
-          <td class="cross">&#10007; No</td>
+          <td>Runtime decision-path enforcement</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
         </tr>
         <tr>
-          <td>Compliance frameworks</td>
-          <td class="check">&#10003; 29 frameworks</td>
-          <td class="check">&#10003; 20+ (generic)</td>
-          <td class="cross">&#10007; Limited</td>
-          <td class="cross">&#10007; 1&ndash;2 manual</td>
+          <td>Multi-framework regulatory mapping (29)</td>
+          <td class="check">&#10003;</td>
+          <td class="dim">partial</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
         </tr>
         <tr>
-          <td>Shadow AI discovery</td>
-          <td class="check">&#10003; Auto-detection</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
+          <td>Cryptographic audit ledger</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
         </tr>
         <tr>
-          <td>Autonomous operation</td>
-          <td class="check">&#10003; Full 24/7</td>
-          <td class="cross">&#10007; Semi-auto</td>
-          <td class="cross">&#10007; Semi-manual</td>
-          <td class="cross">&#10007; Fully manual</td>
+          <td>Multi-LLM cost optimization</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
         </tr>
         <tr>
-          <td>Real-time drift detection</td>
-          <td class="check">&#10003; Embedding-based</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; Periodic</td>
-          <td class="cross">&#10007; No</td>
+          <td>Continuous behavioral drift detection</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="dim">partial</td>
+          <td class="cross">&#10007;</td>
+          <td class="cross">&#10007;</td>
         </tr>
         <tr>
-          <td>Multi-LLM consensus</td>
-          <td class="check">&#10003; 14 models</td>
-          <td class="cross">&#10007; No LLM</td>
-          <td class="cross">&#10007; Single model</td>
-          <td class="cross">&#10007; No</td>
+          <td>Local / on-prem deployment</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="dim">partial</td>
+          <td class="dim">partial</td>
+          <td class="check">&#10003;</td>
         </tr>
         <tr>
-          <td>Hash-chained audit ledger</td>
-          <td class="check">&#10003; SHA-256</td>
-          <td class="cross">&#10007; Standard logs</td>
-          <td class="cross">&#10007; Standard logs</td>
-          <td class="cross">&#10007; Spreadsheets</td>
+          <td>Vertical regulatory depth (banks, healthcare, federal)</td>
+          <td class="check">&#10003; in progress</td>
+          <td class="dim">generalist</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&#10007;</td>
+          <td class="dim">generalist</td>
         </tr>
         <tr>
-          <td>Vendor risk management</td>
-          <td class="check">&#10003; Full TPRM</td>
-          <td class="check">&#10003; Basic</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
-        </tr>
-        <tr>
-          <td>Evidence auto-collection</td>
-          <td class="check">&#10003; GitHub, Jira, cloud</td>
-          <td class="check">&#10003; Limited</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; Manual</td>
-        </tr>
-        <tr>
-          <td>Human-in-the-loop</td>
-          <td class="check">&#10003; Auto-escalation + SLA</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; Manual</td>
-          <td class="cross">&#10007; Manual</td>
-        </tr>
-        <tr>
-          <td>AGI safety controls</td>
-          <td class="check">&#10003; RSIM, CCV, DAD, MACM</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
-          <td class="cross">&#10007; No</td>
-        </tr>
-        <tr>
-          <td>Air-gapped deployment</td>
-          <td class="check">&#10003; Ollama local</td>
-          <td class="cross">&#10007; SaaS only</td>
-          <td class="cross">&#10007; SaaS only</td>
-          <td class="check">&#10003; On-prem</td>
-        </tr>
-        <tr>
-          <td>Time to first audit</td>
-          <td class="check">&lt; 60 minutes</td>
-          <td>Weeks</td>
-          <td>Weeks</td>
-          <td>6&ndash;12 months</td>
+          <td>SOC 2 Type II</td>
+          <td class="dim">in progress</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="dim">N/A</td>
         </tr>
       </tbody>
     </table>
-    <p style="margin-top:24px;font-size:0.95rem;text-align:center;color:var(--text-dim);">
-      GovernLayer is the only platform combining <strong class="accent">multi-LLM consensus</strong>, <strong class="accent">cryptographic audit trails</strong>, <strong class="accent">shadow AI discovery</strong>, and <strong class="accent">AGI safety controls</strong> &mdash; purpose-built for AI governance from day one.
-    </p>
-  </div>
-</section>
 
-<!-- ========== SLIDE 14: GO-TO-MARKET ========== -->
-<section class="slide" id="s14">
-  <div class="glow glow-blue" style="width:400px;height:400px;top:0;right:20%;"></div>
-  <div class="slide-inner">
-    <span class="label">Go-To-Market</span>
-    <h2>Land, Expand, <span class="accent">Defend</span></h2>
-    <div class="cols" style="margin-top:32px;">
-      <div class="col">
-        <div class="card" style="margin-bottom:20px;">
-          <h3 style="color:var(--accent);">Phase 1: Developer-Led (May&ndash;Oct 2026)</h3>
-          <p class="dim" style="font-size:0.9rem;margin-top:8px;">Free tier + API-first approach. Developers integrate GovernLayer into CI/CD pipelines. MCP server lets any AI agent call governance tools natively. Content marketing + developer advocacy.</p>
-        </div>
-        <div class="card" style="margin-bottom:20px;">
-          <h3 style="color:var(--blue);">Phase 2: Enterprise Sales (Nov 2026&ndash;Apr 2027)</h3>
-          <p class="dim" style="font-size:0.9rem;margin-top:8px;">Target compliance-heavy verticals: financial services, healthcare, defense. Partner with Big 4 consulting firms for implementation. SOC 2 Type II certification complete.</p>
-        </div>
-        <div class="card">
-          <h3 style="color:var(--purple);">Phase 3: Platform Ecosystem (May 2027+)</h3>
-          <p class="dim" style="font-size:0.9rem;margin-top:8px;">Marketplace for custom governance frameworks. Channel partnerships. International expansion (EU priority). Become the governance layer for the AI stack.</p>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card card-accent" style="padding:32px;">
-          <h3>Target Segments</h3>
-          <div style="margin-top:16px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="font-size:0.9rem;">Financial Services</span>
-              <span class="pill pill-green">High Priority</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="font-size:0.9rem;">Healthcare / Life Sciences</span>
-              <span class="pill pill-green">High Priority</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="font-size:0.9rem;">Government / Defense</span>
-              <span class="pill pill-blue">Medium Priority</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="font-size:0.9rem;">AI/ML Platform Companies</span>
-              <span class="pill pill-blue">Medium Priority</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
-              <span style="font-size:0.9rem;">Enterprise SaaS</span>
-              <span class="pill pill-purple">Growth</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div style="margin-top:28px;text-align:center;">
+      <span class="pill pill-green">Switching cost via audit history lock-in</span>
+      <span class="pill pill-blue">Vertical regulatory depth</span>
+      <span class="pill pill-purple">Runtime decision-path embedding</span>
     </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 15: TEAM ========== -->
-<section class="slide" id="s15" style="min-height:auto;overflow:visible;padding-top:80px;padding-bottom:80px;">
-  <div class="glow glow-green" style="width:400px;height:400px;bottom:0;left:30%;"></div>
+<!-- ========== SLIDE 10: TEAM ========== -->
+<section class="slide" id="s10">
+  <div class="glow glow-green" style="width:460px;height:460px;top:-100px;right:-5%;"></div>
   <div class="slide-inner">
     <span class="label">Team</span>
     <h2>Built by People Who Understand<br><span class="accent">Enterprise + AI</span></h2>
-    <div class="card-grid grid-2" style="margin-top:36px;max-width:800px;margin-left:auto;margin-right:auto;">
-      <div class="card" style="text-align:center;padding:36px;">
-        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#059669);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:var(--bg);">EU</div>
-        <h3>Ekene Wilfred Uwaezuoke</h3>
-        <p class="accent" style="font-size:0.85rem;margin-bottom:8px;">Founder &amp; CEO</p>
-        <p class="dim" style="font-size:0.85rem;">Senior Engineering Program Manager at Google &mdash; built AI governance programs for Gemini, DeepMind, Waymo &amp; Vertex AI. Former Deloitte Advisory (cloud security &amp; TPRM). ISO 42001 AI Lead Implementer, CISA, CISM, CDPSE. MIT CSAIL AI program. USPTO patent holder.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:36px;">
-        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#7c3aed);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:white;font-weight:700;">CTO</div>
-        <h3>Hiring: CTO / Co-Founder</h3>
-        <p style="color:var(--purple);font-size:0.85rem;margin-bottom:8px;">Technical Co-Founder</p>
-        <p class="dim" style="font-size:0.85rem;">Seeking a technical co-founder with enterprise infrastructure, security, or compliance background. Key hire with seed funding.</p>
-      </div>
-    </div>
-    <div class="card-grid grid-3" style="margin-top:24px;">
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="margin-bottom:8px;font-size:0.95rem;">AI-Native Engineering</h3>
-        <p class="dim" style="font-size:0.82rem;">17 services, 100+ endpoints, and 14 LLM integrations built in weeks &mdash; not months. AI-augmented development at production scale.</p>
-      </div>
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="margin-bottom:8px;font-size:0.95rem;">Key Hires (Pre-Seed)</h3>
-        <p class="dim" style="font-size:0.82rem;">CTO / Technical Co-Founder &bull; Head of Sales &bull; Senior Backend Engineer &bull; DevRel / Developer Advocate</p>
-      </div>
-      <div class="card" style="text-align:center;padding:20px;">
-        <h3 style="margin-bottom:8px;font-size:0.95rem;">Advisory Board</h3>
-        <p class="dim" style="font-size:0.82rem;">Cross-industry advisors from Google DeepMind, Meta AI, NVIDIA, and enterprise AI.</p>
-      </div>
+    <p class="subtitle" style="max-width:780px;">Founder operates at the exact intersection &mdash; AI governance compliance at Google &mdash; that the product addresses for everyone else.</p>
+
+    <div class="card card-accent" style="max-width:520px;margin:32px auto 0;text-align:center;">
+      <div style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#059669);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--bg);margin:0 auto 14px;box-shadow:0 4px 20px var(--accent-glow);">EU</div>
+      <h3 style="font-size:1.2rem;margin-bottom:2px;">Ekene Wilfred Uwaezuoke</h3>
+      <p class="accent" style="font-size:0.85rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">Founder &amp; CEO</p>
+      <p class="dim" style="font-size:0.9rem;line-height:1.7;text-align:left;">
+        Senior Engineering Program Manager at Google &mdash; supports AI governance, risk, and compliance programs across multiple AI product surfaces. Former Deloitte Advisory (cloud security &amp; TPRM). ISO 42001 AI Lead Implementer, CISA, CISM, CDPSE, PMP. MIT Sloan Executive Education &mdash; AI: Implications for Business Strategy. Provisional patent filed (GOVERNLAYER-001, App #64/001,213, Mar 10, 2026); non-provisional conversion deadline Mar 10, 2027.
+      </p>
     </div>
 
-    <!-- Advisory Board -->
-    <div style="margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto;">
-      <h3 style="text-align:center;font-size:1.1rem;margin-bottom:24px;color:var(--text);">Advisory Board</h3>
-      <div class="card-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-        <div class="card" style="text-align:center;padding:24px 16px;">
-          <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#2563eb);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:white;">PJ</div>
-          <h3 style="font-size:0.9rem;margin-bottom:4px;">Philo Juang</h3>
-          <p class="accent" style="font-size:0.75rem;margin-bottom:6px;">Software Engineer</p>
-          <p class="dim" style="font-size:0.78rem;">Google DeepMind</p>
-        </div>
-        <div class="card" style="text-align:center;padding:24px 16px;">
-          <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#7c3aed);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:white;">PG</div>
-          <h3 style="font-size:0.9rem;margin-bottom:4px;">Phani Gunturu</h3>
-          <p class="accent" style="font-size:0.75rem;margin-bottom:6px;">Co-founder, Contract.AI</p>
-          <p class="dim" style="font-size:0.78rem;">Former PM, Google Cloud</p>
-        </div>
-        <div class="card" style="text-align:center;padding:24px 16px;">
-          <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#06b6d4);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:white;">OR</div>
-          <h3 style="font-size:0.9rem;margin-bottom:4px;">Othaman Rifki</h3>
-          <p class="accent" style="font-size:0.75rem;margin-bottom:6px;">Research Engineer</p>
-          <p class="dim" style="font-size:0.78rem;">Meta AI</p>
-        </div>
-        <div class="card" style="text-align:center;padding:24px 16px;">
-          <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:white;">BJ</div>
-          <h3 style="font-size:0.9rem;margin-bottom:4px;">Brandon Johnson</h3>
-          <p class="accent" style="font-size:0.75rem;margin-bottom:6px;">Software Engineer</p>
-          <p class="dim" style="font-size:0.78rem;">NVIDIA</p>
-        </div>
+    <div class="card-grid grid-3">
+      <div class="card">
+        <span class="icon" style="color:var(--accent);">&#9881;</span>
+        <h3>AI-Native Engineering</h3>
+        <p class="dim" style="font-size:0.88rem;">Production platform built with Claude Code and modern LLM-assisted engineering. The new 2026 build pattern.</p>
+      </div>
+      <div class="card">
+        <span class="icon" style="color:var(--blue);">&#127919;</span>
+        <h3>Domain Authority</h3>
+        <p class="dim" style="font-size:0.88rem;">Founder operates at the exact intersection &mdash; AI governance compliance at Google &mdash; that the product addresses for everyone else.</p>
+      </div>
+      <div class="card">
+        <span class="icon" style="color:var(--purple);">&#127894;</span>
+        <h3>Advisory Board</h3>
+        <p class="dim" style="font-size:0.88rem;">Cross-industry technical advisors from Google, Meta Superintelligence Labs, NVIDIA, and Contracts.ai.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== SLIDE 16: ROADMAP + FINANCIALS ========== -->
-<section class="slide" id="s16">
-  <div class="glow glow-blue" style="width:400px;height:400px;top:5%;left:5%;"></div>
-  <div class="glow glow-green" style="width:500px;height:500px;top:20%;right:0;"></div>
+<!-- ========== SLIDE 11: THE ASK ========== -->
+<section class="slide" id="s11">
+  <div class="glow glow-green" style="width:520px;height:520px;top:-120px;right:5%;"></div>
+  <div class="glow glow-blue" style="width:400px;height:400px;bottom:-100px;left:5%;"></div>
   <div class="slide-inner">
-    <span class="label">Roadmap &amp; Financials</span>
-    <h2>Path to <span class="accent">$10M ARR</span></h2>
-    <div class="cols" style="margin-top:32px;">
-      <div class="col">
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-date">Q2 2026 (Now)</div>
-            <div class="timeline-title">Public Launch</div>
-            <div class="timeline-desc">GA release. Self-serve onboarding. Beta design partners. First paying customers.</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-date" style="color:var(--blue);">Q3 2026</div>
-            <div class="timeline-title">Enterprise Features</div>
-            <div class="timeline-desc">SOC 2 Type II. SSO/SAML. On-premise Docker/K8s deployment option.</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-date" style="color:var(--purple);">Q4 2026</div>
-            <div class="timeline-title">Platform Ecosystem</div>
-            <div class="timeline-desc">Framework marketplace. Partner integrations. EU expansion.</div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-date" style="color:var(--warn);">2027</div>
-            <div class="timeline-title">Series A</div>
-            <div class="timeline-desc">500+ enterprise customers. International offices. Industry-specific compliance packs.</div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card" style="margin-bottom:20px;">
-          <h3>Revenue Projections</h3>
-          <table class="table" style="margin-top:12px;">
-            <thead>
-              <tr><th>Year</th><th>ARR</th><th>Customers</th><th>Avg ACV</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>2026</strong></td><td class="accent">$600K</td><td>40</td><td>$15K</td></tr>
-              <tr><td><strong>2027</strong></td><td class="accent">$3.5M</td><td>150</td><td>$23K</td></tr>
-              <tr><td><strong>2028</strong></td><td class="accent">$10M</td><td>350</td><td>$29K</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card">
-          <h3>Unit Economics (Target)</h3>
-          <div style="margin-top:12px;">
-            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-              <span class="dim">LTV</span><span class="accent" style="font-weight:600;">$69K</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-              <span class="dim">CAC</span><span style="font-weight:600;">$12K</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-              <span class="dim">LTV:CAC</span><span class="accent" style="font-weight:600;">5.75x</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.9rem;">
-              <span class="dim">Gross Margin</span><span style="font-weight:600;">82%</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.9rem;">
-              <span class="dim">Net Revenue Retention</span><span class="accent" style="font-weight:600;">130%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card" style="margin-top:20px;">
-      <h3>Use of Funds (Pre-Seed)</h3>
-      <div class="bar-group" style="margin-top:16px;">
-        <div class="bar-row">
-          <span class="bar-label" style="width:120px;">Engineering</span>
-          <div class="bar-track"><div class="bar-fill green" style="width:45%;">45%</div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:120px;">Sales &amp; Mktg</span>
-          <div class="bar-track"><div class="bar-fill blue" style="width:30%;">30%</div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:120px;">Operations</span>
-          <div class="bar-track"><div class="bar-fill purple" style="width:15%;">15%</div></div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label" style="width:120px;">Infrastructure</span>
-          <div class="bar-track"><div class="bar-fill green" style="width:10%;">10%</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== SLIDE 17: THE ASK ========== -->
-<section class="slide" id="s17">
-  <div class="glow glow-green" style="width:600px;height:600px;top:-100px;left:30%;"></div>
-  <div class="glow glow-blue" style="width:400px;height:400px;bottom:-50px;right:20%;"></div>
-  <div class="slide-inner" style="text-align:center;">
     <span class="label">The Ask</span>
-    <h2>Building the <span class="accent">Vanta for AI Governance</span></h2>
+    <h2 style="text-align:center;">Building the <span class="accent">Vanta for AI Governance</span></h2>
+
     <div class="cta-box">
-      <p class="dim" style="font-size:1.1rem;margin-bottom:16px;">Pre-Seed Round</p>
-      <div class="cta-amount">$1.5M</div>
-      <p class="dim" style="font-size:1rem;margin-top:12px;">12 months runway &mdash; first enterprise customers, technical co-founder, product-market fit</p>
-      <div style="margin-top:28px;">
-        <span class="pill pill-green" style="font-size:0.85rem;padding:6px 20px;">SAFE Note &mdash; $5M Post-Money Cap</span>
+      <div class="cta-amount">$1M</div>
+      <p class="subtitle" style="margin-top:8px;">Pre-Seed &middot; $5M post-money cap &middot; SAFE</p>
+    </div>
+
+    <div class="card-grid grid-4">
+      <div class="card stat">
+        <div class="stat-value">45%</div>
+        <div class="stat-label"><strong>Engineering</strong><br>Senior backend, infrastructure, SOC 2</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">30%</div>
+        <div class="stat-label"><strong>Sales &amp; Marketing</strong><br>Enterprise GTM, content, design partners</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">15%</div>
+        <div class="stat-label"><strong>Operations</strong><br>SOC 2 Type II audit, legal, finance</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">10%</div>
+        <div class="stat-label"><strong>Infrastructure</strong><br>Cloud, LLM API, observability</div>
       </div>
     </div>
-    <div class="card-grid grid-3" style="margin-top:32px;max-width:800px;margin-left:auto;margin-right:auto;">
-      <div class="card stat" style="padding:24px;">
-        <div class="stat-value" style="font-size:2rem;">$2.63B</div>
-        <div class="stat-label">AI Governance by 2030</div>
+
+    <p class="label" style="margin-top:32px;text-align:center;">12-Month Milestones</p>
+    <div class="card-grid grid-4" style="margin-top:12px;">
+      <div class="card">
+        <p class="accent" style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Q2 2026</p>
+        <p class="dim" style="font-size:0.88rem;margin-top:6px;">Public GA, first paying customers, EU AI Act early adopters.</p>
       </div>
-      <div class="card stat" style="padding:24px;">
-        <div class="stat-value" style="font-size:2rem;color:var(--blue);">17</div>
-        <div class="stat-label">Services Live Today</div>
+      <div class="card">
+        <p class="accent" style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Q3 2026</p>
+        <p class="dim" style="font-size:0.88rem;margin-top:6px;">SOC 2 Type II, SSO / SAML, on-prem deployment.</p>
       </div>
-      <div class="card stat" style="padding:24px;">
-        <div class="stat-value" style="font-size:2rem;color:var(--purple);">90</div>
-        <div class="stat-label">Days to EU AI Act Enforcement</div>
+      <div class="card">
+        <p class="accent" style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Q4 2026</p>
+        <p class="dim" style="font-size:0.88rem;margin-top:6px;">Framework marketplace, EU customer expansion, <span class="accent" style="font-weight:600;">$500K ARR</span>.</p>
+      </div>
+      <div class="card">
+        <p class="accent" style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">2027</p>
+        <p class="dim" style="font-size:0.88rem;margin-top:6px;"><span class="accent" style="font-weight:600;">$2M&ndash;$5M ARR</span>, Series A.</p>
       </div>
     </div>
-    <div style="margin-top:48px;">
-      <div class="logo-mark" style="justify-content:center;margin-bottom:16px;">
-        <div class="logo-icon" style="width:40px;height:40px;font-size:1.1rem;border-radius:10px;">GL</div>
-        <span class="logo-text" style="font-size:1.2rem;">GovernLayer</span>
+
+    <div class="card card-accent" style="margin-top:32px;text-align:center;">
+      <div class="logo-mark" style="justify-content:center;margin-bottom:14px;">
+        <div class="logo-icon">GL</div>
+        <span class="logo-text">GovernLayer</span>
       </div>
-      <p style="font-size:1rem;color:var(--text-dim);">founders@governlayer.ai</p>
-      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">governlayer.ai</p>
+      <p style="font-size:1.05rem;color:var(--text);">
+        <span class="accent" style="font-weight:600;">founders@governlayer.ai</span> &middot; <span class="accent" style="font-weight:600;">governlayer.ai</span>
+      </p>
     </div>
   </div>
 </section>

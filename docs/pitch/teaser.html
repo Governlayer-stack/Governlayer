@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovernLayer — Investor Teaser</title>
+<meta name="description" content="Autonomous AI governance platform. 29 compliance frameworks, real-time behavioral drift detection, multi-LLM consensus, and cryptographic audit trails.">
+<meta property="og:title" content="GovernLayer — The Governance Layer for Agentic AI">
+<meta property="og:description" content="Runtime AI governance for the agentic era. Continuous monitoring, multi-LLM consensus, cryptographic audit trails.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://governlayer.ai/pitch">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #111827;
+    --bg-card-alt: #162032;
+    --accent: #10b981;
+    --accent-dim: rgba(16, 185, 129, 0.15);
+    --accent-glow: rgba(16, 185, 129, 0.3);
+    --text: #f1f5f9;
+    --text-dim: #94a3b8;
+    --text-muted: #64748b;
+    --danger: #f43f5e;
+    --warn: #f59e0b;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  @media (min-width: 1024px) {
+    html { scroll-snap-type: y proximity; }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .slide {
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    scroll-snap-align: start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .slide-inner {
+    max-width: 1100px;
+    width: 100%;
+    z-index: 1;
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+  .nav-dot.active, .nav-dot:hover {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    transform: scale(1.3);
+  }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    font-size: 13px;
+    color: var(--text-muted);
+    z-index: 100;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .key-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 32px;
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 100;
+    opacity: 0.6;
+  }
+  .key-hint kbd {
+    display: inline-block;
+    padding: 2px 7px;
+    border: 1px solid var(--text-muted);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    margin: 0 2px;
+  }
+
+  /* Typography */
+  h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+  h2 { font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; line-height: 1.2; }
+  h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
+  .subtitle { font-size: 1.25rem; color: var(--text-dim); margin-top: 12px; line-height: 1.5; }
+  .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 600; margin-bottom: 16px; display: block; }
+  .accent { color: var(--accent); }
+  .dim { color: var(--text-dim); }
+  .muted { color: var(--text-muted); }
+
+  /* Cards */
+  .card-grid { display: grid; gap: 20px; margin-top: 32px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 28px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .card-accent {
+    border-color: rgba(16,185,129,0.25);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(16,185,129,0.05) 100%);
+  }
+
+  .card .icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  /* Stat */
+  .stat { text-align: center; }
+  .stat-value { font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 0.85rem; color: var(--text-dim); margin-top: 6px; }
+
+  /* Bar chart */
+  .bar-group { margin-top: 24px; }
+  .bar-row { display: flex; align-items: center; margin-bottom: 14px; }
+  .bar-label { width: 80px; font-size: 0.85rem; color: var(--text-dim); flex-shrink: 0; }
+  .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 600; transition: width 1s ease; }
+  .bar-fill.green { background: linear-gradient(90deg, var(--accent), #34d399); }
+  .bar-fill.blue { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+  .bar-fill.purple { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+
+  /* Table */
+  .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  .table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.9rem; }
+  .table th { color: var(--text-muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .table td { color: var(--text-dim); }
+  .check { color: var(--accent); font-weight: 700; }
+  .cross { color: var(--text-muted); }
+
+  /* Pricing */
+  .price-card { text-align: center; padding: 32px 24px; }
+  .price-card .tier { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+  .price-card .price { font-size: 2.2rem; font-weight: 800; }
+  .price-card .period { font-size: 0.85rem; color: var(--text-muted); }
+  .price-card ul { list-style: none; text-align: left; margin-top: 16px; font-size: 0.85rem; color: var(--text-dim); }
+  .price-card ul li { padding: 5px 0; }
+  .price-card ul li::before { content: "\2713 "; color: var(--accent); font-weight: 700; margin-right: 4px; }
+  .price-featured { border-color: var(--accent); position: relative; }
+  .price-featured::after { content: 'POPULAR'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--bg); font-size: 0.65rem; font-weight: 700; padding: 3px 12px; border-radius: 10px; letter-spacing: 0.06em; }
+
+  /* Timeline */
+  .timeline { margin-top: 32px; position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(180deg, var(--accent), var(--blue), var(--purple)); }
+  .timeline-item { margin-bottom: 28px; position: relative; }
+  .timeline-item::before { content: ''; position: absolute; left: -28px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); }
+  .timeline-item:nth-child(2)::before { background: var(--blue); }
+  .timeline-item:nth-child(3)::before { background: var(--purple); }
+  .timeline-item:nth-child(4)::before { background: var(--warn); }
+  .timeline-date { font-size: 0.75rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .timeline-title { font-size: 1.1rem; font-weight: 600; margin: 4px 0; }
+  .timeline-desc { font-size: 0.85rem; color: var(--text-dim); }
+
+  /* Architecture flow */
+  .arch-flow { display: flex; align-items: center; justify-content: center; gap: 0; margin: 32px 0; flex-wrap: wrap; }
+  .arch-node {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px 24px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .arch-node.highlight {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-dim);
+  }
+  .arch-arrow { color: var(--accent); font-size: 1.5rem; margin: 0 8px; flex-shrink: 0; }
+  .arch-node .node-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .arch-node .node-value { font-size: 1rem; font-weight: 600; margin-top: 4px; }
+
+  /* Logo */
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .logo-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--accent) 0%, #059669 100%);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; font-weight: 900; color: var(--bg);
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .logo-text { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+
+  /* Pill tags */
+  .pill {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 3px 2px;
+  }
+  .pill-green { background: rgba(16,185,129,0.15); color: var(--accent); }
+  .pill-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+  .pill-purple { background: rgba(139,92,246,0.15); color: var(--purple); }
+  .pill-red { background: rgba(244,63,94,0.15); color: var(--danger); }
+
+  /* CTA */
+  .cta-box {
+    background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.02) 100%);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 16px;
+    padding: 48px;
+    text-align: center;
+    margin-top: 32px;
+  }
+  .cta-amount { font-size: 4rem; font-weight: 900; color: var(--accent); line-height: 1; }
+
+  /* Mock screenshot */
+  .mock-screen {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .mock-titlebar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mock-dot.r { background: #f43f5e; }
+  .mock-dot.y { background: #f59e0b; }
+  .mock-dot.g { background: #10b981; }
+  .mock-url { margin-left: 12px; font-size: 0.7rem; color: var(--text-muted); background: rgba(255,255,255,0.04); padding: 3px 12px; border-radius: 4px; flex: 1; max-width: 300px; }
+  .mock-body { padding: 24px; }
+
+  /* Dashboard mock elements */
+  .dash-row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .dash-metric {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .dash-metric .dm-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .dash-metric .dm-value { font-size: 1.4rem; font-weight: 700; margin-top: 4px; }
+  .dash-metric .dm-change { font-size: 0.7rem; margin-top: 2px; }
+  .dm-up { color: var(--accent); }
+  .dm-warn { color: var(--warn); }
+  .dash-chart {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,0.04);
+    flex: 1;
+  }
+  .dash-chart .dc-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .mini-bars { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
+  .mini-bar { flex: 1; border-radius: 3px 3px 0 0; }
+
+  /* Two column layout */
+  .cols { display: flex; gap: 48px; align-items: flex-start; }
+  .col { flex: 1; }
+
+  /* Fade in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide-inner > * {
+    animation: fadeUp 0.6s ease both;
+  }
+  .slide-inner > *:nth-child(2) { animation-delay: 0.08s; }
+  .slide-inner > *:nth-child(3) { animation-delay: 0.16s; }
+  .slide-inner > *:nth-child(4) { animation-delay: 0.24s; }
+
+  /* Achonye hierarchy */
+  .hierarchy { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 24px; }
+  .hier-level {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    position: relative;
+    min-width: 200px;
+    text-align: center;
+  }
+  .hier-connector {
+    width: 2px; height: 20px; background: rgba(16,185,129,0.3);
+  }
+  .hier-fan {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
+  .hier-fan .hier-level { min-width: 130px; font-size: 0.82rem; padding: 10px 18px; }
+  .hier-l1 { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05)); border: 1px solid rgba(16,185,129,0.4); }
+  .hier-l2 { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); }
+  .hier-l3 { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); }
+  .hier-l4 { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); font-size: 0.78rem; padding: 8px 14px; min-width: 100px; }
+
+  /* Glow orbs */
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    opacity: 0.07;
+  }
+  .glow-green { background: var(--accent); }
+  .glow-blue { background: var(--blue); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .slide { padding: 40px 32px; min-height: auto; scroll-snap-align: none; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.8rem; }
+    .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    .cols { flex-direction: column; gap: 24px; }
+    .nav { display: none; }
+    .hier-fan { flex-direction: column; align-items: stretch; }
+    .hier-fan .hier-level { min-width: 0; width: 100%; }
+  }
+  /* Print / PDF export — one slide per page, 16:10.8 landscape with breathing room */
+  @media print {
+    @page { size: 13.33in 9.4in; margin: 0; }
+    html, body { background: var(--bg) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide {
+      min-height: 0;
+      height: 9.4in;
+      width: 13.33in;
+      padding: 56px 72px;
+      page-break-after: always;
+      page-break-inside: avoid;
+      scroll-snap-align: none;
+    }
+    .slide:last-of-type { page-break-after: avoid; }
+    .slide::before { display: none; }
+    .slide-inner { max-width: 100%; }
+    .slide-inner > * { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .nav, .slide-counter, .key-hint { display: none !important; }
+    .glow { display: none !important; }
+    h1 { font-size: 3.2rem; }
+    h2 { font-size: 2.4rem; }
+    h3 { font-size: 1.25rem; }
+    .subtitle { font-size: 1.2rem; }
+    .card { padding: 24px; }
+    .stat-value { font-size: 2.9rem; }
+    .card-grid { margin-top: 28px; gap: 18px; }
+    .timeline { margin-top: 26px; }
+    .timeline-item { margin-bottom: 22px; }
+  }
+
+  @media (max-width: 600px) {
+    .slide { padding: 24px 16px; min-height: auto; padding-top: 40px; padding-bottom: 40px; scroll-snap-align: none; }
+    .slide-inner { max-width: 100%; }
+    h1 { font-size: 1.6rem; line-height: 1.2; }
+    h2 { font-size: 1.3rem; }
+    h3 { font-size: 1rem; }
+    p, li { font-size: 0.9rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 12px; }
+    .arch-flow { flex-direction: column; gap: 8px; }
+    .arch-arrow { transform: rotate(90deg); }
+    .dash-row { flex-direction: column; }
+    .stat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat { padding: 16px; }
+    .stat .num { font-size: 1.5rem; }
+    .bar-track { height: 22px; }
+    .bar-label { font-size: 0.75rem; }
+    .card { padding: 16px; }
+    .key-hint { display: none; }
+    .slide-counter { bottom: 12px; right: 16px; font-size: 11px; }
+    .glow { display: none; }
+    .logo-mark { flex-direction: column; gap: 8px; }
+    .hier-fan { flex-direction: column; align-items: stretch; gap: 8px; }
+    .hier-fan .hier-level, .hier-l4 { min-width: 0; width: 100%; font-size: 0.8rem; padding: 10px; }
+    .hier-row { flex-wrap: wrap; gap: 6px; }
+    table { font-size: 0.78rem; }
+    td, th { padding: 8px 6px; }
+    .cols .col { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation dots -->
+<nav class="nav" id="nav"></nav>
+<div class="slide-counter" id="counter">1 / 6</div>
+<div class="key-hint"><kbd>&uarr;</kbd> <kbd>&darr;</kbd> or <kbd>&larr;</kbd> <kbd>&rarr;</kbd> to navigate</div>
+
+<!-- ========== SLIDE 1: TITLE ========== -->
+<section class="slide" id="s1">
+  <div class="glow glow-green" style="width:500px;height:500px;top:-150px;right:10%;"></div>
+  <div class="glow glow-blue" style="width:400px;height:400px;bottom:-100px;left:5%;"></div>
+  <div class="slide-inner" style="text-align:center;">
+    <div class="logo-mark" style="justify-content:center;">
+      <div class="logo-icon">GL</div>
+      <span class="logo-text">GovernLayer</span>
+    </div>
+    <h1 style="margin-top:16px;">Runtime AI Governance<br>for the <span class="accent">Agentic Era</span></h1>
+    <p class="subtitle" style="max-width:680px;margin:18px auto 0;">
+      Continuous monitoring &middot; Multi-LLM consensus &middot; Cryptographic audit trails.
+    </p>
+    <div style="margin-top:32px;">
+      <span class="pill pill-green">Pre-Seed 2026</span>
+      <span class="pill pill-purple">Live Product</span>
+    </div>
+    <p style="margin-top:56px;font-size:0.85rem;color:var(--text-muted);">
+      Ekene Wilfred Uwaezuoke &middot; founders@governlayer.ai &middot; governlayer.ai
+    </p>
+    <p style="margin-top:14px;font-size:0.78rem;color:var(--text-muted);font-style:italic;">
+      Full investor deck available on request.
+    </p>
+  </div>
+</section>
+
+<!-- ========== SLIDE 2: PROBLEM ========== -->
+<section class="slide" id="s2">
+  <div class="glow glow-green" style="width:420px;height:420px;top:-80px;left:-5%;"></div>
+  <div class="slide-inner">
+    <span class="label">The Problem</span>
+    <h2>Every Enterprise Deploying AI<br>Has <span style="color:var(--danger);">Lost Visibility.</span></h2>
+    <p class="subtitle" style="max-width:780px;">Banks, hospitals, and federal contractors run AI agents in production. None can prove how those agents made any given decision.</p>
+
+    <div class="card-grid grid-3">
+      <div class="card stat">
+        <div class="stat-value" style="color:var(--danger);">73%</div>
+        <div class="stat-label">of enterprises have no automated AI governance <span class="muted">(Gartner)</span></div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value" style="color:var(--danger);">$7.1B+</div>
+        <div class="stat-label">in GDPR-style fines issued since 2018</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value" style="color:var(--danger);">&euro;35M</div>
+        <div class="stat-label">max EU AI Act penalty per violation, or 7% of global revenue</div>
+      </div>
+    </div>
+
+    <p style="margin-top:32px;font-size:1.1rem;text-align:center;font-weight:600;color:var(--text);">
+      When your AI agent denies a claim, fires a candidate, or wipes a production database &mdash; <span style="color:var(--danger);">can you prove what happened?</span>
+    </p>
+  </div>
+</section>
+
+<!-- ========== SLIDE 3: WHY NOW ========== -->
+<section class="slide" id="s3">
+  <div class="glow glow-blue" style="width:480px;height:480px;top:10%;right:-10%;"></div>
+  <div class="slide-inner">
+    <span class="label">Why Now</span>
+    <h2>The <span class="accent">August 2026</span> Cliff</h2>
+    <p class="subtitle" style="max-width:780px;">Three regulatory deadlines collide in the next 18 months. Enterprises have no tooling.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">Feb 2025</div>
+        <div class="timeline-title">EU AI Act prohibited-practice enforcement live</div>
+        <div class="timeline-desc">Social scoring, biometric categorization, and other banned uses now carry &euro;35M / 7% of global revenue penalties.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2025 &ndash; 2026</div>
+        <div class="timeline-title">NYC LL144 audits underway &middot; OMB M-24-10 mandates federal AI governance</div>
+        <div class="timeline-desc">Hiring AI must publish bias audits. Federal agencies must inventory, assess, and govern every AI system in use.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Aug 2026</div>
+        <div class="timeline-title">EU AI Act high-risk system rules enforced &mdash; the critical deadline</div>
+        <div class="timeline-desc">Conformity assessments, risk management, data governance, human oversight, and post-market monitoring become mandatory for every high-risk AI system sold or used in the EU.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">2027</div>
+        <div class="timeline-title">Full GPAI obligations &middot; ISO 42001 becomes de facto procurement standard</div>
+        <div class="timeline-desc">General-purpose AI providers face systemic-risk obligations. Enterprise buyers begin requiring ISO 42001 attestation from every AI vendor.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:32px;font-size:1.15rem;text-align:center;font-weight:600;color:var(--text);">
+      The buyer's deadline is here. Their tooling is not. <span class="accent">We exist to close that gap.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ========== SLIDE 4: SOLUTION ========== -->
+<section class="slide" id="s4">
+  <div class="glow glow-green" style="width:460px;height:460px;top:-100px;right:-5%;"></div>
+  <div class="slide-inner">
+    <span class="label">Solution</span>
+    <h2>Runtime Governance,<br><span class="accent">Replayable Evidence.</span></h2>
+    <p class="subtitle" style="max-width:840px;">GovernLayer sits in the decision path of every AI agent in your organization &mdash; monitoring, validating, and recording every action to a regulator-replayable ledger.</p>
+
+    <div class="card-grid grid-3">
+      <div class="card card-accent">
+        <h3>Continuous Drift Detection</h3>
+        <p class="dim" style="font-size:0.92rem;">Behavioral baselines plus embedding-distance scoring. Real-time alerts when an agent's behavior moves outside its safety manifold.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Achonye Multi-LLM Engine</h3>
+        <p class="dim" style="font-size:0.92rem;">Cost-optimized routing across local and cloud models. Trivial decisions stay local for efficiency; critical decisions trigger multi-model consensus with voting and chain-of-verification for reliability.</p>
+      </div>
+      <div class="card card-accent">
+        <h3>Cryptographic Audit Ledger</h3>
+        <p class="dim" style="font-size:0.92rem;">SHA-256 hash-chained from genesis. Every decision tied to inputs, policy, and model output. Regulator-replayable &mdash; reconstruct any decision exactly as it happened.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:32px;font-size:1.1rem;text-align:center;font-weight:600;color:var(--text);">
+      Not point-in-time audit (Vanta). Not just guardrails (Lakera). <span class="accent">Runtime governance with replayable evidence.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ========== SLIDE 5: TEAM ========== -->
+<section class="slide" id="s5">
+  <div class="glow glow-green" style="width:460px;height:460px;top:-100px;right:-5%;"></div>
+  <div class="slide-inner">
+    <span class="label">Team</span>
+    <h2>Built by an Operator Who <span class="accent">Knows the Problem.</span></h2>
+
+    <div class="card card-accent" style="max-width:580px;margin:32px auto 0;text-align:center;padding:36px;">
+      <div style="width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#059669);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--bg);margin:0 auto 14px;box-shadow:0 4px 20px var(--accent-glow);">EU</div>
+      <h3 style="font-size:1.2rem;margin-bottom:2px;">Ekene Wilfred Uwaezuoke</h3>
+      <p class="accent" style="font-size:0.85rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;">Founder &amp; CEO</p>
+      <p class="dim" style="font-size:0.9rem;line-height:1.7;text-align:left;">
+        Senior Engineering Program Manager at Google &mdash; leads AI governance, risk, and compliance programs for Gemini, DeepMind, Waymo &amp; Vertex AI. Former Deloitte Advisory (cloud security &amp; TPRM). ISO 42001 AI Lead Implementer, CISA, CISM, CDPSE, PMP. MIT Sloan Executive Education &mdash; AI: Implications for Business Strategy (MIT Sloan / CSAIL). Provisional patent filed.
+      </p>
+    </div>
+
+    <p style="margin-top:28px;font-size:0.95rem;text-align:center;color:var(--text-dim);">
+      Cross-industry advisors from Google, Meta Superintelligence Labs, NVIDIA, and enterprise AI.
+    </p>
+  </div>
+</section>
+
+<!-- ========== SLIDE 6: CLOSING / CTA ========== -->
+<section class="slide" id="s6">
+  <div class="glow glow-green" style="width:500px;height:500px;top:-150px;right:10%;"></div>
+  <div class="glow glow-blue" style="width:400px;height:400px;bottom:-100px;left:5%;"></div>
+  <div class="slide-inner" style="text-align:center;">
+    <span class="label">Next Step</span>
+    <h2>Want the <span class="accent">Full Picture</span>?</h2>
+    <p class="subtitle" style="max-width:720px;margin:14px auto 0;">
+      Full investor deck, financial model, regulatory mapping, and live product demo available on request.
+    </p>
+
+    <div class="card card-accent" style="max-width:480px;margin:36px auto 0;text-align:center;padding:36px;">
+      <p style="font-size:1.2rem;font-weight:700;color:var(--text);">Ekene Wilfred Uwaezuoke</p>
+      <p class="dim" style="font-size:0.9rem;margin-top:4px;">Founder &amp; CEO</p>
+      <p class="accent" style="font-size:1.1rem;font-weight:600;margin-top:18px;">founders@governlayer.ai</p>
+      <p class="dim" style="font-size:0.9rem;margin-top:6px;">governlayer.ai</p>
+    </div>
+
+    <p style="margin-top:56px;font-size:0.78rem;color:var(--text-muted);">
+      &copy; 2026 GovernLayer &middot; Confidential &mdash; for the named recipient only &middot; governlayer.ai
+    </p>
+  </div>
+</section>
+
+<script>
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  var nav = document.getElementById('nav');
+  var counter = document.getElementById('counter');
+  var total = slides.length;
+
+  // Build nav dots
+  for (var i = 0; i < total; i++) {
+    var dot = document.createElement('button');
+    dot.className = 'nav-dot';
+    dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+    (function(idx) {
+      dot.addEventListener('click', function(e) {
+        e.stopPropagation();
+        slides[idx].scrollIntoView({ behavior: 'smooth' });
+      });
+    })(i);
+    nav.appendChild(dot);
+  }
+
+  var dots = nav.querySelectorAll('.nav-dot');
+
+  // Observe which slide is visible
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var idx = Array.prototype.indexOf.call(slides, entry.target);
+        for (var j = 0; j < dots.length; j++) {
+          dots[j].classList.toggle('active', j === idx);
+        }
+        counter.textContent = (idx + 1) + ' / ' + total;
+      }
+    });
+  }, { threshold: 0.55 });
+
+  for (var s = 0; s < slides.length; s++) {
+    observer.observe(slides[s]);
+  }
+
+  // Get current slide index
+  function getCurrentSlide() {
+    var current = 0;
+    for (var i = 0; i < slides.length; i++) {
+      var rect = slides[i].getBoundingClientRect();
+      if (rect.top <= window.innerHeight * 0.4 && rect.bottom > window.innerHeight * 0.4) {
+        current = i;
+      }
+    }
+    return current;
+  }
+
+  // Arrow key navigation
+  document.addEventListener('keydown', function(e) {
+    var cur = getCurrentSlide();
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      if (cur < total - 1) slides[cur + 1].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (cur > 0) slides[cur - 1].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      slides[0].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      slides[total - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // Touch/swipe support
+  var touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dy) > 50) {
+      var cur = getCurrentSlide();
+      if (dy < 0 && cur < total - 1) slides[cur + 1].scrollIntoView({ behavior: 'smooth' });
+      else if (dy > 0 && cur > 0) slides[cur - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
