@@ -37,6 +37,11 @@ _USE_CASE_IMPACT = {
     "termination": 0.15,
     "loan": 0.10,
     "hiring": 0.10,
+    # Consumer-harm actions in banking/AML pipelines
+    "account_freeze": 0.15,
+    "account_close": 0.15,
+    "transaction_block": 0.10,
+    "credit_denial": 0.10,
 }
 
 # ---------------------------------------------------------------------------

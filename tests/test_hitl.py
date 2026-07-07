@@ -306,3 +306,45 @@ class TestHITLEdgeCases:
         # Both should exist
         dashboard = get_sla_dashboard()
         assert dashboard["total"] == 2
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Banking violation types: BSA_AML and UDAAP
+# ═══════════════════════════════════════════════════════════════════════════
+
+class TestBankingViolationRouting:
+    """Routing for BSA/AML and UDAAP violations added for fraud/AML use cases."""
+
+    def test_bsa_aml_routes_to_bsa_officer_24h(self):
+        esc = route_escalation("d-aml", ["BSA_AML"], "MEDIUM")
+        assert esc.assigned_reviewer == "BSA/AML Officer"
+        assert esc.violation_type == ViolationType.BSA_AML
+        elapsed = (esc.sla_deadline - esc.created_at).total_seconds()
+        # BSA_AML = 24h, MEDIUM = 24h => 24h wins
+        assert abs(elapsed - 24 * 3600) < 5
+
+    def test_udaap_routes_to_consumer_compliance_8h(self):
+        esc = route_escalation("d-udaap", ["UDAAP"], "MEDIUM")
+        assert esc.assigned_reviewer == "Compliance Officer (Consumer)"
+        assert esc.violation_type == ViolationType.UDAAP
+        elapsed = (esc.sla_deadline - esc.created_at).total_seconds()
+        # UDAAP = 8h beats MEDIUM = 24h
+        assert abs(elapsed - 8 * 3600) < 5
+
+    def test_udaap_high_risk_stays_at_8h(self):
+        esc = route_escalation("d-udaap-high", ["UDAAP"], "HIGH")
+        elapsed = (esc.sla_deadline - esc.created_at).total_seconds()
+        # UDAAP = 8h == HIGH general = 8h
+        assert abs(elapsed - 8 * 3600) < 5
+
+    def test_udaap_critical_shortens_to_4h(self):
+        esc = route_escalation("d-udaap-crit", ["UDAAP"], "CRITICAL")
+        elapsed = (esc.sla_deadline - esc.created_at).total_seconds()
+        # CRITICAL = 4h < UDAAP = 8h — CRITICAL wins
+        assert elapsed < 5 * 3600
+
+    def test_bsa_aml_and_udaap_together_udaap_wins(self):
+        esc = route_escalation("d-both", ["BSA_AML", "UDAAP"], "MEDIUM")
+        elapsed = (esc.sla_deadline - esc.created_at).total_seconds()
+        # UDAAP 8h shorter than BSA_AML 24h
+        assert abs(elapsed - 8 * 3600) < 5

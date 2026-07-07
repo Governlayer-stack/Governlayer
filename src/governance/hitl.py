@@ -6,9 +6,11 @@ to qualified reviewers with legally mandated SLA deadlines:
     sla_deadline = current_time + delta_t(violation_type, risk_level)
 
 Violation routing:
-    ECOA  -> Compliance Officer (Finance), 4h SLA
-    EEOC  -> HR Compliance Officer, 4h SLA
-    HIPAA -> Licensed Medical Professional, 2h SLA
+    ECOA    -> Compliance Officer (Finance), 4h SLA
+    EEOC    -> HR Compliance Officer, 4h SLA
+    HIPAA   -> Licensed Medical Professional, 2h SLA
+    BSA_AML -> BSA/AML Officer, 24h SLA        (analyst review of freeze/block)
+    UDAAP   -> Compliance Officer (Consumer), 8h SLA  (consumer-harm actions)
     HIGH-risk general  -> Senior Reviewer, 8h SLA
     MEDIUM-risk general -> Standard Queue, 24h SLA
 """
@@ -40,6 +42,8 @@ class ViolationType(str, Enum):
     ECOA = "ECOA"
     EEOC = "EEOC"
     HIPAA = "HIPAA"
+    BSA_AML = "BSA_AML"
+    UDAAP = "UDAAP"
     GENERAL = "GENERAL"
 
 
@@ -67,6 +71,8 @@ _VIOLATION_ROUTING: dict[ViolationType, tuple[str, int]] = {
     ViolationType.ECOA: ("Compliance Officer (Finance)", 4),
     ViolationType.EEOC: ("HR Compliance Officer", 4),
     ViolationType.HIPAA: ("Licensed Medical Professional", 2),
+    ViolationType.BSA_AML: ("BSA/AML Officer", 24),
+    ViolationType.UDAAP: ("Compliance Officer (Consumer)", 8),
 }
 
 _RISK_ROUTING: dict[str, tuple[str, int]] = {

@@ -35,7 +35,7 @@ class EscalateRequest(BaseModel):
     decision_id: str = Field(..., min_length=1, max_length=64, description="Governance decision ID")
     violations: list[str] = Field(
         default_factory=list,
-        description="Violation types: ECOA, EEOC, HIPAA, GENERAL",
+        description="Violation types: ECOA, EEOC, HIPAA, BSA_AML, UDAAP, GENERAL",
     )
     risk_level: str = Field(
         default="MEDIUM",
