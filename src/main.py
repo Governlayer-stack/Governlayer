@@ -1264,6 +1264,17 @@ def create_app() -> FastAPI:
             return HTMLResponse(_beta_html)
         return {"error": "Beta program page not found"}
 
+    # Public interactive demo — registered BEFORE the /pitch/{slug} catch-all
+    # so the "demo" slug resolves here instead of returning 404 from the private
+    # pitch handler.
+    @app.get("/pitch/demo")
+    def public_pitch_demo():
+        for base in [os.path.dirname(os.path.dirname(__file__)), "/app"]:
+            p = os.path.join(base, "docs", "pitch", "demo-walkthrough.html")
+            if os.path.exists(p):
+                return FileResponse(p, media_type="text/html")
+        return Response(status_code=404)
+
     @app.get("/pitch/{slug}")
     def private_pitch(slug: str):
         # Private investor deck — only served when slug matches the env-var token.
