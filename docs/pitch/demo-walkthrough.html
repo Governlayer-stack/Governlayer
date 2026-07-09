@@ -320,6 +320,57 @@ pre code{font-family:inherit;font-size:inherit;background:none;padding:0}
 .step-9 .step-number,.toc .c9{background:linear-gradient(135deg,#0ea5e9,#0369a1);color:#fff}
 .step-10 .step-number,.toc .c10{background:linear-gradient(135deg,#f97316,#c2410c);color:#fff}
 
+/* ===== LIVE DEMO PANEL ===== */
+.live-demo{background:linear-gradient(160deg,#0f172a,#1e293b);color:#f1f5f9;border-radius:20px;padding:36px 40px;margin:32px 0;box-shadow:0 20px 60px rgba(15,23,42,0.4);border:1px solid #334155}
+.live-demo-header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap}
+.live-demo-eyebrow{color:#38bdf8;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px}
+.live-demo-title{color:#f1f5f9;font-size:26px;font-weight:700;margin:0 0 8px 0;letter-spacing:-0.02em}
+.live-demo-sub{color:#94a3b8;font-size:14px;line-height:1.6;margin:0;max-width:640px}
+.live-demo-sub code{background:#0b1220;color:#38bdf8;padding:2px 8px;border-radius:6px;font-size:12px}
+.live-demo-session{background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:6px;min-width:280px;align-items:flex-start}
+.live-demo-session-label{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
+.live-demo-session code{color:#38bdf8;font-size:13px;word-break:break-all;font-family:'SF Mono',Monaco,monospace}
+.live-btn-ghost{background:transparent;border:1px solid #334155;color:#94a3b8;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px;transition:all 0.15s}
+.live-btn-ghost:hover{background:#1e293b;color:#f1f5f9;border-color:#475569}
+.live-demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:24px}
+.live-btn{background:#0b1220;border:1px solid #1e293b;border-radius:14px;padding:20px;text-align:left;cursor:pointer;transition:transform 0.15s,border-color 0.15s,background 0.15s;display:flex;flex-direction:column;gap:8px;color:#f1f5f9;font-family:inherit}
+.live-btn:hover:not(:disabled){transform:translateY(-2px);background:#131c2e}
+.live-btn:disabled{opacity:0.45;cursor:wait}
+.live-btn-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#64748b}
+.live-btn-title{font-size:16px;font-weight:700;color:#f1f5f9;line-height:1.3}
+.live-btn-sub{font-size:12px;color:#94a3b8;line-height:1.5}
+.live-btn-banking:hover:not(:disabled){border-color:#0ea5e9}
+.live-btn-banking .live-btn-tag{color:#38bdf8}
+.live-btn-cyber:hover:not(:disabled){border-color:#8b5cf6}
+.live-btn-cyber .live-btn-tag{color:#a78bfa}
+.live-btn-healthcare:hover:not(:disabled){border-color:#f97316}
+.live-btn-healthcare .live-btn-tag{color:#fb923c}
+.live-btn-verify{background:linear-gradient(135deg,#065f46,#10b981);border-color:#10b981}
+.live-btn-verify:hover:not(:disabled){transform:translateY(-2px);background:linear-gradient(135deg,#047857,#059669)}
+.live-btn-verify .live-btn-tag,.live-btn-verify .live-btn-sub{color:rgba(255,255,255,0.85)}
+.live-demo-out{background:#020617;border-radius:12px;border:1px solid #1e293b;overflow:hidden}
+.live-demo-out-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#0b1220;border-bottom:1px solid #1e293b;font-size:12px}
+#live-out-title{font-weight:700;color:#f1f5f9;text-transform:uppercase;letter-spacing:0.08em}
+#live-out-meta{color:#64748b}
+.live-demo-out-body{padding:18px 20px;margin:0;font-family:'SF Mono',Monaco,monospace;font-size:12px;line-height:1.6;color:#a5f3fc;max-height:340px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.live-demo-chain{margin-top:20px;background:#0b1220;border:1px solid #1e293b;border-radius:12px;padding:18px 20px}
+.live-demo-chain-head{display:flex;justify-content:space-between;color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:12px}
+.live-demo-chain-head span:first-child{color:#f1f5f9}
+.live-demo-chain-genesis{font-family:'SF Mono',Monaco,monospace;color:#64748b;text-transform:none;letter-spacing:0}
+.live-demo-chain-list{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.live-demo-chain-list li{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:8px 12px;background:#020617;border-radius:8px;border:1px solid #1e293b;font-size:12px;font-family:'SF Mono',Monaco,monospace;color:#e2e8f0}
+.live-demo-chain-list li.live-chain-empty{grid-template-columns:1fr;text-align:center;color:#64748b;font-family:inherit;font-style:italic}
+.live-chain-idx{color:#64748b;font-weight:600}
+.live-chain-scenario{color:#38bdf8}
+.live-chain-hash{color:#94a3b8;font-size:11px}
+.live-verified{color:#34d399;font-weight:700}
+.live-tampered{color:#f87171;font-weight:700}
+@media (max-width:640px){
+  .live-demo{padding:24px 20px}
+  .live-demo-header{flex-direction:column}
+  .live-demo-session{min-width:0;width:100%}
+}
+
 /* ===== PRINT ===== */
 @media print{
   body{
@@ -386,11 +437,68 @@ pre code{font-family:inherit;font-size:inherit;background:none;padding:0}
   <h1>GovernLayer <span>Live Demo</span></h1>
   <p>Step-by-step walkthrough for demonstrating runtime AI governance. Eight live API calls showing compliance, risk scoring, AGI safety research direction, and cryptographic auditability.</p>
   <div class="header-meta">
-    <span>8 demo steps</span>
+    <span>10 demo steps</span>
     <span>~15 min runtime</span>
     <span>Base URL: www.governlayer.ai</span>
   </div>
 </header>
+
+<!-- ============ LIVE DEMO PANEL ============ -->
+<section class="live-demo" id="live-demo">
+  <div class="live-demo-header">
+    <div>
+      <div class="live-demo-eyebrow">Interactive &mdash; no login required</div>
+      <h2 class="live-demo-title">Run this demo live against the production API</h2>
+      <p class="live-demo-sub">Every button below fires against <code>web-production-bdd26.up.railway.app/demo/*</code>. Real hash chain, real Reg&nbsp;B reason codes, real HITL routing table. State is isolated to your browser session and expires after one hour.</p>
+    </div>
+    <div class="live-demo-session">
+      <span class="live-demo-session-label">Your session</span>
+      <code id="live-session-id">issuing&hellip;</code>
+      <button id="live-reset-btn" type="button" class="live-btn-ghost">Reset chain</button>
+    </div>
+  </div>
+
+  <div class="live-demo-grid">
+    <button type="button" class="live-btn live-btn-banking" data-scenario="banking">
+      <span class="live-btn-tag">Scene 1 &mdash; Banking</span>
+      <span class="live-btn-title">Run credit-oversight scenario</span>
+      <span class="live-btn-sub">Borderline denial &rarr; ECOA HITL, Compliance Officer (Finance), 4h SLA</span>
+    </button>
+    <button type="button" class="live-btn live-btn-cyber" data-scenario="cyber">
+      <span class="live-btn-tag">Scene 2 &mdash; Compliance / Cyber</span>
+      <span class="live-btn-title">Run framework-enforcement scenario</span>
+      <span class="live-btn-sub">ISO 42001 A.7.2 CRITICAL fails &rarr; runtime BLOCK with citations</span>
+    </button>
+    <button type="button" class="live-btn live-btn-healthcare" data-scenario="healthcare">
+      <span class="live-btn-tag">Scene 3 &mdash; Healthcare</span>
+      <span class="live-btn-title">Run PHI-at-boundary scenario</span>
+      <span class="live-btn-sub">SSN + MRN outbound &rarr; HIPAA HITL, Licensed Medical Professional, 2h SLA</span>
+    </button>
+    <button type="button" class="live-btn live-btn-verify" id="live-verify-btn">
+      <span class="live-btn-tag">The closer</span>
+      <span class="live-btn-title">Verify entire hash chain</span>
+      <span class="live-btn-sub">One API call. Cryptographic proof every decision above is intact.</span>
+    </button>
+  </div>
+
+  <div class="live-demo-out">
+    <div class="live-demo-out-head">
+      <span id="live-out-title">Response</span>
+      <span id="live-out-meta"></span>
+    </div>
+    <pre id="live-out-body" class="live-demo-out-body">Click a scenario above to run it. The response below will be the exact JSON returned by the live production API.</pre>
+  </div>
+
+  <div class="live-demo-chain">
+    <div class="live-demo-chain-head">
+      <span>Your accumulated hash chain <span id="live-chain-count">(0 records)</span></span>
+      <span class="live-demo-chain-genesis">genesis = SHA256("GOVERNLAYER_DEMO_GENESIS")</span>
+    </div>
+    <ol id="live-chain-list" class="live-demo-chain-list">
+      <li class="live-chain-empty">Genesis only. Chain empty. Run a scenario above.</li>
+    </ol>
+  </div>
+</section>
 
 <!-- ============ TABLE OF CONTENTS ============ -->
 <nav class="toc">
@@ -1207,6 +1315,165 @@ pre code{font-family:inherit;font-size:inherit;background:none;padding:0}
 </section>
 
 </div><!-- .container -->
+
+<script>
+(function() {
+  var API = 'https://web-production-bdd26.up.railway.app';
+  var SESSION_KEY = 'governlayer_demo_session';
+
+  var sessionEl   = document.getElementById('live-session-id');
+  var outTitle    = document.getElementById('live-out-title');
+  var outMeta     = document.getElementById('live-out-meta');
+  var outBody     = document.getElementById('live-out-body');
+  var chainCount  = document.getElementById('live-chain-count');
+  var chainList   = document.getElementById('live-chain-list');
+  var resetBtn    = document.getElementById('live-reset-btn');
+  var verifyBtn   = document.getElementById('live-verify-btn');
+  var scenarioBtns = document.querySelectorAll('.live-btn[data-scenario]');
+
+  function getSession() {
+    return localStorage.getItem(SESSION_KEY);
+  }
+
+  function setSession(id) {
+    localStorage.setItem(SESSION_KEY, id);
+    sessionEl.textContent = id;
+  }
+
+  function shortHash(h) {
+    if (!h || h.length < 16) return h || '';
+    return h.slice(0, 10) + '…' + h.slice(-6);
+  }
+
+  function renderChain(entries) {
+    chainCount.textContent = '(' + (entries.length) + ' record' + (entries.length === 1 ? '' : 's') + ')';
+    if (!entries.length) {
+      chainList.innerHTML = '<li class="live-chain-empty">Genesis only. Chain empty. Run a scenario above.</li>';
+      return;
+    }
+    chainList.innerHTML = entries.map(function(e, i) {
+      return '<li>'
+        + '<span class="live-chain-idx">#' + (i + 1) + '</span>'
+        + '<span><span class="live-chain-scenario">' + e.scenario + '</span> · ' + e.governance_action + '</span>'
+        + '<span class="live-chain-hash">' + shortHash(e.current_hash) + '</span>'
+        + '</li>';
+    }).join('');
+  }
+
+  function setOutput(title, meta, body) {
+    outTitle.textContent = title;
+    outMeta.textContent = meta || '';
+    if (typeof body === 'string') {
+      outBody.textContent = body;
+    } else {
+      outBody.textContent = JSON.stringify(body, null, 2);
+    }
+  }
+
+  function lockButtons(locked) {
+    scenarioBtns.forEach(function(b) { b.disabled = locked; });
+    verifyBtn.disabled = locked;
+    resetBtn.disabled = locked;
+  }
+
+  async function refreshChain(sid) {
+    try {
+      var r = await fetch(API + '/demo/state/' + encodeURIComponent(sid));
+      if (!r.ok) return;
+      var body = await r.json();
+      renderChain(body.ledger || []);
+    } catch (e) { /* silent — chain panel just stays stale */ }
+  }
+
+  async function issueSession() {
+    var t0 = performance.now();
+    try {
+      var existing = getSession();
+      var opts = existing ? { headers: { 'X-Demo-Session': existing } } : {};
+      var r = await fetch(API + '/demo/scenarios', opts);
+      var body = await r.json();
+      setSession(body.session_id);
+      renderChain([]);
+      if (existing) await refreshChain(body.session_id);
+      var dt = Math.round(performance.now() - t0);
+      setOutput('Ready', 'session issued in ' + dt + 'ms',
+        'Session ready. Click a scenario above to run it against the live production API. '
+        + 'Every button issues a real API call to ' + API + '/demo/*.');
+    } catch (e) {
+      sessionEl.textContent = 'error';
+      setOutput('Session error', '', 'Failed to reach the demo API: ' + e.message);
+    }
+  }
+
+  async function runScenario(name) {
+    var sid = getSession();
+    if (!sid) { await issueSession(); sid = getSession(); }
+    lockButtons(true);
+    setOutput('Running scenario', name, 'POST ' + API + '/demo/scenarios/' + name + '/run…');
+    var t0 = performance.now();
+    try {
+      var r = await fetch(API + '/demo/scenarios/' + name + '/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Demo-Session': sid },
+      });
+      var body = await r.json();
+      var dt = Math.round(performance.now() - t0);
+      setOutput('POST /demo/scenarios/' + name + '/run', dt + 'ms · status ' + r.status, body);
+      if (r.ok) await refreshChain(sid);
+    } catch (e) {
+      setOutput('Request failed', name, 'Error: ' + e.message);
+    } finally {
+      lockButtons(false);
+    }
+  }
+
+  async function verifyChain() {
+    var sid = getSession();
+    if (!sid) { await issueSession(); sid = getSession(); }
+    lockButtons(true);
+    setOutput('Verifying chain', 'session ' + sid.slice(0, 18) + '…', 'GET ' + API + '/demo/ledger/verify/' + sid);
+    var t0 = performance.now();
+    try {
+      var r = await fetch(API + '/demo/ledger/verify/' + sid);
+      var body = await r.json();
+      var dt = Math.round(performance.now() - t0);
+      var verdict = body.chain_intact
+        ? '✅  chain_intact = true'
+        : '⚠️  chain_intact = false';
+      var summary = verdict + '  ·  ' + (body.records_validated || 0) + ' records validated in ' + body.verification_time_ms + 'ms server-side';
+      setOutput('GET /demo/ledger/verify/{session}', dt + 'ms round-trip · status ' + r.status, summary + '\n\n' + JSON.stringify(body, null, 2));
+    } catch (e) {
+      setOutput('Verify failed', '', 'Error: ' + e.message);
+    } finally {
+      lockButtons(false);
+    }
+  }
+
+  async function resetChain() {
+    var sid = getSession();
+    if (!sid) return;
+    if (!confirm('Clear your demo chain and start fresh?')) return;
+    lockButtons(true);
+    try {
+      await fetch(API + '/demo/reset/' + sid, { method: 'POST' });
+      renderChain([]);
+      setOutput('Chain reset', 'session preserved', 'Ledger cleared. Chain returned to GOVERNLAYER_DEMO_GENESIS. Run a scenario to grow a new chain.');
+    } catch (e) {
+      setOutput('Reset failed', '', 'Error: ' + e.message);
+    } finally {
+      lockButtons(false);
+    }
+  }
+
+  scenarioBtns.forEach(function(b) {
+    b.addEventListener('click', function() { runScenario(b.dataset.scenario); });
+  });
+  verifyBtn.addEventListener('click', verifyChain);
+  resetBtn.addEventListener('click', resetChain);
+
+  issueSession();
+})();
+</script>
 
 </body>
 </html>

@@ -68,6 +68,36 @@ class RequestCorrelationMiddleware(BaseHTTPMiddleware):
             _request_id_ctx.reset(token)
 
 
+class DemoCORSMiddleware(BaseHTTPMiddleware):
+    """Open CORS for /demo/* only.
+
+    The rest of the API is CORS-locked to governlayer.ai. The demo endpoints
+    are public by design (see src/api/demo.py) and are called from static
+    HTML that may be hosted anywhere (GitHub Pages, local file, embedded in
+    an investor deck). We allow-list all origins for this namespace only.
+    Everything else keeps its existing CORS policy.
+    """
+
+    _DEMO_HEADERS = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, X-Demo-Session",
+        "Access-Control-Max-Age": "600",
+    }
+
+    async def dispatch(self, request: Request, call_next):
+        if not request.url.path.startswith("/demo/") and request.url.path != "/demo":
+            return await call_next(request)
+
+        if request.method == "OPTIONS":
+            return Response(status_code=204, headers=self._DEMO_HEADERS)
+
+        response = await call_next(request)
+        for k, v in self._DEMO_HEADERS.items():
+            response.headers[k] = v
+        return response
+
+
 def _seed_demo_data():
     """Seed demo data on first startup so the dashboard isn't empty."""
     db = SessionLocal()
@@ -307,6 +337,9 @@ def create_app() -> FastAPI:
     app.add_middleware(BodySizeLimitMiddleware)
     # RequestCorrelationMiddleware — runs before everything else (added last = outermost)
     app.add_middleware(RequestCorrelationMiddleware)
+    # DemoCORSMiddleware — outermost so preflight OPTIONS never hits auth/rate-limit.
+    # Only affects /demo/* paths; every other route keeps its locked-down CORS policy.
+    app.add_middleware(DemoCORSMiddleware)
 
     # Register routers
     app.include_router(auth.router)
