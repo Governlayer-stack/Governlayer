@@ -24,6 +24,10 @@ class AgentStatus(str, enum.Enum):
     UNDER_REVIEW = "under_review"
     APPROVED = "approved"
     REJECTED = "rejected"
+    # Terminal state: agent was killed via /agent-registry/agents/{id}/kill.
+    # Required by SR 26-2 §V.3 (kill-switch capability). Once KILLED the
+    # agent cannot be re-approved without registering a new agent record.
+    KILLED = "killed"
 
 
 class DiscoverySource(str, enum.Enum):

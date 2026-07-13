@@ -25,7 +25,7 @@ from sqlalchemy import text as sa_text
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.api import (
-    achonye, agent_governance, agent_registry, agi, analytics, analytics_usage,
+    achonye, admin, agent_governance, agent_registry, agi, analytics, analytics_usage,
     assets, audit, auth, automation, billing, calendar, compliance_hub, controls, credentials,
     credit, dashboard, demo, enterprise, enterprise_features, evidence, export, frameworks, fraud,
     governance, growth, hitl, incidents, integrations, knowledge_graph, ledger, lineage, mfa,
@@ -394,6 +394,7 @@ def create_app() -> FastAPI:
     app.include_router(credit.router)
     app.include_router(fraud.router)
     app.include_router(demo.router)
+    app.include_router(admin.router)
 
     # --------------- Custom Swagger UI with GovernLayer dark theme ---------------
     _SWAGGER_DARK_CSS = (

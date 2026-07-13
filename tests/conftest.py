@@ -18,6 +18,21 @@ def setup_database():
     except Exception:
         pass
     Base.metadata.create_all(bind=engine)
+
+    # Ensure new enum values that were added after the initial CREATE TYPE
+    # are present. Alembic handles this for production; for pytest (which
+    # calls create_all directly), we run the ADD VALUE here idempotently.
+    if engine.dialect.name == "postgresql":
+        with engine.connect() as conn:
+            from sqlalchemy import text as sa_text
+            for enum_val in ("KILLED",):
+                try:
+                    with conn.begin():
+                        conn.execute(sa_text(
+                            f"ALTER TYPE agentstatus ADD VALUE IF NOT EXISTS '{enum_val}'"
+                        ))
+                except Exception:
+                    pass
     yield
 
 

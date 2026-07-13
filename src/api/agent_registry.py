@@ -221,6 +221,118 @@ def update_agent_governance(agent_id: int, data: AgentApproval,
     return {"id": agent.id, "name": agent.name, "status": agent.status.value, "governance_status": agent.governance_status}
 
 
+class KillRequest(BaseModel):
+    """Kill-switch payload — SR 26-2 §V.3 requires immediate, cooperative-independent termination."""
+    reason: str = Field(..., min_length=1, max_length=1000,
+                        description="Documented reason for termination (goes on the ledger).")
+    kill_source: str = Field(default="operator",
+                             description="Who or what triggered the kill: operator | auto_guardrail | regulatory")
+
+
+@router.post("/{agent_id}/kill")
+def kill_agent(agent_id: int, data: KillRequest,
+               auth: AuthContext = Depends(require_scope("govern")),
+               db: Session = Depends(get_db)):
+    """Terminate an agent immediately, irrevocably, and cryptographically.
+
+    Regulatory basis: SR 26-2 §V.3 (Federal Reserve, effective 2026-04-17) and
+    OCC Bulletin 2026-13 require every AI/ML system that takes autonomous
+    action to have a documented kill-switch capability that terminates the
+    system regardless of its cooperation.
+
+    Guarantees:
+      1. Status transitions to KILLED regardless of prior state.
+      2. A hash-chained AuditRecord is written so the termination is
+         cryptographically provable to an examiner.
+      3. The kill fires a webhook (`agent.killed`) so downstream systems can
+         de-register the agent.
+      4. Attempting to kill an already-KILLED agent is idempotent — returns
+         200 with `already_killed: true` rather than an error, so a repeated
+         kill call under duress is safe.
+    """
+    from src.api.webhooks import dispatch_event
+    from src.models.database import AuditRecord, compute_hash, get_last_hash
+    import json
+    import uuid
+
+    agent = db.query(AIAgent).filter(AIAgent.id == agent_id).first()
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    if auth.org_id and agent.org_id != auth.org_id:
+        raise HTTPException(status_code=404, detail="Agent not found")
+
+    already_killed = agent.status == AgentStatus.KILLED
+    prior_status = agent.status.value if agent.status else "unknown"
+
+    now = datetime.utcnow()
+    agent.status = AgentStatus.KILLED
+    agent.governance_status = "killed"
+    agent.updated_at = now
+
+    # Hash-chain the termination onto the ledger so the kill is
+    # cryptographically provable during an OCC / Fed / CFPB exam.
+    decision_id = f"kill-{uuid.uuid4().hex[:12]}"
+    previous_hash = get_last_hash(db)
+    record_payload = {
+        "decision_id": decision_id,
+        "system_name": agent.name,
+        "agent_id": agent.id,
+        "action": "KILL_AGENT",
+        "prior_status": prior_status,
+        "kill_source": data.kill_source,
+        "reason": data.reason,
+        "already_killed": already_killed,
+        "killed_by": auth.identity,
+        "created_at": now.isoformat(),
+    }
+    current_hash = compute_hash({**record_payload, "previous_hash": previous_hash})
+    audit = AuditRecord(
+        decision_id=decision_id,
+        system_name=agent.name,
+        industry="agent_governance",
+        audited_by=auth.identity,
+        frameworks_audited="SR_26_2,OCC_2026_13,EU_AI_ACT",
+        results=json.dumps(record_payload),
+        risk_score=1.0,
+        risk_level="CRITICAL",
+        governance_action="KILL_AGENT",
+        policy_version="kill-switch-v1",
+        previous_hash=previous_hash,
+        current_hash=current_hash,
+    )
+    db.add(audit)
+    log_mutation(db, auth.identity, "kill", "agent", agent_id,
+                 f"KILL from {prior_status} · source={data.kill_source} · reason={data.reason[:80]}")
+    db.commit()
+
+    try:
+        dispatch_event("agent.killed", {
+            "agent_id": agent.id,
+            "name": agent.name,
+            "prior_status": prior_status,
+            "kill_source": data.kill_source,
+            "reason": data.reason,
+            "decision_id": decision_id,
+            "already_killed": already_killed,
+        }, agent.org_id, db)
+    except Exception:  # noqa: BLE001 — never let webhook failure block the kill
+        pass
+
+    return {
+        "agent_id": agent.id,
+        "name": agent.name,
+        "status": AgentStatus.KILLED.value,
+        "prior_status": prior_status,
+        "already_killed": already_killed,
+        "kill_source": data.kill_source,
+        "killed_by": auth.identity,
+        "killed_at": now.isoformat(),
+        "decision_id": decision_id,
+        "current_hash": current_hash,
+        "frameworks_cited": ["SR_26_2", "OCC_2026_13", "EU_AI_ACT"],
+    }
+
+
 @router.get("/{agent_id}/dependencies")
 def get_agent_dependencies(agent_id: int, db: Session = Depends(get_db)):
     """Get the dependency graph for an agent."""
