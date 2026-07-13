@@ -17,7 +17,29 @@ def setup_database():
         import src.models.tenant  # noqa: F401
     except Exception:
         pass
+    # Import the newer models so their tables are on Base.metadata
+    try:
+        import src.models.privacy  # noqa: F401
+    except Exception:
+        pass
     Base.metadata.create_all(bind=engine)
+
+    # New columns added to api_keys after initial CREATE need to be applied
+    # against the persisted schema for tests. create_all is a no-op for
+    # existing tables, so we add missing columns idempotently here.
+    if engine.dialect.name == "postgresql":
+        with engine.connect() as conn:
+            from sqlalchemy import text as sa_text
+            for stmt in [
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS agent_id INTEGER",
+                "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS principal_type VARCHAR(16) DEFAULT 'user' NOT NULL",
+                "ALTER TABLE api_keys ALTER COLUMN org_id DROP NOT NULL",
+            ]:
+                try:
+                    with conn.begin():
+                        conn.execute(sa_text(stmt))
+                except Exception:
+                    pass
 
     # Ensure new enum values that were added after the initial CREATE TYPE
     # are present. Alembic handles this for production; for pytest (which

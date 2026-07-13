@@ -28,7 +28,9 @@ class Organization(Base):
 class ApiKey(Base):
     __tablename__ = "api_keys"
     id = Column(Integer, primary_key=True, index=True)
-    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=False)
+    # Nullable to support agent-scoped credentials on agents without an org
+    # (e.g., internal test agents, single-tenant deploys).
+    org_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
     name = Column(String(255), nullable=False)  # e.g. "production", "staging"
     key_prefix = Column(String(12), nullable=False)  # first chars for identification (gl_xxxxxxx)
     key_hash = Column(String(64), unique=True, nullable=False)  # SHA-256 of full key
@@ -38,6 +40,12 @@ class ApiKey(Base):
     last_used_at = Column(DateTime, nullable=True)
     expires_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    # SR 26-2 §V.3 agent-identity: an API key bound to a specific agent.
+    # When agent_id is set, principal_type is "agent" and every request
+    # authenticated with this key counts against the agent's budget.
+    agent_id = Column(Integer, ForeignKey("ai_agents.id"), nullable=True, index=True)
+    principal_type = Column(String(16), default="user", nullable=False)  # "user" | "agent"
 
     organization = relationship("Organization", back_populates="api_keys")
 

@@ -29,7 +29,7 @@ from src.api import (
     assets, audit, auth, automation, billing, calendar, compliance_hub, controls, credentials,
     credit, dashboard, demo, enterprise, enterprise_features, evidence, export, frameworks, fraud,
     governance, growth, hitl, incidents, integrations, knowledge_graph, ledger, lineage, mfa,
-    notifications, oauth, ipi, personnel, pii, policies, rbac_views, redteam, registry,
+    notifications, oauth, ipi, personnel, pii, policies, privacy, rbac_views, redteam, registry,
     remediation, reports, residency, risk, safety, sso, threats, v1, vendor_risk, workspace,
 )
 from src.config import get_settings
@@ -395,6 +395,7 @@ def create_app() -> FastAPI:
     app.include_router(fraud.router)
     app.include_router(demo.router)
     app.include_router(admin.router)
+    app.include_router(privacy.router)
 
     # --------------- Custom Swagger UI with GovernLayer dark theme ---------------
     _SWAGGER_DARK_CSS = (
@@ -757,6 +758,7 @@ def create_app() -> FastAPI:
         return {
             "status": overall,
             "version": settings.policy_version,
+            "environment": settings.environment,
             "uptime_seconds": round(time.time() - _boot_time),
             "database": db_status,
             "redis": redis_status,

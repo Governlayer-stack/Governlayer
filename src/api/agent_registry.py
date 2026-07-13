@@ -435,3 +435,369 @@ def list_shadow_detections(status: Optional[str] = None,
         ],
         total, pagination.page, pagination.per_page,
     )
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Agent identity — first-class principals (P1-8)
+# ═══════════════════════════════════════════════════════════════════════════
+
+class AgentCredentialCreate(BaseModel):
+    """Payload for issuing an agent-scoped API key."""
+    name: str = Field(..., min_length=1, max_length=255,
+                      description="Human label for this credential (e.g. 'prod-runtime', 'canary-eval')")
+    scopes: str = Field(default="govern,risk,scan",
+                        description="Comma-separated scope list this credential can exercise")
+    rate_limit: int = Field(default=60, ge=1, le=10000,
+                            description="Per-minute rate limit for this credential")
+    expires_in_days: Optional[int] = Field(default=90, ge=1, le=365,
+                                           description="Auto-expiry; None disables")
+
+
+def _load_agent_or_404(agent_id: int, db: Session, auth) -> "AIAgent":
+    agent = db.query(AIAgent).filter(AIAgent.id == agent_id).first()
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    if auth.org_id and agent.org_id != auth.org_id:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    return agent
+
+
+@router.post("/{agent_id}/credentials")
+def issue_agent_credential(agent_id: int, data: AgentCredentialCreate,
+                           auth: AuthContext = Depends(require_scope("govern")),
+                           db: Session = Depends(get_db)):
+    """Issue a fresh scoped API key bound to this specific agent.
+
+    The returned `key` value is shown **once** — hash-only storage means we
+    cannot show it again. Save it in your agent's secret store immediately.
+
+    Enforces "no shared service accounts": every credential has an agent_id
+    and a principal_type of "agent", so downstream audit logs can attribute
+    every request to a specific agent identity.
+    """
+    from src.models.tenant import ApiKey, generate_api_key
+    from datetime import timedelta
+
+    agent = _load_agent_or_404(agent_id, db, auth)
+    if agent.status == AgentStatus.KILLED:
+        raise HTTPException(status_code=409,
+                            detail="Cannot issue credentials for a KILLED agent")
+
+    full_key, prefix, key_hash = generate_api_key()
+
+    expires_at = None
+    if data.expires_in_days is not None:
+        expires_at = datetime.utcnow() + timedelta(days=data.expires_in_days)
+
+    key_row = ApiKey(
+        org_id=agent.org_id,
+        agent_id=agent.id,
+        principal_type="agent",
+        name=data.name,
+        key_prefix=prefix,
+        key_hash=key_hash,
+        scopes=data.scopes,
+        rate_limit=data.rate_limit,
+        expires_at=expires_at,
+    )
+    db.add(key_row)
+    db.flush()
+    log_mutation(db, auth.identity, "create", "agent_credential", str(key_row.id),
+                 f"issued for agent={agent.id} name={data.name} scopes={data.scopes}")
+    db.commit()
+
+    return {
+        "credential_id": key_row.id,
+        "agent_id": agent.id,
+        "name": key_row.name,
+        "key": full_key,  # shown once
+        "key_prefix": prefix,
+        "principal_type": "agent",
+        "scopes": key_row.scopes,
+        "rate_limit": key_row.rate_limit,
+        "expires_at": expires_at.isoformat() if expires_at else None,
+        "warning": "Store this key now — it will not be shown again.",
+    }
+
+
+@router.get("/{agent_id}/credentials")
+def list_agent_credentials(agent_id: int,
+                           auth: AuthContext = Depends(require_scope("govern")),
+                           db: Session = Depends(get_db)):
+    """List credentials for an agent (values redacted)."""
+    from src.models.tenant import ApiKey
+    _load_agent_or_404(agent_id, db, auth)
+    creds = db.query(ApiKey).filter(ApiKey.agent_id == agent_id).all()
+    return {
+        "agent_id": agent_id,
+        "count": len(creds),
+        "credentials": [
+            {
+                "credential_id": c.id,
+                "name": c.name,
+                "key_prefix": c.key_prefix,
+                "scopes": c.scopes,
+                "is_active": c.is_active,
+                "last_used_at": c.last_used_at.isoformat() if c.last_used_at else None,
+                "expires_at": c.expires_at.isoformat() if c.expires_at else None,
+                "created_at": c.created_at.isoformat() if c.created_at else None,
+            }
+            for c in creds
+        ],
+    }
+
+
+@router.post("/{agent_id}/credentials/{credential_id}/rotate")
+def rotate_agent_credential(agent_id: int, credential_id: int,
+                            auth: AuthContext = Depends(require_scope("govern")),
+                            db: Session = Depends(get_db)):
+    """Rotate an agent credential: mint a new value, invalidate the old."""
+    from src.models.tenant import ApiKey, generate_api_key
+    _load_agent_or_404(agent_id, db, auth)
+    cred = (db.query(ApiKey)
+              .filter(ApiKey.id == credential_id, ApiKey.agent_id == agent_id)
+              .first())
+    if not cred:
+        raise HTTPException(status_code=404, detail="Credential not found")
+    full_key, prefix, key_hash = generate_api_key()
+    cred.key_prefix = prefix
+    cred.key_hash = key_hash
+    cred.last_used_at = None
+    log_mutation(db, auth.identity, "rotate", "agent_credential", str(cred.id),
+                 f"rotated for agent={agent_id}")
+    db.commit()
+    return {
+        "credential_id": cred.id,
+        "agent_id": agent_id,
+        "key": full_key,
+        "key_prefix": prefix,
+        "warning": "Store this key now — it will not be shown again.",
+    }
+
+
+@router.post("/{agent_id}/credentials/{credential_id}/revoke")
+def revoke_agent_credential(agent_id: int, credential_id: int,
+                            auth: AuthContext = Depends(require_scope("govern")),
+                            db: Session = Depends(get_db)):
+    """Immediately disable an agent credential."""
+    from src.models.tenant import ApiKey
+    _load_agent_or_404(agent_id, db, auth)
+    cred = (db.query(ApiKey)
+              .filter(ApiKey.id == credential_id, ApiKey.agent_id == agent_id)
+              .first())
+    if not cred:
+        raise HTTPException(status_code=404, detail="Credential not found")
+    cred.is_active = False
+    log_mutation(db, auth.identity, "revoke", "agent_credential", str(cred.id),
+                 f"revoked for agent={agent_id}")
+    db.commit()
+    return {"credential_id": cred.id, "agent_id": agent_id, "is_active": False}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Agent budgets — enforced autonomy caps (P1-9)
+# ═══════════════════════════════════════════════════════════════════════════
+
+class AgentBudgetSet(BaseModel):
+    step_budget: Optional[int] = Field(default=None, ge=0,
+                                       description="Max steps/actions; None = uncapped")
+    spend_budget_usd: Optional[float] = Field(default=None, ge=0,
+                                              description="Max USD spend; None = uncapped")
+    recursion_depth_limit: Optional[int] = Field(default=None, ge=0)
+    period: str = Field(default="total", pattern=r"^(total|hourly|daily)$")
+    on_exhaustion: str = Field(default="kill", pattern=r"^(kill|pause)$")
+
+
+class AgentBudgetConsume(BaseModel):
+    steps: int = Field(default=1, ge=0)
+    spend_usd: float = Field(default=0.0, ge=0)
+    recursion_depth: Optional[int] = Field(default=None, ge=0)
+
+
+def _budget_dict(b, agent) -> dict:
+    return {
+        "agent_id": agent.id,
+        "agent_status": agent.status.value if agent.status else None,
+        "step_budget": b.step_budget,
+        "spend_budget_usd": b.spend_budget_usd,
+        "recursion_depth_limit": b.recursion_depth_limit,
+        "used_steps": b.used_steps,
+        "used_spend_usd": round(b.used_spend_usd, 4),
+        "steps_remaining": (b.step_budget - b.used_steps) if b.step_budget is not None else None,
+        "spend_remaining_usd": (
+            round(b.spend_budget_usd - b.used_spend_usd, 4) if b.spend_budget_usd is not None else None
+        ),
+        "period": b.period,
+        "period_start": b.period_start.isoformat() if b.period_start else None,
+        "on_exhaustion": b.on_exhaustion,
+    }
+
+
+@router.post("/{agent_id}/budget")
+def set_agent_budget(agent_id: int, data: AgentBudgetSet,
+                     auth: AuthContext = Depends(require_scope("govern")),
+                     db: Session = Depends(get_db)):
+    """Set (or update) the enforced autonomy budget for an agent."""
+    from src.models.agents import AgentBudget
+    agent = _load_agent_or_404(agent_id, db, auth)
+    budget = db.query(AgentBudget).filter(AgentBudget.agent_id == agent_id).first()
+    if budget is None:
+        budget = AgentBudget(agent_id=agent_id)
+        db.add(budget)
+    budget.step_budget = data.step_budget
+    budget.spend_budget_usd = data.spend_budget_usd
+    budget.recursion_depth_limit = data.recursion_depth_limit
+    budget.period = data.period
+    budget.on_exhaustion = data.on_exhaustion
+    budget.period_start = datetime.utcnow()
+    log_mutation(db, auth.identity, "update", "agent_budget", str(agent_id),
+                 f"steps={data.step_budget} spend={data.spend_budget_usd} period={data.period}")
+    db.commit()
+    db.refresh(budget)
+    return _budget_dict(budget, agent)
+
+
+@router.get("/{agent_id}/budget")
+def get_agent_budget(agent_id: int,
+                     auth: AuthContext = Depends(require_scope("govern")),
+                     db: Session = Depends(get_db)):
+    """Return the current budget and consumption for an agent."""
+    from src.models.agents import AgentBudget
+    agent = _load_agent_or_404(agent_id, db, auth)
+    budget = db.query(AgentBudget).filter(AgentBudget.agent_id == agent_id).first()
+    if budget is None:
+        raise HTTPException(status_code=404, detail="No budget set for this agent")
+    return _budget_dict(budget, agent)
+
+
+@router.post("/{agent_id}/budget/reset")
+def reset_agent_budget(agent_id: int,
+                       auth: AuthContext = Depends(require_scope("govern")),
+                       db: Session = Depends(get_db)):
+    """Zero out `used_steps` and `used_spend_usd`, restart the period window."""
+    from src.models.agents import AgentBudget
+    agent = _load_agent_or_404(agent_id, db, auth)
+    budget = db.query(AgentBudget).filter(AgentBudget.agent_id == agent_id).first()
+    if budget is None:
+        raise HTTPException(status_code=404, detail="No budget set for this agent")
+    budget.used_steps = 0
+    budget.used_spend_usd = 0.0
+    budget.period_start = datetime.utcnow()
+    log_mutation(db, auth.identity, "reset", "agent_budget", str(agent_id))
+    db.commit()
+    db.refresh(budget)
+    return _budget_dict(budget, agent)
+
+
+@router.post("/{agent_id}/budget/consume")
+def consume_agent_budget(agent_id: int, data: AgentBudgetConsume,
+                         auth: AuthContext = Depends(require_scope("govern")),
+                         db: Session = Depends(get_db)):
+    """Charge steps/spend against the agent's budget.
+
+    Called by the agent runtime after each action. If either cap is exceeded
+    the endpoint returns `exhausted: true` and applies `on_exhaustion`:
+      * `kill` — auto-transitions the agent to KILLED and hash-chains the
+        termination onto the audit ledger (same behavior as an explicit kill).
+      * `pause` — sets agent status to SUSPENDED without hash-chaining.
+
+    Idempotent-ish: repeatedly calling after exhaustion is safe; the agent
+    stays in its terminal state and subsequent responses report `exhausted`.
+    """
+    from src.models.agents import AgentBudget
+    agent = _load_agent_or_404(agent_id, db, auth)
+    budget = db.query(AgentBudget).filter(AgentBudget.agent_id == agent_id).first()
+    if budget is None:
+        raise HTTPException(status_code=404, detail="No budget set for this agent")
+
+    budget.used_steps += data.steps
+    budget.used_spend_usd += data.spend_usd
+
+    step_exhausted = budget.step_budget is not None and budget.used_steps > budget.step_budget
+    spend_exhausted = (
+        budget.spend_budget_usd is not None and budget.used_spend_usd > budget.spend_budget_usd
+    )
+    recursion_exhausted = (
+        budget.recursion_depth_limit is not None
+        and data.recursion_depth is not None
+        and data.recursion_depth > budget.recursion_depth_limit
+    )
+    exhausted = step_exhausted or spend_exhausted or recursion_exhausted
+
+    action_taken = "none"
+    kill_decision_id: Optional[str] = None
+
+    if exhausted and agent.status != AgentStatus.KILLED and agent.status != AgentStatus.SUSPENDED:
+        if budget.on_exhaustion == "kill":
+            # Hash-chain the auto-kill just like a manual kill
+            from src.api.webhooks import dispatch_event
+            from src.models.database import AuditRecord, compute_hash, get_last_hash
+            import json
+            import uuid
+
+            reasons = []
+            if step_exhausted:  reasons.append(f"steps {budget.used_steps}/{budget.step_budget}")
+            if spend_exhausted: reasons.append(f"spend ${budget.used_spend_usd:.2f}/${budget.spend_budget_usd:.2f}")
+            if recursion_exhausted: reasons.append(f"recursion {data.recursion_depth}/{budget.recursion_depth_limit}")
+
+            agent.status = AgentStatus.KILLED
+            agent.governance_status = "killed"
+            agent.updated_at = datetime.utcnow()
+
+            decision_id = f"kill-budget-{uuid.uuid4().hex[:10]}"
+            previous_hash = get_last_hash(db)
+            payload = {
+                "decision_id": decision_id,
+                "system_name": agent.name,
+                "agent_id": agent.id,
+                "action": "KILL_AGENT",
+                "kill_source": "auto_budget",
+                "reason": "budget exhausted: " + ", ".join(reasons),
+                "budget_snapshot": _budget_dict(budget, agent),
+                "created_at": datetime.utcnow().isoformat(),
+            }
+            current_hash = compute_hash({**payload, "previous_hash": previous_hash})
+            db.add(AuditRecord(
+                decision_id=decision_id,
+                system_name=agent.name,
+                industry="agent_governance",
+                audited_by=auth.identity,
+                frameworks_audited="SR_26_2,OCC_2026_13",
+                results=json.dumps(payload),
+                risk_score=1.0,
+                risk_level="CRITICAL",
+                governance_action="KILL_AGENT",
+                policy_version="budget-kill-v1",
+                previous_hash=previous_hash,
+                current_hash=current_hash,
+            ))
+            action_taken = "killed"
+            kill_decision_id = decision_id
+            try:
+                dispatch_event("agent.killed", {
+                    "agent_id": agent.id, "name": agent.name,
+                    "kill_source": "auto_budget",
+                    "reason": payload["reason"],
+                    "decision_id": decision_id,
+                }, agent.org_id, db)
+            except Exception:  # noqa: BLE001
+                pass
+        else:  # pause
+            agent.status = AgentStatus.SUSPENDED
+            agent.governance_status = "suspended"
+            agent.updated_at = datetime.utcnow()
+            action_taken = "paused"
+
+    db.commit()
+    db.refresh(budget)
+    db.refresh(agent)
+
+    return {
+        **_budget_dict(budget, agent),
+        "exhausted": exhausted,
+        "step_exhausted": step_exhausted,
+        "spend_exhausted": spend_exhausted,
+        "recursion_exhausted": recursion_exhausted,
+        "action_taken": action_taken,
+        "kill_decision_id": kill_decision_id,
+    }

@@ -116,3 +116,40 @@ class ShadowAIDetection(Base):
     remediation = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class AgentBudget(Base):
+    """Enforced autonomy budget per agent (SR 26-2 §V.3 companion to kill switch).
+
+    Budgets enforce hard limits *in the runtime*, not in the prompt. When an
+    agent exhausts any budget dimension, the platform auto-kills it and
+    records the exhaustion on the audit ledger.
+
+    A budget can be:
+      * one-shot (`period="total"`): budget never resets, exhaustion = terminal.
+      * time-windowed (`period="hourly"|"daily"`): resets at the start of each
+        window; used_steps and used_spend_usd zero out.
+    """
+    __tablename__ = "agent_budgets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    agent_id = Column(Integer, ForeignKey("ai_agents.id"), nullable=False, unique=True, index=True)
+
+    # Hard caps
+    step_budget = Column(Integer, nullable=True)          # None = no cap
+    spend_budget_usd = Column(Float, nullable=True)       # None = no cap
+    recursion_depth_limit = Column(Integer, nullable=True)  # None = no cap
+
+    # Consumed
+    used_steps = Column(Integer, default=0, nullable=False)
+    used_spend_usd = Column(Float, default=0.0, nullable=False)
+
+    # Window
+    period = Column(String(16), default="total", nullable=False)  # "total" | "hourly" | "daily"
+    period_start = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    # Enforcement action once exhausted: "kill" or "pause"
+    on_exhaustion = Column(String(16), default="kill", nullable=False)
+
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

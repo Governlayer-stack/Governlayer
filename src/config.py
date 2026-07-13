@@ -90,6 +90,13 @@ class Settings(BaseSettings):
     # Policy
     policy_version: str = "3.0.0"
 
+    # Environment labeling (used by /health, /admin/infra-check, alert helpers)
+    environment: str = "production"  # "production" | "staging" | "development"
+
+    # Alerting
+    slack_alert_webhook: str = ""
+    alert_email_to: str = ""
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "case_sensitive": False, "extra": "ignore"}
 
 
