@@ -50,14 +50,18 @@ pg_dump --format=custom --no-owner --no-privileges \
   --file "$DUMP_FILE" "$DATABASE_URL_SOURCE"
 ok "dump succeeded ($(du -h "$DUMP_FILE" | cut -f1))"
 
-# 2. Scratch Postgres
-log "starting scratch Postgres on :$SCRATCH_PORT (container $SCRATCH_CONTAINER)"
+# 2. Scratch Postgres — use a version >= the source so all reserved words /
+#    parameters emitted by pg_dump are understood on restore. Railway's
+#    managed Postgres tracks the latest LTS (17 at time of writing), so we
+#    default to 17 unless the caller overrides with SCRATCH_PG_IMAGE.
+SCRATCH_PG_IMAGE="${SCRATCH_PG_IMAGE:-postgres:17-alpine}"
+log "starting scratch Postgres on :$SCRATCH_PORT (container $SCRATCH_CONTAINER, image $SCRATCH_PG_IMAGE)"
 docker run -d --rm \
   --name "$SCRATCH_CONTAINER" \
   -e POSTGRES_PASSWORD="$SCRATCH_PASSWORD" \
   -e POSTGRES_DB=governlayer_restore_test \
   -p "$SCRATCH_PORT:5432" \
-  postgres:15-alpine >/dev/null
+  "$SCRATCH_PG_IMAGE" >/dev/null
 
 log "waiting for scratch Postgres to accept connections"
 for i in {1..30}; do
