@@ -4,9 +4,11 @@ dockerfilePath = "Dockerfile"
 [deploy]
 healthcheckPath = "/health"
 healthcheckTimeout = 300
-# Run pending Alembic migrations before starting uvicorn. If migrations
-# fail (unreachable DB, conflict), the container exits and Railway
-# restarts it — safer than booting the app against a stale schema.
-startCommand = "alembic upgrade head && python -c 'import os,uvicorn;uvicorn.run(\"src.main:app\",host=\"0.0.0.0\",port=int(os.environ.get(\"PORT\",8000)),workers=2)'"
+# Attempt Alembic migrations before starting uvicorn, but DO NOT block
+# app boot on migration failure — the container will still come up and
+# serve /health while an operator investigates the migration failure.
+# This is a deliberate tradeoff: schema drift is a bad day, but boot
+# failure is a worse one because it takes the whole platform offline.
+startCommand = "sh -c 'alembic upgrade head || echo \"MIGRATION FAILED — app booting against current schema\" >&2; python -c \"import os,uvicorn;uvicorn.run(\\\"src.main:app\\\",host=\\\"0.0.0.0\\\",port=int(os.environ.get(\\\"PORT\\\",8000)),workers=2)\"'"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
