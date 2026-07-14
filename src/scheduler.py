@@ -117,6 +117,15 @@ def _scheduler_loop():
             except Exception as e:
                 logger.error(f"Scheduler: control check error: {e}")
 
+        # --- Webhook retry sweeper ---
+        try:
+            from src.api.webhooks import sweep_pending_retries
+            n = sweep_pending_retries()
+            if n:
+                logger.info(f"Scheduler: retried {n} pending webhook deliveries")
+        except Exception as e:
+            logger.error(f"Scheduler: webhook sweep error: {e}")
+
         _stop_event.wait(TICK_INTERVAL)
 
     logger.info("Background scheduler stopped")

@@ -173,6 +173,103 @@ def add_dataset(model_id: str, dataset: DatasetSource) -> ModelCard:
 
 
 # ---------------------------------------------------------------------------
+# Bulk ingest — populate the lineage graph from an external catalog export
+# ---------------------------------------------------------------------------
+
+class CatalogModelEntry(BaseModel):
+    """One row from a catalog manifest — becomes a ModelCard + attached datasets."""
+    name: str
+    provider: str = "custom"
+    family: str = "unknown"
+    intended_use: str = "imported from catalog"
+    known_limitations: str = ""
+    risk_classification: str = "limited"
+    owner: str = ""
+    datasets: list[DatasetSource] = Field(default_factory=list)
+
+
+class CatalogIngest(BaseModel):
+    source_system: str = Field(..., description="e.g. 'dbt', 'unity_catalog', 'atlan', 'custom_export'")
+    source_uri: Optional[str] = Field(default=None, description="Where the catalog came from")
+    models: list[CatalogModelEntry] = Field(default_factory=list,
+                                            description="Model entries to create or update")
+
+
+@router.post("/catalog/ingest")
+def ingest_catalog(manifest: CatalogIngest) -> dict:
+    """Bulk-populate the lineage graph from a data-catalog export.
+
+    Idempotent-ish on model.name: an existing model with the same name gets
+    dataset entries appended (deduped by dataset name) rather than
+    replaced. Provides a single-call bridge from external data catalogs
+    (dbt manifest.json, Unity Catalog, Atlan export) into the /lineage
+    graph, so Layer 2 (Data Foundation) has an actual ingest pipeline
+    rather than being empty by default.
+
+    Returns a summary suitable for a CI job or a UI toast:
+
+        {
+          "source_system": "dbt",
+          "models_created":   N,
+          "models_updated":   M,
+          "datasets_added":   K,
+          "duplicates_skipped": D
+        }
+    """
+    now = datetime.now(timezone.utc)
+    created = updated = datasets_added = duplicates = 0
+
+    for entry in manifest.models:
+        # Look up existing by name
+        existing = next((c for c in _models.values() if c.name == entry.name), None)
+        if existing is None:
+            model_id = f"mdl_{uuid.uuid4().hex[:12]}"
+            card = ModelCard(
+                model_id=model_id,
+                name=entry.name,
+                provider=entry.provider,
+                family=entry.family,
+                intended_use=entry.intended_use,
+                known_limitations=entry.known_limitations,
+                risk_classification=entry.risk_classification,
+                owner=entry.owner,
+                created_at=now,
+                updated_at=now,
+                datasets=[],
+                versions=[],
+                evals=[],
+            )
+            _models[model_id] = card
+            created += 1
+        else:
+            card = existing
+            updated += 1
+
+        # Merge datasets by name
+        existing_names = {d.name for d in card.datasets}
+        for ds in entry.datasets:
+            if ds.name in existing_names:
+                duplicates += 1
+                continue
+            card.datasets.append(ds)
+            existing_names.add(ds.name)
+            datasets_added += 1
+
+        card.updated_at = now
+
+    return {
+        "source_system": manifest.source_system,
+        "source_uri": manifest.source_uri,
+        "ingested_at": now.isoformat(),
+        "models_in_manifest": len(manifest.models),
+        "models_created": created,
+        "models_updated": updated,
+        "datasets_added": datasets_added,
+        "duplicates_skipped": duplicates,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Endpoints — decision linkage
 # ---------------------------------------------------------------------------
 

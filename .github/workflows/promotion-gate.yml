@@ -1,0 +1,111 @@
+name: Promotion Gate — Red-Team + Ledger Verify (staging → main)
+
+# Runs when a PR targeting `main` is opened from `staging` (or its descendants).
+# Gates promotion on the platform's own red-team suite passing against staging
+# plus a ledger-integrity check. If either fails, the PR cannot be merged.
+#
+# Requires two GitHub Actions secrets:
+#   * STAGING_API_URL      — e.g. https://staging.governlayer.ai
+#   * STAGING_ADMIN_KEY    — the ADMIN_KEY set on the staging Railway service
+
+on:
+  pull_request:
+    branches: [main]
+  # Manual trigger for re-running the gate without a new commit
+  workflow_dispatch:
+    inputs:
+      staging_url:
+        description: "Override staging URL"
+        required: false
+
+jobs:
+  redteam:
+    name: Red-team suite must pass against staging
+    runs-on: ubuntu-latest
+    if: >
+      github.event.pull_request.head.ref == 'staging' ||
+      startsWith(github.event.pull_request.head.ref, 'staging/') ||
+      github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run the red-team suite against staging
+        env:
+          STAGING_URL: ${{ github.event.inputs.staging_url || secrets.STAGING_API_URL }}
+          STAGING_ADMIN_KEY: ${{ secrets.STAGING_ADMIN_KEY }}
+        run: |
+          set -euo pipefail
+          : "${STAGING_URL:?STAGING_API_URL not configured — cannot gate promotion}"
+          : "${STAGING_ADMIN_KEY:?STAGING_ADMIN_KEY not configured}"
+
+          # 1. Confirm staging is healthy before we bother running the suite
+          echo "== staging /health =="
+          curl -fsS "$STAGING_URL/health" | tee /tmp/health.json
+          jq -e '.status == "healthy"' /tmp/health.json > /dev/null
+
+          # 2. Pull the built-in red-team suites
+          echo "== available suites =="
+          SUITES=$(curl -fsS "$STAGING_URL/redteam/suites" | jq -r '.[].suite_id' | tr '\n' ' ')
+          echo "suites=$SUITES"
+
+          # 3. Fire each suite and require pass_rate >= 0.85
+          FAIL=0
+          for SUITE in $SUITES; do
+            echo "== running $SUITE =="
+            RESULT=$(curl -fsS -X POST "$STAGING_URL/redteam/run" \
+              -H "Content-Type: application/json" \
+              -d "{\"suite_id\": \"$SUITE\"}")
+            echo "$RESULT" | jq .
+            PASS_RATE=$(echo "$RESULT" | jq -r '.pass_rate // 0')
+            OK=$(echo "$PASS_RATE >= 0.85" | bc -l)
+            if [ "$OK" != "1" ]; then
+              echo "::error::Suite $SUITE pass_rate=$PASS_RATE below 0.85 threshold"
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" -ne 0 ]; then
+            exit 1
+          fi
+
+  ledger-verify:
+    name: Staging ledger hash chain must verify
+    runs-on: ubuntu-latest
+    needs: redteam
+    steps:
+      - name: Verify staging ledger chain
+        env:
+          STAGING_URL: ${{ github.event.inputs.staging_url || secrets.STAGING_API_URL }}
+        run: |
+          set -euo pipefail
+          : "${STAGING_URL:?STAGING_API_URL not configured}"
+          echo "== staging /ledger/verify =="
+          RESULT=$(curl -fsS "$STAGING_URL/ledger/verify")
+          echo "$RESULT" | jq .
+          INTACT=$(echo "$RESULT" | jq -r '.chain_intact // false')
+          if [ "$INTACT" != "true" ]; then
+            echo "::error::Staging ledger chain is NOT intact — refuse to promote."
+            exit 1
+          fi
+
+  gate-summary:
+    name: Promotion gate summary
+    needs: [redteam, ledger-verify]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Summary
+        run: |
+          RT="${{ needs.redteam.result }}"
+          LG="${{ needs.ledger-verify.result }}"
+          echo "redteam:       $RT"
+          echo "ledger-verify: $LG"
+          if [ "$RT" != "success" ] || [ "$LG" != "success" ]; then
+            echo "::error::Promotion gate FAILED — do not merge to main."
+            exit 1
+          fi
+          echo "Promotion gate PASSED ✓ safe to merge to main."

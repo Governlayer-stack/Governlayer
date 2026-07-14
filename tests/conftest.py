@@ -22,6 +22,10 @@ def setup_database():
         import src.models.privacy  # noqa: F401
     except Exception:
         pass
+    try:
+        import src.models.webhooks  # noqa: F401
+    except Exception:
+        pass
     Base.metadata.create_all(bind=engine)
 
     # New columns added to api_keys after initial CREATE need to be applied

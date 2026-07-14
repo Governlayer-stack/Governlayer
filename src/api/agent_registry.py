@@ -413,6 +413,66 @@ def scan_for_shadow_ai(data: ShadowScanRequest,
     }
 
 
+class AutoScanRequest(BaseModel):
+    window_hours: int = Field(default=24, ge=1, le=720,
+                              description="Look-back window for usage + mutation signals.")
+    limit: int = Field(default=5000, ge=100, le=50000,
+                       description="Max rows to inspect per scanner.")
+    persist: bool = Field(default=True,
+                          description="If false, run in dry-run mode (no rows written).")
+
+
+@router.post("/discovery/auto-scan")
+def auto_scan_shadow_ai(data: AutoScanRequest,
+                        auth: AuthContext = Depends(require_scope("scan")),
+                        db: Session = Depends(get_db)):
+    """Automatic shadow-AI detection from the platform's own signals.
+
+    Unlike POST /discovery/scan which needs explicit targets, this endpoint
+    sweeps three sources without any input:
+
+      * UsageRecord — flags outbound calls to known LLM API domains
+        (openai.com, anthropic.com, groq.com, azure.com/openai, bedrock,
+        vertex, replicate, together, mistral, cohere, x.ai, huggingface).
+      * MutationLog — flags bursts of identical mutations by a single actor
+        (≥25 within 15 minutes) — smells like an unregistered agent.
+      * ApiKey — flags active keys with principal_type='agent' pointing
+        at agent_ids that no longer exist.
+
+    Detections are written to ShadowAIDetection so they land on the
+    existing /agents/discovery/detections list.
+    """
+    from src.shadow_ai import detector
+
+    detections = detector.scan(
+        db,
+        window_hours=data.window_hours,
+        limit=data.limit,
+        persist=data.persist,
+    )
+    counts_by_severity = {}
+    for d in detections:
+        counts_by_severity[d["severity"]] = counts_by_severity.get(d["severity"], 0) + 1
+
+    log_mutation(db, auth.identity, "create", "shadow_auto_scan",
+                 details=f"window={data.window_hours}h found={len(detections)}")
+    if not data.persist:
+        db.commit()  # flush the mutation log even in dry-run
+
+    risk_level = "critical" if counts_by_severity.get("high", 0) >= 3 else (
+        "medium" if detections else "safe"
+    )
+
+    return {
+        "window_hours": data.window_hours,
+        "detections_found": len(detections),
+        "counts_by_severity": counts_by_severity,
+        "risk_level": risk_level,
+        "persisted": data.persist,
+        "detections": detections,
+    }
+
+
 @router.get("/discovery/detections")
 def list_shadow_detections(status: Optional[str] = None,
                            pagination: PaginationParams = Depends(),
