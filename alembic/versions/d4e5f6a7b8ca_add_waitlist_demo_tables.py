@@ -1,14 +1,19 @@
 """Add waitlist and demo request tables.
 
-Revision ID: d4e5f6a7b8c9
+Revision ID: d4e5f6a7b8ca
 Revises: c3d4e5f6a7b8
 Create Date: 2026-03-16 23:00:00.000000
+
+Note: this revision was previously duplicated with the ID `d4e5f6a7b8c9`
+(same as the org-isolation migration). Renamed to `d4e5f6a7b8ca` so
+Alembic can distinguish them. A companion merge revision reconciles the
+two branches back into one head.
 """
 
 from alembic import op
 import sqlalchemy as sa
 
-revision = "d4e5f6a7b8c9"
+revision = "d4e5f6a7b8ca"
 down_revision = "c3d4e5f6a7b8"
 branch_labels = None
 depends_on = None
