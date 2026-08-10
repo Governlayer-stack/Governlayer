@@ -28,6 +28,15 @@ class AgentStatus(str, enum.Enum):
     # Required by SR 26-2 §V.3 (kill-switch capability). Once KILLED the
     # agent cannot be re-approved without registering a new agent record.
     KILLED = "killed"
+    # ERG four-tier circuit breaker:
+    #   WARNED — a soft signal was raised (e.g. approaching a budget cap or
+    #   a spec-gaming pattern was detected). Agent still runs; operator
+    #   should review before it escalates further.
+    WARNED = "warned"
+    #   LOCKED_DOWN — the agent AND every sibling agent sharing the same
+    #   batch_id have been killed atomically. Terminal; used when an eval
+    #   batch demonstrates coordinated boundary probing.
+    LOCKED_DOWN = "locked_down"
 
 
 class DiscoverySource(str, enum.Enum):
@@ -71,6 +80,9 @@ class AIAgent(Base):
     is_shadow = Column(Boolean, default=False)
     first_seen_at = Column(DateTime)
     last_activity_at = Column(DateTime)
+    # ERG: agents sharing the same batch_id are treated as a coordinated
+    # unit for lockdown purposes — kill one, lock down all.
+    batch_id = Column(String(64), nullable=True, index=True)
     tags = Column(JSON, default=list)
     metadata_ = Column("metadata", JSON, default=dict)
     created_at = Column(DateTime, default=datetime.utcnow)

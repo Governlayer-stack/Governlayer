@@ -24,14 +24,23 @@ JWT_DEFAULT_SCOPES = ["govern", "audit", "risk", "scan", "read"]
 class AuthContext:
     """Unified auth result — works for both JWT users and API key tenants."""
     def __init__(self, identity: str, org_id: int | None = None, scopes: list[str] | None = None,
-                 auth_type: str = "jwt", api_key_id: int | None = None):
+                 auth_type: str = "jwt", api_key_id: int | None = None,
+                 principal_type: str = "user"):
         self.identity = identity
         self.org_id = org_id
         self.scopes = scopes or []
         self.auth_type = auth_type
         self.api_key_id = api_key_id
+        # "user" | "agent" | "eval" — mirrors ApiKey.principal_type. Eval
+        # principals get an extra denylist enforcement in has_scope().
+        self.principal_type = principal_type
 
     def has_scope(self, scope: str) -> bool:
+        # Eval principals can never exercise `govern` or `audit` regardless
+        # of what their stored scope list says. Defense in depth against
+        # a scope-column tamper or a bug that widened an eval credential.
+        if self.principal_type == "eval" and scope in ("govern", "audit"):
+            return False
         return scope in self.scopes
 
 
@@ -54,12 +63,14 @@ def verify_api_key_or_jwt(
         api_key.last_used_at = datetime.utcnow()
         db.commit()
         scopes = [s.strip() for s in (api_key.scopes or "").split(",") if s.strip()]
+        principal_type = getattr(api_key, "principal_type", "user") or "user"
         return AuthContext(
-            identity=f"org:{api_key.org_id}:{api_key.name}",
+            identity=f"{principal_type}:{api_key.org_id}:{api_key.name}",
             org_id=api_key.org_id,
             scopes=scopes,
             auth_type="api_key",
             api_key_id=api_key.id,
+            principal_type=principal_type,
         )
 
     # JWT path

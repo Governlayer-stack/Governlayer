@@ -27,11 +27,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from src.api import (
     achonye, admin, agent_governance, agent_registry, agi, analytics, analytics_usage,
     assets, audit, auth, automation, billing, calendar, compliance_hub, controls, credentials,
-    credit, dashboard, demo, enterprise, enterprise_features, evidence, export, frameworks, fraud,
-    governance, growth, hitl, incidents, integrations, knowledge_graph, ledger, lineage, mfa,
-    notifications, oauth, ipi, personnel, pii, policies, privacy, rbac_views, redteam, registry,
-    remediation, reports, residency, risk, safety, sso, threats, v1, vendor_risk, webhooks,
-    workspace,
+    credit, dashboard, demo, enterprise, enterprise_features, erg, evidence, export, frameworks,
+    fraud, governance, growth, hitl, incidents, integrations, knowledge_graph, ledger, lineage,
+    mfa, notifications, oauth, ipi, personnel, pii, policies, privacy, rbac_views, redteam,
+    registry, remediation, reports, residency, risk, safety, sso, threats, v1, vendor_risk,
+    webhooks, workspace,
 )
 from src.config import get_settings
 from src.models.database import create_tables, SessionLocal
@@ -398,6 +398,7 @@ def create_app() -> FastAPI:
     app.include_router(admin.router)
     app.include_router(privacy.router)
     app.include_router(webhooks.router)
+    app.include_router(erg.router)
 
     # --------------- Custom Swagger UI with GovernLayer dark theme ---------------
     _SWAGGER_DARK_CSS = (

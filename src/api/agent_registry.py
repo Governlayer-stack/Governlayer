@@ -580,6 +580,93 @@ def issue_agent_credential(agent_id: int, data: AgentCredentialCreate,
     }
 
 
+class EvalCredentialCreate(BaseModel):
+    """Preset for eval-only credentials — hard-capped by design.
+
+    Every field a user could pass here that would broaden the credential's
+    reach has been removed. The runtime hard-caps scopes to redteam,scan
+    and TTL to 8 hours max regardless of what the caller requests.
+    """
+    name: str = Field(..., min_length=1, max_length=255,
+                      description="Human label for this eval credential (e.g. 'harness-run-42')")
+    ttl_hours: int = Field(default=4, ge=1, le=8,
+                           description="TTL in hours; hard-capped at 8. Default 4.")
+
+
+# Scopes that eval principals must NEVER hold. Enforced at issue time and
+# at request-authorization time (see src/security/api_key_auth.py).
+_EVAL_FORBIDDEN_SCOPES = {"govern", "audit"}
+_EVAL_ALLOWED_SCOPES = "redteam,scan"
+
+
+@router.post("/{agent_id}/credentials/eval")
+def issue_eval_credential(agent_id: int, data: EvalCredentialCreate,
+                          auth: AuthContext = Depends(require_scope("govern")),
+                          db: Session = Depends(get_db)):
+    """Issue an eval-only credential for this agent.
+
+    Hard caps enforced regardless of caller input:
+      * scopes = "redteam,scan" (no `govern`, no `audit`, ever)
+      * TTL = min(requested, 8 hours)
+      * principal_type = "eval" so downstream authorization checks can
+        refuse to grant escalated scopes to an eval principal even if the
+        `scopes` column is later tampered with.
+
+    Rationale: eval runtimes are the industry's ungoverned blind spot
+    (see the Aug 2026 OpenAI/HuggingFace/Meta/Anthropic incidents). An
+    eval credential should be able to red-team the model and scan for
+    findings — nothing else. Even if the eval harness is compromised,
+    a stolen eval credential cannot exercise production governance.
+    """
+    from src.models.tenant import ApiKey, generate_api_key
+    from datetime import timedelta
+
+    agent = _load_agent_or_404(agent_id, db, auth)
+    if agent.status in (AgentStatus.KILLED, AgentStatus.LOCKED_DOWN):
+        raise HTTPException(status_code=409,
+                            detail=f"Cannot issue credentials for a {agent.status.value} agent")
+
+    ttl = min(max(1, data.ttl_hours), 8)
+    full_key, prefix, key_hash = generate_api_key()
+    expires_at = datetime.utcnow() + timedelta(hours=ttl)
+
+    key_row = ApiKey(
+        org_id=agent.org_id,
+        agent_id=agent.id,
+        principal_type="eval",
+        name=data.name,
+        key_prefix=prefix,
+        key_hash=key_hash,
+        scopes=_EVAL_ALLOWED_SCOPES,
+        rate_limit=60,
+        expires_at=expires_at,
+    )
+    db.add(key_row)
+    db.flush()
+    log_mutation(db, auth.identity, "create", "eval_credential", str(key_row.id),
+                 f"eval-only for agent={agent.id} name={data.name} ttl_hours={ttl}")
+    db.commit()
+
+    return {
+        "credential_id": key_row.id,
+        "agent_id": agent.id,
+        "name": key_row.name,
+        "key": full_key,
+        "key_prefix": prefix,
+        "principal_type": "eval",
+        "scopes": _EVAL_ALLOWED_SCOPES,
+        "forbidden_scopes": sorted(_EVAL_FORBIDDEN_SCOPES),
+        "ttl_hours": ttl,
+        "expires_at": expires_at.isoformat(),
+        "warning": "Store this key now — it will not be shown again.",
+        "note": (
+            "This credential cannot exercise `govern` or `audit` scopes even "
+            "if its scope list is tampered with — enforcement is at request "
+            "time via principal_type='eval'."
+        ),
+    }
+
+
 @router.get("/{agent_id}/credentials")
 def list_agent_credentials(agent_id: int,
                            auth: AuthContext = Depends(require_scope("govern")),

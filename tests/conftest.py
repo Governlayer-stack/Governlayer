@@ -26,6 +26,10 @@ def setup_database():
         import src.models.webhooks  # noqa: F401
     except Exception:
         pass
+    try:
+        import src.models.erg  # noqa: F401
+    except Exception:
+        pass
     Base.metadata.create_all(bind=engine)
 
     # New columns added to api_keys after initial CREATE need to be applied
@@ -38,6 +42,8 @@ def setup_database():
                 "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS agent_id INTEGER",
                 "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS principal_type VARCHAR(16) DEFAULT 'user' NOT NULL",
                 "ALTER TABLE api_keys ALTER COLUMN org_id DROP NOT NULL",
+                "ALTER TABLE ai_agents ADD COLUMN IF NOT EXISTS batch_id VARCHAR(64)",
+                "CREATE INDEX IF NOT EXISTS ix_ai_agents_batch_id ON ai_agents(batch_id)",
             ]:
                 try:
                     with conn.begin():
@@ -51,7 +57,7 @@ def setup_database():
     if engine.dialect.name == "postgresql":
         with engine.connect() as conn:
             from sqlalchemy import text as sa_text
-            for enum_val in ("KILLED",):
+            for enum_val in ("KILLED", "WARNED", "LOCKED_DOWN"):
                 try:
                     with conn.begin():
                         conn.execute(sa_text(
