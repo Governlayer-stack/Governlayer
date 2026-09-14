@@ -40,7 +40,9 @@ htmlcov/
 
 # Profiling
 *.prof
-*.svg
+# Profiling flamegraphs (SVG) — but allow tracked brand assets in docs/assets/
+/*.svg
+/**/profile-*.svg
 
 # Git rewrite artifacts
 .git-rewrite/

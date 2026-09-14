@@ -1429,9 +1429,26 @@ def create_app() -> FastAPI:
             return FileResponse(_og_image_path, media_type="image/svg+xml")
         return JSONResponse(status_code=404, content={"error": "og-image not found"})
 
-    # Resolve favicon path once at startup
+    # ---- Brand assets — served straight from docs/assets/ so every page
+    #      (landing, workspace, pitch, demo) can <img src="/assets/logo-*.svg">.
+    _assets_dir = None
+    for _p in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "assets"),
+        os.path.join("/app", "docs", "assets"),
+    ]:
+        if os.path.isdir(_p):
+            _assets_dir = _p
+            break
+
+    if _assets_dir:
+        app.mount("/assets", StaticFiles(directory=_assets_dir), name="assets")
+
+    # Resolve favicon path once at startup. Prefer the new brand asset if
+    # present; fall back to the legacy landing favicon.
     _favicon_path = None
     for _fav_path in [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "assets", "favicon.svg"),
+        os.path.join("/app", "docs", "assets", "favicon.svg"),
         os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs", "landing", "favicon.svg"),
         os.path.join("/app", "docs", "landing", "favicon.svg"),
     ]:
